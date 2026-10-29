@@ -242,6 +242,25 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .flow-times span{position:absolute;transform:translateX(-50%);text-align:center;white-space:nowrap;font-size:12px;line-height:1.4;color:var(--muted)}
 .flow-times small{display:block;font:10px var(--mono);color:var(--dim)}
 @media(max-width:560px){.flows{grid-template-columns:minmax(0,1fr)}.flow{padding:14px 10px 10px}}
+.chaps{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
+.chap{font:inherit;color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;background:color-mix(in srgb,#e9c46a calc(var(--a)*28%),rgba(18,14,11,.7));transition:transform .2s,border-color .2s}
+.chap:hover{transform:translateY(-2px);border-color:var(--line2)}
+.chap .cd{font-size:12px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
+.chap .cd em{font-style:normal;font-size:9.5px;border-radius:999px;padding:0 6px;white-space:nowrap}
+.chap .now{background:#e9c46a;color:#1a1208}.chap .pk{border:1px solid #3dffb0;color:#3dffb0}
+.chap b{font-family:var(--display);font-size:14px;font-weight:700}
+.chap .cs{font-family:var(--mono);font-size:12px;color:var(--gold)}
+.chap.past{opacity:.5}
+.chap.sel{border-color:var(--emerald);box-shadow:0 0 16px rgba(61,255,176,.25);opacity:1}
+.dsum{margin-top:14px;padding:14px 16px;border-radius:12px;background:linear-gradient(90deg,rgba(61,255,176,.07),transparent);border-left:2px solid var(--emerald)}
+.dt{margin:0 0 10px;font-size:14px}.chapn{font-family:var(--display);font-weight:700;color:var(--gold);font-size:16px}
+.dbars{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 20px}
+.db{display:grid;grid-template-columns:64px minmax(0,1fr) 28px;gap:8px;align-items:center;font-size:12.5px}
+.db span{color:var(--c)}.db i{height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden}.db s{display:block;height:100%;background:var(--c);border-radius:3px;box-shadow:0 0 8px var(--c)}
+.db b{font-family:var(--mono);font-size:12px;text-align:right}
+.dl{margin:10px 0 0;font-size:13.5px;color:#d8cfc1}
+.neg{color:#ff9aa8}.pos{color:#3dffb0;font-weight:600}
+@media (max-width:620px){.chaps{grid-template-columns:repeat(4,minmax(0,1fr))}.dbars{grid-template-columns:minmax(0,1fr)}}
 /* score receipt */
 .why-head{display:flex;gap:12px;align-items:center;margin:10px 0 14px}
 .wq{margin:0;font-size:13px;color:var(--muted)}.wa{margin:0;font-size:16px}.wa b{font-family:var(--latin);font-size:22px;color:var(--c)}
@@ -459,10 +478,13 @@ const SUNG=["누구보다 먼저 길을 여는 개척자의 불꽃","한 번 쥔
 const NAKG={Ketu:"예리한 직관과 통찰",Venus:"아름다움을 알아보는 감각과 풍요",Sun:"타고난 리더의 기품",Moon:"사람의 마음을 읽는 따뜻한 공감",Mars:"두려움 없는 용기와 실행력",Rahu:"시대를 앞서가는 혁신의 감각",Jupiter:"사람을 이끄는 지혜와 복",Saturn:"끝까지 해내는 인내와 깊이",Mercury:"빠른 두뇌와 재치"};
 const ELS=["성장하는 힘과 기획력","열정과 표현력","신뢰와 버티는 힘","결단력과 원칙","지혜와 직관"],ELW=["시작한 일을 하나씩 마무리하면 운이 몇 배로 커집니다","열정을 꾸준함으로 바꾸면 누구도 못 따라옵니다","새로운 변화에 조금만 문을 열면 기회가 쏟아집니다","부드러운 말 한마디를 더하면 사람이 모여듭니다","생각을 행동으로 옮기는 순간 운이 열립니다"];
 const ELIMG=["곧은 나무","타오르는 불","단단한 땅","벼린 쇠","깊은 물"];
-const HEAD={money:["재물이 크게 들어오는 시기","수입이 늘어나는 흐름","안정적으로 쌓아가는 시기","지출을 정리하면 길이 보이는 시기","다음 도약을 위해 힘을 모으는 시기"],
- love:["인연이 강하게 끌려오는 시기","좋은 만남이 이어지는 흐름","잔잔하게 깊어지는 시기","관계를 단단히 다지는 시기","나를 먼저 채우는 시기"],
- work:["일과 공부 모두 크게 도약하는 시기","성과와 성적이 오르는 흐름","실력을 다지는 시기","방향을 새로 잡는 기회의 시기","내공을 쌓는 시기"],
- health:["컨디션이 가장 좋은 시기","활력이 이어지는 흐름","리듬을 지키면 좋은 시기","쉬어가며 충전할 시기","몸을 아끼며 회복할 시기"]};
+const HEAD={money:["재물이 크게 들어오는 시기","수입이 늘어나는 흐름","안정적으로 쌓아가는 시기","지출이 늘기 쉬운 시기 · 정리하면 새 길이 보여요","재물이 새기 쉬운 시기 · 지키는 힘을 기르는 해예요"],
+ love:["인연이 강하게 끌려오는 시기","좋은 만남이 이어지는 흐름","잔잔하게 깊어지는 시기","관계에 오해가 생기기 쉬운 시기 · 대화로 더 단단해져요","거리가 생기기 쉬운 시기 · 나를 채우면 인연이 다시 와요"],
+ work:["일과 공부 모두 크게 도약하는 시기","성과와 성적이 오르는 흐름","실력을 다지는 시기","압박이 커지기 쉬운 시기 · 방향을 새로 잡을 기회예요","정체되기 쉬운 시기 · 내공이 가장 많이 쌓이는 때예요"],
+ health:["컨디션이 가장 좋은 시기","활력이 이어지는 흐름","리듬을 지키면 좋은 시기","피로가 쌓이기 쉬운 시기 · 쉬어가면 금방 회복해요","몸이 지치기 쉬운 시기 · 관리하는 만큼 확실히 좋아져요"]};
+const CAUTION=["지출이나 손실이 생기기 쉬워요","오해나 거리가 생기기 쉬워요","압박이나 정체를 느끼기 쉬워요","피로가 쌓이기 쉬워요"];
+function voiceText(x,ci){if(x[0]>=50)return x[1];const neg=(x[3]||[]).filter(f=>f[1]<0).sort((a,b)=>a[1]-b[1])[0];
+  const why=neg?`${neg[0]} 때문에 `:"이 점술로는 ";return `<span class="neg">${why}${CAUTION[ci]}.</span> <span class="pos">그래도</span> ${x[1]}`}
 /* 신살: 일간 기준 천을귀인·문창, 일지 기준 도화·역마 */
 const GUI={0:[1,7],4:[1,7],6:[1,7],1:[0,8],5:[0,8],2:[11,9],3:[11,9],7:[2,6],8:[5,3],9:[5,3]};
 const MUNC=[5,6,8,9,8,9,11,0,2,3];
@@ -493,7 +515,8 @@ function tenGod(d,o){const rel=mod(SE[o]-SE[d],5),same=(d%2)===(o%2);return TG[r
 const digitsum=n=>String(n).split("").reduce((a,b)=>a+ +b,0);
 function reduceNum(n,master){while(n>9&&!(master&&(n===11||n===22||n===33)))n=digitsum(n);return n}
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const stretch=v=>Math.round(clamp(50+(v-50)*1.2,12,98));
+const soft=(v,k)=>v<50?50-(50-v)*k:v;
+const stretch=v=>Math.round(clamp(soft(50+(v-50)*1.2,.7),18,98));
 function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 function rng(s){return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
 function isKoreaDST(y,m,d){if(y===1987)return (m>5||(m===5&&d>=10))&&(m<10||(m===10&&d<11));if(y===1988)return (m>5||(m===5&&d>=8))&&(m<10||(m===10&&d<9));return false}
@@ -641,7 +664,7 @@ function oTarot(ch,hi,ci){const t=tarot[hi];const [sc,FF]=fin(t[6][ci],[[`${t[1]
    assemble: R = 가까운 미래(4시점), LY = 나이별(0~80세), LD = 10년 단위(0~70대)
    ========================================================= */
 const ORC=[oSaju,oWest,oVedic,oNum,oMaya];
-const amp=(avg,k)=>Math.round(clamp(60+(avg-56)*k,20,98));
+const amp=(avg,k)=>Math.round(clamp(soft(60+(avg-56)*k,.6),32,98));
 function summarize(v,k){const sc=v.map(x=>x[0]);const avg=sc.reduce((a,b)=>a+b)/sc.length;const sd=Math.sqrt(sc.reduce((a,b)=>a+(b-avg)**2,0)/sc.length);
   return {v,avg,mean:amp(avg,k),agree:Math.max(0,Math.round(100-sd*2.2))}}
 let CH=null,R=null,LY=null,LD=null,LS=null;const sel={money:0,love:0,work:0,health:0};let mode="near",selDec=0,netP=0,netC=0;
@@ -681,22 +704,22 @@ function renderSigil(){const s=document.getElementById("sigil");s.innerHTML="";c
 
 const SHORT=["금전","애정","직업·학업","건강"];
 function renderTrend(){document.querySelectorAll("#modeTabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===mode));
-  document.getElementById("trendNote").textContent=mode==="life"?"칸 색이 진할수록 좋은 10년입니다. 지나온 10년은 흐리게 표시했어요. 칸을 누르면 아래 카드가 그 시기의 풀이로 바뀝니다.":"각 분야의 1·3·5·10년 뒤 점수 흐름입니다. 모든 그래프는 같은 0~100점 눈금이며, 선은 네 시점의 비교를 위한 연결입니다. 점을 누르면 아래 카드에서 해당 시점의 풀이를 볼 수 있습니다.";
+  document.getElementById("trendNote").textContent=mode==="life"?"10년마다 가장 강한 운으로 이름을 붙였어요. 색이 진할수록 좋은 10년이고, 지나온 10년은 흐리게 보여요. 누르면 아래 카드가 그 시기로 바뀝니다.":"각 분야의 1·3·5·10년 뒤 점수 흐름입니다. 모든 그래프는 같은 0~100점 눈금이며, 선은 네 시점의 비교를 위한 연결입니다. 점을 누르면 아래 카드에서 해당 시점의 풀이를 볼 수 있습니다.";
   mode==="life"?renderLifeMap():renderForecast()}
 function chapter(d){const row=LD[d].map(c=>c.mean);const mx=Math.max(...row);if(mx<55)return "다지는 10년";return ["재물의 10년","인연의 10년","성취의 10년","활력의 10년"][row.indexOf(mx)]}
 function renderLifeMap(){const v=document.getElementById("viz");const na=nowAge();const curD=clamp(Math.floor(na/10),0,DECS-1);
-  const tot=LD.map(r=>Math.round(r.reduce((a,b)=>a+b.mean,0)/4));const peak=tot.indexOf(Math.max(...tot)),low=tot.indexOf(Math.min(...tot));
-  const col=d=>`${d===selDec?" sel":""}${(d*10+10)<=na?" past":""}`;
-  let h=`<div class="lm" style="--n:${DECS}"><div class="lh"></div>`;
-  for(let d=0;d<DECS;d++)h+=`<button type="button" class="lh dh${col(d)}" data-d="${d}"><b>${d*10}대</b><small>${Math.floor(CH.birthYear+d*10+.5)}~</small>${d===curD?'<em class="now">지금</em>':d===peak?'<em class="pk">최고</em>':d===low?'<em class="lw">주의</em>':""}</button>`;
-  h+=`<div class="rl">종합</div><div class="tl" style="grid-column:2/-1"><svg viewBox="0 0 ${DECS*100} 60" preserveAspectRatio="none"><polyline points="${tot.map((t,d)=>`${d*100+50},${56-t*.52}`).join(" ")}" fill="none" stroke="#e9c46a" stroke-width="2" vector-effect="non-scaling-stroke"/>${tot.map((t,d)=>`<circle cx="${d*100+50}" cy="${56-t*.52}" r="3.5" fill="${d===selDec?"#e9c46a":"#120e0a"}" stroke="#e9c46a" stroke-width="1.5" vector-effect="non-scaling-stroke"/>`).join("")}</svg><div class="tlv">${tot.map((t,d)=>`<span class="${d===selDec?"on":""}">${t}</span>`).join("")}</div></div>`;
-  CATS.forEach((c,ci)=>{h+=`<div class="rl" style="color:${c.c}">${SHORT[ci]}</div>`;
-    for(let d=0;d<DECS;d++){const s=LD[d][ci].mean;const a=clamp((s-25)/65,.06,1);h+=`<button type="button" class="cell${col(d)}" data-d="${d}" data-c="${ci}" style="--c:${c.c};--a:${a.toFixed(2)}" title="${d*10}대 ${c.n} ${s}점"><span>${s}</span></button>`}});
-  h+=`</div><div class="lsum"><b>${selDec*10}대 · ${decRange(selDec)}</b><span class="chap">${chapter(selDec)}</span><span>${lifeLine(selDec)}</span></div>`;
+  const tot=LD.map(r=>Math.round(r.reduce((a,b)=>a+b.mean,0)/4));const fut=tot.map((t,d)=>d>=curD?t:-1);const peak=fut.indexOf(Math.max(...fut));
+  let h=`<div class="chaps" role="group" aria-label="10년 단위 인생 챕터">`;
+  for(let d=0;d<DECS;d++){const past=(d*10+10)<=na;const a=clamp((tot[d]-45)/45,.08,1);
+    h+=`<button type="button" class="chap${d===selDec?" sel":""}${past?" past":""}" data-d="${d}" aria-pressed="${d===selDec}" style="--a:${a.toFixed(2)}"><span class="cd">${d*10}대${d===curD?'<em class="now">지금</em>':d===peak?'<em class="pk">최고</em>':""}</span><b>${chapter(d).replace(/의? 10년/,"")}</b><span class="cs">${tot[d]}</span></button>`}
+  h+=`</div>`;const r=LD[selDec];
+  h+=`<div class="dsum"><p class="dt"><b>${selDec*10}대</b> · ${decRange(selDec)} · <span class="chapn">${chapter(selDec)}</span></p>
+   <div class="dbars">${CATS.map((c,ci)=>`<div class="db" style="--c:${c.c}"><span>${SHORT[ci]}</span><i><s style="width:${r[ci].mean}%"></s></i><b>${r[ci].mean}</b></div>`).join("")}</div>
+   <p class="dl">${lifeLine(selDec)}</p></div>`;
   v.innerHTML=h;
-  v.querySelectorAll("[data-d]").forEach(b=>b.addEventListener("click",()=>{selDec=+b.dataset.d;cast();renderTrend();renderCats();if(b.dataset.c!=null)focusCard(+b.dataset.c)}))}
+  v.querySelectorAll(".chap").forEach(b=>b.addEventListener("click",()=>{selDec=+b.dataset.d;cast();renderTrend();renderCats()}))}
 function lifeLine(d){const row=LD[d].map((c,ci)=>[c.mean,ci]).sort((a,b)=>b[0]-a[0]);const best=row[0],worst=row[3];
-  return `${SHORT[best[1]]}이 가장 밝고(${best[0]}), ${SHORT[worst[1]]}은 ${worst[0]<45?"조심해야 해요":"상대적으로 약해요"}(${worst[0]}).`}
+  return `${SHORT[best[1]]}운이 가장 밝게 빛나는 10년이에요. ${SHORT[worst[1]]}운은 ${worst[0]<50?"상대적으로 약하니 무리하지 말고 다지는 데 쓰면 다음 10년의 힘이 됩니다":"다른 운보다 잔잔하지만 안정적으로 이어집니다"}.`}
 function renderForecast(){const v=document.getElementById("viz"),y0=new Date().getFullYear();
   const x=hi=>12+76*(HZ[hi].off-1)/9,y=s=>36+(100-s)*1.1;
   v.innerHTML='<div class="flows">'+CATS.map((c,ci)=>{const scores=R.map(row=>row[ci].mean),peak=scores.indexOf(Math.max(...scores));
@@ -718,12 +741,11 @@ function renderCat(ci,anim){const c=CATS[ci];const box=document.getElementById("
   const top=r.v.map((x,i)=>[x[0],i]).sort((a,b)=>b[0]-a[0]);const lead=r.mean>=50?M[top[0][1]].n:M[top[top.length-1][1]].n;
   const sub=life?`${selDec*10}대 · ${decRange(selDec)}`:`${HZ[hi].n} · ${new Date().getFullYear()+HZ[hi].off}`;
   const na=nowAge();
-  const nav=life?`<div class="decbars" style="--c:${c.c}" role="group" aria-label="10년 구간 선택">${LD.map((row,d)=>`<button type="button" data-d="${d}" aria-pressed="${d===selDec}" class="${(d*10+10)<=na?"past":""}" title="${d*10}대 ${row[ci].mean}점"><i style="height:${Math.max(8,row[ci].mean)}%"></i><b>${d*10}</b></button>`).join("")}</div>`
-    :`<div class="hz" style="--c:${c.c}">${HZ.map((h,i)=>`<button type="button" aria-pressed="${i===hi}" data-h="${i}"><b>${h.n}</b><span>${R[i][ci].mean}</span></button>`).join("")}</div>`;
+  const nav=life?"":`<div class="hz" style="--c:${c.c}">${HZ.map((h,i)=>`<button type="button" aria-pressed="${i===hi}" data-h="${i}"><b>${h.n}</b><span>${R[i][ci].mean}</span></button>`).join("")}</div>`;
   box.innerHTML=`<div class="cat-top">${ringSvg(r.mean,c.c)}<div style="min-width:0"><h3>${c.n}<small>${sub}</small></h3><p class="head">${HEAD[c.k][tier(r.mean)]}</p>
    <div class="agree">${r.mean>=50?"가장 강하게 밀어주는 점술":"가장 강하게 경고하는 점술"}: ${lead} · 일치도 ${r.agree}%</div></div></div>${nav}
    <div class="dots">${r.v.map((x,i)=>`<span class="dot" style="--c:${M[i].c}"><i></i>${M[i].n} <b>${x[0]}</b></span>`).join("")}</div>
-   <details class="more" ${openState[c.k]?"open":""}><summary>점술별 풀이 보기 <span class="chev">⌄</span></summary><ul class="voices">${r.v.map((x,i)=>`<li style="--c:${M[i].c}"><span class="who">${M[i].n}</span><span class="sc">${x[0]}</span><span>${x[1]}<em>${i<5?x[2]:""}</em></span></li>`).join("")}</ul></details>`;
+   <details class="more" ${openState[c.k]?"open":""}><summary>점술별 풀이 보기 <span class="chev">⌄</span></summary><ul class="voices">${r.v.map((x,i)=>`<li style="--c:${M[i].c}"><span class="who">${M[i].n}</span><span class="sc">${x[0]}</span><span>${voiceText(x,ci)}<em>${i<5?x[2]:""}</em></span></li>`).join("")}</ul></details>`;
   box.querySelectorAll(".hz button").forEach(b=>b.addEventListener("click",()=>{sel[c.k]=+b.dataset.h;renderCat(ci,true);renderTrend()}));
   box.querySelectorAll(".decbars button").forEach(b=>b.addEventListener("click",()=>{selDec=+b.dataset.d;cast();renderTrend();renderCats();if(document.getElementById("p-net").open)renderNet()}));
   box.querySelector("details").addEventListener("toggle",e=>{openState[c.k]=e.target.open});
