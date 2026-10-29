@@ -117,6 +117,8 @@ form.ask{border-top:1px solid var(--line);padding:16px;animation:open .45s ease;
 .go small{font-size:12px;color:var(--dim)}
 #err{color:var(--rose);font-size:13px}
 
+.natalbox{margin-top:22px;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);backdrop-filter:blur(8px)}
+.nat-h{margin:0 0 12px;font-family:var(--display);font-size:19px;color:var(--gold)}
 .verdict{display:flex;gap:18px;align-items:flex-start;margin-top:24px;flex-wrap:wrap}
 .orb{width:92px;height:92px;flex:none;border-radius:50%;display:grid;place-items:center;position:relative;background:radial-gradient(circle,rgba(61,255,176,.25),rgba(3,12,20,.2) 65%);border:1px solid var(--line2);box-shadow:0 0 40px rgba(61,255,176,.25),inset 0 0 20px rgba(61,255,176,.15)}
 .orb::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px dashed rgba(233,196,106,.55);animation:spin 24s linear infinite}
@@ -395,9 +397,9 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
     </details>
 
     <div class="verdict">
-      <div class="orb"><b id="fateIdx">–</b><small>운명 지수</small></div>
       <div class="vtext" style="flex:1;min-width:240px;max-width:62ch"><p class="type" id="typeName"></p><div id="typeText"></div></div>
     </div>
+    <div class="natalbox"><h3 class="nat-h">타고난 운명</h3><div class="natal" id="natal"></div><div class="pillars" id="pillars"></div></div>
     <div class="share-actions"><button type="button" id="share-open">내 운명 결과 공유하기 ↗</button><small>이름·생년월일·출생지는 공유되지 않아요.</small></div>
   </div>
 </header>
@@ -422,10 +424,6 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 </section>
 
 <section class="panels">
-  <details class="panel">
-    <summary><svg class="g" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="none" stroke="#3dffb0" stroke-opacity=".6"/><path d="M17 4 L28 24 H6 Z" fill="none" stroke="#e9c46a" stroke-opacity=".8"/><circle cx="17" cy="17" r="3" fill="#3dffb0"/></svg><div><h3>타고난 운명</h3><p>사주 여덟 글자와 출생 차트로 본 기질과 타고난 선물</p></div><span class="chev">⌄</span></summary>
-    <div class="pbody"><div class="natal" id="natal"></div><div class="pillars" id="pillars"></div></div>
-  </details>
 
   <details class="panel" id="p-net">
     <summary><svg class="g" viewBox="0 0 34 34"><line x1="17" y1="5" x2="17" y2="29" stroke="#ab9f8c" stroke-opacity=".5"/><rect x="17" y="8" width="12" height="4" rx="1" fill="#3dffb0"/><rect x="9" y="15" width="8" height="4" rx="1" fill="#ff5d73"/><rect x="17" y="22" width="8" height="4" rx="1" fill="#3dffb0"/></svg><div><h3>분석 구조</h3><p>1·3·5·10년 뒤 점수가 어떤 근거로 올라가고 깎였는지 보여주는 계산서</p></div><span class="chev">⌄</span></summary>
@@ -871,7 +869,7 @@ function natalGifts(ch){const g=[];const d=ch.stems.d;
   g.push(["사주 강약",ch.strong?`스스로 길을 여는 힘이 강한 <b>신강 사주</b>예요. 내가 판을 주도할 때 운이 가장 커집니다.`:`주변의 도움을 끌어당기는 <b>신약 사주</b>예요. 좋은 사람을 곁에 둘수록 운이 크게 불어납니다.`]);
   g.push(["마야",`마야력으로는 <b>${MS[ch.msign][0]}(${MS[ch.msign][1]})</b>의 날에 태어나 ${MS[ch.msign][2]}의 힘을 품고 있어요.`]);
   return g}
-function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b)=>a+b.mean,0)/all.length);document.getElementById("fateIdx").textContent=D(idx);
+function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b)=>a+b.mean,0)/all.length);
   const dm=LD.map(r=>r.reduce((a,b)=>a+b.mean,0)/4);const cD=clamp(Math.floor(nowAge()/10),0,DECS-1);const pv=dm.slice(1,Math.max(2,cD)),nx=dm.slice(cD,cD+3);const early=pv.reduce((a,b)=>a+b,0)/pv.length,late=nx.reduce((a,b)=>a+b,0)/nx.length;
   const traj=late-early>3?"지금부터 크게 피어나는":early-late>3?"일찍부터 빛을 내온":"한결같이 빛나는";
   const na=nowAge();let best={m:-1};LD.forEach((row,d)=>{if(d*10+10<=na)return;row.forEach((c,ci)=>{if(c.mean>best.m)best={m:c.mean,d,ci}})});if(best.m<0)LD.forEach((row,d)=>row.forEach((c,ci)=>{if(c.mean>best.m)best={m:c.mean,d,ci}}));
@@ -888,7 +886,7 @@ function renderNatal(){const ch=CH,d=ch.stems.d;const dom=ch.cnt.indexOf(Math.ma
   const gifts=natalGifts(ch);
   document.getElementById("natal").innerHTML=`
    <div><h4>타고난 기질</h4><p>일간 ${ST[d]}${EL[SE[d]]}는 ${DM[ST[d]]} 사람이에요. 오행은 ${cs}로 ${ELK[dom]}(${EL[dom]})의 힘이 가장 셉니다. ${ascS!=null?`첫인상을 만드는 상승궁은 ${ZOD[ascS]}자리라 '${SUNP[ascS]}'으로 기억됩니다.`:""} 인생 수는 ${ch.lp}${ch.expr?`, 표현 수 ${ch.expr}`:""}${ch.soul?`, 영혼 수 ${ch.soul}`:""}입니다.</p></div>
-   <div><h4>타고난 선물</h4><p>${gifts.slice(0,4).map(g=>g[1]).join(" ")}</p></div>
+   <div><h4>또 다른 선물</h4><p>${gifts.slice(3,6).map(g=>g[1]).join(" ")}</p></div>
    <div><h4>더 빛나려면</h4><p>${ELS[dom]}이 가장 큰 무기예요. ${ELW[dom]}. ${miss.length?`사주에 ${miss.join("·")} 기운이 비어 있어, 그 기운이 들어오는 해마다 운이 크게 채워집니다.`:"오행이 모두 갖춰진 고른 사주라 어떤 해에도 버틸 힘이 있습니다."}</p></div>`;
   const hp=ch.stems.h!=null?ST[ch.stems.h]+"<br>"+BR[ch.brs.h]:"?<br>?";
   document.getElementById("pillars").innerHTML=`<div class="pl"><div class="t">시주</div><div class="h">${hp}</div></div><div class="pl me"><div class="t">일주 · 나</div><div class="h">${ST[d]}<br>${BR[ch.brs.d]}</div></div><div class="pl"><div class="t">월주</div><div class="h">${ST[ch.stems.m]}<br>${BR[ch.brs.m]}</div></div><div class="pl"><div class="t">연주</div><div class="h">${ST[ch.stems.y]}<br>${BR[ch.brs.y]}</div></div>
