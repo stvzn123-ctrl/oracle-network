@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>운명 신경망</title>
+<title>운명 네트워크</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Nanum+Myeongjo:wght@400;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -11,6 +11,7 @@
   --fg:#efe9df; --muted:#ab9f8c; --dim:#76695a;
   --emerald:#3dffb0; --teal:#4fd1e8; --gold:#e9c46a; --ember:#ff9a3c; --rose:#ff86b0; --violet:#b49cff;
   --money:#f2c45a; --love:#ff86b0; --work:#52d6ff; --health:#48f0a6;
+  --net-bg:#071321; --net-core:#123e57; --net-node:#8ae5ff;
   --display:"Nanum Myeongjo","Batang","AppleMyungjo",serif;
   --latin:"Cinzel","Nanum Myeongjo",serif;
   --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
@@ -328,13 +329,6 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .rules b{display:block;color:var(--fg);margin-bottom:2px}
 @media (prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}.natalpts{opacity:.55}#net .flow{stroke-dasharray:none}}
 
-/* Cosmic sky and a restrained animated destiny astrolabe */
-#fate-cosmos{position:fixed;z-index:1;right:0;bottom:0;width:min(82vw,850px);height:min(92svh,900px);pointer-events:none;opacity:.32;overflow:hidden;mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.14) 18%,#000 72%);}
-#fate-cosmos svg{width:100%;height:100%;display:block;}
-.destiny-wheel{transform-box:view-box;transform-origin:484px 455px;animation:destiny-turn 180s linear infinite}
-@keyframes destiny-turn{to{transform:rotate(1turn)}}
-@media(max-width:760px){#fate-cosmos{right:-18vw;width:108vw;height:65svh;opacity:.24;mask-image:linear-gradient(180deg,transparent 0%,#000 26%,#000 80%,transparent 100%);}}
-@media(prefers-reduced-motion:reduce){.destiny-wheel{animation:none!important}}
 /* Result sharing: preview includes no identifying birth information. */
 .share-actions{margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .share-actions button,.share-dialog button{font:inherit;cursor:pointer;border:1px solid var(--line2);border-radius:10px;padding:10px 16px;background:var(--field);color:var(--emerald)}
@@ -346,30 +340,36 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .share-dialog .share-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .share-dialog button:focus-visible,.share-actions button:focus-visible{outline:2px solid var(--emerald);outline-offset:3px}
 #share-status{min-height:1.7em;margin-bottom:0}
+
+/* Network identity and graph sharing gate */
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hero-top .eyebrow{letter-spacing:.2em;font-size:11px}
+.hero-top .share-actions{margin:0;flex-shrink:0}
+.hero-top button{white-space:nowrap}
+.sigil{display:none}
+.trend{position:relative;isolation:isolate}
+#graph-content{transition:filter .3s}
+.is-locked #graph-content{filter:blur(9px);pointer-events:none;user-select:none}
+.graph-gate{position:absolute;inset:0;z-index:2;display:flex;justify-content:center;align-items:flex-start;padding:70px 12px 24px;background:var(--panel);border-radius:16px}
+.gate-card{position:sticky;top:70px;max-width:440px;width:100%;padding:26px 20px;text-align:center;background:var(--bg);border:1px solid var(--line2);border-radius:18px}
+.gate-card h3{font-family:var(--display);font-size:clamp(20px,4vw,26px);margin:12px 0}
+.gate-card p{color:var(--muted)}
+.gate-card small{display:block;margin-top:14px;color:var(--muted);font-size:12px}
+.gate-card button{width:100%;padding:13px 10px;border:1px solid var(--emerald);border-radius:10px;background:var(--field);color:var(--emerald);font:inherit;font-weight:600;cursor:pointer}
+.gate-card button:focus-visible{outline:2px solid var(--fg);outline-offset:4px}
+#unlock-status:empty{display:none}
+#unlock-status{color:var(--emerald);font-size:13px}
+@media(prefers-reduced-motion:reduce){#graph-content{transition:none}}
 </style>
 
-<div id="fate-cosmos" aria-hidden="true"><svg viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
-<defs><radialGradient id="cosmos-glow"><stop stop-color="#ffe1a4" stop-opacity=".44"/><stop offset=".35" stop-color="#ef85bf" stop-opacity=".22"/><stop offset=".68" stop-color="#50c9d8" stop-opacity=".13"/><stop offset="1" stop-color="#0b0907" stop-opacity="0"/></radialGradient><linearGradient id="orbit-ink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e9c46a"/><stop offset=".52" stop-color="#76dcca"/><stop offset="1" stop-color="#ff86b0"/></linearGradient></defs>
-<circle cx="484" cy="455" r="350" fill="url(#cosmos-glow)"/>
-<g fill="none" stroke="url(#orbit-ink)" stroke-linecap="round">
- <circle cx="484" cy="455" r="296" stroke-opacity=".5" stroke-width="1.2"/><circle cx="484" cy="455" r="264" stroke-opacity=".26" stroke-width="1" stroke-dasharray="1 8"/>
- <path class="destiny-wheel" d="M484.0 181.0L484.0 159.0M557.2 181.6L560.6 169.1M621.0 217.7L632.0 198.7M684.1 254.9L693.3 245.7M721.3 318.0L740.3 307.0M757.4 381.8L769.9 378.4M758.0 455.0L780.0 455.0M757.4 528.2L769.9 531.6M721.3 592.0L740.3 603.0M684.1 655.1L693.3 664.3M621.0 692.3L632.0 711.3M557.2 728.4L560.6 740.9M484.0 729.0L484.0 751.0M410.8 728.4L407.4 740.9M347.0 692.3L336.0 711.3M283.9 655.1L274.7 664.3M246.7 592.0L227.7 603.0M210.6 528.2L198.1 531.6M210.0 455.0L188.0 455.0M210.6 381.8L198.1 378.4M246.7 318.0L227.7 307.0M283.9 254.9L274.7 245.7M347.0 217.7L336.0 198.7M410.8 181.6L407.4 169.1" stroke-opacity=".62" stroke-width="1"/>
- <g class="destiny-wheel" stroke-opacity=".34" stroke-width="1"><ellipse cx="484" cy="455" rx="248" ry="102" transform="rotate(-28 484 455)"/><ellipse cx="484" cy="455" rx="248" ry="102" transform="rotate(32 484 455)"/><circle cx="484" cy="455" r="176" stroke-dasharray="3 10"/></g>
- <path d="M188 455h592M484 159v592" stroke-opacity=".18" stroke-width=".8" stroke-dasharray="2 10"/>
- <circle cx="484" cy="455" r="58" stroke-opacity=".45" stroke-width="1.2"/><path d="m484 413 9 33-9 51-9-51zM442 455l33-9 51 9-51 9z" stroke-opacity=".7" stroke-width="1.2"/>
-</g>
-<g fill="#ffe5ae"><circle cx="484" cy="159" r="2.7"/><circle cx="780" cy="455" r="2.5"/><circle cx="484" cy="751" r="2.7"/><circle cx="188" cy="455" r="2.5"/><circle cx="484" cy="455" r="5"/></g>
-<g fill="none" stroke="#9ce9df" stroke-opacity=".58" stroke-width="1"><path d="m220 217 40-25 33 28 46-12 25 43M664 637l35 29 45-17 25 31M255 687l29-37 43 9 26-30"/></g>
-<g fill="#c9fff0" fill-opacity=".8"><circle cx="220" cy="217" r="2"/><circle cx="260" cy="192" r="2"/><circle cx="293" cy="220" r="2"/><circle cx="339" cy="208" r="2"/><circle cx="364" cy="251" r="2"/><circle cx="664" cy="637" r="2"/><circle cx="699" cy="666" r="2"/><circle cx="744" cy="649" r="2"/><circle cx="769" cy="680" r="2"/><circle cx="255" cy="687" r="2"/><circle cx="284" cy="650" r="2"/><circle cx="327" cy="659" r="2"/><circle cx="353" cy="629" r="2"/></g>
-</svg></div>
 <canvas id="sky" aria-hidden="true"></canvas>
 <div class="wrap">
 
 <header class="hero">
   <div class="sigil" aria-hidden="true"><svg id="sigil" viewBox="0 0 500 500"></svg></div>
   <div class="hero-in">
-    <div class="eyebrow">The Oracle Network</div>
-    <h1><span id="whoName">오은석</span>님의<br><em>운명 신경망</em></h1>
+    <div class="hero-top"><div class="eyebrow">The Oracle Network</div><div class="share-actions"><button type="button" id="share-open" aria-label="내 운명 결과 공유하기">공유하기 ↗</button></div></div>
+    <h1><span id="whoName">오은석</span>님의<br><em>운명 네트워크</em></h1>
     <p class="lede">태어난 순간을 입력하면 사주, 서양·인도 점성술, 수비학, 마야력, 타로가 각자의 규칙으로 계산해 1·3·5·10년 뒤의 운을 말합니다.</p>
 
     <details class="askbox" id="askbox">
@@ -400,7 +400,6 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
       <div class="vtext" style="flex:1;min-width:240px;max-width:62ch"><p class="type" id="typeName"></p><div id="typeText"></div></div>
     </div>
     <div class="natalbox"><h3 class="nat-h">타고난 운명</h3><div class="natal" id="natal"></div><div class="pillars" id="pillars"></div></div>
-    <div class="share-actions"><button type="button" id="share-open">내 운명 결과 공유하기 ↗</button><small>이름·생년월일·출생지는 공유되지 않아요.</small></div>
   </div>
 </header>
 
@@ -411,14 +410,18 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
   <div class="share-buttons">
     <button type="button" id="share-native" hidden>공유하기</button>
     <button type="button" id="share-copy">결과 복사</button>
+    <button type="button" id="share-manual" hidden>직접 복사 후 결과 보기</button>
     <button type="button" id="share-close">닫기</button>
   </div>
   <p id="share-status" role="status" aria-live="polite"></p>
 </dialog>
-<section>
+<section id="forecast">
   <div class="sec-head"><span class="eyebrow">Prophecy</span><h2>여섯 점술이 말하는 당신의 운</h2></div>
   <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="near" aria-pressed="true">가까운 미래<small>1·3·5·10년</small></button><button type="button" data-m="life" aria-pressed="false">평생 지도<small>10년 단위</small></button></div>
-  <div class="trend"><div id="viz"></div><p class="tnote" id="trendNote"></p></div>
+  <div class="trend is-locked" id="result-gate">
+    <div id="graph-content" inert aria-hidden="true"><div id="viz"></div><p class="tnote" id="trendNote"></p></div>
+    <div class="graph-gate" id="graph-gate"><div class="gate-card"><span class="eyebrow">Unlock your flow</span><h3>나의 운명 흐름이 궁금하다면</h3><p>친구에게 운명 네트워크를 소개하고<br>분야별 흐름 그래프를 확인해 보세요.</p><button type="button" id="gate-share">친구에게 공유하고 결과 보기 ↗</button><small>공유 창 완료 또는 결과 복사 후 열립니다.<br>실제 전송 여부는 확인하지 않아요.</small></div></div>
+  </div><p id="unlock-status" role="status" aria-live="polite"></p>
   <div class="cats" id="cats"><svg class="flash" id="flash" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
   <div class="tarotrow" id="tarot"></div>
 </section>
@@ -924,16 +927,37 @@ function renderNet(){renderNetCtl();const r=R[netP][netC],cat=CATS[netC],hz=HZ[n
   document.getElementById("whyBox").innerHTML=h}
 document.getElementById("p-net").addEventListener("toggle",e=>{if(e.target.open)renderNet()});
 let rsT;addEventListener("resize",()=>{clearTimeout(rsT);rsT=setTimeout(()=>{if(!CH)return;renderTrend()},150)});
-/* ---------- sky: slow-moving milky way ---------- */
-(function sky(){const cv=document.getElementById("sky");if(!cv)return;const x=cv.getContext("2d");let W,Hh,dpr,stars=[],last=0,elapsed=0;
- function size(){dpr=Math.min(devicePixelRatio||1,1.5);W=cv.width=Math.round(innerWidth*dpr);Hh=cv.height=Math.round(innerHeight*dpr);cv.style.width=innerWidth+"px";cv.style.height=innerHeight+"px";let seed=87;const rnd=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};stars=Array.from({length:Math.min(420,Math.round(innerWidth*innerHeight/4800))},()=>({x:rnd()*W,y:rnd()*Hh,r:(.45+rnd()*1.25)*dpr,a:.3+rnd()*.7,p:rnd()*6.28,v:(.25+rnd()*.65)*dpr}))}
- function frame(ts){if(ts-last<40){requestAnimationFrame(frame);return}const dt=Math.min((ts-last)/1000,.1);last=ts;elapsed+=dt;const bg=x.createLinearGradient(0,0,0,Hh);bg.addColorStop(0,"#171421");bg.addColorStop(.48,"#15101b");bg.addColorStop(1,"#0b0907");x.fillStyle=bg;x.fillRect(0,0,W,Hh);
-  x.save();x.translate(W*.5,Hh*.4);x.rotate(-.43);const band=x.createLinearGradient(0,-Hh*.33,0,Hh*.33);band.addColorStop(0,"rgba(255,200,145,0)");band.addColorStop(.25,"rgba(255,150,192,.07)");band.addColorStop(.48,"rgba(255,224,185,.17)");band.addColorStop(.66,"rgba(134,211,225,.1)");band.addColorStop(1,"rgba(255,200,145,0)");x.fillStyle=band;x.fillRect(-W,-Hh*.38,W*2,Hh*.76);const heart=x.createRadialGradient(0,0,0,0,0,Math.max(W,Hh)*.34);heart.addColorStop(0,"rgba(255,211,177,.2)");heart.addColorStop(.28,"rgba(218,122,191,.1)");heart.addColorStop(1,"rgba(48,77,109,0)");x.fillStyle=heart;x.fillRect(-W,-Hh,W*2,Hh*2);x.restore();
-  for(const s of stars){if(!matchMedia("(prefers-reduced-motion: reduce)").matches){s.x+=s.v*dt;if(s.x>W+2)s.x=-2}const twinkle=.66+.34*Math.sin(elapsed*.7+s.p);x.beginPath();x.arc(s.x,s.y,s.r,0,6.283);x.fillStyle=s.p<2?"rgba(255,224,185,"+(s.a*twinkle)+")":s.p<4?"rgba(255,166,207,"+(s.a*twinkle*.74)+")":"rgba(152,224,236,"+(s.a*twinkle*.78)+")";x.fill()}
-  const shade=x.createLinearGradient(0,0,W*.72,0);shade.addColorStop(0,"rgba(11,9,7,.48)");shade.addColorStop(.62,"rgba(11,9,7,.1)");shade.addColorStop(1,"rgba(11,9,7,0)");x.fillStyle=shade;x.fillRect(0,0,W,Hh);
-  const dusk=x.createLinearGradient(0,Hh*.7,0,Hh);dusk.addColorStop(0,"rgba(11,9,7,0)");dusk.addColorStop(1,"rgba(11,9,7,.78)");x.fillStyle=dusk;x.fillRect(0,0,W,Hh);
-  if(!matchMedia("(prefers-reduced-motion: reduce)").matches)requestAnimationFrame(frame)}
- size();addEventListener("resize",size);if(matchMedia("(prefers-reduced-motion: reduce)").matches){last=performance.now();frame(last+50)}else requestAnimationFrame(frame)})();
+
+/* ---------- sky: connected network ---------- */
+(function networkSky(){
+ const cv=document.getElementById("sky"),x=cv?.getContext("2d");if(!x)return;
+ const motion=matchMedia("(prefers-reduced-motion: reduce)");
+ let w=0,h=0,dpr=1,nodes=[],raf=0,last=0,time=0,colors;
+ function resize(){
+   const style=getComputedStyle(document.documentElement);colors={bg:style.getPropertyValue("--net-bg").trim(),core:style.getPropertyValue("--net-core").trim(),node:style.getPropertyValue("--net-node").trim(),line:style.getPropertyValue("--teal").trim()};
+   dpr=Math.min(devicePixelRatio||1,1.5);w=innerWidth;h=innerHeight;cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);cv.style.width=w+"px";cv.style.height=h+"px";
+   let seed=87;const rnd=()=>{seed=seed*16807%2147483647;return(seed-1)/2147483646};
+   nodes=Array.from({length:w<600?38:70},()=>({x:rnd()*w,y:rnd()*h,p:rnd()*Math.PI*2,r:1+rnd()*1.4}));
+   draw();
+ }
+ function draw(){
+   x.setTransform(dpr,0,0,dpr,0,0);x.globalAlpha=1;x.fillStyle=colors.bg;x.fillRect(0,0,w,h);
+   const glow=x.createRadialGradient(w*.72,h*.35,0,w*.72,h*.35,Math.max(w,h)*.7);glow.addColorStop(0,colors.core);glow.addColorStop(1,colors.bg);x.fillStyle=glow;x.fillRect(0,0,w,h);
+   const pts=nodes.map(n=>({...n,px:n.x+Math.sin(time*.12+n.p)*16,py:n.y+Math.cos(time*.1+n.p)*12})),reach=w<600?120:165;
+   x.lineWidth=.7;x.strokeStyle=colors.line;
+   for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+     const a=pts[i],b=pts[j],dist=Math.hypot(a.px-b.px,a.py-b.py);if(dist>reach)continue;
+     x.globalAlpha=(1-dist/reach)*.32;x.beginPath();x.moveTo(a.px,a.py);x.lineTo(b.px,b.py);x.stroke();
+     if((i+j)%11===0){const t=(time*.08+a.p)%1;x.globalAlpha=(1-dist/reach)*.65;x.fillStyle=colors.node;x.beginPath();x.arc(a.px+(b.px-a.px)*t,a.py+(b.py-a.py)*t,1.6,0,Math.PI*2);x.fill();}
+   }
+   x.fillStyle=colors.node;
+   for(const p of pts){x.globalAlpha=.25+.35*(.5+.5*Math.sin(time*.5+p.p));x.beginPath();x.arc(p.px,p.py,p.r,0,Math.PI*2);x.fill();}
+   x.globalAlpha=1;
+ }
+ function frame(ts){if(ts-last>=50){time+=Math.min((ts-last)/1000,.1);last=ts;draw()}if(!motion.matches)raf=requestAnimationFrame(frame)}
+ function start(){cancelAnimationFrame(raf);last=performance.now();draw();if(!motion.matches)raf=requestAnimationFrame(frame)}
+ resize();addEventListener("resize",resize);motion.addEventListener("change",start);start();
+})();
 
 /* ---------- form ---------- */
 const $=id=>document.getElementById(id);
@@ -1047,7 +1071,7 @@ $("ask").addEventListener("submit",e=>{e.preventDefault();const v=readForm();
   if(!(y>=1920&&y<=2026)){$("err").textContent="태어난 해를 1920~2025년 사이로 입력해 주세요.";return}
   if(!v.name){$("err").textContent="이름을 입력해 주세요.";return}
   $("err").textContent="";try{localStorage.setItem("fate-input",JSON.stringify(v))}catch(_){}
-  toggleMap(false);$("askbox").open=false;run(v,true);document.querySelector(".hero").nextElementSibling.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})});
+  toggleMap(false);$("askbox").open=false;run(v,true);document.getElementById("forecast").scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})});
 /* Share only a derived description and scores; never encode the birth input in URLs. */
 const SHARE_URL="https://stvzn123-ctrl.github.io/oracle-network/";
 function resultShareText(){
@@ -1055,34 +1079,50 @@ function resultShareText(){
   return ["나의 운명은 ‘"+type+"’ ✨","",
     "1년 뒤 나의 운 흐름",
     ...CATS.map((c,i)=>c.n+" "+D(R[0][i].mean)+"점"),
-    "","너는 어떤 운명을 타고났을까?","운명 신경망 · 재미로 보는 해석, 예측력 없음",SHARE_URL].join("\n");
+    "","너는 어떤 운명을 타고났을까?","운명 네트워크 · 재미로 보는 해석, 예측력 없음",SHARE_URL].join("\n");
 }
-$("share-open").addEventListener("click",()=>{
-  $("share-preview").value=resultShareText();
-  $("share-status").textContent="";
+
+let graphUnlocked=false;
+try{graphUnlocked=sessionStorage.getItem("fate-graphs-unlocked")==="1"}catch(_){}
+function applyGraphLock(){
+  $("result-gate").classList.toggle("is-locked",!graphUnlocked);
+  $("graph-content").inert=!graphUnlocked;
+  $("graph-content").setAttribute("aria-hidden",String(!graphUnlocked));
+  $("graph-gate").hidden=graphUnlocked;
+}
+function unlockGraphs(){
+  graphUnlocked=true;try{sessionStorage.setItem("fate-graphs-unlocked","1")}catch(_){}
+  applyGraphLock();$("share-dialog").close();
+  $("unlock-status").textContent="분야별 흐름 그래프가 열렸어요.";
+}
+function openShare(){
+  $("share-preview").value=resultShareText();$("share-status").textContent="";
   $("share-native").hidden=typeof navigator.share!=="function";
-  $("share-dialog").showModal();
-});
+  $("share-manual").hidden=true;$("share-dialog").showModal();
+}
+$("share-open").addEventListener("click",openShare);
+$("gate-share").addEventListener("click",openShare);
 $("share-close").addEventListener("click",()=>$("share-dialog").close());
+$("share-manual").addEventListener("click",unlockGraphs);
 $("share-copy").addEventListener("click",async()=>{
   const area=$("share-preview"),text=area.value;
   try{
     if(!navigator.clipboard?.writeText)throw new Error("Clipboard unavailable");
-    await navigator.clipboard.writeText(text);
-    $("share-status").textContent="결과와 링크를 복사했어요. 친구에게 붙여넣어 주세요.";
+    await navigator.clipboard.writeText(text);unlockGraphs();
+    $("unlock-status").textContent="결과를 복사했어요. 친구에게 붙여넣어 주세요. 그래프가 열렸어요.";
   }catch(_){
-    area.focus();area.select();
-    $("share-status").textContent="자동 복사를 사용할 수 없어요. 선택된 글을 길게 누르거나 Ctrl+C / ⌘C로 복사해 주세요.";
+    area.focus();area.select();$("share-manual").hidden=false;
+    $("share-status").textContent="자동 복사를 사용할 수 없어요. 글을 길게 누르거나 Ctrl+C / ⌘C로 복사한 뒤 ‘직접 복사 후 결과 보기’를 눌러 주세요.";
   }
 });
 $("share-native").addEventListener("click",async()=>{
   try{
-    await navigator.share({title:"나의 운명 신경망",text:$("share-preview").value});
-    $("share-status").textContent="공유 창을 닫았어요.";
+    await navigator.share({title:"나의 운명 네트워크",text:$("share-preview").value});unlockGraphs();
   }catch(e){
-    if(e.name!=="AbortError")$("share-status").textContent="공유 창을 열지 못했어요. 결과 복사를 이용해 주세요.";
+    $("share-status").textContent=e.name==="AbortError"?"공유를 취소했어요. 그래프를 열려면 공유 또는 결과 복사를 완료해 주세요.":"공유 창을 열지 못했어요. 결과 복사를 이용해 주세요.";
   }
 });
+applyGraphLock();
 
 fillDays();$("in-d").value=22;$("in-m").value=11;fillDays();$("in-d").value=22;showPlace();
 let start=readForm(),saved=false;try{const sv=JSON.parse(localStorage.getItem("fate-input")||"null");if(sv&&sv.date){fillForm(sv);start=readForm();if(start.err)start=sv;saved=true}}catch(_){}
