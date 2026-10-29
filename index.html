@@ -69,6 +69,7 @@ form.ask{border-top:1px solid var(--line);padding:16px;animation:open .45s ease;
 .ymd select,.ymd input{padding-inline:8px}
 .sub{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-height:20px}
 .conv{font-family:var(--mono);font-size:11.5px;color:var(--gold)}
+.noplace{margin:0 0 8px}.noplace small{color:var(--dim)}
 .psearch{position:relative;margin-bottom:6px}
 .psearch input{font:inherit;font-size:14px;width:100%;color:var(--fg);background:var(--field);border:1px solid var(--line2);border-radius:9px;padding:9px 12px 9px 34px;background-image:radial-gradient(circle at 15px 50%,transparent 5px,var(--emerald) 5.5px,var(--emerald) 6.5px,transparent 7px);background-repeat:no-repeat}
 .psearch input:focus{outline:none;border-color:var(--emerald);box-shadow:0 0 0 3px rgba(61,255,176,.15)}
@@ -369,14 +370,15 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
         <div class="sub"><label class="chk" id="leapWrap" hidden><input type="checkbox" id="in-leap">윤달</label><span class="conv" id="conv"></span></div></div>
       <div class="f s2"><label for="in-time">출생 시각</label><input id="in-time" type="time" value="10:30"><label class="chk"><input type="checkbox" id="in-notime">시각을 몰라요</label></div>
       <div class="f full"><span class="lb">출생지</span>
-        <div class="psearch"><input id="placeQ" type="text" autocomplete="off" placeholder="도시·구·군 이름으로 검색 (예: 분당, 해운대, 도쿄)" role="combobox" aria-expanded="false" aria-controls="placeList" aria-label="출생지 검색"><ul id="placeList" class="plist" role="listbox" hidden></ul></div>
+        <label class="chk noplace"><input type="checkbox" id="in-noplace">출생지를 고르지 않을래요 <small>(대한민국 표준시로 계산)</small></label>
+        <div id="placeBox"><div class="psearch"><input id="placeQ" type="text" autocomplete="off" placeholder="도시·구·군 이름으로 검색 (예: 분당, 해운대, 도쿄)" role="combobox" aria-expanded="false" aria-controls="placeList" aria-label="출생지 검색"><ul id="placeList" class="plist" role="listbox" hidden></ul></div>
         <div class="psel"><select id="sido" aria-label="시·도"></select><select id="sgg" aria-label="시·군·구"></select></div>
         <div class="placebar"><span class="pin" aria-hidden="true"></span><span class="pname" id="placeName">경기도 성남시</span><span class="coords" id="placeCoord"></span><button type="button" id="mapBtn" aria-expanded="false" aria-controls="mapbox">지도로 보기</button></div>
         <div class="mapbox" id="mapbox" hidden>
           <div class="maptabs" role="group" aria-label="지도 범위"><button type="button" data-v="kr" aria-pressed="true">대한민국</button><button type="button" data-v="w" aria-pressed="false">세계</button><span class="maphint" id="mapHint">지도를 눌러 태어난 곳을 고르세요</span></div>
           <div class="mapwrap"><svg id="map" role="img" aria-label="출생지 선택 지도"></svg><div class="maptip" id="mapTip" hidden></div></div>
           <div class="mapfoot"><div class="quick" id="quick"></div><label class="tz" for="in-tz">UTC<input id="in-tz" type="number" step="0.25" min="-12" max="14" value="9"></label><button type="button" class="done" id="mapDone">완료</button></div>
-        </div></div>
+        </div></div></div>
       <div class="go"><button type="submit">운명 읽기</button><small>입력값은 이 브라우저에만 남고, 어디로도 보내지 않습니다.</small><span id="err" role="alert"></span></div>
     </form>
     </details>
@@ -421,6 +423,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
         <div><b>평생 흐름</b>0~80세의 해마다 다섯 점술을 계산해 5년 이동 평균으로 곡선을 그립니다. 10년 카드의 점수는 그 10년의 평균입니다. 점술·운마다 기본값이 한쪽으로 쏠리지 않도록 무작위 출생 300명으로 보정했습니다.</div>
       </div>
       <p style="margin-top:16px"><b>계산 범위.</b> 시각은 출생지 경도로 지방시를 보정해 시주를 정하고, 한국 서머타임(1948~1951, 1955~1960, 1987~1988, IANA tz 기준)과 1954~1961년 UTC+8:30을 반영합니다. 해외 출생지는 서머타임을 반영하지 않습니다. 행성 위치는 연 단위 근사라 전문 프로그램과 몇 도 차이가 날 수 있습니다. 23시 이후 출생은 다음 날 자시로 봅니다.</p>
+      <p><b>출생지를 고르지 않으면</b> 대한민국 표준시(동경 127.5° 기준 지방시)로 시주를 정하고, 상승궁과 하우스는 계산하지 않습니다. 서양 점성술은 태양 별자리, 인도 점성술은 달 별자리를 기준으로 봅니다.</p>
       <p><b>같은 정보, 같은 결과.</b> 같은 출생 정보를 넣으면 언제 봐도 같은 결과가 나옵니다. 시점은 해 단위로 계산하고, 타로 카드도 출생 정보와 그해로 정해집니다.</p>
       <p><b>읽는 법.</b> 계산 자체는 각 체계의 규칙을 따르지만, 점수는 그 규칙을 재미로 숫자로 옮긴 것이고 해석은 가능한 한 밝은 쪽으로 풀었습니다. 이 점술들은 미래를 맞힌다는 근거가 없고, 여러 개를 합쳐도 정확도가 올라가지 않습니다.</p>
     </div>
@@ -594,11 +597,11 @@ function enrich(ch){const d=ch.stems.d,de=SE[d],re=(de+4)%5;
    chart
    ========================================================= */
 function buildChart(inp){
-  const [Y,Mo,D]=inp.date.split("-").map(Number);const pl=inp.place;const lat=pl.lat,lon=pl.lon;const tz=pl.kr?koreaTz(Y,Mo,D):pl.tz;
+  const [Y,Mo,D]=inp.date.split("-").map(Number);const pl=inp.place;const lat=pl.lat,lon=pl.none?127.5:pl.lon;const tz=pl.kr?koreaTz(Y,Mo,D):pl.tz;
   let hh=12,mm=0;if(!inp.notime){[hh,mm]=inp.time.split(":").map(Number)}
   let clock=hh*60+mm;if(pl.kr&&isKoreaDST(Y,Mo,D))clock-=60;
   const jd=jdUTC(Y,Mo,D,(clock-tz*60)/60);
-  const sun=sunLon(jd),moon=moonLon(jd),asc=inp.notime?null:ascLon(jd,lat,lon);
+  const sun=sunLon(jd),moon=moonLon(jd),asc=(inp.notime||pl.none)?null:ascLon(jd,lat,lon);
   // saju
   let py=Y;if(Mo<=2&&sun<315&&sun>=270)py=Y-1;
   const ys=mod(py-4,10),yb=mod(py-4,12);const mi=Math.floor(norm(sun-315)/30);const mb=(2+mi)%12,ms=(((ys%5)*2+2)+mi)%10;
@@ -989,15 +992,18 @@ $("placeList").addEventListener("mousedown",e=>{const li=e.target.closest("li");
 $("placeQ").addEventListener("blur",()=>setTimeout(()=>{pHits=[];renderHits()},120));
 fillSido();fillSgg("");syncSel();
 
+const NOPLACE={name:"출생지 미선택",lat:null,lon:127.5,tz:9,kr:true,none:true};
+function setNoPlace(on){$("in-noplace").checked=on;$("placeBox").hidden=on;if(on)toggleMap(false)}
+$("in-noplace").addEventListener("change",e=>setNoPlace(e.target.checked));
 function readForm(){const cal=$("cal-l").checked?"l":"s";const y=+$("in-y").value,m=+$("in-m").value,d=+$("in-d").value,leap=cal==="l"&&$("in-leap").checked;
   let sol={y,m,d};if(cal==="l"){const r=lunarToSolar(y,m,d,leap);if(r.err)return {err:r.err};sol=r}
   const date=`${sol.y}-${String(sol.m).padStart(2,"0")}-${String(sol.d).padStart(2,"0")}`;
-  return {name:$("in-name").value.trim(),roman:$("in-roman").value.trim(),sex:$("sx-f").checked?"f":"m",cal,ly:y,lm:m,ld:d,leap,date,time:$("in-time").value||"12:00",notime:$("in-notime").checked,place:{...place}}}
+  return {name:$("in-name").value.trim(),roman:$("in-roman").value.trim(),sex:$("sx-f").checked?"f":"m",cal,ly:y,lm:m,ld:d,leap,date,time:$("in-time").value||"12:00",notime:$("in-notime").checked,place:$("in-noplace").checked?{...NOPLACE}:{...place}}}
 function fillForm(v){$("in-name").value=v.name||"";$("in-roman").value=v.roman||"";$(v.sex==="f"?"sx-f":"sx-m").checked=true;
   const [sy,sm,sd]=v.date.split("-").map(Number);const isL=v.cal==="l";$(isL?"cal-l":"cal-s").checked=true;
   $("in-y").value=isL?v.ly:sy;$("in-m").value=isL?v.lm:sm;fillDays();$("in-d").value=isL?v.ld:sd;$("in-leap").checked=!!v.leap;updConv();
   $("in-time").value=v.time;$("in-notime").checked=!!v.notime;$("in-time").disabled=!!v.notime;
-  place=typeof v.place==="number"?placeFromIdx(v.place):v.place;showPlace();syncSel()}
+  if(v.place&&v.place.none){setNoPlace(true)}else{setNoPlace(false);place=typeof v.place==="number"?placeFromIdx(v.place):v.place;showPlace();syncSel()}}
 function renderWho(v){const [y,m,d]=v.date.split("-");const dt=v.cal==="l"?`음 ${v.ly}.${String(v.lm).padStart(2,"0")}.${String(v.ld).padStart(2,"0")}${v.leap?"(윤)":""}`:`${y}.${m}.${d}`;
   $("whoSum").innerHTML=[v.name||"이름 없음",`${dt} ${v.notime?"시각 모름":v.time}`,v.place.name,v.sex==="f"?"여":"남"].map(t=>`<span>${t}</span>`).join("")}
 function run(v,animate){renderWho(v);CH=buildChart(v);drawTarot(CH);compute();selDec=clamp(Math.floor(nowAge()/10),0,DECS-1);if(animate)cast();renderAll()}
