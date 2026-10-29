@@ -274,8 +274,61 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .rules div{border-top:1px solid var(--line);padding-top:10px;font-size:13px;color:var(--muted)}
 .rules b{display:block;color:var(--fg);margin-bottom:2px}
 @media (prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}.natalpts{opacity:.55}#net .flow{stroke-dasharray:none}}
+
+/* Original, quiet background scene */
+#seated-oracle{position:fixed;z-index:2;right:0;bottom:0;width:min(94vw,980px);height:min(100svh,960px);pointer-events:none;opacity:.38;overflow:hidden;mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.12) 16%,#000 64%);}
+#seated-oracle svg{width:100%;height:100%;display:block;}
+#seated-oracle .head-sway{transform-box:fill-box;transform-origin:50% 88%;animation:oracle-sway 8s ease-in-out infinite;}
+@keyframes oracle-sway{0%,100%{transform:rotate(-2.2deg) translateX(-2px)}50%{transform:rotate(2.2deg) translateX(2px)}}
+@media(max-width:760px){#seated-oracle{right:-23vw;width:120vw;height:68svh;opacity:.23;mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 82%,transparent 100%);}}
+@media(prefers-reduced-motion:reduce){#seated-oracle .head-sway{animation:none;transform:none}}
 </style>
 
+<div id="seated-oracle" aria-hidden="true"><svg viewBox="0 0 1000 960" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+<defs>
+ <radialGradient id="scene-glow"><stop stop-color="#6b4927" stop-opacity=".55"/><stop offset="1" stop-color="#17100b" stop-opacity="0"/></radialGradient>
+ <linearGradient id="stone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8e6240" stop-opacity=".36"/><stop offset="1" stop-color="#291c14" stop-opacity=".5"/></linearGradient>
+ <linearGradient id="robe" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#32413b"/><stop offset=".5" stop-color="#18231f"/><stop offset="1" stop-color="#0d1312"/></linearGradient>
+ <linearGradient id="hood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4a4438"/><stop offset=".5" stop-color="#201e1a"/><stop offset="1" stop-color="#100f0d"/></linearGradient>
+ <radialGradient id="aura"><stop stop-color="#54ffb9" stop-opacity=".29"/><stop offset="1" stop-color="#3dffb0" stop-opacity="0"/></radialGradient>
+ <filter id="soft"><feGaussianBlur stdDeviation="24"/></filter>
+</defs>
+<ellipse cx="660" cy="665" rx="365" ry="345" fill="url(#scene-glow)"/>
+<g fill="none" stroke="#a0784d" stroke-opacity=".25">
+ <path stroke-width="26" d="M220 760V365a355 355 0 0 1 710 0v395"/><path stroke-width="8" d="M272 758V378a303 303 0 0 1 606 0v380"/>
+ <path stroke-width="13" d="M310 500h530M291 544h568M278 730h595"/>
+ <path stroke-width="6" d="M354 240v274m90-367v367m308-364v364m91-274v274M321 622h523"/>
+</g>
+<g fill="url(#stone)" stroke="#b38353" stroke-opacity=".17">
+ <path d="M97 280h96v492H97zM133 224l-64 56h154l-54-56zM845 242h91v530h-91zM879 190l-67 52h156l-57-52z"/>
+ <path d="m0 794 116-68 90 45 88-52 75 84-31 89H0zm740 98 42-96 84-42 64 50 70-22v178H723z"/>
+</g>
+<g fill="#c39459" fill-opacity=".22">
+ <circle cx="187" cy="575" r="4"/><circle cx="834" cy="392" r="3"/><circle cx="304" cy="338" r="3"/><circle cx="926" cy="630" r="4"/><circle cx="415" cy="181" r="3"/>
+</g>
+<ellipse cx="611" cy="664" rx="251" ry="226" fill="url(#aura)" filter="url(#soft)"/>
+<g fill="none" stroke="#4dffc0" stroke-opacity=".22">
+ <circle cx="610" cy="575" r="208" stroke-width="2"/><circle cx="610" cy="575" r="221" stroke-width="1" stroke-dasharray="2 13"/><path d="M610 335v38m0 403v38m-241-239h39m405 0h39"/>
+</g>
+<!-- A quiet, original robed figure; the hood is in deep shadow with no facial detail. -->
+<ellipse cx="610" cy="829" rx="246" ry="28" fill="#0a0e0c" fill-opacity=".76"/>
+<path d="M483 498q-82 21-134 91l-72 115q75 49 171 42l78-97zm254 2q85 21 137 91l69 113q-72 48-170 41l-77-95z" fill="#292a24" stroke="#776448" stroke-opacity=".48" stroke-width="5"/>
+<path d="M513 465q-46 18-59 65l-22 171q55 50 178 51 123-1 178-51l-22-171q-13-47-59-65z" fill="url(#robe)" stroke="#708075" stroke-opacity=".25" stroke-width="4"/>
+<path d="M537 480q73 85 73 269m-37-276q4 120 4 276m71-269q-73 85-73 269m37-276q-4 120-4 276" fill="none" stroke="#8e9b89" stroke-opacity=".16" stroke-width="3"/>
+<path d="M577 425h67v78q-33 30-67 0z" fill="#191b18"/>
+<g class="head-sway">
+ <path d="M520 397q-16-106 90-135 109 19 92 135l-25 82q-24 44-68 50-43-8-65-51z" fill="url(#hood)" stroke="#9a805b" stroke-opacity=".55" stroke-width="6"/>
+ <path d="M536 388q4-82 73-100 67 16 76 100-32-25-75-23-42-2-74 23z" fill="#090b0a"/>
+ <path d="M553 399q27-22 56-22 31 0 57 22l-15 60q-14 29-42 34-28-6-42-34z" fill="#080a09"/>
+ <path d="M530 401q-9-88 36-118m110 0q44 30 34 118" fill="none" stroke="#c0a275" stroke-opacity=".22" stroke-width="4"/>
+</g>
+<path d="M514 498q-42 61-57 137m234-137q44 61 58 137" fill="none" stroke="#a5a28a" stroke-opacity=".22" stroke-width="4"/>
+<!-- Folded legs rest on a low stone seat. -->
+<path d="M500 668q-82 6-135 74-41 54 22 80 92 38 221-25l30-63-48-55z" fill="#202622" stroke="#727d6e" stroke-opacity=".36" stroke-width="5"/>
+<path d="M716 668q83 6 137 74 40 54-23 80-92 38-220-25l-30-63 47-55z" fill="#202622" stroke="#727d6e" stroke-opacity=".36" stroke-width="5"/>
+<path d="M387 822q119 19 221-33 101 52 221 33v29H387z" fill="#30291f" stroke="#937348" stroke-opacity=".45" stroke-width="4"/>
+<g fill="#3dffb0" fill-opacity=".7"><circle cx="610" cy="600" r="3"/><circle cx="539" cy="617" r="2"/><circle cx="683" cy="633" r="2"/></g>
+</svg></div>
 <canvas id="sky" aria-hidden="true"></canvas>
 <div class="wrap">
 
@@ -815,3 +868,6 @@ let start=readForm(),saved=false;try{const sv=JSON.parse(localStorage.getItem("f
 $("askbox").open=!saved;
 run(start,false);
 </script>
+
+
+
