@@ -10,7 +10,7 @@
   --bg:#0b0907; --panel:rgba(18,14,11,.74); --field:rgba(10,8,6,.82); --line:rgba(110,230,160,.18); --line2:rgba(110,230,160,.36);
   --fg:#efe9df; --muted:#ab9f8c; --dim:#76695a;
   --emerald:#3dffb0; --teal:#4fd1e8; --gold:#e9c46a; --ember:#ff9a3c; --rose:#ff86b0; --violet:#b49cff;
-  --money:#f2c45a; --love:#ff86b0; --work:#52d6ff; --health:#48f0a6;
+  --money:#f2c45a; --love:#ff86b0; --work:#52d6ff; --health:#48f0a6; --space-top:#171421; --space-mid:#15101b;
   --display:"Nanum Myeongjo","Batang","AppleMyungjo",serif;
   --latin:"Cinzel","Nanum Myeongjo",serif;
   --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
@@ -311,7 +311,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 </style>
 
 <div id="fate-cosmos" aria-hidden="true"><svg viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
-<defs><radialGradient id="cosmos-glow"><stop stop-color="#ffe1a4" stop-opacity=".44"/><stop offset=".35" stop-color="#ef85bf" stop-opacity=".22"/><stop offset=".68" stop-color="#50c9d8" stop-opacity=".13"/><stop offset="1" stop-color="#0b0907" stop-opacity="0"/></radialGradient><linearGradient id="orbit-ink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e9c46a"/><stop offset=".52" stop-color="#76dcca"/><stop offset="1" stop-color="#ff86b0"/></linearGradient></defs>
+<defs><radialGradient id="cosmos-glow"><stop stop-color="var(--fg)" stop-opacity=".44"/><stop offset=".35" stop-color="var(--rose)" stop-opacity=".22"/><stop offset=".68" stop-color="var(--teal)" stop-opacity=".13"/><stop offset="1" stop-color="var(--bg)" stop-opacity="0"/></radialGradient><linearGradient id="orbit-ink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--gold)"/><stop offset=".52" stop-color="var(--teal)"/><stop offset="1" stop-color="var(--rose)"/></linearGradient></defs>
 <circle cx="484" cy="455" r="350" fill="url(#cosmos-glow)"/>
 <g fill="none" stroke="url(#orbit-ink)" stroke-linecap="round">
  <circle cx="484" cy="455" r="296" stroke-opacity=".5" stroke-width="1.2"/><circle cx="484" cy="455" r="264" stroke-opacity=".26" stroke-width="1" stroke-dasharray="1 8"/>
@@ -320,9 +320,9 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
  <path d="M188 455h592M484 159v592" stroke-opacity=".18" stroke-width=".8" stroke-dasharray="2 10"/>
  <circle cx="484" cy="455" r="58" stroke-opacity=".45" stroke-width="1.2"/><path d="m484 413 9 33-9 51-9-51zM442 455l33-9 51 9-51 9z" stroke-opacity=".7" stroke-width="1.2"/>
 </g>
-<g fill="#ffe5ae"><circle cx="484" cy="159" r="2.7"/><circle cx="780" cy="455" r="2.5"/><circle cx="484" cy="751" r="2.7"/><circle cx="188" cy="455" r="2.5"/><circle cx="484" cy="455" r="5"/></g>
-<g fill="none" stroke="#9ce9df" stroke-opacity=".58" stroke-width="1"><path d="m220 217 40-25 33 28 46-12 25 43M664 637l35 29 45-17 25 31M255 687l29-37 43 9 26-30"/></g>
-<g fill="#c9fff0" fill-opacity=".8"><circle cx="220" cy="217" r="2"/><circle cx="260" cy="192" r="2"/><circle cx="293" cy="220" r="2"/><circle cx="339" cy="208" r="2"/><circle cx="364" cy="251" r="2"/><circle cx="664" cy="637" r="2"/><circle cx="699" cy="666" r="2"/><circle cx="744" cy="649" r="2"/><circle cx="769" cy="680" r="2"/><circle cx="255" cy="687" r="2"/><circle cx="284" cy="650" r="2"/><circle cx="327" cy="659" r="2"/><circle cx="353" cy="629" r="2"/></g>
+<g fill="var(--fg)"><circle cx="484" cy="159" r="2.7"/><circle cx="780" cy="455" r="2.5"/><circle cx="484" cy="751" r="2.7"/><circle cx="188" cy="455" r="2.5"/><circle cx="484" cy="455" r="5"/></g>
+<g fill="none" stroke="var(--teal)" stroke-opacity=".58" stroke-width="1"><path d="m220 217 40-25 33 28 46-12 25 43M664 637l35 29 45-17 25 31M255 687l29-37 43 9 26-30"/></g>
+<g fill="var(--emerald)" fill-opacity=".8"><circle cx="220" cy="217" r="2"/><circle cx="260" cy="192" r="2"/><circle cx="293" cy="220" r="2"/><circle cx="339" cy="208" r="2"/><circle cx="364" cy="251" r="2"/><circle cx="664" cy="637" r="2"/><circle cx="699" cy="666" r="2"/><circle cx="744" cy="649" r="2"/><circle cx="769" cy="680" r="2"/><circle cx="255" cy="687" r="2"/><circle cx="284" cy="650" r="2"/><circle cx="327" cy="659" r="2"/><circle cx="353" cy="629" r="2"/></g>
 </svg></div>
 <canvas id="sky" aria-hidden="true"></canvas>
 <div class="wrap">
@@ -812,17 +812,17 @@ function renderNet(){renderNetCtl();const r=R[netP][netC],cat=CATS[netC],hz=HZ[n
 document.getElementById("p-net").addEventListener("toggle",e=>{if(e.target.open)renderNet()});
 let rsT;addEventListener("resize",()=>{clearTimeout(rsT);rsT=setTimeout(()=>{if(!CH)return;renderTrend()},150)});
 /* ---------- sky: slow-moving milky way ---------- */
-(function sky(){const cv=document.getElementById("sky");if(!cv)return;const x=cv.getContext("2d");let W,Hh,dpr,stars=[],last=0,elapsed=0;
+(function sky(){const cv=document.getElementById("sky");if(!cv)return;const x=cv.getContext("2d"),tokens=getComputedStyle(document.documentElement);const color=name=>tokens.getPropertyValue("--"+name).trim();let W,Hh,dpr,stars=[],last=0,elapsed=0;const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
  function size(){dpr=Math.min(devicePixelRatio||1,1.5);W=cv.width=Math.round(innerWidth*dpr);Hh=cv.height=Math.round(innerHeight*dpr);cv.style.width=innerWidth+"px";cv.style.height=innerHeight+"px";let seed=87;const rnd=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};stars=Array.from({length:Math.min(420,Math.round(innerWidth*innerHeight/4800))},()=>({x:rnd()*W,y:rnd()*Hh,r:(.45+rnd()*1.25)*dpr,a:.3+rnd()*.7,p:rnd()*6.28,v:(.25+rnd()*.65)*dpr}))}
- function frame(ts){if(ts-last<40){requestAnimationFrame(frame);return}const dt=Math.min((ts-last)/1000,.1);last=ts;elapsed+=dt;const bg=x.createLinearGradient(0,0,0,Hh);bg.addColorStop(0,"#171421");bg.addColorStop(.48,"#15101b");bg.addColorStop(1,"#0b0907");x.fillStyle=bg;x.fillRect(0,0,W,Hh);
-  x.save();x.translate(W*.5,Hh*.4);x.rotate(-.43);const band=x.createLinearGradient(0,-Hh*.33,0,Hh*.33);band.addColorStop(0,"rgba(255,200,145,0)");band.addColorStop(.25,"rgba(255,150,192,.07)");band.addColorStop(.48,"rgba(255,224,185,.17)");band.addColorStop(.66,"rgba(134,211,225,.1)");band.addColorStop(1,"rgba(255,200,145,0)");x.fillStyle=band;x.fillRect(-W,-Hh*.38,W*2,Hh*.76);const heart=x.createRadialGradient(0,0,0,0,0,Math.max(W,Hh)*.34);heart.addColorStop(0,"rgba(255,211,177,.2)");heart.addColorStop(.28,"rgba(218,122,191,.1)");heart.addColorStop(1,"rgba(48,77,109,0)");x.fillStyle=heart;x.fillRect(-W,-Hh,W*2,Hh*2);x.restore();
-  for(const s of stars){if(!matchMedia("(prefers-reduced-motion: reduce)").matches){s.x+=s.v*dt;if(s.x>W+2)s.x=-2}const twinkle=.66+.34*Math.sin(elapsed*.7+s.p);x.beginPath();x.arc(s.x,s.y,s.r,0,6.283);x.fillStyle=s.p<2?"rgba(255,224,185,"+(s.a*twinkle)+")":s.p<4?"rgba(255,166,207,"+(s.a*twinkle*.74)+")":"rgba(152,224,236,"+(s.a*twinkle*.78)+")";x.fill()}
-  const shade=x.createLinearGradient(0,0,W*.72,0);shade.addColorStop(0,"rgba(11,9,7,.48)");shade.addColorStop(.62,"rgba(11,9,7,.1)");shade.addColorStop(1,"rgba(11,9,7,0)");x.fillStyle=shade;x.fillRect(0,0,W,Hh);
-  const dusk=x.createLinearGradient(0,Hh*.7,0,Hh);dusk.addColorStop(0,"rgba(11,9,7,0)");dusk.addColorStop(1,"rgba(11,9,7,.78)");x.fillStyle=dusk;x.fillRect(0,0,W,Hh);
-  if(!matchMedia("(prefers-reduced-motion: reduce)").matches)requestAnimationFrame(frame)}
- size();addEventListener("resize",size);if(matchMedia("(prefers-reduced-motion: reduce)").matches){last=performance.now();frame(last+50)}else requestAnimationFrame(frame)})();
-
-+/* ---------- form ---------- */
+ function frame(ts){if(ts-last<40){requestAnimationFrame(frame);return}const dt=Math.min((ts-last)/1000,.1);last=ts;elapsed+=dt;const bg=x.createLinearGradient(0,0,0,Hh);bg.addColorStop(0,color("space-top"));bg.addColorStop(.48,color("space-mid"));bg.addColorStop(1,color("bg"));x.fillStyle=bg;x.fillRect(0,0,W,Hh);
+  x.save();x.translate(W*.5,Hh*.4);x.rotate(-.43);const band=x.createLinearGradient(0,-Hh*.33,0,Hh*.33);band.addColorStop(0,"transparent");band.addColorStop(.25,color("rose"));band.addColorStop(.48,color("fg"));band.addColorStop(.66,color("teal"));band.addColorStop(1,"transparent");x.globalAlpha=.12;x.fillStyle=band;x.fillRect(-W,-Hh*.38,W*2,Hh*.76);const heart=x.createRadialGradient(0,0,0,0,0,Math.max(W,Hh)*.34);heart.addColorStop(0,color("gold"));heart.addColorStop(.28,color("rose"));heart.addColorStop(1,"transparent");x.globalAlpha=.16;x.fillStyle=heart;x.fillRect(-W,-Hh,W*2,Hh*2);x.restore();
+  for(const s of stars){if(!reduce){s.x+=s.v*dt;if(s.x>W+2)s.x=-2}const twinkle=.66+.34*Math.sin(elapsed*.7+s.p);x.beginPath();x.arc(s.x,s.y,s.r,0,6.283);x.globalAlpha=s.a*twinkle*(s.p<2?1:.72);x.fillStyle=s.p<2?color("fg"):s.p<4?color("rose"):color("teal");x.fill()}x.globalAlpha=1;
+  const shade=x.createLinearGradient(0,0,W*.72,0);shade.addColorStop(0,color("bg"));shade.addColorStop(.62,"transparent");shade.addColorStop(1,"transparent");x.globalAlpha=.5;x.fillStyle=shade;x.fillRect(0,0,W,Hh);
+  const dusk=x.createLinearGradient(0,Hh*.7,0,Hh);dusk.addColorStop(0,"transparent");dusk.addColorStop(1,color("bg"));x.globalAlpha=.78;x.fillStyle=dusk;x.fillRect(0,0,W,Hh);x.globalAlpha=1;
+  if(!reduce)requestAnimationFrame(frame)}
+ size();addEventListener("resize",size);if(reduce){last=performance.now();frame(last+50)}else requestAnimationFrame(frame)})();
+ 
+/* ---------- form ---------- */
 const $=id=>document.getElementById(id);
 const placeFromIdx=i=>{const p=PLACES[i];return {name:p[0],lat:p[1],lon:p[2],tz:p[3],kr:p[3]===9&&p[2]>124&&p[2]<132&&p[1]>33&&p[1]<39}};
 let place={name:"경기도 성남시",lat:37.42,lon:127.13,tz:9,kr:true};
