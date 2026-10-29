@@ -106,13 +106,20 @@ form.ask{border-top:1px solid var(--line);padding:16px;animation:open .45s ease;
 .go small{font-size:12px;color:var(--dim)}
 #err{color:var(--rose);font-size:13px}
 
-.verdict{display:flex;gap:18px;align-items:center;margin-top:24px;flex-wrap:wrap}
+.verdict{display:flex;gap:18px;align-items:flex-start;margin-top:24px;flex-wrap:wrap}
 .orb{width:92px;height:92px;flex:none;border-radius:50%;display:grid;place-items:center;position:relative;background:radial-gradient(circle,rgba(61,255,176,.25),rgba(3,12,20,.2) 65%);border:1px solid var(--line2);box-shadow:0 0 40px rgba(61,255,176,.25),inset 0 0 20px rgba(61,255,176,.15)}
 .orb::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px dashed rgba(233,196,106,.55);animation:spin 24s linear infinite}
 .orb b{font-family:var(--latin);font-size:32px;color:var(--gold);line-height:1}
 .orb small{position:absolute;bottom:13px;font-size:10px;color:var(--muted)}
-.verdict p{margin:0;max-width:44ch;font-size:14.5px;color:#cfe3dd;flex:1;min-width:220px}
-.verdict .type{display:block;font-family:var(--display);font-size:21px;color:var(--gold);margin-bottom:2px}
+.verdict>p{margin:0;max-width:60ch;font-size:14.5px;color:#cfe3dd;flex:1;min-width:240px}
+.verdict .type{display:block;font-family:var(--display);font-size:clamp(19px,2.6vw,23px);line-height:1.45;margin-bottom:8px;text-wrap:balance}
+.verdict .type em{font-style:normal;color:var(--gold);text-shadow:0 0 16px rgba(233,196,106,.35)}
+.gifts{margin:0 0 10px;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.gifts li{position:relative;padding-left:18px;font-size:14px;color:#d8cfc1}
+.gifts li::before{content:"";position:absolute;left:2px;top:.62em;width:7px;height:7px;transform:rotate(45deg);background:var(--emerald);box-shadow:0 0 8px var(--emerald)}
+.gifts b,.vline b{color:var(--fg)}
+.vline{margin:0 0 6px;font-size:14px;color:#cfe3dd}
+.rare{margin:0;font-size:12px;color:var(--dim)}
 
 /* forecast */
 .sec-head{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
@@ -333,7 +340,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 
     <div class="verdict">
       <div class="orb"><b id="fateIdx">–</b><small>운명 지수</small></div>
-      <p><span class="type" id="typeName"></span><span id="typeText"></span></p>
+      <div class="vtext" style="flex:1;min-width:240px;max-width:62ch"><p class="type" id="typeName"></p><div id="typeText"></div></div>
     </div>
   </div>
 </header>
@@ -348,7 +355,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 
 <section class="panels">
   <details class="panel">
-    <summary><svg class="g" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="none" stroke="#3dffb0" stroke-opacity=".6"/><path d="M17 4 L28 24 H6 Z" fill="none" stroke="#e9c46a" stroke-opacity=".8"/><circle cx="17" cy="17" r="3" fill="#3dffb0"/></svg><div><h3>타고난 운명</h3><p>사주 여덟 글자와 출생 차트로 본 기질·강점·약점</p></div><span class="chev">⌄</span></summary>
+    <summary><svg class="g" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="none" stroke="#3dffb0" stroke-opacity=".6"/><path d="M17 4 L28 24 H6 Z" fill="none" stroke="#e9c46a" stroke-opacity=".8"/><circle cx="17" cy="17" r="3" fill="#3dffb0"/></svg><div><h3>타고난 운명</h3><p>사주 여덟 글자와 출생 차트로 본 기질과 타고난 선물</p></div><span class="chev">⌄</span></summary>
     <div class="pbody"><div class="natal" id="natal"></div><div class="pillars" id="pillars"></div></div>
   </details>
 
@@ -362,16 +369,17 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
     <summary><svg class="g" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="none" stroke="#3dffb0" stroke-opacity=".5"/><path d="M11 12 H23 M11 17 H23 M11 22 H19" stroke="#e9c46a" stroke-width="1.6" stroke-linecap="round"/></svg><div><h3>점수 계산 방식과 읽는 법</h3><p>각 점술이 무엇을 보고 점수를 매기는지</p></div><span class="chev">⌄</span></summary>
     <div class="pbody note">
       <div class="rules">
-        <div><b>사주</b>그해의 천간·지지와 지금 대운이 내 일간에게 어떤 십신(재성·관성 등)인지 보고, 일지와의 합·충, 오행 균형을 더합니다. 남성은 재성, 여성은 관성을 이성 인연으로 봅니다.</div>
-        <div><b>서양 점성술</b>그해 목성과 토성이 출생 차트의 몇 번째 하우스를 지나는지로 매깁니다. 목성은 기회, 토성은 시험입니다. 토성 회귀와 목성의 태양·상승궁 통과를 가산합니다.</div>
-        <div><b>인도 점성술</b>달의 낙샤트라로 빔쇼타리 다샤(대운)를 계산하고, 그 시점의 대운 행성과 보조 행성이 각 운에서 길한지 흉한지로 매깁니다.</div>
-        <div><b>수비학</b>생일 숫자와 그해 숫자를 더한 개인년(1~9)으로 매기고, 인생 수로 조금 보정합니다.</div>
+        <div><b>사주</b>그해의 천간·지지와 대운이 내 일간에게 어떤 십신인지 보고, 신강·신약에 따라 도움이 되는 기운(희신)인지 가립니다. 천을귀인·문창귀인·도화·역마, 일지와의 합·충을 더합니다. 남성은 재성, 여성은 관성을 이성 인연으로 봅니다.</div>
+        <div><b>서양 점성술</b>그해 목성과 토성이 출생 차트의 몇 번째 하우스를 지나는지로 매깁니다. 목성 회귀, 토성 회귀, 목성의 태양·상승궁 통과와 태양과의 조화각을 더합니다.</div>
+        <div><b>인도 점성술</b>달의 낙샤트라로 빔쇼타리 다샤를 계산합니다. 대운·보조 행성의 본래 성질에, 내 라그나(시각을 모르면 달 별자리) 기준으로 그 행성이 다스리는 하우스(행운 하우스, 요가카라카 등)를 더해 매깁니다.</div>
+        <div><b>수비학</b>인생 수는 월·일·연을 각각 줄인 뒤 더하는 방식(마스터 넘버 11·22·33 보존)으로 구합니다. 그해 개인년(1~9)으로 매기고 인생 수와의 공명을 더합니다.</div>
         <div><b>마야력</b>그해 생일이 260일 촐킨 달력의 어느 기호(20개)와 숫자(13개)에 떨어지는지로 매깁니다.</div>
         <div><b>타로</b>입력값으로 섞은 메이저 아르카나 22장에서 시점마다 한 장씩 뽑습니다. 다시 뽑기를 누르면 바뀝니다. 우연에 기대는 점술이라 평생 흐름에는 넣지 않습니다.</div>
         <div><b>평생 흐름</b>0~80세의 해마다 다섯 점술을 계산해 5년 이동 평균으로 곡선을 그립니다. 10년 카드의 점수는 그 10년의 평균입니다. 점술·운마다 기본값이 한쪽으로 쏠리지 않도록 무작위 출생 300명으로 보정했습니다.</div>
       </div>
       <p style="margin-top:16px"><b>계산 범위.</b> 시각은 출생지 경도로 지방시를 보정해 시주를 정하고, 1987·1988년 한국 서머타임을 반영합니다. 해외 출생지는 서머타임을 반영하지 않습니다. 행성 위치는 연 단위 근사라 전문 프로그램과 몇 도 차이가 날 수 있습니다. 23시 이후 출생은 다음 날 자시로 봅니다.</p>
-      <p><b>읽는 법.</b> 계산 자체는 각 체계의 규칙을 따르지만, 점수는 그 규칙을 재미로 숫자로 옮긴 것입니다. 이 점술들은 미래를 맞힌다는 근거가 없고, 여러 개를 합쳐도 정확도가 올라가지 않습니다.</p>
+      <p><b>같은 정보, 같은 결과.</b> 같은 출생 정보를 넣으면 언제 봐도 같은 결과가 나옵니다. 시점은 해 단위로 계산하고, 타로 카드도 출생 정보와 그해로 정해집니다.</p>
+      <p><b>읽는 법.</b> 계산 자체는 각 체계의 규칙을 따르지만, 점수는 그 규칙을 재미로 숫자로 옮긴 것이고 해석은 가능한 한 밝은 쪽으로 풀었습니다. 이 점술들은 미래를 맞힌다는 근거가 없고, 여러 개를 합쳐도 정확도가 올라가지 않습니다.</p>
     </div>
   </details>
 </section>
@@ -401,58 +409,67 @@ const KNAME={PRK:"북한",CHN:"중국",JPN:"일본",RUS:"러시아",USA:"미국"
 /* saju ten gods: weights [money, love(m), love(f), work, health] */
 const TG=["비견","겁재","식신","상관","편재","정재","편관","정관","편인","정인"];
 const TGW={비견:[-8,-10,-6,10,14],겁재:[-32,-24,-10,-8,-8],식신:[22,10,6,16,20],상관:[10,-6,-26,-12,-14],편재:[28,26,6,12,-8],정재:[32,30,8,10,6],편관:[-16,-6,20,16,-32],정관:[6,6,32,30,4],편인:[-18,-16,-12,10,-10],정인:[4,6,8,18,18]};
-const TGP={
- 비견:{money:"내 몫을 지키는 글자라 큰돈보다 독립적인 벌이가 됩니다",love:"자기 주장이 강해져 관계에서 고집이 부딪칩니다",work:"동료와 겨루며 자기 영역을 만듭니다",health:"체력이 받쳐주는 글자입니다"},
- 겁재:{money:"돈이 새는 글자입니다. 동업·보증·충동 지출을 조심하라고 봅니다",love:"경쟁자가 끼어들기 쉬운 글자입니다",work:"경쟁이 치열해지고 무리한 승부수를 두기 쉽습니다",health:"과신해서 무리하기 쉽습니다"},
- 식신:{money:"재능이 돈을 낳는 글자라 꾸준한 수입 신호입니다",love:"여유와 표현력이 살아나 매력이 올라갑니다",work:"전문성과 결과물로 인정받습니다",health:"먹고 쉬는 복이 있어 회복이 빠릅니다"},
- 상관:{money:"아이디어로 버는 돈이지만 기복이 있습니다",love:"말이 날카로워져 다툼이 생기기 쉽습니다",work:"틀을 깨는 힘이 있지만 윗사람과 마찰을 조심합니다",health:"신경이 예민해집니다"},
- 편재:{money:"큰돈이 움직이는 글자입니다. 투자·사업 기회와 변동이 함께 옵니다",love:"사람을 많이 만나고 인연이 활발해집니다",work:"영업과 사업 감각이 살아납니다",health:"바쁘게 움직여 피로가 쌓입니다"},
- 정재:{money:"안정적인 수입의 글자라 월급과 저축이 늘어납니다",love:"진지하고 안정적인 인연이 들어옵니다",work:"성실함이 보상받습니다",health:"생활 리듬이 안정됩니다"},
- 편관:{money:"책임 때문에 나가는 돈이 생깁니다",love:"강한 끌림과 갈등이 함께 옵니다",work:"무거운 책임과 큰 과제가 주어집니다",health:"스트레스가 가장 큰 글자입니다"},
- 정관:{money:"명예가 돈보다 앞서지만 수입은 안정적입니다",love:"공식적인 관계, 결혼 신호로 봅니다",work:"승진과 직책, 좋은 평가의 글자입니다",health:"규칙적인 생활로 무난합니다"},
- 편인:{money:"돈보다 공부와 자격에 쓰는 해입니다",love:"혼자 있고 싶어지는 글자입니다",work:"자격증, 연구, 특수 분야에 강합니다",health:"생각이 많아 잠을 챙겨야 합니다"},
- 정인:{money:"문서와 계약에 이득이 있습니다",love:"나를 돌봐주는 사람이 곁에 옵니다",work:"윗사람의 지원을 받고 배움이 성과로 이어집니다",health:"회복력이 좋아지는 글자입니다"}};
 /* western house weights [money, love, work, health] */
 const JW=[null,[10,18,14,14],[32,0,6,4],[4,6,10,4],[6,8,-6,8],[6,32,4,8],[2,-4,14,14],[8,32,8,4],[26,8,0,-6],[8,6,14,6],[12,2,34,2],[28,12,14,6],[-14,-10,-12,-6]];
 const SW=[null,[-6,-12,4,-26],[-26,0,0,-4],[0,-4,4,-4],[-6,-12,-14,-8],[-4,-20,0,-6],[0,0,-6,-22],[-4,-16,-4,-4],[-20,-6,0,-12],[0,-4,-6,0],[4,-6,18,-8],[-4,-6,6,0],[-10,-6,-12,-18]];
 /* vedic planet weights [money, love, work, health] */
 const PW={Sun:[4,-8,26,4],Moon:[6,18,0,8],Mars:[0,-10,16,-18],Mercury:[20,4,18,4],Jupiter:[30,22,16,22],Venus:[22,34,6,8],Saturn:[-14,-20,18,-22],Rahu:[10,4,22,-20],Ketu:[-26,-28,-16,-16]};
-const PP={
- Sun:["태양은 명예의 행성이라 돈보다 이름이 먼저 섭니다","자존심이 앞서 관계에 거리가 생기기 쉽습니다","권위와 리더십으로 인정받는 시기입니다","활력은 좋지만 눈과 심장의 피로를 봅니다"],
- Moon:["수입이 흐름을 타며 들쭉날쭉합니다","감정이 풍부해지고 가정에 마음이 갑니다","사람을 상대하는 일이 잘 맞습니다","감정 기복이 몸에 바로 드러납니다"],
- Mars:["과감하게 벌고 과감하게 씁니다","열정과 다툼이 함께 옵니다","추진력과 경쟁심이 최고조입니다","사고, 염증, 열을 조심하는 시기입니다"],
- Mercury:["거래, 계약, 부업에 운이 따릅니다","대화가 통하는 사람을 만납니다","기획, 글, 분석, 영업에 강합니다","신경 피로와 불면을 챙깁니다"],
- Jupiter:["확장과 축적, 재물이 불어나는 시기입니다","결혼·가정·자녀 신호가 강합니다","멘토와 승진, 교육에서 기회가 옵니다","보호받는 시기라 큰 탈이 적습니다"],
- Venus:["안락함과 소비가 함께 늘어납니다","연애와 결혼의 행성이라 애정운이 가장 강합니다","디자인, 서비스, 협업이 잘 풀립니다","무난하지만 과식·과음을 조심합니다"],
- Saturn:["천천히 쌓이지만 지출 압박이 있습니다","외로움과 책임으로 관계를 시험받습니다","늦지만 확실한 성과, 무거운 책임입니다","만성 피로와 뼈·관절을 챙기라고 봅니다"],
- Rahu:["갑작스러운 기회와 손실이 함께 옵니다. 투기는 조심합니다","배경이 낯선 사람, 예상 밖 인연입니다","해외, 디지털, 새 분야에서 급성장합니다","불규칙한 생활과 중독성 습관을 조심합니다"],
- Ketu:["물질에 대한 집착이 줄고 돈이 빠져나갑니다","거리두기와 이별, 혼자의 시간이 늘어납니다","방향을 잃기 쉬워 정리가 필요합니다","원인 모를 피로가 쌓여 휴식이 필요합니다"]};
 /* numerology personal year [money, love, work, health] + phrases */
-const NYW={1:[56,62,88,74],2:[42,86,46,64],3:[48,90,62,72],4:[72,36,80,44],5:[38,70,58,48],6:[64,94,52,78],7:[28,32,50,58],8:[96,42,94,42],9:[36,46,40,60]};
-const NYP={
- 1:["씨앗을 뿌리는 해라 거두기보다 심는 돈이 많습니다","새로운 만남, 새 관계가 시작됩니다","독립, 창업, 새 직무에 가장 좋은 해입니다","새 운동 습관을 들이기 좋습니다"],
- 2:["협력과 기다림의 해라 수입이 더딥니다","파트너십의 숫자라 관계가 깊어집니다","앞에 나서기보다 돕는 역할이 맞습니다","감정이 예민해지니 쉬어가야 합니다"],
- 3:["즐기는 데 돈을 쓰는 해입니다","사교와 표현, 연애의 숫자입니다","발표, 콘텐츠, 표현에서 빛납니다","즐거움이 많아 컨디션이 좋습니다"],
- 4:["성실히 모으는 해라 저축이 쌓입니다","일에 묻혀 연애가 뒷전이 됩니다","기초를 다지는 해라 노력한 만큼 남습니다","과로로 몸이 무거워지기 쉽습니다"],
- 5:["변화가 많아 수입이 출렁입니다","자유로운 만남이 설레지만 가볍습니다","이직, 이동, 변화의 해입니다","생활 리듬이 무너지기 쉽습니다"],
- 6:["가족과 집에 돈이 들지만 안정적입니다","사랑과 가정의 숫자, 결혼에 가장 좋은 해입니다","돌보고 책임지는 역할이 늘어납니다","마음이 편해 회복이 빠릅니다"],
- 7:["돈보다 내면의 해라 수입이 정체됩니다","혼자 생각할 시간이 필요해 관계가 멀어지기 쉽습니다","연구와 공부로 전문성을 쌓는 해입니다","휴식과 정리가 필요한 해입니다"],
- 8:["9년 주기 중 돈과 성과가 가장 강한 해입니다","일과 돈이 우선이라 연애는 뒤로 밀립니다","권한과 성과의 숫자, 결과로 평가받습니다","일 욕심으로 무리하기 쉽습니다"],
- 9:["정리의 해라 나갈 돈은 나갑니다","끝나야 할 관계가 끝나는 해입니다","마무리하고 새 출발을 준비합니다","쌓인 피로를 털어내는 해입니다"]};
 /* maya */
 const MS=[["Imix","용","근원과 양육",[60,72,56,74]],["Ik","바람","소통과 영감",[50,66,74,54]],["Akbal","밤","꿈과 내면",[40,58,46,50]],["Kan","씨앗","성장과 결실",[80,64,70,74]],["Chicchan","뱀","생명력과 본능",[62,80,64,84]],["Cimi","죽음","변형과 끝맺음",[34,42,48,40]],["Manik","사슴","치유와 솜씨",[64,62,78,82]],["Lamat","별","풍요와 조화",[90,74,66,70]],["Muluc","물","감정과 정화",[54,82,50,70]],["Oc","개","충성과 사랑",[56,92,60,68]],["Chuen","원숭이","놀이와 창조",[62,84,72,70]],["Eb","길","여정과 공동체",[66,58,82,62]],["Ben","갈대","탐험과 기둥",[60,52,84,66]],["Ix","재규어","직관과 마법",[54,60,66,56]],["Men","독수리","비전과 높이",[76,54,88,62]],["Cib","올빼미","지혜와 기억",[52,48,70,58]],["Caban","대지","동기화와 흐름",[70,64,68,72]],["Etznab","부싯돌","진실과 단절",[44,34,62,44]],["Cauac","폭풍","격변과 정화",[36,44,40,36]],["Ahau","태양","깨달음과 완성",[82,76,86,88]]];
 const MT=[null,["시작",[0,2,8,2]],["도전",[-8,-8,-4,-6]],["활성",[4,4,4,4]],["정의",[2,0,4,2]],["힘",[8,6,8,8]],["흐름",[2,4,0,4]],["균형",[4,6,4,6]],["조화",[6,6,6,6]],["인내",[0,-2,2,0]],["실현",[12,6,12,6]],["해체",[-12,-10,-8,-10]],["협력",[4,8,4,2]],["초월",[8,6,8,10]]];
 /* tarot [numeral, name, money, love, work, health, vector] */
-const T=[["0","바보","계획 없는 지출 주의","설렘으로 시작하는 인연","새 분야 도전","활력은 좋지만 부상 주의",[44,72,64,62]],["I","마법사","재주가 돈이 됨","먼저 다가가면 이루어짐","능력을 펼칠 기회","의지로 회복",[82,74,90,72]],["II","여사제","지출을 미루는 게 이득","천천히 깊어지는 관계","조용히 준비하는 시기","수면 리듬이 중요",[56,62,58,64]],["III","여황제","풍요롭고 넉넉함","사랑받고 돌보는 관계","기획과 창작에서 성과","컨디션 좋음",[86,90,72,74]],["IV","황제","안정적 수입 구조","책임지는 관계","리더 자리","과로 주의",[82,60,92,54]],["V","교황","원칙을 지키는 재테크","소개로 이어지는 인연","신뢰와 멘토","정기 검진",[64,70,76,74]],["VI","연인","감정에 따른 소비","강한 이끌림, 선택의 순간","파트너 선택","무난함",[58,96,64,68]],["VII","전차","추진력으로 버는 돈","적극적인 진전","승진과 돌파","과속 주의",[74,66,90,56]],["VIII","힘","꾸준함이 돈이 됨","인내로 지키는 관계","버티면 인정받음","회복력 강함",[66,74,74,88]],["IX","은둔자","지출 줄이고 공부","혼자의 시간","전문성 축적","휴식 필요",[50,30,62,62]],["X","운명의 수레바퀴","큰 변동","운명적인 전환","흐름이 바뀜","변화기 적응",[76,74,74,58]],["XI","정의","받을 돈 정산","약속과 공정한 관계","계약에 유리","균형",[72,68,80,72]],["XII","매달린 사람","돈이 묶임","기다림이 필요","정체기","순환 저하",[30,46,36,44]],["XIII","죽음","구조 재편","정리 후 새 관계","전직","습관 리셋",[42,48,58,50]],["XIV","절제","수입과 지출의 조절","균형 잡힌 관계","조율자 역할","회복",[68,76,68,84]],["XV","악마","욕심 투자 위험","강한 끌림, 집착 주의","과몰입","과음·중독 주의",[48,64,56,24]],["XVI","탑","예상 밖 지출","급격한 변화","판이 뒤집힘","사고 주의",[18,26,30,22]],["XVII","별","회복","희망적인 인연","꿈에 가까워짐","치유",[62,84,74,88]],["XVIII","달","불확실함","모호한 감정, 오해","정보부터 확인","불면 주의",[34,40,40,38]],["XIX","태양","풍성함","밝고 공개적인 사랑","성공","활력 최상",[90,94,92,94]],["XX","심판","과거 투자 회수","재회와 재결합","재도전의 부름","재활",[66,72,82,68]],["XXI","세계","목표 달성","관계의 완성","완성, 해외","안정",[88,92,90,82]]];
-const DM={甲:"곧게 뻗는 큰 나무처럼 앞장서는",乙:"풀과 덩굴처럼 유연하고 적응력 좋은",丙:"태양처럼 밝고 드러나는",丁:"촛불처럼 섬세하고 따뜻한",戊:"큰 산처럼 묵직하고 믿음직한",己:"논밭처럼 품이 넓고 실속 있는",庚:"바위와 쇠처럼 결단력 있는",辛:"보석처럼 예민하고 완벽을 추구하는",壬:"큰 강처럼 스케일이 큰",癸:"비와 이슬처럼 직관적이고 깊은"};
-const SUNP=["직진하는 개척자","느리지만 확실한 사람","호기심과 말재주","정이 많고 지키려는 사람","주목받는 존재감","분석과 디테일","균형과 미감","집중과 깊이","자유와 확장","책임과 성취","독창성과 독립","공감과 상상력"];
-const ELS=["성장 욕구와 기획력","열정과 표현력","신뢰와 버티는 힘","결단과 원칙","지혜와 직관"],ELW=["시작은 많고 마무리가 약할 수 있습니다","쉽게 달아오르고 쉽게 식습니다","변화에 느리고 고집이 셉니다","날카롭고 융통성이 부족해 보일 수 있습니다","생각과 걱정이 많아지기 쉽습니다"];
+const TGP={
+ 비견:{money:"내 힘으로 버는 돈이 단단해집니다. 독립적인 수입원이 생기기 좋은 해예요",love:"나다움이 빛나 자신감 있는 연애를 합니다",work:"동료 사이에서 존재감이 커지고 내 영역을 확실히 만듭니다",health:"체력과 회복력이 든든하게 받쳐줍니다"},
+ 겁재:{money:"승부 근성이 살아나 큰돈을 다룰 기회가 옵니다. 계약과 기록만 챙기면 기회가 됩니다",love:"경쟁자가 생길 만큼 매력이 드러나는 해입니다",work:"경쟁 속에서 실력이 단련되어 한 단계 올라섭니다",health:"에너지가 넘쳐 무엇이든 해낼 힘이 있습니다. 속도 조절만 하면 됩니다"},
+ 식신:{money:"재능이 그대로 돈이 되는 글자예요. 꾸준하고 넉넉한 수입 신호입니다",love:"여유와 다정함이 살아나 사람이 모여듭니다",work:"전문성과 결과물로 인정받는 해입니다",health:"먹고 쉬는 복이 있어 회복이 빠릅니다"},
+ 상관:{money:"남다른 아이디어가 새 수입을 만듭니다",love:"솔직하고 매력적인 표현력이 빛나는 해입니다",work:"틀을 깨는 창의력이 최고조예요. 새로운 방식으로 판을 바꿉니다",health:"감각이 예민해지는 만큼 휴식이 곧 영감이 됩니다"},
+ 편재:{money:"큰돈이 움직이는 글자예요. 사업·투자 감각이 살아납니다",love:"사람을 많이 만나고 인연이 활발해집니다",work:"사업 수완과 추진력이 돋보입니다",health:"활동량이 많아 활기찬 해입니다"},
+ 정재:{money:"안정적인 재물의 글자예요. 월급과 저축이 착실히 늘어납니다",love:"진지하고 안정적인 인연이 들어옵니다",work:"성실함이 확실한 보상으로 돌아옵니다",health:"생활 리듬이 안정됩니다"},
+ 편관:{money:"책임이 커지는 만큼 보상의 그릇도 커집니다",love:"강렬하게 끌리는 인연이 나타납니다",work:"큰 과제와 권한이 함께 주어집니다. 해내면 위상이 달라집니다",health:"의지가 강해 몸을 단련하기 좋은 해입니다. 휴식도 일정에 넣어 두세요"},
+ 정관:{money:"명예와 신용이 재물을 불러옵니다",love:"공식적인 관계, 결혼의 신호로 봅니다",work:"승진과 직책, 좋은 평가의 글자입니다",health:"규칙적인 생활로 컨디션이 안정됩니다"},
+ 편인:{money:"배움과 자격에 투자한 것이 나중에 큰 자산이 됩니다",love:"나를 깊이 이해해 주는 사람과 통하는 해입니다",work:"자격증, 연구, 특별한 전문 분야에서 두각을 나타냅니다",health:"직관이 맑아지는 해예요. 잘 자는 것이 최고의 보약입니다"},
+ 정인:{money:"문서와 계약에 운이 따릅니다. 집이나 도장 찍는 일에 이득이 있어요",love:"나를 아껴 주는 사람이 곁에 옵니다",work:"윗사람의 지원을 받고 공부가 성과로 이어집니다",health:"회복력이 좋아지는 글자입니다"}};
+const PP={
+ Sun:["이름과 신용이 돈을 불러옵니다","당당한 매력으로 존중받는 관계를 만듭니다","권위와 리더십으로 인정받는 시기입니다","활력이 넘치는 시기입니다"],
+ Moon:["사람과 흐름을 읽는 감각으로 수입이 늘어납니다","감정이 풍부해지고 따뜻한 관계가 깊어집니다","사람을 상대하는 일에서 빛납니다","마음이 편안할수록 몸도 좋아지는 시기입니다"],
+ Mars:["과감한 결단이 수익으로 이어집니다","열정적인 인연이 찾아옵니다","추진력과 경쟁력이 최고조입니다","운동한 만큼 성과가 바로 나오는 시기입니다"],
+ Mercury:["거래, 계약, 부업에 운이 따릅니다","대화가 잘 통하는 사람을 만납니다","기획, 글, 분석, 공부에 탁월한 시기입니다","가볍고 민첩한 컨디션이 이어집니다"],
+ Jupiter:["재물이 불어나는 확장의 시기입니다","결혼·가정·자녀의 신호가 가장 강한 행성입니다","멘토와 승진, 학업에서 큰 기회가 옵니다","보호받는 시기라 큰 탈이 적습니다"],
+ Venus:["풍요와 여유가 함께 커지는 시기입니다","연애와 결혼의 행성이라 애정운이 가장 빛납니다","디자인, 서비스, 협업이 잘 풀립니다","몸과 마음이 편안한 시기입니다"],
+ Saturn:["늦게 오지만 오래 남는 재물을 쌓습니다","한 번 맺으면 오래가는 진지한 인연입니다","노력이 가장 확실하게 보상받는 시기입니다","꾸준한 관리가 평생 체력을 만드는 시기입니다"],
+ Rahu:["남들이 못 본 기회를 먼저 잡는 시기입니다","운명처럼 낯선 인연이 찾아옵니다","해외, 디지털, 새 분야에서 급성장합니다","새로운 건강 습관이 잘 붙는 시기입니다"],
+ Ketu:["욕심을 덜어낼수록 진짜 필요한 것이 남습니다","영혼이 통하는 깊은 인연을 알아보는 시기입니다","직관으로 나만의 길을 찾는 시기입니다","몸과 마음을 비우며 회복하는 시기입니다"]};
+const NYW={1:[60,64,88,74],2:[52,86,54,66],3:[56,90,66,72],4:[72,50,80,58],5:[54,74,64,58],6:[66,94,58,78],7:[46,52,62,64],8:[96,58,94,58],9:[50,56,52,64]};
+const NYP={
+ 1:["새로 심은 씨앗이 앞으로 9년의 재물이 됩니다","새로운 만남, 새 관계가 시작됩니다","독립, 창업, 새 출발에 가장 좋은 해입니다","새 운동 습관을 들이기 좋습니다"],
+ 2:["협력하는 돈이 더 크게 불어나는 해입니다","파트너십의 숫자라 관계가 깊어집니다","좋은 파트너와 함께할 때 빛나는 해입니다","몸과 마음의 균형을 찾는 해입니다"],
+ 3:["즐기는 만큼 기회도 들어오는 해입니다","사교와 표현, 연애의 숫자입니다","발표, 콘텐츠, 표현력이 빛나는 해입니다","즐거움이 많아 컨디션이 좋습니다"],
+ 4:["성실하게 모은 것이 단단한 기반이 됩니다","믿음직한 관계를 차근차근 쌓는 해입니다","기초를 다진 만큼 오래 남는 해입니다","규칙적인 생활이 최고의 보약이 됩니다"],
+ 5:["변화 속에서 새 수입원을 찾는 해입니다","설레는 만남이 많은 자유로운 해입니다","이직, 이동, 새로운 경험이 기회가 되는 해입니다","새로운 활동이 활력을 주는 해입니다"],
+ 6:["가족과 집에 쓰는 돈이 행복으로 돌아옵니다","사랑과 가정의 숫자, 결혼에 가장 좋은 해입니다","돌보고 책임지는 역할에서 신뢰를 얻습니다","마음이 편해 회복이 빠릅니다"],
+ 7:["공부하고 준비한 것이 다음 해 돈이 되는 준비의 해입니다","깊은 대화가 통하는 인연을 만나는 해입니다","연구와 공부로 전문성이 깊어지는 해입니다","휴식과 명상으로 에너지를 채우는 해입니다"],
+ 8:["9년 주기 중 돈과 성과가 가장 강한 해입니다","성공한 모습에 사람들이 끌리는 해입니다","권한과 성과의 숫자, 결과로 인정받습니다","힘이 넘치는 해예요. 쉬는 시간도 성과의 일부입니다"],
+ 9:["한 주기를 마무리하며 새 돈이 들어올 자리를 만듭니다","진짜 소중한 인연이 선명해지는 해입니다","지금까지의 성과를 완성하고 새 출발을 준비합니다","쌓인 피로를 털어내고 가벼워지는 해입니다"]};
+const T=[["0","바보","새 도전에 거는 용기","설렘으로 시작하는 인연","새 분야로의 첫걸음","가벼운 몸, 새로운 활력",[58,76,68,66]],["I","마법사","재주가 돈이 됨","먼저 다가가면 이루어짐","능력을 펼칠 무대","의지로 만드는 컨디션",[82,76,90,74]],["II","여사제","때를 아는 지혜로운 돈","천천히 깊어지는 관계","조용히 실력을 쌓는 시기","직관이 맑은 시기",[62,66,64,66]],["III","여황제","풍요롭고 넉넉함","사랑받고 돌보는 관계","기획과 창작에서 성과","컨디션 최고",[88,90,74,76]],["IV","황제","안정적 수입 구조","든든하게 지켜주는 관계","리더의 자리","굳건한 체력",[84,66,92,64]],["V","교황","원칙을 지키는 재테크","소개로 이어지는 좋은 인연","신뢰와 멘토","정기 관리로 지키는 건강",[66,72,78,74]],["VI","연인","마음 가는 곳에 쓰는 행복한 돈","강한 이끌림, 운명의 선택","최고의 파트너","몸과 마음의 조화",[62,96,68,70]],["VII","전차","추진력으로 버는 돈","적극적인 진전","승진과 돌파","힘찬 에너지",[76,70,90,64]],["VIII","힘","꾸준함이 돈이 됨","인내로 지키는 관계","버티면 인정받음","강한 회복력",[68,76,76,88]],["IX","은둔자","배움에 쓰는 현명한 돈","나를 깊이 알아가는 시간","전문성 축적","휴식으로 충전",[58,52,68,66]],["X","운명의 수레바퀴","흐름을 타는 큰 기회","운명적인 전환","판이 바뀌는 행운","새 리듬",[80,78,78,64]],["XI","정의","받을 돈 정산","약속과 공정한 관계","계약에 유리","균형",[72,70,80,72]],["XII","매달린 사람","기다린 만큼 다르게 보이는 기회","기다림 끝에 깊어지는 인연","관점을 바꾸면 열리는 길","쉬어가며 회복",[48,56,52,56]],["XIII","죽음","낡은 구조를 정리하고 새로 시작","정리 후 찾아오는 새 관계","새 출발, 전환","습관을 새로 고침",[54,58,64,58]],["XIV","절제","수입과 지출의 조화","균형 잡힌 관계","조율자 역할","회복",[70,76,70,84]],["XV","악마","강한 욕망이 만드는 추진력","거부할 수 없는 끌림","몰입이 만드는 성과","즐거움과 절제의 균형",[60,70,64,48]],["XVI","탑","낡은 것이 무너지고 새 판이 열림","관계를 새로 세우는 계기","판을 뒤집는 돌파","몸이 보내는 신호를 듣는 기회",[44,46,52,44]],["XVII","별","희망과 회복","희망적인 인연","꿈에 가까워짐","치유",[70,86,76,88]],["XVIII","달","직관을 믿으면 보이는 길","신비롭게 끌리는 인연","숨은 정보를 찾아내는 눈","깊은 휴식",[50,58,54,52]],["XIX","태양","풍성함","밝고 공개적인 사랑","성공","활력 최상",[92,94,92,94]],["XX","심판","과거 노력의 보상","재회와 재결합","재도전의 부름","새로 태어나는 활력",[72,74,84,70]],["XXI","세계","목표 달성","관계의 완성","완성, 해외로 넓어지는 무대","안정",[90,92,92,84]]];
+const DM={甲:"곧게 뻗는 큰 나무처럼 앞장서는",乙:"풀과 덩굴처럼 유연하고 끈질긴",丙:"태양처럼 밝고 주변을 비추는",丁:"등불처럼 섬세하고 따뜻한",戊:"큰 산처럼 묵직하고 믿음직한",己:"기름진 땅처럼 품이 넓고 실속 있는",庚:"강철처럼 결단력 있는",辛:"보석처럼 빛나고 감각이 예리한",壬:"큰 바다처럼 스케일이 큰",癸:"단비처럼 직관적이고 깊은"};
+const DMA={甲:"하늘로 곧게 뻗는 큰 나무",乙:"바위틈에서도 꽃을 피우는 덩굴",丙:"세상을 비추는 태양",丁:"어둠 속 길을 밝히는 등불",戊:"모두가 기대는 큰 산",己:"만물을 길러내는 기름진 땅",庚:"단단히 벼려진 강철",辛:"빛을 머금은 보석",壬:"끝없이 흐르는 큰 바다",癸:"메마른 땅을 살리는 단비"};
+const SUNP=["직진하는 개척자","끝까지 키워내는 사람","호기심과 말재주","사람을 품는 보호자","타고난 존재감","디테일을 보는 눈","균형과 미감","몰입과 깊이","자유와 확장","책임과 성취","독창성과 미래 감각","공감과 상상력"];
+const SUNG=["누구보다 먼저 길을 여는 개척자의 불꽃","한 번 쥔 것을 크게 키워내는 끈기와 감각","어디서든 빛나는 말재주와 호기심","사람을 품는 따뜻한 보호자의 마음","무대 위에서 빛나는 타고난 존재감","남들이 못 보는 디테일을 잡아내는 눈","사람과 아름다움의 균형을 맞추는 감각","한 번 몰입하면 끝을 보는 깊이와 집중력","멀리 보고 크게 나아가는 자유로운 정신","결국 정상에 오르는 책임감과 성취욕","틀을 깨는 독창성과 미래를 보는 눈","세상을 감싸는 공감과 풍부한 상상력"];
+const NAKG={Ketu:"예리한 직관과 통찰",Venus:"아름다움을 알아보는 감각과 풍요",Sun:"타고난 리더의 기품",Moon:"사람의 마음을 읽는 따뜻한 공감",Mars:"두려움 없는 용기와 실행력",Rahu:"시대를 앞서가는 혁신의 감각",Jupiter:"사람을 이끄는 지혜와 복",Saturn:"끝까지 해내는 인내와 깊이",Mercury:"빠른 두뇌와 재치"};
+const ELS=["성장하는 힘과 기획력","열정과 표현력","신뢰와 버티는 힘","결단력과 원칙","지혜와 직관"],ELW=["시작한 일을 하나씩 마무리하면 운이 몇 배로 커집니다","열정을 꾸준함으로 바꾸면 누구도 못 따라옵니다","새로운 변화에 조금만 문을 열면 기회가 쏟아집니다","부드러운 말 한마디를 더하면 사람이 모여듭니다","생각을 행동으로 옮기는 순간 운이 열립니다"];
 const ELIMG=["곧은 나무","타오르는 불","단단한 땅","벼린 쇠","깊은 물"];
-const HEAD={money:["재물이 크게 들어오는 시기","수입이 늘어나는 흐름","들고 나는 게 비슷한 시기","지출을 조심할 시기","재물이 새기 쉬운 시기"],
- love:["인연이 강하게 끌려오는 시기","좋은 만남이 이어지는 흐름","잔잔하게 흘러가는 시기","관계에 시험이 오는 시기","거리를 두게 되는 시기"],
- work:["일과 공부 모두 크게 도약하는 시기","성과와 성적이 오르는 흐름","실력을 다지는 시기","방향을 다시 잡아야 할 시기","정체와 압박이 큰 시기"],
- health:["컨디션이 가장 좋은 시기","무난하게 유지되는 흐름","관리가 필요한 시기","무리하면 탈이 나는 시기","가장 조심해야 할 시기"]};
-
+const HEAD={money:["재물이 크게 들어오는 시기","수입이 늘어나는 흐름","안정적으로 쌓아가는 시기","지출을 정리하면 길이 보이는 시기","다음 도약을 위해 힘을 모으는 시기"],
+ love:["인연이 강하게 끌려오는 시기","좋은 만남이 이어지는 흐름","잔잔하게 깊어지는 시기","관계를 단단히 다지는 시기","나를 먼저 채우는 시기"],
+ work:["일과 공부 모두 크게 도약하는 시기","성과와 성적이 오르는 흐름","실력을 다지는 시기","방향을 새로 잡는 기회의 시기","내공을 쌓는 시기"],
+ health:["컨디션이 가장 좋은 시기","활력이 이어지는 흐름","리듬을 지키면 좋은 시기","쉬어가며 충전할 시기","몸을 아끼며 회복할 시기"]};
+/* 신살: 일간 기준 천을귀인·문창, 일지 기준 도화·역마 */
+const GUI={0:[1,7],4:[1,7],6:[1,7],1:[0,8],5:[0,8],2:[11,9],3:[11,9],7:[2,6],8:[5,3],9:[5,3]};
+const MUNC=[5,6,8,9,8,9,11,0,2,3];
+const DOHWA=b=>[9,3,6,0][[8,0,4].includes(b)?0:[2,6,10].includes(b)?1:[5,9,1].includes(b)?2:3];
+const YEOKMA=b=>[2,8,11,5][[8,0,4].includes(b)?0:[2,6,10].includes(b)?1:[5,9,1].includes(b)?2:3];
+/* 별자리 주인 행성 (양~물고기) */
+const RULER=["Mars","Venus","Mercury","Moon","Sun","Mercury","Venus","Mars","Jupiter","Saturn","Saturn","Jupiter"];
 /* =========================================================
    astronomy & calendar
    ========================================================= */
@@ -476,7 +493,7 @@ function tenGod(d,o){const rel=mod(SE[o]-SE[d],5),same=(d%2)===(o%2);return TG[r
 const digitsum=n=>String(n).split("").reduce((a,b)=>a+ +b,0);
 function reduceNum(n,master){while(n>9&&!(master&&(n===11||n===22||n===33)))n=digitsum(n);return n}
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const stretch=v=>Math.round(clamp(50+(v-50)*1.2,5,98));
+const stretch=v=>Math.round(clamp(50+(v-50)*1.2,12,98));
 function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 function rng(s){return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
 function isKoreaDST(y,m,d){if(y===1987)return (m>5||(m===5&&d>=10))&&(m<10||(m===10&&d<11));if(y===1988)return (m>5||(m===5&&d>=8))&&(m<10||(m===10&&d<9));return false}
@@ -490,6 +507,30 @@ function lunarToSolar(y,m,d,leap){const L=lunarInfo(y);if(!L)return {err:"음력
   let off=0;for(const x of L.months){if(x.m===m&&x.leap===!!leap){if(d>x.len)return {err:`${y}년 음력 ${leap?"윤":""}${m}월은 ${x.len}일까지 있어요.`};
     const [ny,nm,nd]=L.ny.split("-").map(Number);const [sy,sm,sd]=jdnToDate(jdn(ny,nm,nd)+off+d-1);return {y:sy,m:sm,d:sd}}off+=x.len}return {err:"날짜를 확인해 주세요."}}
 function koreaTz(y,m,d){const v=y*10000+m*100+d;return (v>=19540321&&v<19610810)?8.5:9}
+/* 전문 해석용 보강: 신강·신약과 희신, 신살, 인도 점성술 기능적 길흉, 수비학(구간별 축약) */
+function enrich(ch){const d=ch.stems.d,de=SE[d],re=(de+4)%5;
+  const items=[[ch.stems.y,1,"s"],[ch.stems.m,1,"s"],[ch.stems.h,1,"s"],[ch.brs.y,1,"b"],[ch.brs.m,3,"b"],[ch.brs.d,1.5,"b"],[ch.brs.h,1,"b"]].filter(x=>x[0]!=null);
+  let sup=0,tot=0;items.forEach(([v,w,k])=>{const e=k==="s"?SE[v]:SE[BMAIN[v]];tot+=w;if(e===de||e===re)sup+=w});
+  ch.strong=sup/tot>=.5;ch.goodG=ch.strong?[1,2,3]:[4,0];
+  const nb=[ch.brs.y,ch.brs.m,ch.brs.d,ch.brs.h].filter(v=>v!=null);
+  ch.gui=GUI[d];ch.munc=MUNC[d];ch.dohwa=DOHWA(ch.brs.d);ch.yeokma=YEOKMA(ch.brs.d);
+  ch.has={gui:nb.some(b=>ch.gui.includes(b)),munc:nb.includes(ch.munc),dohwa:nb.includes(ch.dohwa)||nb.includes(DOHWA(ch.brs.y)),yeokma:nb.includes(ch.yeokma)||nb.includes(YEOKMA(ch.brs.y))};
+  // vedic: 라그나(시각 없으면 달 별자리) 기준 기능적 길흉
+  const lag=sign(norm((ch.asc??ch.moon)-ch.ayan));ch.lagna=lag;ch.chandra=ch.asc==null;
+  ch.FW={};ch.prole={};
+  DL.forEach(p=>{const hs=[];RULER.forEach((r,sg)=>{if(r===p)hs.push(mod(sg-lag,12)+1)});
+    let g=0;const tri=hs.some(h=>h===5||h===9),ken=hs.some(h=>h===4||h===7||h===10);
+    hs.forEach(h=>{if(h===1||h===5||h===9)g+=10;else if((h===6||h===8||h===12)&&!hs.includes(1))g-=6;else if(h===4||h===7||h===10)g+=3});
+    if(tri&&ken)g+=8;
+    const w=[g*.6,g*.6,g*.6,g*.6];
+    if(hs.some(h=>h===2||h===11))w[0]+=8;if(hs.some(h=>h===5||h===7))w[1]+=8;if(hs.includes(10))w[2]+=8;if(hs.includes(1))w[3]+=6;
+    ch.FW[p]=w;ch.prole[p]=hs.includes(1)?"라그나 주인":(tri&&ken)?"요가카라카":tri?"행운 하우스 주인":hs.length?`${hs.join("·")}하우스 주인`:"그림자 행성"});
+  // numerology: 월·일·연을 따로 줄인 뒤 합산(마스터 넘버 보존)
+  const keep=n=>reduceNum(n,true);const [Y,Mo,D]=[ch.Y,ch.Mo,ch.D];const parts=[keep(Mo),keep(D),keep(digitsum(Y))];
+  ch.lp=keep(parts[0]+parts[1]+parts[2]);ch.masters=parts.filter(p=>p>9).concat(ch.lp>9?[ch.lp]:[]);
+  const nm=(ch.inp.roman||"").toLowerCase().replace(/[^a-z]/g,"");const val=c=>"abcdefghijklmnopqrstuvwxyz".indexOf(c)%9+1;
+  const vs=nm.split("").filter(c=>"aeiou".includes(c)).reduce((a,c)=>a+val(c),0);ch.soul=vs?keep(vs):null;
+  return ch}
 /* =========================================================
    chart
    ========================================================= */
@@ -523,71 +564,84 @@ function buildChart(inp){
   const expr=ex?reduceNum(ex,true):null;
   // maya
   const kd=jdn(Y,Mo,D)-584283;
-  return {inp,Y,Mo,D,birthYear,jd,lat,lon,sun,moon,asc,ayan,stems:{y:ys,m:ms,d:ds,h:hs},brs:{y:yb,m:mb,d:db,h:hb},cnt,male,fwd,dwStart,mIdx,dashas,nk,lp,expr,
-    tone:mod(kd+3,13)+1,msign:mod(kd+19,20),natSat:satLon(jd),natJup:jupLon(jd),place:pl.name,tz};
+  return enrich({inp,Y,Mo,D,birthYear,jd,lat,lon,sun,moon,asc,ayan,stems:{y:ys,m:ms,d:ds,h:hs},brs:{y:yb,m:mb,d:db,h:hb},cnt,male,fwd,dwStart,mIdx,dashas,nk,lp,expr,
+    tone:mod(kd+3,13)+1,msign:mod(kd+19,20),natSat:satLon(jd),natJup:jupLon(jd),place:pl.name,tz});
 }
 
 /* =========================================================
    oracles: each returns [score, text, context, factors]  factors = [[label, delta(점수 단위)], ...]
+   같은 입력이면 언제 봐도 같은 결과: 시점은 '해' 단위로 고정하고, 타로도 입력값+해로 정해진다.
    ========================================================= */
 const SL=1.2;
-/* 점술·운별 기본값 보정: 무작위 출생 300명×81년 평균이 56점 근처가 되도록 맞춘 값 */
-const OCAL=[[-3.1,-1,-17.1,5.5],[-3.1,0.4,-6.3,7.2],[-7.4,-2.2,-13.5,9],[1.6,-5.5,-9.7,-4.5],[-6.9,-10.2,-15.1,-11.6],[-6.6,-11.6,-14,-8.4]];
-function horizonDate(off){const now=new Date();return {y:now.getFullYear()+off,frac:now.getFullYear()+off+(now.getMonth()+.5)/12}}
+/* 점술·운별 기본값 보정: 무작위 출생 300명×81년 평균이 기준점 근처가 되도록 맞춘 값 */
+const OCAL=[[-6.4,-5.7,-21.2,1.2],[-4.5,-1.7,-6.6,4.9],[-10.6,-6.2,-15.1,5.3],[-7.2,-14.2,-15.7,-12.1],[-7.2,-10.6,-15.4,-11.9],[-13.4,-17,-18.7,-14.1]];
+function horizonDate(off){const y=new Date().getFullYear()+off;return {y,frac:y+.5}}
 function lifeDate(ch,age){const frac=ch.birthYear+age+.5;return {y:Math.floor(frac),frac}}
 function fin(raw,F,oi,ci){return [stretch(raw+OCAL[oi][ci]),F.filter(f=>Math.abs(f[1])>=.5).map(f=>[f[0],Math.round(f[1]*SL)])]}
+const sumF=F=>F.reduce((a,f)=>a+f[1],0);
 function oSaju(ch,t,ci){const {y,frac}=t;const age=frac-ch.birthYear;
   const s=mod(y-4,10),b=mod(y-4,12),d=ch.stems.d;const pre=age<ch.dwStart;
   let dw;if(pre)dw=ch.mIdx;else{const k=Math.floor((age-ch.dwStart)/10)+1;dw=ch.mIdx+(ch.fwd?k:-k)}
   const dwS=mod(dw,60)%10,dwB=mod(dw,60)%12,dl=pre?"월주":"대운";
   const t1=tenGod(d,s),t2=tenGod(d,BMAIN[b]),t3=tenGod(d,dwS),t4=tenGod(d,BMAIN[dwB]);
-  const idx=[0,ch.male?1:2,3,4][ci];const w=tg=>TGW[tg][idx];
-  const F=[[`${ST[s]} ${t1}`,w(t1)*.7],[`${BR[b]} ${t2}`,w(t2)*.55],[`${dl} ${ST[dwS]} ${t3}`,w(t3)*.45],[`${dl} ${BR[dwB]} ${t4}`,w(t4)*.3]];let extra="";
-  const db=ch.brs.d;
-  if((b+db)%12===1){F.push([`${BR[b]}${BR[db]}합`,[6,18,4,4][ci]]);extra=` 그해 지지가 배우자 자리(${BR[db]})와 합(${BR[b]}${BR[db]}합)해 ${["돈이 묶이기보다 모입니다","인연이 단단히 묶입니다","협력이 잘 됩니다","마음이 안정됩니다"][ci]}.`}
-  if(Math.abs(b-db)===6){F.push([`${BR[b]}${BR[db]}충`,-[6,20,6,12][ci]]);extra=` 그해 지지가 배우자 자리(${BR[db]})와 부딪쳐(${BR[b]}${BR[db]}충) ${["예상 밖 지출이 생깁니다","관계가 흔들립니다","자리 이동이 생깁니다","몸이 지치기 쉽습니다"][ci]}.`}
-  if(ch.brs.h!=null&&Math.abs(b-ch.brs.h)===6&&ci===2){F.push([`시주 ${BR[ch.brs.h]}${BR[b]}충`,4]);extra+=` 시주(${BR[ch.brs.h]})와도 충해 이동이나 이직 수가 있습니다.`}
-  const el=SE[s],mn=Math.min(...ch.cnt),mx=Math.max(...ch.cnt);
-  if(ch.cnt[el]===mn)F.push([`${EL[el]} 보충`,[6,2,2,10][ci]]);else if(ch.cnt[el]===mx)F.push([`${EL[el]} 과다`,-[4,2,2,10][ci]]);
+  const idx=[0,ch.male?1:2,3,4][ci];const w=tg=>TGW[tg][idx];const grp=tg=>Math.floor(TG.indexOf(tg)/2);const fav=tg=>ch.goodG.includes(grp(tg));
+  const F=[[`${ST[s]} ${t1}`,w(t1)*.7],[`${BR[b]} ${t2}`,w(t2)*.55],[`${dl} ${ST[dwS]} ${t3}`,w(t3)*.45],[`${dl} ${BR[dwB]} ${t4}`,w(t4)*.3]];
+  const yong=[[t1,7,4],[t2,5,3],[t3,5,3],[t4,3,2]].reduce((a,[tg,p,n])=>a+(fav(tg)?p:-n),0);
+  F.push([ch.strong?"신강 사주에 맞는 기운":"신약 사주에 맞는 기운",yong]);
+  let extra="";const db=ch.brs.d;
+  if((b+db)%12===1){F.push([`${BR[b]}${BR[db]}합`,[6,18,4,6][ci]]);extra+=` 그해 지지가 배우자 자리(${BR[db]})와 합해 ${["돈이 모이고 묶입니다","인연이 단단히 맺어집니다","협력이 잘 됩니다","마음이 안정됩니다"][ci]}.`}
+  if(Math.abs(b-db)===6){F.push([`${BR[b]}${BR[db]}충`,-[4,12,0,8][ci]]);extra+=` 그해 지지가 배우자 자리(${BR[db]})와 충해 ${["돈의 흐름이 바뀝니다. 새 판을 짤 기회입니다","관계에 새 바람이 붑니다. 더 맞는 쪽으로 정리됩니다","자리 이동이나 새 도전이 열립니다","생활 리듬을 바꾸기 좋은 때입니다"][ci]}.`}
+  if(ch.gui.includes(b)){F.push(["천을귀인의 해",[8,8,8,8][ci]]);extra+=" 천을귀인이 드는 해라 결정적인 순간에 귀인이 나타납니다."}
+  if(b===ch.munc&&ci===2){F.push(["문창귀인의 해",10]);extra+=" 문창귀인이 들어 시험·공부·글에서 빛납니다."}
+  if(b===ch.dohwa&&ci===1){F.push(["도화의 해",10]);extra+=" 도화가 드는 해라 매력이 가장 돋보입니다."}
+  if(b===ch.yeokma&&(ci===0||ci===2)){F.push(["역마의 해",ci===2?6:4]);extra+=" 역마가 움직여 이동·출장·해외에서 기회가 옵니다."}
   const main=Math.abs(w(t1))>=Math.abs(w(t2))?[ST[s],t1]:[BR[b],t2];
   let p=TGP[main[1]][CATS[ci].k];
   if(ci===1){const isMate=ch.male?["편재","정재"].includes(main[1]):["편관","정관"].includes(main[1]);if(isMate)p=`${ch.male?"남성 사주에서 재성":"여성 사주에서 관성"}은 이성 인연을 뜻합니다. ${p}`}
-  const [sc,FF]=fin(52+F.reduce((a,f)=>a+f[1],0),F,0,ci);
+  if(yong>=8)p+=". 내 사주에 꼭 필요한 기운이 들어오는 해라 운이 한층 밝아집니다";
+  const [sc,FF]=fin(52+sumF(F),F,0,ci);
   return [sc,`${pillar(cyc(s,b))}년에는 ${main[0]}(${main[1]})이 들어옵니다. ${p}.${extra}`,`${pillar(cyc(s,b))}년 · ${pillar(dw)} ${dl}`,FF]}
 function oWest(ch,t,ci){const {frac}=t;const jd=jdUTC(Math.floor(frac),Math.floor((frac%1)*12)+1,1,0);
   const J=jupLon(jd),S=satLon(jd);const base=sign(ch.asc??ch.sun);const hJ=mod(sign(J)-base,12)+1,hS=mod(sign(S)-base,12)+1;
-  const top=HOUSE[hJ],stp=HOUSE[hS];const F=[[`목성 ${hJ}H ${top}`,JW[hJ][ci]],[`토성 ${hS}H ${stp}`,SW[hS][ci]]];const notes=[];
-  if(sep(S,ch.natSat)<14){F.push(["토성 회귀",[0,-8,10,-14][ci]]);notes.push("토성이 태어날 때 자리로 돌아오는 토성 회귀 구간이라 인생 구조를 다시 짭니다")}
-  const jHit=sep(J,ch.sun)<12?"태양":(ch.asc!=null&&sep(J,ch.asc)<12)?"상승궁":null;
-  if(jHit){F.push([`목성·출생 ${jHit}`,10]);notes.push(`목성이 출생 ${jHit} 위를 지나 12년에 한 번 오는 행운 구간입니다`)}
+  const top=HOUSE[hJ],stp=HOUSE[hS];const F=[[`목성 ${hJ}H ${top}`,JW[hJ][ci]],[`토성 ${hS}H ${stp}`,SW[hS][ci]*.8]];const notes=[];
+  if(sep(S,ch.natSat)<14){F.push(["토성 회귀",[2,-2,12,-6][ci]]);notes.push("토성이 태어날 때 자리로 돌아오는 토성 회귀 구간이에요. 진짜 어른으로 거듭나며 인생의 기반을 새로 세웁니다")}
+  if(sep(J,ch.natJup)<10){F.push(["목성 회귀",[10,8,10,6][ci]]);notes.push("목성이 태어날 때 자리로 돌아오는 목성 회귀예요. 12년 만에 행운의 주기가 새로 시작됩니다")}
+  const jHit=sep(J,ch.sun)<10?"태양":(ch.asc!=null&&sep(J,ch.asc)<10)?"상승궁":null;
+  if(jHit){F.push([`목성·출생 ${jHit}`,10]);notes.push(`목성이 출생 ${jHit} 위를 지나는 12년 만의 행운 구간입니다`)}
+  else if(Math.abs(sep(J,ch.sun)-120)<8){F.push(["목성·태양 삼각",6]);notes.push("목성이 태양과 조화로운 각도(트라인)를 이뤄 일이 순조롭게 풀립니다")}
+  if(Math.abs(sep(S,ch.sun)-90)<6||Math.abs(sep(S,ch.sun)-180)<6){F.push(["토성·태양 긴장각",[-2,-2,-4,-4][ci]]);notes.push("토성이 태양과 긴장 각도를 이뤄 한 단계 성숙해지는 관문을 지납니다")}
   const jv=JW[hJ][ci],sv=SW[hS][ci];
-  const jp=jv>=20?`${top} 쪽 기회가 크게 열립니다`:jv>=8?`${top} 쪽에 순풍이 붑니다`:jv>-5?"이 운에는 직접적인 영향이 적습니다":"기운이 흩어지기 쉽습니다";
-  const spp=sv<=-15?`${stp}에서 시험과 부담이 큽니다`:sv<=-5?`${stp}에 숙제가 생깁니다`:sv>=10?"책임진 만큼 단단한 결과가 나옵니다":"부담은 크지 않습니다";
-  const [sc,FF]=fin(52+F.reduce((a,f)=>a+f[1],0),F,1,ci);
+  const jp=jv>=20?`${top} 쪽 기회가 크게 열립니다`:jv>=8?`${top} 쪽에 순풍이 붑니다`:jv>-5?`${top}을 통해 은근한 행운이 들어옵니다`:`${top}에서 쉬어가며 다음 기회를 준비합니다`;
+  const spp=sv<=-15?`${stp}에서 성숙의 시험을 지나며 큰 내공이 쌓입니다`:sv<=-5?`${stp}에 꾸준함을 들인 만큼 단단해집니다`:sv>=10?"책임진 만큼 확실한 결과를 남깁니다":"든든하게 받쳐줍니다";
+  const [sc,FF]=fin(52+sumF(F),F,1,ci);
   return [sc,`목성이 ${hJ}하우스(${top})를 지나 ${jp}. 토성은 ${hS}하우스(${stp})에서 ${spp}.${notes.length?" "+notes.join(". ")+".":""}`,`목성 ${ZOD[sign(J)]} · 토성 ${ZOD[sign(S)]}`,FF]}
 function oVedic(ch,t,ci){const {frac}=t;const md=ch.dashas.find(x=>frac>=x.start&&frac<x.end)||ch.dashas[ch.dashas.length-1];
   let st=md.start,ad=null;for(let k=0;k<9;k++){const L=(md.L+k)%9;const len=DY[md.L]*DY[L]/120;if(frac<st+len){ad={lord:DL[L],end:st+len};break}st+=len}
   ad=ad||{lord:md.lord,end:md.end};
-  const F=[[`대운 ${PK[md.lord]}`,PW[md.lord][ci]*.55],[`보조 ${PK[ad.lord]}`,PW[ad.lord][ci]*.85]];
-  const endY=Math.floor(ad.end),endM=Math.floor((ad.end%1)*12)+1;const [sc,FF]=fin(50+F.reduce((a,f)=>a+f[1],0),F,2,ci);
-  return [sc,`${PK[md.lord]} 대운 안의 ${PK[ad.lord]} 기간(~${endY}.${endM}). ${PP[ad.lord][ci]}.`,`${PK[md.lord]}–${PK[ad.lord]} 다샤`,FF]}
-function oNum(ch,t,ci){const {y}=t;const py=reduceNum(digitsum(ch.Mo)+digitsum(ch.D)+digitsum(y),false);
-  const lpAdj={money:{8:6,4:4},love:{2:6,6:6},work:{1:5,8:5,22:6},health:{7:-4,6:3}}[CATS[ci].k][ch.lp]||0;
-  const F=[[`개인년 ${py}`,NYW[py][ci]-50]];if(lpAdj)F.push([`인생 수 ${ch.lp}`,lpAdj]);const [sc,FF]=fin(50+F.reduce((a,f)=>a+f[1],0),F,3,ci);
+  const F=[[`대운 ${PK[md.lord]}`,PW[md.lord][ci]*.5],[`보조 ${PK[ad.lord]}`,PW[ad.lord][ci]*.75],[`${PK[md.lord]}·${ch.prole[md.lord]}`,ch.FW[md.lord][ci]*.5],[`${PK[ad.lord]}·${ch.prole[ad.lord]}`,ch.FW[ad.lord][ci]*.75]];
+  const endY=Math.floor(ad.end),endM=Math.floor((ad.end%1)*12)+1;const [sc,FF]=fin(50+sumF(F),F,2,ci);
+  const role=["라그나 주인","요가카라카","행운 하우스 주인"].includes(ch.prole[ad.lord])?` 당신의 차트에서 ${PK[ad.lord]}은 ${ch.prole[ad.lord]} 행성이라 특히 힘이 셉니다.`:"";
+  return [sc,`${PK[md.lord]} 대운 안의 ${PK[ad.lord]} 기간(~${endY}.${endM}). ${PP[ad.lord][ci]}.${role}`,`${PK[md.lord]}–${PK[ad.lord]} 다샤`,FF]}
+function oNum(ch,t,ci){const {y}=t;const py=reduceNum(reduceNum(ch.Mo,false)+reduceNum(ch.D,false)+reduceNum(digitsum(y),false),false);
+  const lpAdj={money:{8:6,4:4,22:6},love:{2:6,6:6,33:6},work:{1:5,8:5,22:6,11:4},health:{6:3,9:3}}[CATS[ci].k][ch.lp]||0;
+  const F=[[`개인년 ${py}`,NYW[py][ci]-50]];if(lpAdj)F.push([`인생 수 ${ch.lp}`,lpAdj]);if(py===ch.lp%9||(py===9&&ch.lp%9===0))F.push(["인생 수와 공명",5]);
+  const [sc,FF]=fin(50+sumF(F),F,3,ci);
   return [sc,`${y}년 개인년 ${py}. ${NYP[py][ci]}.`,`개인년 ${py}`,FF]}
 function oMaya(ch,t,ci){const {y}=t;const kd=jdn(y,ch.Mo,Math.min(ch.D,28+(ch.Mo===2?0:2)))-584283;const tone=mod(kd+3,13)+1,sg=mod(kd+19,20);
-  const back=sg===ch.msign?" 태어난 날의 기호가 돌아오는 해라 근본으로 돌아갑니다.":"";
-  const F=[[`${MS[sg][0]}(${MS[sg][1]})`,MS[sg][3][ci]-50],[`숫자 ${tone} ${MT[tone][0]}`,MT[tone][1][ci]]];const [sc,FF]=fin(50+F.reduce((a,f)=>a+f[1],0),F,4,ci);
-  return [sc,`${y}년 생일 기호는 ${tone} ${MS[sg][0]}(${MS[sg][1]}). ${MS[sg][2]}의 기호에 ${MT[tone][0]}의 숫자가 붙었습니다.${back}`,`생일 기호 ${tone} ${MS[sg][0]}`,FF]}
-let draws=0,tarot=[];
-function drawTarot(ch){const r=rng(hash(ch.inp.name+ch.inp.date+ch.inp.time)+draws*7919);const deck=T.map((_,i)=>i);tarot=HZ.map(()=>T[deck.splice(Math.floor(r()*deck.length),1)[0]])}
+  const back=sg===ch.msign?" 태어난 날의 기호가 돌아오는 해라 내 본래의 힘이 가장 강해집니다.":"";
+  const F=[[`${MS[sg][0]}(${MS[sg][1]})`,MS[sg][3][ci]-50],[`숫자 ${tone} ${MT[tone][0]}`,MT[tone][1][ci]]];if(back)F.push(["탄생 기호 귀환",6]);
+  const [sc,FF]=fin(50+sumF(F),F,4,ci);
+  return [sc,`${y}년 생일 기호는 ${tone} ${MS[sg][0]}(${MS[sg][1]}). ${MS[sg][2]}의 기운에 ${MT[tone][0]}의 숫자가 더해진 해입니다.${back}`,`생일 기호 ${tone} ${MS[sg][0]}`,FF]}
+let tarot=[];
+function drawTarot(ch){const base=[ch.inp.name,ch.inp.sex,ch.inp.date,ch.inp.notime?"":ch.inp.time,ch.inp.place.lat,ch.inp.place.lon].join("|");const used=new Set();
+  tarot=HZ.map(h=>{let i=hash(base+"|"+(new Date().getFullYear()+h.off))%T.length;while(used.has(i))i=(i+1)%T.length;used.add(i);return T[i]})}
 function oTarot(ch,hi,ci){const t=tarot[hi];const [sc,FF]=fin(t[6][ci],[[`${t[1]} 카드`,t[6][ci]-50]],5,ci);return [sc,`<i>${t[1]}</i> 카드. ${t[ci+2]}.`,t[1],FF]}
 
 /* =========================================================
    assemble: R = 가까운 미래(4시점), LY = 나이별(0~80세), LD = 10년 단위(0~70대)
    ========================================================= */
 const ORC=[oSaju,oWest,oVedic,oNum,oMaya];
-const amp=(avg,k)=>Math.round(clamp(55+(avg-56)*k,5,98));
+const amp=(avg,k)=>Math.round(clamp(60+(avg-56)*k,20,98));
 function summarize(v,k){const sc=v.map(x=>x[0]);const avg=sc.reduce((a,b)=>a+b)/sc.length;const sd=Math.sqrt(sc.reduce((a,b)=>a+(b-avg)**2,0)/sc.length);
   return {v,avg,mean:amp(avg,k),agree:Math.max(0,Math.round(100-sd*2.2))}}
 let CH=null,R=null,LY=null,LD=null,LS=null;const sel={money:0,love:0,work:0,health:0};let mode="near",selDec=0,netP=0,netC=0;
@@ -624,15 +678,6 @@ function renderSigil(){const s=document.getElementById("sigil");s.innerHTML="";c
   "☰☱☲☳☴☵☶☷".split("").forEach((g,i)=>{const[x,y]=P(128,i*45);r3.append(E("text",{x,y,fill:Au,"fill-opacity":.6,stroke:"none","font-size":13,"text-anchor":"middle","dominant-baseline":"middle"},g))});s.append(r3);
   const c=E("g",{filter:"url(#gl)"});c.append(E("polygon",{points:poly(cx,cy,92,6,0,2),fill:"none",stroke:Au,"stroke-opacity":.5}),E("circle",{cx,cy,r:58,fill:"none",stroke:G,"stroke-opacity":.6}),E("text",{x:cx,y:cy+2,fill:G,"fill-opacity":.75,"font-size":34,"font-family":"Nanum Myeongjo,serif","text-anchor":"middle","dominant-baseline":"middle"},ST[CH.stems.d]));s.append(c)}
 
-function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b)=>a+b.mean,0)/all.length);document.getElementById("fateIdx").textContent=idx;
-  const dm=LD.map(r=>r.reduce((a,b)=>a+b.mean,0)/4);const early=(dm[0]+dm[1]+dm[2])/3,late=(dm[3]+dm[4]+dm[5]+dm[6])/4;
-  const traj=late-early>3?"늦게 크게 피는 형":early-late>3?"일찍 꽃피는 형":"꾸준히 이어가는 형";
-  let best={m:-1};LD.forEach((row,d)=>row.forEach((c,ci)=>{if(c.mean>best.m)best={m:c.mean,d,ci}}));
-  let soon={m:-1},warn={m:999};R.forEach((row,hi)=>row.forEach((c,ci)=>{if(c.mean>soon.m)soon={m:c.mean,hi,ci};if(c.mean<warn.m)warn={m:c.mean,hi,ci}}));
-  document.getElementById("typeName").textContent=`${ELIMG[SE[CH.stems.d]]}, ${traj}`;
-  const line=traj==="늦게 크게 피는 형"?"초반은 쌓는 시간, 후반은 거두는 시간입니다.":traj==="일찍 꽃피는 형"?"젊은 시절에 운이 몰려 있습니다. 그때 잡은 것을 오래 지키는 게 과제입니다.":"큰 굴곡 없이 고르게 이어지는 흐름입니다.";
-  document.getElementById("typeText").textContent=`${line} 평생 가장 강한 10년은 ${best.d*10}대의 ${CATS[best.ci].n}(${best.m}). 가까운 미래에선 ${HZ[soon.hi].n} ${CATS[soon.ci].n}(${soon.m})이 가장 밝고, ${HZ[warn.hi].n} ${CATS[warn.ci].n}(${warn.m})을 조심하세요.`;
-  document.getElementById("whoName").textContent=CH.inp.name||"당신"}
 
 const SHORT=["금전","애정","직업·학업","건강"];
 function renderTrend(){document.querySelectorAll("#modeTabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===mode));
@@ -687,23 +732,44 @@ function renderCats(){const box=document.getElementById("cats");box.querySelecto
   CATS.forEach((c,ci)=>{const a=document.createElement("article");a.className="cat";a.id="card-"+c.k;box.append(a);renderCat(ci)});
   const tr=document.getElementById("tarot");
   if(mode==="life"){tr.innerHTML=`<span><b>${selDec*10}대 (${decRange(selDec)})</b> · 평생 흐름은 타로를 뺀 다섯 점술로 계산합니다. 각 점술의 점수는 그 10년의 평균이고, 풀이는 그중 가장 두드러진 해를 보여줍니다.</span>`;return}
-  tr.innerHTML=`<div class="tcards">${tarot.map(t=>`<div class="tcard" title="${t[1]}">${t[0]}</div>`).join("")}</div><span><b>타로: ${tarot.map((t,i)=>HZ[i].n.replace(" 뒤","")+" "+t[1]).join(" · ")}</b><br>입력값으로 섞은 덱에서 시점마다 한 장씩 뽑았습니다.</span><button class="draw" type="button" id="redraw">카드 다시 뽑기</button>`;
-  document.getElementById("redraw").addEventListener("click",()=>{draws++;drawTarot(CH);compute();cast();renderAll()})}
+  tr.innerHTML=`<div class="tcards">${tarot.map(t=>`<div class="tcard" title="${t[1]}">${t[0]}</div>`).join("")}</div><span><b>타로: ${tarot.map((t,i)=>HZ[i].n.replace(" 뒤","")+" "+t[1]).join(" · ")}</b><br>카드는 당신의 출생 정보와 그해로 정해져서, 같은 정보로 다시 봐도 같은 카드가 나옵니다.</span>`}
 function cast(){const f=document.getElementById("flash");f.classList.remove("cast");void f.getBoundingClientRect();f.classList.add("cast")}
 document.getElementById("flash").innerHTML=`<g fill="none" stroke="#3dffb0" stroke-width=".8" style="filter:drop-shadow(0 0 4px #3dffb0)"><circle cx="100" cy="100" r="96"/><circle cx="100" cy="100" r="80" stroke="#ff9a3c" stroke-dasharray="2 3"/><polygon points="${poly(100,100,80,6,0,2)}"/><polygon points="${poly(100,100,80,4,45)}"/><circle cx="100" cy="100" r="40"/></g>`;
 
-function renderNatal(){const ch=CH,d=ch.stems.d;const dom=ch.cnt.indexOf(Math.max(...ch.cnt));const miss=ch.cnt.map((v,i)=>v?null:ELK[i]+"("+EL[i]+")").filter(Boolean);
-  const cs=ch.cnt.map((v,i)=>`${EL[i]}${v}`).join(" ");
-  const bs=[ch.brs.y,ch.brs.m,ch.brs.d,ch.brs.h].filter(v=>v!=null);let clash=[];for(let i=0;i<bs.length;i++)for(let j=i+1;j<bs.length;j++)if(Math.abs(bs[i]-bs[j])===6)clash.push(BR[bs[i]]+BR[bs[j]]);
+function natalGifts(ch){const g=[];const d=ch.stems.d;
+  if(ch.has.gui)g.push(["천을귀인",`사주에 <b>천을귀인</b>이 있어요. 결정적인 순간마다 도와주는 사람이 나타나는, 사주에서 가장 귀하게 치는 길성입니다.`]);
+  if(ch.masters.length)g.push(["마스터 넘버",`생일 숫자에 <b>마스터 넘버 ${[...new Set(ch.masters)].join("·")}</b>가 들어 있어요. 수비학에서 큰 사명을 지닌 사람에게 나타난다고 보는 흔치 않은 배열입니다.`]);
+  if(ch.has.munc)g.push(["문창귀인",`<b>문창귀인</b>을 타고나 배우고 표현하는 재능이 남다릅니다. 공부와 글, 말로 이름을 얻는 사주예요.`]);
+  if(ch.has.dohwa)g.push(["도화",`<b>도화</b>가 있어 사람을 끌어당기는 매력이 타고났어요. 어디서든 눈에 띄는 사람입니다.`]);
+  if(ch.has.yeokma)g.push(["역마",`<b>역마</b>가 있어 멀리 나아갈수록 기회가 커집니다. 이동과 해외, 새로운 무대에서 운이 열려요.`]);
+  g.push(["태양",`서양 점성술로는 <b>${ZOD[sign(ch.sun)]}자리 태양</b>, ${SUNG[sign(ch.sun)]}을 지녔어요.`]);
+  const nl=DL[ch.nk%9];g.push(["낙샤트라",`인도 점성술로 달이 <b>${NAK[ch.nk]}</b>에 있어 ${NAKG[nl]}을 타고났습니다.`]);
+  g.push(["사주 강약",ch.strong?`스스로 길을 여는 힘이 강한 <b>신강 사주</b>예요. 내가 판을 주도할 때 운이 가장 커집니다.`:`주변의 도움을 끌어당기는 <b>신약 사주</b>예요. 좋은 사람을 곁에 둘수록 운이 크게 불어납니다.`]);
+  g.push(["마야",`마야력으로는 <b>${MS[ch.msign][0]}(${MS[ch.msign][1]})</b>의 날에 태어나 ${MS[ch.msign][2]}의 힘을 품고 있어요.`]);
+  return g}
+function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b)=>a+b.mean,0)/all.length);document.getElementById("fateIdx").textContent=idx;
+  const dm=LD.map(r=>r.reduce((a,b)=>a+b.mean,0)/4);const early=(dm[0]+dm[1]+dm[2])/3,late=(dm[3]+dm[4]+dm[5]+dm[6])/4;
+  const traj=late-early>3?"갈수록 크게 피어나는":early-late>3?"일찍부터 빛을 내는":"한결같이 빛나는";
+  const na=nowAge();let best={m:-1};LD.forEach((row,d)=>{if(d*10+10<=na)return;row.forEach((c,ci)=>{if(c.mean>best.m)best={m:c.mean,d,ci}})});if(best.m<0)LD.forEach((row,d)=>row.forEach((c,ci)=>{if(c.mean>best.m)best={m:c.mean,d,ci}}));
+  let soon={m:-1};R.forEach((row,hi)=>row.forEach((c,ci)=>{if(c.mean>soon.m)soon={m:c.mean,hi,ci}}));
+  const d=CH.stems.d;const gifts=natalGifts(CH).slice(0,3);
+  document.getElementById("typeName").innerHTML=`당신은 <em>${DMA[ST[d]]}</em>의 운명을 타고난 사람입니다.`;
+  document.getElementById("typeText").innerHTML=`<ul class="gifts">${gifts.map(g=>`<li>${g[1]}</li>`).join("")}</ul>
+   <p class="vline">${traj} 운명이에요. 앞으로 가장 빛나는 10년은 <b>${best.d*10}대의 ${CATS[best.ci].n}</b>(${best.m}), 가까운 미래에는 <b>${HZ[soon.hi].n} ${CATS[soon.ci].n}</b>(${soon.m})이 가장 밝게 열립니다.</p>
+   <p class="rare">사주 여덟 글자의 조합은 약 51만 가지. 같은 날 같은 시에 태어나지 않는 한 똑같은 판은 거의 없습니다.</p>`;
+  document.getElementById("whoName").textContent=CH.inp.name||"당신"}
+function renderNatal(){const ch=CH,d=ch.stems.d;const dom=ch.cnt.indexOf(Math.max(...ch.cnt));
+  const cs=ch.cnt.map((v,i)=>`${EL[i]}${v}`).join(" ");const miss=ch.cnt.map((v,i)=>v?null:ELK[i]).filter(Boolean);
   const sunS=sign(ch.sun),ascS=ch.asc!=null?sign(ch.asc):null,moonS=sign(ch.moon);const vm=norm(ch.moon-ch.ayan);
+  const gifts=natalGifts(ch);
   document.getElementById("natal").innerHTML=`
-   <div><h4>기질</h4><p>일간 ${ST[d]}${EL[SE[d]]}는 ${DM[ST[d]]} 사람으로 풉니다. 오행은 ${cs}로 ${ELK[dom]}(${EL[dom]}) 기운이 가장 셉니다. 서양 점성술로는 ${ZOD[sunS]}자리 태양(${SUNP[sunS]}), 인도 점성술로는 달이 ${NAK[ch.nk]} 낙샤트라에 있습니다.</p></div>
-   <div><h4>강점</h4><p>${ELS[dom]}이 타고난 무기입니다. ${ascS!=null?`상승궁 ${ZOD[ascS]}자리는 첫인상을 '${SUNP[ascS]}'으로 보이게 합니다.`:"출생 시각이 없어 상승궁은 계산하지 않았습니다."} 인생 수 ${ch.lp}${ch.expr?`, 표현 수 ${ch.expr}`:""}입니다.</p></div>
-   <div><h4>약점</h4><p>${ELK[dom]} 기운이 넘쳐 ${ELW[dom]} ${miss.length?`사주에 ${miss.join("·")}이 없어 그 기운이 들어오는 해에 균형이 맞춰집니다.`:""} ${clash.length?`원국에 충(${clash.join(", ")})이 있어 거처나 일이 자주 바뀔 수 있습니다.`:""} 달은 ${ZOD[moonS]}자리입니다.</p></div>`;
+   <div><h4>타고난 기질</h4><p>일간 ${ST[d]}${EL[SE[d]]}는 ${DM[ST[d]]} 사람이에요. 오행은 ${cs}로 ${ELK[dom]}(${EL[dom]})의 힘이 가장 셉니다. ${ascS!=null?`첫인상을 만드는 상승궁은 ${ZOD[ascS]}자리라 '${SUNP[ascS]}'으로 기억됩니다.`:""} 인생 수는 ${ch.lp}${ch.expr?`, 표현 수 ${ch.expr}`:""}${ch.soul?`, 영혼 수 ${ch.soul}`:""}입니다.</p></div>
+   <div><h4>타고난 선물</h4><p>${gifts.slice(0,4).map(g=>g[1]).join(" ")}</p></div>
+   <div><h4>더 빛나려면</h4><p>${ELS[dom]}이 가장 큰 무기예요. ${ELW[dom]}. ${miss.length?`사주에 ${miss.join("·")} 기운이 비어 있어, 그 기운이 들어오는 해마다 운이 크게 채워집니다.`:"오행이 모두 갖춰진 고른 사주라 어떤 해에도 버틸 힘이 있습니다."}</p></div>`;
   const hp=ch.stems.h!=null?ST[ch.stems.h]+"<br>"+BR[ch.brs.h]:"?<br>?";
   document.getElementById("pillars").innerHTML=`<div class="pl"><div class="t">시주</div><div class="h">${hp}</div></div><div class="pl me"><div class="t">일주 · 나</div><div class="h">${ST[d]}<br>${BR[ch.brs.d]}</div></div><div class="pl"><div class="t">월주</div><div class="h">${ST[ch.stems.m]}<br>${BR[ch.brs.m]}</div></div><div class="pl"><div class="t">연주</div><div class="h">${ST[ch.stems.y]}<br>${BR[ch.brs.y]}</div></div>
    <div class="pl wide"><div class="t">태양 · 달 · 상승궁</div><div class="h">${ZOD[sunS]} ${(ch.sun%30).toFixed(1)}°<br>${ZOD[moonS]} · ${ascS!=null?ZOD[ascS]:"–"}</div></div>
-   <div class="pl wide"><div class="t">인도 · 달</div><div class="h">${ZOD[sign(vm)]} · ${NAK[ch.nk]}<br>대운 ${ch.fwd?"순행":"역행"} ${ch.dwStart.toFixed(1)}세~</div></div>
+   <div class="pl wide"><div class="t">인도 · ${ch.chandra?"달 기준":"라그나"}</div><div class="h">${ZOD[ch.lagna]} · ${NAK[ch.nk]}<br>대운 ${ch.fwd?"순행":"역행"} ${ch.dwStart.toFixed(1)}세~</div></div>
    <div class="pl wide"><div class="t">수비학 · 마야</div><div class="h">인생 수 ${ch.lp}<br>${ch.tone} ${MS[ch.msign][0]}</div></div>`}
 
 /* ---------- 분석 구조: 점수 계산서 (가까운 미래 4시점만) ---------- */
@@ -798,7 +864,7 @@ function fillForm(v){$("in-name").value=v.name||"";$("in-roman").value=v.roman||
   place=typeof v.place==="number"?placeFromIdx(v.place):v.place;showPlace()}
 function renderWho(v){const [y,m,d]=v.date.split("-");const dt=v.cal==="l"?`음 ${v.ly}.${String(v.lm).padStart(2,"0")}.${String(v.ld).padStart(2,"0")}${v.leap?"(윤)":""}`:`${y}.${m}.${d}`;
   $("whoSum").innerHTML=[v.name||"이름 없음",`${dt} ${v.notime?"시각 모름":v.time}`,v.place.name,v.sex==="f"?"여":"남"].map(t=>`<span>${t}</span>`).join("")}
-function run(v,animate){renderWho(v);CH=buildChart(v);draws=0;drawTarot(CH);compute();selDec=clamp(Math.floor(nowAge()/10),0,DECS-1);if(animate)cast();renderAll()}
+function run(v,animate){renderWho(v);CH=buildChart(v);drawTarot(CH);compute();selDec=clamp(Math.floor(nowAge()/10),0,DECS-1);if(animate)cast();renderAll()}
 function renderAll(){renderSigil();renderVerdict();renderTrend();renderCats();renderNatal();if(document.getElementById("p-net").open)renderNet()}
 document.querySelectorAll("#modeTabs button").forEach(b=>b.addEventListener("click",()=>{if(mode===b.dataset.m)return;mode=b.dataset.m;cast();renderTrend();renderCats()}));
 $("ask").addEventListener("submit",e=>{e.preventDefault();const v=readForm();
