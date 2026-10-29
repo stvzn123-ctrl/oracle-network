@@ -11,7 +11,7 @@
   --fg:#efe9df; --muted:#ab9f8c; --dim:#76695a;
   --emerald:#3dffb0; --teal:#4fd1e8; --gold:#e9c46a; --ember:#ff9a3c; --rose:#ff86b0; --violet:#b49cff;
   --money:#f2c45a; --love:#ff86b0; --work:#52d6ff; --health:#48f0a6;
-  --net-bg:#071321; --net-core:#123e57; --net-node:#8ae5ff;
+  --trait-dot:#b8f36d; --net-bg:#071321; --net-core:#123e57; --net-node:#8ae5ff;
   --display:"Nanum Myeongjo","Batang","AppleMyungjo",serif;
   --latin:"Cinzel","Nanum Myeongjo",serif;
   --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
@@ -361,31 +361,21 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 #unlock-status{color:var(--emerald);font-size:13px}
 @media(prefers-reduced-motion:reduce){#graph-content{transition:none}}
 
-/* Compact natal summary and the site's own four-axis type. */
-.natalbox .type{margin:12px 0 20px;font-size:clamp(18px,3vw,23px)}
-.trait-head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
-.trait-head strong{font-family:var(--display);font-size:21px;color:var(--emerald)}
-.trait-head span,.trait-note{font-size:12px;color:var(--muted)}
-.trait-summary{font-size:13px;color:var(--muted);margin:8px 0 16px}
-.trait-table{width:100%;border-collapse:separate;border-spacing:0 6px;table-layout:fixed}
-.trait-table caption{text-align:left;font-size:13px;color:var(--muted);margin-bottom:6px}
-.trait-table thead{font-size:11px;color:var(--muted)}
-.trait-table th:first-child{width:22%}
-.trait-table tbody th{font-size:13px;font-weight:500;text-align:left}
-.trait-table td{text-align:center;padding:10px 6px;border:1px solid var(--line);color:var(--muted);font-size:15px}
-.trait-table td:nth-child(2){border-radius:9px 0 0 9px}
-.trait-table td:last-child{border-radius:0 9px 9px 0}
-.trait-table td.chosen{border-color:var(--emerald);color:var(--emerald);background:var(--field);font-weight:600}
-.trait-note{line-height:1.7;margin:10px 0}
-.trait-more,.natal-more{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
-.trait-more summary,.natal-more summary{cursor:pointer;color:var(--emerald);font-size:13px;padding:5px 0}
-.trait-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}
-.trait-grid>div{padding:12px;border:1px solid var(--line);border-radius:10px;min-width:0}
-.trait-grid b{display:block;font-size:13px;font-weight:500;overflow-wrap:anywhere}
-.trait-grid small{display:block;font-size:11px;color:var(--muted);margin-top:4px}
-.trait-grid .current{border-color:var(--emerald);color:var(--emerald)}
+/* Simple directional axes; dots show category, not a measured probability. */
+.natalbox .type{margin:12px 0 20px;font-size:clamp(17px,2.8vw,21px);line-height:1.8}
+.trait-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.trait-table caption{text-align:left;font-size:13px;color:var(--muted);margin-bottom:12px}
+.trait-table th{width:56px;text-align:left;font-size:13px;font-weight:500}
+.trait-table td{padding:12px 0}
+.trait-table .trait-end{width:44px;text-align:center;color:var(--muted);font-size:13px;white-space:nowrap}
+.trait-table .selected{color:var(--trait-dot);font-weight:600}
+.trait-axis-cell{padding-inline:12px!important}
+.trait-axis{display:block;height:2px;background:var(--line2);position:relative}
+.trait-axis::after{content:"";position:absolute;left:50%;top:-3px;width:1px;height:8px;background:var(--muted)}
+.trait-dot{position:absolute;z-index:1;left:var(--dot);top:50%;width:10px;height:10px;border-radius:50%;background:var(--trait-dot);transform:translate(-50%,-50%)}
+.trait-note{font-size:12px;color:var(--muted);line-height:1.7;margin:12px 0}
+.natal-more{border-top:1px solid var(--line);margin-top:20px;padding-top:18px}
 .natal-more .natal{margin-top:20px}
-@media(max-width:440px){.trait-grid{grid-template-columns:1fr}.trait-head strong{font-size:19px}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -426,7 +416,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
       <h3 class="nat-h">타고난 운명</h3>
       <p class="type" id="typeName"></p>
       <div id="fate-traits"></div>
-      <details class="natal-more"><summary>타고난 선물·약점과 사주 정보 펼쳐보기</summary><div id="typeText"></div><div class="natal" id="natal"></div><div class="pillars" id="pillars"></div></details>
+      <div class="natal-more"><div id="typeText"></div><div class="natal" id="natal"></div><div class="pillars" id="pillars"></div></div>
     </div>
   </div>
 </header>
@@ -915,16 +905,23 @@ function fateTraits(ch){
  const index=rows.reduce((s,a)=>s*2+a.side,0);
  return {rows,index,name:FATE_TYPES[index],code:"ON-"+rows.map(a=>a.side).join("")};
 }
+function traitDescription(ch){
+ const t=fateTraits(ch),s=t.rows.map(a=>a.side);
+ return [
+ s[0]?"충분히 살펴본 뒤 움직이고":"새로운 일을 먼저 시도하고",
+ s[1]?"자기 기준으로 판단하는 편이에요.":"사람들과 의견을 나누며 결정하는 편이에요.",
+ s[2]?"근거와 구조를 먼저 확인하며,":"가능성과 흐름을 먼저 떠올리며,",
+ s[3]?"새로운 방법과 변화를 즐기는 쪽으로 해석돼요.":"관심 있는 일은 깊게 파고드는 쪽으로 해석돼요."
+ ].join(" ");
+}
 function renderFateTraits(){
  const t=fateTraits(CH);
  document.getElementById("fate-traits").innerHTML=`
- <div class="trait-head"><strong>${t.name}</strong><span>${t.code} · 16가지 운명 성향</span></div>
- <p class="trait-summary">${t.rows.map(a=>a.about[a.side]).join(" · ")}</p>
- <table class="trait-table"><caption>나의 네 가지 운명 성향</caption><thead><tr><th scope="col">축</th><th scope="col">왼쪽 성향</th><th scope="col">오른쪽 성향</th></tr></thead><tbody>${t.rows.map(a=>`<tr><th scope="row">${a.name}</th><td class="${a.side===0?"chosen":""}">${a.left}${a.side===0?'<span class="trait-check"> ✓</span>':""}</td><td class="${a.side===1?"chosen":""}">${a.right}${a.side===1?'<span class="trait-check"> ✓</span>':""}</td></tr>`).join("")}</tbody></table>
- <p class="trait-note">출생 사주의 오행을 조합한 재미용 분류예요. MBTI·심리검사나 실제 성격 예측이 아닙니다.${t.rows.some(a=>a.tie)?" 동률인 축은 균형 성향이며, 유형 코드에서는 왼쪽으로 분류해요.":""}</p>
- <details class="trait-more"><summary>16가지 성향과 분류 기준 보기</summary>
- <div class="trait-grid">${FATE_TYPES.map((name,i)=>{const bits=[3,2,1,0].map(b=>(i>>b)&1);return `<div class="${i===t.index?"current":""}"><b>${name}${i===t.index?" · 나":""}</b><small>${FATE_AXES.map((a,k)=>bits[k]?a.right:a.left).join(" · ")}</small></div>`}).join("")}</div>
- <p class="trait-note">자체 분류 규칙 v1 · 천간·지지의 기존 오행 개수를 사용합니다. 움직임: 목+화 / 토+수, 관계: 화+토 / 금+수, 선택: 목+수 / 토+금, 앞의 세 축은 개수 합이 큰 쪽을 선택합니다. 지속은 태양이 고정궁(황소·사자·전갈·물병)이면 몰입, 나머지는 변화로 분류합니다. 확률·과학적 성향 점수를 의미하지 않으며, 기존 운세 점수에는 영향을 주지 않아요.</p></details>`;
+ <table class="trait-table"><caption>나의 네 가지 운명 성향</caption><tbody>${t.rows.map(a=>{
+   const selected=a.tie?"균형":a.side?a.right:a.left;
+   return `<tr><th scope="row">${a.name}</th><td class="trait-end ${!a.tie&&a.side===0?"selected":""}">${a.left}</td><td class="trait-axis-cell"><span class="trait-axis" role="img" aria-label="${a.name}: ${selected} 성향"><i class="trait-dot" aria-hidden="true" style="--dot:${a.tie?50:a.side?75:25}%"></i></span></td><td class="trait-end ${!a.tie&&a.side===1?"selected":""}">${a.right}</td></tr>`
+ }).join("")}</tbody></table>
+ <p class="trait-note">출생 차트를 바탕으로 만든 재미용 분류예요. 실제 성격을 예측하는 심리검사가 아닙니다. 점은 성향의 방향을 나타내요.</p>`;
 }
 
 function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b)=>a+b.mean,0)/all.length);
@@ -933,7 +930,7 @@ function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b
   const na=nowAge();let best={m:-1};LD.forEach((row,d)=>{if(d*10+10<=na)return;row.forEach((c,ci)=>{if(c.mean>best.m)best={m:c.mean,d,ci}})});if(best.m<0)LD.forEach((row,d)=>row.forEach((c,ci)=>{if(c.mean>best.m)best={m:c.mean,d,ci}}));
   let soon={m:-1};R.forEach((row,hi)=>row.forEach((c,ci)=>{if(c.mean>soon.m)soon={m:c.mean,hi,ci}}));
   const d=CH.stems.d;const gifts=natalGifts(CH).slice(0,3);
-  document.getElementById("typeName").innerHTML=`당신은 <em>${DMA[ST[d]]}</em>의 운명을 타고난 사람입니다.`;
+  document.getElementById("typeName").textContent=traitDescription(CH);
   document.getElementById("typeText").innerHTML=`<ul class="gifts">${gifts.map(g=>`<li>${g[1]}</li>`).join("")}</ul>
    <p class="vline">${traj} 운명이에요. 앞으로 가장 빛나는 10년은 <b>${best.d*10}대의 ${CATS[best.ci].n}</b>(${D(best.m)}), 가까운 미래에는 <b>${HZ[soon.hi].n} ${CATS[soon.ci].n}</b>(${D(soon.m)})이 가장 밝게 열립니다.</p>
    <p class="rare">사주 여덟 글자의 조합은 약 51만 가지. 같은 날 같은 시에 태어나지 않는 한 똑같은 판은 거의 없습니다.</p>`;
@@ -1130,8 +1127,8 @@ $("ask").addEventListener("submit",e=>{e.preventDefault();const v=readForm();
 /* Share only a derived description and scores; never encode the birth input in URLs. */
 const SHARE_URL="https://stvzn123-ctrl.github.io/oracle-network/";
 function resultShareText(){
-  const type=DMA[ST[CH.stems.d]];
-  return ["나의 운명은 ‘"+type+"’ ✨","",
+  const type=fateTraits(CH).name;
+  return ["나의 운명 성향은 ‘"+type+"’ ✨",traitDescription(CH),"",
     "1년 뒤 나의 운 흐름",
     ...CATS.map((c,i)=>c.n+" "+D(R[0][i].mean)+"점"),
     "","너는 어떤 운명을 타고났을까?","운명 네트워크 · 재미로 보는 해석, 예측력 없음",SHARE_URL].join("\n");
