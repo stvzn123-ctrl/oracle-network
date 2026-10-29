@@ -184,16 +184,39 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .pl .h{font-family:var(--display);font-size:22px;line-height:1.25;color:var(--gold)}
 .pl.me{border-color:var(--emerald);box-shadow:0 0 18px rgba(61,255,176,.2)}.pl.me .h{color:var(--emerald)}
 .pl.wide .h{font-size:14.5px;line-height:1.7}
-.netctl{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
-.netctl button{font:inherit;font-size:13px;background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 14px;cursor:pointer}
-.netctl button[aria-pressed="true"]{color:var(--emerald);border-color:var(--emerald)}
-#net{display:block;width:100%;height:460px}
+.netctl{display:flex;gap:10px 18px;margin-bottom:6px;flex-wrap:wrap}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{font:inherit;font-size:13px;background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 13px;cursor:pointer;transition:all .2s}
+.chips button[aria-pressed="true"]{color:var(--c,var(--emerald));border-color:var(--c,var(--emerald));background:color-mix(in srgb,var(--c,#3dffb0) 10%,transparent)}
+.netlabel{font-family:var(--mono);font-size:12px;color:var(--muted);margin:6px 0}
+.netwrap{position:relative}
+#net{display:block;width:100%;height:auto}
+#net .flow{stroke-dasharray:2 9;animation:dash 2.4s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-22}}
+#net .spin{animation:spin 30s linear infinite;transform-box:fill-box;transform-origin:center}
+#net .spin.rev{animation-direction:reverse;animation-duration:40s}
+#net [data-t]{cursor:help}
+#net .onode:hover circle:first-child{stroke-width:3}
+.ntip{max-width:280px;white-space:normal;line-height:1.5;transform:translate(-50%,-115%)}
+.modetabs{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:14px;background:var(--panel)}
+.modetabs button{font:inherit;font-size:14px;background:transparent;border:0;color:var(--muted);padding:9px 18px;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.3;transition:all .25s}
+.modetabs button small{font-family:var(--mono);font-size:10.5px;opacity:.8}
+.modetabs button[aria-pressed="true"]{color:#032016;background:var(--emerald);box-shadow:0 0 22px rgba(61,255,176,.35)}
+.tnote{margin:6px 8px 0;font-size:12.5px;color:var(--dim)}
+.decbars{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px;padding:0 18px 12px;height:66px}
+.decbars button{font:inherit;position:relative;background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:6px;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;padding:0;overflow:hidden}
+.decbars button i{display:block;background:var(--c);opacity:.55;border-radius:3px 3px 0 0;margin:0 3px 16px}
+.decbars button b{position:absolute;bottom:1px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:10px;font-weight:400;color:var(--muted)}
+.decbars button.past i{opacity:.22}
+.decbars button[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 12px color-mix(in srgb,var(--c) 35%,transparent)}
+.decbars button[aria-pressed="true"] i{opacity:1;box-shadow:0 0 8px var(--c)}
+.decbars button[aria-pressed="true"] b{color:var(--c)}
 .note{font-size:13.5px;color:var(--muted);max-width:75ch}
 .note p{margin:0 0 10px}.note b{color:var(--fg)}
 .rules{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:8px}
 .rules div{border-top:1px solid var(--line);padding-top:10px;font-size:13px;color:var(--muted)}
 .rules b{display:block;color:var(--fg);margin-bottom:2px}
-@media (prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}.natalpts{opacity:.55}}
+@media (prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}.natalpts{opacity:.55}#net .flow{stroke-dasharray:none}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -235,8 +258,9 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 </header>
 
 <section>
-  <div class="sec-head"><span class="eyebrow">Prophecy</span><h2>여섯 점술은 당신의 미래를 이렇게 말합니다</h2></div>
-  <div class="trend"><svg id="trend" viewBox="0 0 760 280" role="img" aria-label="10년간 네 가지 운의 흐름"></svg><div class="legend" id="legend"></div></div>
+  <div class="sec-head"><span class="eyebrow">Prophecy</span><h2>여섯 점술이 말하는 당신의 운</h2></div>
+  <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="life" aria-pressed="true">평생 흐름<small>0~80세</small></button><button type="button" data-m="near" aria-pressed="false">가까운 미래<small>1·3·5·10년</small></button></div>
+  <div class="trend"><svg id="trend" viewBox="0 0 760 280" role="img" aria-label="10년간 네 가지 운의 흐름"></svg><div class="legend" id="legend"></div><p class="tnote" id="trendNote"></p></div>
   <div class="cats" id="cats"><svg class="flash" id="flash" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
   <div class="tarotrow" id="tarot"></div>
 </section>
@@ -248,9 +272,11 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
   </details>
 
   <details class="panel" id="p-net">
-    <summary><svg class="g" viewBox="0 0 34 34"><circle cx="6" cy="10" r="2.5" fill="#4fd1e8"/><circle cx="6" cy="24" r="2.5" fill="#4fd1e8"/><circle cx="17" cy="17" r="3" fill="#3dffb0"/><circle cx="28" cy="17" r="3.5" fill="#e9c46a"/><path d="M6 10 Q12 10 17 17 M6 24 Q12 24 17 17 M17 17 H28" stroke="#3dffb0" stroke-opacity=".6" fill="none"/></svg><div><h3>분석 구조</h3><p>출생 정보가 여섯 점술을 거쳐 네 개의 운으로 모이는 신경망</p></div><span class="chev">⌄</span></summary>
-    <div class="pbody"><div class="netctl" id="netctl"></div><canvas id="net" role="img" aria-label="입력 4개가 점술 6개, 운 4개를 거쳐 종합 1개로 모이는 신경망"></canvas>
-      <p class="note" style="margin-top:10px">빛이 흐르는 선은 점수 70 이상의 강한 신호입니다.</p></div>
+    <summary><svg class="g" viewBox="0 0 34 34"><circle cx="6" cy="10" r="2.5" fill="#4fd1e8"/><circle cx="6" cy="24" r="2.5" fill="#4fd1e8"/><circle cx="17" cy="17" r="3" fill="#3dffb0"/><circle cx="28" cy="17" r="3.5" fill="#e9c46a"/><path d="M6 10 Q12 10 17 17 M6 24 Q12 24 17 17 M17 17 H28" stroke="#3dffb0" stroke-opacity=".6" fill="none"/></svg><div><h3>분석 구조</h3><p>어떤 근거가 운을 올리고 깎았는지 보여주는 근거 지도</p></div><span class="chev">⌄</span></summary>
+    <div class="pbody"><div class="netctl"><div class="chips" id="netP" role="group" aria-label="시점"></div><div class="chips" id="netC" role="group" aria-label="운"></div></div>
+      <p class="netlabel" id="netLabel"></p>
+      <div class="netwrap"><svg id="net" role="img" aria-label="점술별 근거가 운 점수로 모이는 클러스터 네트워크"></svg><div class="maptip ntip" id="netTip" hidden></div></div>
+      <p class="note" style="margin-top:8px">가운데가 고른 운, 그 둘레가 여섯 점술, 바깥 점들이 각 점술이 실제로 본 근거입니다. <span style="color:#3dffb0">초록</span>은 점수를 올린 근거, <span style="color:#ff5d73">빨강</span>은 깎은 근거이고 선이 굵을수록 영향이 큽니다. 점에 마우스를 올리면 설명이 나옵니다.</p></div>
   </details>
 
   <details class="panel">
@@ -262,7 +288,8 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
         <div><b>인도 점성술</b>달의 낙샤트라로 빔쇼타리 다샤(대운)를 계산하고, 그 시점의 대운 행성과 보조 행성이 각 운에서 길한지 흉한지로 매깁니다.</div>
         <div><b>수비학</b>생일 숫자와 그해 숫자를 더한 개인년(1~9)으로 매기고, 인생 수로 조금 보정합니다.</div>
         <div><b>마야력</b>그해 생일이 260일 촐킨 달력의 어느 기호(20개)와 숫자(13개)에 떨어지는지로 매깁니다.</div>
-        <div><b>타로</b>입력값으로 섞은 메이저 아르카나 22장에서 시점마다 한 장씩 뽑습니다. 다시 뽑기를 누르면 바뀝니다.</div>
+        <div><b>타로</b>입력값으로 섞은 메이저 아르카나 22장에서 시점마다 한 장씩 뽑습니다. 다시 뽑기를 누르면 바뀝니다. 우연에 기대는 점술이라 평생 흐름에는 넣지 않습니다.</div>
+        <div><b>평생 흐름</b>0~80세의 해마다 다섯 점술을 계산해 5년 이동 평균으로 곡선을 그립니다. 10년 카드의 점수는 그 10년의 평균입니다. 점술·운마다 기본값이 한쪽으로 쏠리지 않도록 무작위 출생 300명으로 보정했습니다.</div>
       </div>
       <p style="margin-top:16px"><b>계산 범위.</b> 시각은 출생지 경도로 지방시를 보정해 시주를 정하고, 1987·1988년 한국 서머타임을 반영합니다. 해외 출생지는 서머타임을 반영하지 않습니다. 행성 위치는 연 단위 근사라 전문 프로그램과 몇 도 차이가 날 수 있습니다. 23시 이후 출생은 다음 날 자시로 봅니다.</p>
       <p><b>읽는 법.</b> 계산 자체는 각 체계의 규칙을 따르지만, 점수는 그 규칙을 재미로 숫자로 옮긴 것입니다. 이 점술들은 미래를 맞힌다는 근거가 없고, 여러 개를 합쳐도 정확도가 올라가지 않습니다.</p>
@@ -422,60 +449,81 @@ function buildChart(inp){
 }
 
 /* =========================================================
-   oracles: each returns [score, text, context]
+   oracles: each returns [score, text, context, factors]  factors = [[label, delta(점수 단위)], ...]
    ========================================================= */
+const SL=1.2;
+/* 점술·운별 기본값 보정: 무작위 출생 300명×81년 평균이 56점 근처가 되도록 맞춘 값 */
+const OCAL=[[-3.1,-1,-17.1,5.5],[-3.1,0.4,-6.3,7.2],[-7.4,-2.2,-13.5,9],[1.6,-5.5,-9.7,-4.5],[-6.9,-10.2,-15.1,-11.6],[-6.6,-11.6,-14,-8.4]];
 function horizonDate(off){const now=new Date();return {y:now.getFullYear()+off,frac:now.getFullYear()+off+(now.getMonth()+.5)/12}}
-function oSaju(ch,off,ci){const {y,frac}=horizonDate(off);const age=frac-ch.birthYear;
-  const s=mod(y-4,10),b=mod(y-4,12),d=ch.stems.d;
-  let dw;if(age<ch.dwStart)dw=ch.mIdx;else{const k=Math.floor((age-ch.dwStart)/10)+1;dw=ch.mIdx+(ch.fwd?k:-k)}
-  const dwS=mod(dw,60)%10,dwB=mod(dw,60)%12,dwFrom=Math.round(ch.birthYear+ch.dwStart+10*Math.floor(Math.max(0,age-ch.dwStart)/10));
+function lifeDate(ch,age){const frac=ch.birthYear+age+.5;return {y:Math.floor(frac),frac}}
+function fin(raw,F,oi,ci){return [stretch(raw+OCAL[oi][ci]),F.filter(f=>Math.abs(f[1])>=.5).map(f=>[f[0],Math.round(f[1]*SL)])]}
+function oSaju(ch,t,ci){const {y,frac}=t;const age=frac-ch.birthYear;
+  const s=mod(y-4,10),b=mod(y-4,12),d=ch.stems.d;const pre=age<ch.dwStart;
+  let dw;if(pre)dw=ch.mIdx;else{const k=Math.floor((age-ch.dwStart)/10)+1;dw=ch.mIdx+(ch.fwd?k:-k)}
+  const dwS=mod(dw,60)%10,dwB=mod(dw,60)%12,dl=pre?"월주":"대운";
   const t1=tenGod(d,s),t2=tenGod(d,BMAIN[b]),t3=tenGod(d,dwS),t4=tenGod(d,BMAIN[dwB]);
-  const idx=[0,ch.male?1:2,3,4][ci];const w=t=>TGW[t][idx];
-  let raw=52+w(t1)*.7+w(t2)*.55+w(t3)*.45+w(t4)*.3;let extra="";
+  const idx=[0,ch.male?1:2,3,4][ci];const w=tg=>TGW[tg][idx];
+  const F=[[`${ST[s]} ${t1}`,w(t1)*.7],[`${BR[b]} ${t2}`,w(t2)*.55],[`${dl} ${ST[dwS]} ${t3}`,w(t3)*.45],[`${dl} ${BR[dwB]} ${t4}`,w(t4)*.3]];let extra="";
   const db=ch.brs.d;
-  if((b+db)%12===1){raw+=[6,18,4,4][ci];extra=` 그해 지지가 배우자 자리(${BR[db]})와 합(${BR[b]}${BR[db]}합)해 ${["돈이 묶이기보다 모입니다","인연이 단단히 묶입니다","협력이 잘 됩니다","마음이 안정됩니다"][ci]}.`}
-  if(Math.abs(b-db)===6){raw-=[6,20,6,12][ci];extra=` 그해 지지가 배우자 자리(${BR[db]})와 부딪쳐(${BR[b]}${BR[db]}충) ${["예상 밖 지출이 생깁니다","관계가 흔들립니다","자리 이동이 생깁니다","몸이 지치기 쉽습니다"][ci]}.`}
-  if(ch.brs.h!=null&&Math.abs(b-ch.brs.h)===6&&ci===2){raw+=4;extra+=` 시주(${BR[ch.brs.h]})와도 충해 이동이나 이직 수가 있습니다.`}
+  if((b+db)%12===1){F.push([`${BR[b]}${BR[db]}합`,[6,18,4,4][ci]]);extra=` 그해 지지가 배우자 자리(${BR[db]})와 합(${BR[b]}${BR[db]}합)해 ${["돈이 묶이기보다 모입니다","인연이 단단히 묶입니다","협력이 잘 됩니다","마음이 안정됩니다"][ci]}.`}
+  if(Math.abs(b-db)===6){F.push([`${BR[b]}${BR[db]}충`,-[6,20,6,12][ci]]);extra=` 그해 지지가 배우자 자리(${BR[db]})와 부딪쳐(${BR[b]}${BR[db]}충) ${["예상 밖 지출이 생깁니다","관계가 흔들립니다","자리 이동이 생깁니다","몸이 지치기 쉽습니다"][ci]}.`}
+  if(ch.brs.h!=null&&Math.abs(b-ch.brs.h)===6&&ci===2){F.push([`시주 ${BR[ch.brs.h]}${BR[b]}충`,4]);extra+=` 시주(${BR[ch.brs.h]})와도 충해 이동이나 이직 수가 있습니다.`}
   const el=SE[s],mn=Math.min(...ch.cnt),mx=Math.max(...ch.cnt);
-  if(ch.cnt[el]===mn){raw+=[6,2,2,10][ci]}else if(ch.cnt[el]===mx){raw-=[4,2,2,10][ci]}
+  if(ch.cnt[el]===mn)F.push([`${EL[el]} 보충`,[6,2,2,10][ci]]);else if(ch.cnt[el]===mx)F.push([`${EL[el]} 과다`,-[4,2,2,10][ci]]);
   const main=Math.abs(w(t1))>=Math.abs(w(t2))?[ST[s],t1]:[BR[b],t2];
   let p=TGP[main[1]][CATS[ci].k];
   if(ci===1){const isMate=ch.male?["편재","정재"].includes(main[1]):["편관","정관"].includes(main[1]);if(isMate)p=`${ch.male?"남성 사주에서 재성":"여성 사주에서 관성"}은 이성 인연을 뜻합니다. ${p}`}
-  return [stretch(raw),`${pillar(cyc(s,b))}년에는 ${main[0]}(${main[1]})이 들어옵니다. ${p}.${extra}`,`${pillar(cyc(s,b))}년 · ${pillar(dw)} 대운`,{dw:pillar(dw),dwFrom}]}
-function oWest(ch,off,ci){const {y,frac}=horizonDate(off);const jd=jdUTC(Math.floor(frac),Math.round((frac%1)*12)+1||1,1,0);
+  const [sc,FF]=fin(52+F.reduce((a,f)=>a+f[1],0),F,0,ci);
+  return [sc,`${pillar(cyc(s,b))}년에는 ${main[0]}(${main[1]})이 들어옵니다. ${p}.${extra}`,`${pillar(cyc(s,b))}년 · ${pillar(dw)} ${dl}`,FF]}
+function oWest(ch,t,ci){const {frac}=t;const jd=jdUTC(Math.floor(frac),Math.floor((frac%1)*12)+1,1,0);
   const J=jupLon(jd),S=satLon(jd);const base=sign(ch.asc??ch.sun);const hJ=mod(sign(J)-base,12)+1,hS=mod(sign(S)-base,12)+1;
-  let raw=52+JW[hJ][ci]+SW[hS][ci];const notes=[];
-  if(sep(S,ch.natSat)<14){raw+=[0,-8,10,-14][ci];notes.push("토성이 태어날 때 자리로 돌아오는 토성 회귀 구간이라 인생 구조를 다시 짭니다")}
+  const top=HOUSE[hJ],stp=HOUSE[hS];const F=[[`목성 ${hJ}H ${top}`,JW[hJ][ci]],[`토성 ${hS}H ${stp}`,SW[hS][ci]]];const notes=[];
+  if(sep(S,ch.natSat)<14){F.push(["토성 회귀",[0,-8,10,-14][ci]]);notes.push("토성이 태어날 때 자리로 돌아오는 토성 회귀 구간이라 인생 구조를 다시 짭니다")}
   const jHit=sep(J,ch.sun)<12?"태양":(ch.asc!=null&&sep(J,ch.asc)<12)?"상승궁":null;
-  if(jHit){raw+=10;notes.push(`목성이 출생 ${jHit} 위를 지나 12년에 한 번 오는 행운 구간입니다`)}
-  const jv=JW[hJ][ci],sv=SW[hS][ci];const top=HOUSE[hJ],stp=HOUSE[hS];
+  if(jHit){F.push([`목성·출생 ${jHit}`,10]);notes.push(`목성이 출생 ${jHit} 위를 지나 12년에 한 번 오는 행운 구간입니다`)}
+  const jv=JW[hJ][ci],sv=SW[hS][ci];
   const jp=jv>=20?`${top} 쪽 기회가 크게 열립니다`:jv>=8?`${top} 쪽에 순풍이 붑니다`:jv>-5?"이 운에는 직접적인 영향이 적습니다":"기운이 흩어지기 쉽습니다";
   const spp=sv<=-15?`${stp}에서 시험과 부담이 큽니다`:sv<=-5?`${stp}에 숙제가 생깁니다`:sv>=10?"책임진 만큼 단단한 결과가 나옵니다":"부담은 크지 않습니다";
-  return [stretch(raw),`목성이 ${hJ}하우스(${top})를 지나 ${jp}. 토성은 ${hS}하우스(${stp})에서 ${spp}.${notes.length?" "+notes.join(". ")+".":""}`,`목성 ${ZOD[sign(J)]} · 토성 ${ZOD[sign(S)]}`]}
-function oVedic(ch,off,ci){const {frac}=horizonDate(off);const md=ch.dashas.find(x=>frac>=x.start&&frac<x.end)||ch.dashas[ch.dashas.length-1];
-  let t=md.start,ad=null;for(let k=0;k<9;k++){const L=(md.L+k)%9;const len=DY[md.L]*DY[L]/120;if(frac<t+len){ad={lord:DL[L],end:t+len};break}t+=len}
+  const [sc,FF]=fin(52+F.reduce((a,f)=>a+f[1],0),F,1,ci);
+  return [sc,`목성이 ${hJ}하우스(${top})를 지나 ${jp}. 토성은 ${hS}하우스(${stp})에서 ${spp}.${notes.length?" "+notes.join(". ")+".":""}`,`목성 ${ZOD[sign(J)]} · 토성 ${ZOD[sign(S)]}`,FF]}
+function oVedic(ch,t,ci){const {frac}=t;const md=ch.dashas.find(x=>frac>=x.start&&frac<x.end)||ch.dashas[ch.dashas.length-1];
+  let st=md.start,ad=null;for(let k=0;k<9;k++){const L=(md.L+k)%9;const len=DY[md.L]*DY[L]/120;if(frac<st+len){ad={lord:DL[L],end:st+len};break}st+=len}
   ad=ad||{lord:md.lord,end:md.end};
-  const raw=50+PW[md.lord][ci]*.55+PW[ad.lord][ci]*.85;
-  const endY=Math.floor(ad.end),endM=Math.floor((ad.end%1)*12)+1;
-  return [stretch(raw),`${PK[md.lord]} 대운 안의 ${PK[ad.lord]} 기간(~${endY}.${endM}). ${PP[ad.lord][ci]}.`,`${PK[md.lord]}–${PK[ad.lord]} 다샤`]}
-function oNum(ch,off,ci){const {y}=horizonDate(off);const py=reduceNum(digitsum(ch.Mo)+digitsum(ch.D)+digitsum(y),false);
-  let raw=NYW[py][ci];const lpAdj={money:{8:6,4:4},love:{2:6,6:6},work:{1:5,8:5,22:6},health:{7:-4,6:3}}[CATS[ci].k][ch.lp]||0;raw+=lpAdj;
-  return [stretch(raw),`${y}년 개인년 ${py}. ${NYP[py][ci]}.`,`개인년 ${py}`]}
-function oMaya(ch,off,ci){const {y}=horizonDate(off);const kd=jdn(y,ch.Mo,Math.min(ch.D,28+(ch.Mo===2?0:2)))-584283;const tone=mod(kd+3,13)+1,sg=mod(kd+19,20);
-  const raw=MS[sg][3][ci]+MT[tone][1][ci];const back=sg===ch.msign?" 태어난 날의 기호가 돌아오는 해라 근본으로 돌아갑니다.":"";
-  return [stretch(raw),`${y}년 생일 기호는 ${tone} ${MS[sg][0]}(${MS[sg][1]}). ${MS[sg][2]}의 기호에 ${MT[tone][0]}의 숫자가 붙었습니다.${back}`,`생일 기호 ${tone} ${MS[sg][0]}`]}
+  const F=[[`대운 ${PK[md.lord]}`,PW[md.lord][ci]*.55],[`보조 ${PK[ad.lord]}`,PW[ad.lord][ci]*.85]];
+  const endY=Math.floor(ad.end),endM=Math.floor((ad.end%1)*12)+1;const [sc,FF]=fin(50+F.reduce((a,f)=>a+f[1],0),F,2,ci);
+  return [sc,`${PK[md.lord]} 대운 안의 ${PK[ad.lord]} 기간(~${endY}.${endM}). ${PP[ad.lord][ci]}.`,`${PK[md.lord]}–${PK[ad.lord]} 다샤`,FF]}
+function oNum(ch,t,ci){const {y}=t;const py=reduceNum(digitsum(ch.Mo)+digitsum(ch.D)+digitsum(y),false);
+  const lpAdj={money:{8:6,4:4},love:{2:6,6:6},work:{1:5,8:5,22:6},health:{7:-4,6:3}}[CATS[ci].k][ch.lp]||0;
+  const F=[[`개인년 ${py}`,NYW[py][ci]-50]];if(lpAdj)F.push([`인생 수 ${ch.lp}`,lpAdj]);const [sc,FF]=fin(50+F.reduce((a,f)=>a+f[1],0),F,3,ci);
+  return [sc,`${y}년 개인년 ${py}. ${NYP[py][ci]}.`,`개인년 ${py}`,FF]}
+function oMaya(ch,t,ci){const {y}=t;const kd=jdn(y,ch.Mo,Math.min(ch.D,28+(ch.Mo===2?0:2)))-584283;const tone=mod(kd+3,13)+1,sg=mod(kd+19,20);
+  const back=sg===ch.msign?" 태어난 날의 기호가 돌아오는 해라 근본으로 돌아갑니다.":"";
+  const F=[[`${MS[sg][0]}(${MS[sg][1]})`,MS[sg][3][ci]-50],[`숫자 ${tone} ${MT[tone][0]}`,MT[tone][1][ci]]];const [sc,FF]=fin(50+F.reduce((a,f)=>a+f[1],0),F,4,ci);
+  return [sc,`${y}년 생일 기호는 ${tone} ${MS[sg][0]}(${MS[sg][1]}). ${MS[sg][2]}의 기호에 ${MT[tone][0]}의 숫자가 붙었습니다.${back}`,`생일 기호 ${tone} ${MS[sg][0]}`,FF]}
 let draws=0,tarot=[];
 function drawTarot(ch){const r=rng(hash(ch.inp.name+ch.inp.date+ch.inp.time)+draws*7919);const deck=T.map((_,i)=>i);tarot=HZ.map(()=>T[deck.splice(Math.floor(r()*deck.length),1)[0]])}
-function oTarot(ch,hi,ci){const t=tarot[hi];return [stretch(t[6][ci]),`<i>${t[1]}</i> 카드. ${t[ci+2]}.`,t[1]]}
+function oTarot(ch,hi,ci){const t=tarot[hi];const [sc,FF]=fin(t[6][ci],[[`${t[1]} 카드`,t[6][ci]-50]],5,ci);return [sc,`<i>${t[1]}</i> 카드. ${t[ci+2]}.`,t[1],FF]}
 
 /* =========================================================
-   assemble
+   assemble: R = 가까운 미래(4시점), LY = 나이별(0~80세), LD = 10년 단위(0~70대)
    ========================================================= */
-let CH=null,R=null;const sel={money:0,love:0,work:0,health:0};let netH=0;
-function compute(){R=HZ.map((h,hi)=>CATS.map((c,ci)=>{const v=[oSaju(CH,h.off,ci),oWest(CH,h.off,ci),oVedic(CH,h.off,ci),oNum(CH,h.off,ci),oMaya(CH,h.off,ci),oTarot(CH,hi,ci)];
-  const sc=v.map(x=>x[0]);const avg=sc.reduce((a,b)=>a+b)/6;const sd=Math.sqrt(sc.reduce((a,b)=>a+(b-avg)**2,0)/6);
-  const mean=Math.round(clamp(55+(avg-62)*1.8,5,98));
-  return {v,mean,agree:Math.max(0,Math.round(100-sd*2.2))}}))}
+const ORC=[oSaju,oWest,oVedic,oNum,oMaya];
+const amp=(avg,k)=>Math.round(clamp(55+(avg-56)*k,5,98));
+function summarize(v,k){const sc=v.map(x=>x[0]);const avg=sc.reduce((a,b)=>a+b)/sc.length;const sd=Math.sqrt(sc.reduce((a,b)=>a+(b-avg)**2,0)/sc.length);
+  return {v,avg,mean:amp(avg,k),agree:Math.max(0,Math.round(100-sd*2.2))}}
+let CH=null,R=null,LY=null,LD=null,LS=null;const sel={money:0,love:0,work:0,health:0};let mode="life",selDec=0,netP=0,netC=0;
+const AGES=81,DECS=8;
+const nowAge=()=>{const n=new Date();return n.getFullYear()+(n.getMonth()+.5)/12-CH.birthYear};
+function compute(){
+  R=HZ.map((h,hi)=>CATS.map((c,ci)=>{const t=horizonDate(h.off);return summarize([...ORC.map(o=>o(CH,t,ci)),oTarot(CH,hi,ci)],1.8)}));
+  LY=Array.from({length:AGES},(_,a)=>{const t=lifeDate(CH,a);return CATS.map((c,ci)=>summarize(ORC.map(o=>o(CH,t,ci)),1.8))});
+  LS=CATS.map((c,ci)=>LY.map((_,a)=>{let s=0,n=0;for(let k=-2;k<=2;k++){const r=LY[a+k];if(r){s+=r[ci].avg;n++}}return amp(s/n,2.6)}));
+  LD=Array.from({length:DECS},(_,d)=>CATS.map((c,ci)=>{const yrs=LY.slice(d*10,d*10+10).map(r=>r[ci]);
+    const v=ORC.map((o,oi)=>{const sc=yrs.map(r=>r.v[oi][0]);const m=sc.reduce((a,b)=>a+b)/sc.length;let bi=0;sc.forEach((x,i)=>{if(Math.abs(x-50)>Math.abs(sc[bi]-50))bi=i});
+      const ex=yrs[bi].v[oi];const yr=Math.floor(CH.birthYear+d*10+bi+.5);
+      return [Math.round(clamp(50+(m-50)*1.7,5,98)),`가장 두드러진 해는 <b>${yr}년(${d*10+bi}세)</b>. ${ex[1]}`,ex[2],yrs[5].v[oi][3]]});
+    return summarize(v,1.8)}));
+}
 const reduceM=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* =========================================================
@@ -498,44 +546,77 @@ function renderSigil(){const s=document.getElementById("sigil");s.innerHTML="";c
   const c=E("g",{filter:"url(#gl)"});c.append(E("polygon",{points:poly(cx,cy,92,6,0,2),fill:"none",stroke:Au,"stroke-opacity":.5}),E("circle",{cx,cy,r:58,fill:"none",stroke:G,"stroke-opacity":.6}),E("text",{x:cx,y:cy+2,fill:G,"fill-opacity":.75,"font-size":34,"font-family":"Nanum Myeongjo,serif","text-anchor":"middle","dominant-baseline":"middle"},ST[CH.stems.d]));s.append(c)}
 
 function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b)=>a+b.mean,0)/all.length);document.getElementById("fateIdx").textContent=idx;
-  const early=(R[0].concat(R[1])).reduce((a,b)=>a+b.mean,0)/8,late=(R[2].concat(R[3])).reduce((a,b)=>a+b.mean,0)/8;
-  const traj=late-early>4?"늦게 크게 피는 형":early-late>4?"일찍 꽃피는 형":"꾸준히 오르는 형";
-  let best={m:-1},worst={m:999};R.forEach((row,hi)=>row.forEach((c,ci)=>{if(c.mean>best.m)best={m:c.mean,hi,ci};if(c.mean<worst.m)worst={m:c.mean,hi,ci}}));
+  const dm=LD.map(r=>r.reduce((a,b)=>a+b.mean,0)/4);const early=(dm[0]+dm[1]+dm[2])/3,late=(dm[3]+dm[4]+dm[5]+dm[6])/4;
+  const traj=late-early>3?"늦게 크게 피는 형":early-late>3?"일찍 꽃피는 형":"꾸준히 이어가는 형";
+  let best={m:-1};LD.forEach((row,d)=>row.forEach((c,ci)=>{if(c.mean>best.m)best={m:c.mean,d,ci}}));
+  let soon={m:-1},warn={m:999};R.forEach((row,hi)=>row.forEach((c,ci)=>{if(c.mean>soon.m)soon={m:c.mean,hi,ci};if(c.mean<warn.m)warn={m:c.mean,hi,ci}}));
   document.getElementById("typeName").textContent=`${ELIMG[SE[CH.stems.d]]}, ${traj}`;
-  const line=traj==="늦게 크게 피는 형"?"초반은 쌓는 시간, 후반은 거두는 시간입니다.":traj==="일찍 꽃피는 형"?"가까운 몇 년에 운이 몰려 있습니다. 지금 잡은 기회를 오래 지키는 게 과제입니다.":"큰 굴곡 없이 차근차근 올라가는 흐름입니다.";
-  document.getElementById("typeText").textContent=`${line} 가장 강한 신호는 ${HZ[best.hi].n} ${CATS[best.ci].n}(${best.m}), 가장 조심할 곳은 ${HZ[worst.hi].n} ${CATS[worst.ci].n}(${worst.m})입니다.`;
+  const line=traj==="늦게 크게 피는 형"?"초반은 쌓는 시간, 후반은 거두는 시간입니다.":traj==="일찍 꽃피는 형"?"젊은 시절에 운이 몰려 있습니다. 그때 잡은 것을 오래 지키는 게 과제입니다.":"큰 굴곡 없이 고르게 이어지는 흐름입니다.";
+  document.getElementById("typeText").textContent=`${line} 평생 가장 강한 10년은 ${best.d*10}대의 ${CATS[best.ci].n}(${best.m}). 가까운 미래에선 ${HZ[soon.hi].n} ${CATS[soon.ci].n}(${soon.m})이 가장 밝고, ${HZ[warn.hi].n} ${CATS[warn.ci].n}(${warn.m})을 조심하세요.`;
   document.getElementById("whoName").textContent=CH.inp.name||"당신"}
 
-function renderTrend(){const s=document.getElementById("trend");const W=760,Hh=280,L=40,R0=44,Tp=14,B=36;
-  const xs=y=>L+(W-L-R0)*(y/10),ys=v=>Tp+(Hh-Tp-B)*(1-v/100);let o="";
-  [0,20,40,60,80,100].forEach(v=>{o+=`<line x1="${L}" x2="${W-R0}" y1="${ys(v)}" y2="${ys(v)}" stroke="rgba(80,200,170,${v===50?.2:.1})"/><text x="${L-10}" y="${ys(v)}" fill="#ab9f8c" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="end" dominant-baseline="middle">${v}</text>`});
-  o+=`<rect x="${L}" y="${ys(100)}" width="${W-R0-L}" height="${ys(70)-ys(100)}" fill="rgba(61,255,176,.04)"/><rect x="${L}" y="${ys(35)}" width="${W-R0-L}" height="${ys(0)-ys(35)}" fill="rgba(255,134,176,.04)"/>`;
-  o+=`<text x="${xs(0)}" y="${Hh-B+22}" fill="#76695a" font-size="12" font-family="IBM Plex Sans KR,sans-serif" text-anchor="middle">지금</text>`;
-  const y0=new Date().getFullYear();
-  HZ.forEach(h=>{o+=`<line x1="${xs(h.off)}" x2="${xs(h.off)}" y1="${Tp}" y2="${Hh-B}" stroke="rgba(80,200,170,.12)"/><text x="${xs(h.off)}" y="${Hh-B+22}" fill="#ab9f8c" font-size="12" font-family="IBM Plex Sans KR,sans-serif" text-anchor="middle">${h.n} · ${y0+h.off}</text>`});
-  CATS.forEach((c,ci)=>{const pts=HZ.map((h,hi)=>[xs(h.off),ys(R[hi][ci].mean)]);let d=`M${pts[0][0]},${pts[0][1]}`;
-    for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],mx=(a[0]+b[0])/2;d+=` C${mx},${a[1]} ${mx},${b[1]} ${b[0]},${b[1]}`}
-    o+=`<path d="${d}" fill="none" stroke="${c.c}" stroke-width="2.2" style="filter:drop-shadow(0 0 5px ${c.c})"/>`;
-    pts.forEach((p,hi)=>{const on=sel[c.k]===hi;o+=`<circle cx="${p[0]}" cy="${p[1]}" r="${on?5.5:3.2}" fill="${on?c.c:"#0b0907"}" stroke="${c.c}" stroke-width="1.8"/>`})});
-  s.innerHTML=o;document.getElementById("legend").innerHTML=CATS.map(c=>`<span><i style="background:${c.c};box-shadow:0 0 6px ${c.c}"></i>${c.n}</span>`).join("")}
+function chartW(){const el=document.getElementById("trend");return Math.max(320,Math.round((el.parentElement.clientWidth||760)-32))}
+function renderTrend(){document.querySelectorAll("#modeTabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===mode));
+  document.getElementById("trendNote").textContent=mode==="life"?"점마다 다섯 점술(타로 제외)의 5년 이동 평균입니다. 지나온 구간은 흐리게, 앞으로는 밝게 표시했고, 10년 구간을 누르면 아래 카드가 그 시기로 바뀝니다.":"점마다 여섯 점술의 평균입니다. 가로축은 실제 햇수 간격이고, 카드마다 고른 시점이 큰 점으로 표시됩니다.";
+  mode==="life"?renderLife():renderNear()}
+function gridY(W,L,R0,ys,o){[0,20,40,60,80,100].forEach(v=>{o.push(`<line x1="${L}" x2="${W-R0}" y1="${ys(v)}" y2="${ys(v)}" stroke="rgba(110,230,160,${v===60?.16:.08})"/><text x="${L-8}" y="${ys(v)}" fill="#ab9f8c" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="end" dominant-baseline="middle">${v}</text>`)})}
+function curve(pts){let d=`M${pts[0][0]},${pts[0][1]}`;for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],mx=(a[0]+b[0])/2;d+=` C${mx},${a[1]} ${mx},${b[1]} ${b[0]},${b[1]}`}return d}
+function renderNear(){const s=document.getElementById("trend");const W=chartW(),Hh=270,L=36,R0=22,Tp=12,B=34;s.setAttribute("viewBox",`0 0 ${W} ${Hh}`);
+  const xs=y=>L+(W-L-R0)*(y/10),ys=v=>Tp+(Hh-Tp-B)*(1-v/100);const o=[];gridY(W,L,R0,ys,o);const y0=new Date().getFullYear();const nar=W<520;
+  o.push(`<text x="${xs(0)}" y="${Hh-B+20}" fill="#76695a" font-size="11" text-anchor="middle">지금</text>`);
+  HZ.forEach(h=>{o.push(`<line x1="${xs(h.off)}" x2="${xs(h.off)}" y1="${Tp}" y2="${Hh-B}" stroke="rgba(110,230,160,.1)"/><text x="${xs(h.off)}" y="${Hh-B+20}" fill="#ab9f8c" font-size="${nar?10.5:12}" text-anchor="${h.off===10?"end":"middle"}">${h.n}${nar?"":" · "+(y0+h.off)}</text>`)});
+  CATS.forEach((c,ci)=>{const pts=HZ.map((h,hi)=>[xs(h.off),ys(R[hi][ci].mean)]);o.push(`<path d="${curve(pts)}" fill="none" stroke="${c.c}" stroke-width="2.2" style="filter:drop-shadow(0 0 5px ${c.c})"/>`);
+    pts.forEach((p,hi)=>{const on=sel[c.k]===hi;o.push(`<circle cx="${p[0]}" cy="${p[1]}" r="${on?5.5:3.2}" fill="${on?c.c:"#0b0907"}" stroke="${c.c}" stroke-width="1.8"/>`)})});
+  s.innerHTML=o.join("");legend()}
+function legend(){document.getElementById("legend").innerHTML=CATS.map(c=>`<span><i style="background:${c.c};box-shadow:0 0 6px ${c.c}"></i>${c.n}</span>`).join("")}
+function renderLife(){const s=document.getElementById("trend");const W=chartW(),nar=W<520;const L=nar?30:36,R0=14,Tp=22,CB=200,Hh=nar?318:322;s.setAttribute("viewBox",`0 0 ${W} ${Hh}`);
+  const xs=a=>L+(W-L-R0)*(a/80),ys=v=>Tp+(CB-Tp)*(1-v/100);const o=[];const na=clamp(nowAge(),0,80);
+  o.push(`<defs><clipPath id="cpP"><rect x="0" y="0" width="${xs(na)}" height="${CB+2}"/></clipPath><clipPath id="cpF"><rect x="${xs(na)}" y="0" width="${W}" height="${CB+2}"/></clipPath></defs>`);
+  o.push(`<rect x="${xs(selDec*10)}" y="${Tp}" width="${xs(10)-xs(0)}" height="${CB-Tp}" fill="rgba(61,255,176,.07)" stroke="rgba(61,255,176,.35)" stroke-dasharray="3 4"/>`);
+  gridY(W,L,R0,ys,o);
+  for(let a=0;a<=80;a+=10)o.push(`<line x1="${xs(a)}" x2="${xs(a)}" y1="${Tp}" y2="${CB}" stroke="rgba(110,230,160,.06)"/>`);
+  const lines=CATS.map((c,ci)=>`<path d="${curve(LS[ci].map((v,a)=>[xs(a),ys(v)]))}" fill="none" stroke="${c.c}" stroke-width="2" stroke-linejoin="round" style="filter:drop-shadow(0 0 4px ${c.c})"/>`).join("");
+  o.push(`<g clip-path="url(#cpP)" opacity=".3">${lines}</g><g clip-path="url(#cpF)">${lines}</g>`);
+  o.push(`<line x1="${xs(na)}" x2="${xs(na)}" y1="${Tp-8}" y2="${CB}" stroke="#e9c46a" stroke-width="1.2"/><circle cx="${xs(na)}" cy="${Tp-8}" r="3" fill="#e9c46a"/><text x="${xs(na)+6}" y="${Tp-6}" fill="#e9c46a" font-size="11" font-family="IBM Plex Sans KR,sans-serif">지금 ${Math.floor(na)}세</text>`);
+  // decade labels
+  const dy=CB+18;for(let d=0;d<DECS;d++){const on=d===selDec;o.push(`<text x="${(xs(d*10)+xs(d*10+10))/2}" y="${dy}" text-anchor="middle" font-size="${nar?10.5:12}" fill="${on?"#3dffb0":"#ab9f8c"}" font-weight="${on?600:400}">${d*10}대</text>`)}
+  if(!nar)for(let d=0;d<DECS;d++)o.push(`<text x="${(xs(d*10)+xs(d*10+10))/2}" y="${dy+14}" text-anchor="middle" font-size="10" fill="#76695a" font-family="IBM Plex Mono,monospace">${Math.floor(CH.birthYear+d*10+.5)}</text>`);
+  // bands
+  const band=(y,label,segs,col)=>{o.push(`<text x="${L-6}" y="${y+9}" text-anchor="end" font-size="10" fill="#76695a">${label}</text>`);
+    segs.forEach(([a0,a1,t])=>{const x0=xs(clamp(a0,0,80)),x1=xs(clamp(a1,0,80));if(x1-x0<1)return;const past=a1<=na;
+      o.push(`<rect x="${x0+.5}" y="${y}" width="${x1-x0-1}" height="18" rx="3" fill="${col}" fill-opacity="${past?.05:.12}" stroke="${col}" stroke-opacity="${past?.15:.35}"/>`);
+      if(x1-x0>(nar?18:22))o.push(`<text x="${(x0+x1)/2}" y="${y+12.5}" text-anchor="middle" font-size="${nar?9.5:11}" fill="${past?"#76695a":"#efe9df"}" font-family="Nanum Myeongjo,serif">${t}</text>`)})};
+  const segs=[[0,CH.dwStart,"월주"]];for(let k=1;CH.dwStart+10*(k-1)<80;k++)segs.push([CH.dwStart+10*(k-1),CH.dwStart+10*k,pillar(CH.mIdx+(CH.fwd?k:-k))]);
+  const by0=dy+(nar?10:24);band(by0,"대운",segs,"#e9c46a");
+  band(by0+24,"다샤",CH.dashas.map(x=>[x.start-CH.birthYear,x.end-CH.birthYear,PK[x.lord]]),"#3dffb0");
+  for(let d=0;d<DECS;d++)o.push(`<rect class="dhit" data-d="${d}" x="${xs(d*10)}" y="0" width="${xs(10)-xs(0)}" height="${dy+6}" fill="transparent" style="cursor:pointer"><title>${d*10}대 보기</title></rect>`);
+  s.innerHTML=o.join("");legend();
+  s.querySelectorAll(".dhit").forEach(r=>r.addEventListener("click",()=>{selDec=+r.dataset.d;cast();renderTrend();renderCats();if(document.getElementById("p-net").open)renderNet()}))}
 
 function ringSvg(v,c){const r=28,L=2*Math.PI*r;return `<svg class="ring" viewBox="0 0 68 68"><circle cx="34" cy="34" r="32" fill="none" stroke="${c}" stroke-opacity=".25" stroke-dasharray="1 3"/><circle cx="34" cy="34" r="${r}" fill="none" stroke="rgba(80,200,170,.15)" stroke-width="4"/><circle class="arc" cx="34" cy="34" r="${r}" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${(L*v/100).toFixed(1)} ${L.toFixed(1)}" transform="rotate(-90 34 34)" style="filter:drop-shadow(0 0 5px ${c})"/><text x="34" y="35" text-anchor="middle" dominant-baseline="middle" fill="#efe9df" font-family="Cinzel,serif" font-size="19" font-weight="700">${v}</text></svg>`}
 const openState={};
 function tier(v){return v>=80?0:v>=65?1:v>=50?2:v>=35?3:4}
-function renderCat(ci,anim){const c=CATS[ci],hi=sel[c.k],r=R[hi][ci];const box=document.getElementById("card-"+c.k);
-  const top=r.v.map((x,i)=>[x[0],i]).sort((a,b)=>b[0]-a[0]);const lead=r.mean>=50?M[top[0][1]].n:M[top[5][1]].n;
-  const y=new Date().getFullYear()+HZ[hi].off;
-  box.innerHTML=`<div class="cat-top">${ringSvg(r.mean,c.c)}<div style="min-width:0"><h3>${c.n}<small>${HZ[hi].n} · ${y}</small></h3><p class="head">${HEAD[c.k][tier(r.mean)]}</p>
-   <div class="agree">${r.mean>=50?"가장 강하게 밀어주는 점술":"가장 강하게 경고하는 점술"}: ${lead} · 일치도 ${r.agree}%</div></div></div>
-   <div class="hz" style="--c:${c.c}">${HZ.map((h,i)=>`<button type="button" aria-pressed="${i===hi}" data-h="${i}"><b>${h.n}</b><span>${R[i][ci].mean}</span></button>`).join("")}</div>
+function decRange(d){const a=Math.floor(CH.birthYear+d*10+.5);return `${a}~${a+9}`}
+function renderCat(ci,anim){const c=CATS[ci];const box=document.getElementById("card-"+c.k);const life=mode==="life";
+  const r=life?LD[selDec][ci]:R[sel[c.k]][ci];const hi=sel[c.k];
+  const top=r.v.map((x,i)=>[x[0],i]).sort((a,b)=>b[0]-a[0]);const lead=r.mean>=50?M[top[0][1]].n:M[top[top.length-1][1]].n;
+  const sub=life?`${selDec*10}대 · ${decRange(selDec)}`:`${HZ[hi].n} · ${new Date().getFullYear()+HZ[hi].off}`;
+  const na=nowAge();
+  const nav=life?`<div class="decbars" style="--c:${c.c}" role="group" aria-label="10년 구간 선택">${LD.map((row,d)=>`<button type="button" data-d="${d}" aria-pressed="${d===selDec}" class="${(d*10+10)<=na?"past":""}" title="${d*10}대 ${row[ci].mean}점"><i style="height:${Math.max(8,row[ci].mean)}%"></i><b>${d*10}</b></button>`).join("")}</div>`
+    :`<div class="hz" style="--c:${c.c}">${HZ.map((h,i)=>`<button type="button" aria-pressed="${i===hi}" data-h="${i}"><b>${h.n}</b><span>${R[i][ci].mean}</span></button>`).join("")}</div>`;
+  box.innerHTML=`<div class="cat-top">${ringSvg(r.mean,c.c)}<div style="min-width:0"><h3>${c.n}<small>${sub}</small></h3><p class="head">${HEAD[c.k][tier(r.mean)]}</p>
+   <div class="agree">${r.mean>=50?"가장 강하게 밀어주는 점술":"가장 강하게 경고하는 점술"}: ${lead} · 일치도 ${r.agree}%</div></div></div>${nav}
    <div class="dots">${r.v.map((x,i)=>`<span class="dot" style="--c:${M[i].c}"><i></i>${M[i].n} <b>${x[0]}</b></span>`).join("")}</div>
    <details class="more" ${openState[c.k]?"open":""}><summary>점술별 풀이 보기 <span class="chev">⌄</span></summary><ul class="voices">${r.v.map((x,i)=>`<li style="--c:${M[i].c}"><span class="who">${M[i].n}</span><span class="sc">${x[0]}</span><span>${x[1]}<em>${i<5?x[2]:""}</em></span></li>`).join("")}</ul></details>`;
   box.querySelectorAll(".hz button").forEach(b=>b.addEventListener("click",()=>{sel[c.k]=+b.dataset.h;renderCat(ci,true);renderTrend()}));
+  box.querySelectorAll(".decbars button").forEach(b=>b.addEventListener("click",()=>{selDec=+b.dataset.d;cast();renderTrend();renderCats();if(document.getElementById("p-net").open)renderNet()}));
   box.querySelector("details").addEventListener("toggle",e=>{openState[c.k]=e.target.open});
   if(anim){box.animate?.([{boxShadow:`0 0 0 ${c.c}00`},{boxShadow:`0 0 36px ${c.c}55`},{boxShadow:`0 0 0 ${c.c}00`}],{duration:900,easing:"ease-out"})}}
 function renderCats(){const box=document.getElementById("cats");box.querySelectorAll(".cat").forEach(e=>e.remove());
   CATS.forEach((c,ci)=>{const a=document.createElement("article");a.className="cat";a.id="card-"+c.k;box.append(a);renderCat(ci)});
-  document.getElementById("tarot").innerHTML=`<div class="tcards">${tarot.map(t=>`<div class="tcard" title="${t[1]}">${t[0]}</div>`).join("")}</div><span><b>타로: ${tarot.map((t,i)=>HZ[i].n.replace(" 뒤","")+" "+t[1]).join(" · ")}</b><br>입력값으로 섞은 덱에서 시점마다 한 장씩 뽑았습니다.</span><button class="draw" type="button" id="redraw">카드 다시 뽑기</button>`;
+  const tr=document.getElementById("tarot");
+  if(mode==="life"){tr.innerHTML=`<span><b>${selDec*10}대 (${decRange(selDec)})</b> · 평생 흐름은 타로를 뺀 다섯 점술로 계산합니다. 각 점술의 점수는 그 10년의 평균이고, 풀이는 그중 가장 두드러진 해를 보여줍니다.</span>`;return}
+  tr.innerHTML=`<div class="tcards">${tarot.map(t=>`<div class="tcard" title="${t[1]}">${t[0]}</div>`).join("")}</div><span><b>타로: ${tarot.map((t,i)=>HZ[i].n.replace(" 뒤","")+" "+t[1]).join(" · ")}</b><br>입력값으로 섞은 덱에서 시점마다 한 장씩 뽑았습니다.</span><button class="draw" type="button" id="redraw">카드 다시 뽑기</button>`;
   document.getElementById("redraw").addEventListener("click",()=>{draws++;drawTarot(CH);compute();cast();renderAll()})}
 function cast(){const f=document.getElementById("flash");f.classList.remove("cast");void f.getBoundingClientRect();f.classList.add("cast")}
 document.getElementById("flash").innerHTML=`<g fill="none" stroke="#3dffb0" stroke-width=".8" style="filter:drop-shadow(0 0 4px #3dffb0)"><circle cx="100" cy="100" r="96"/><circle cx="100" cy="100" r="80" stroke="#ff9a3c" stroke-dasharray="2 3"/><polygon points="${poly(100,100,80,6,0,2)}"/><polygon points="${poly(100,100,80,4,45)}"/><circle cx="100" cy="100" r="40"/></g>`;
@@ -554,38 +635,47 @@ function renderNatal(){const ch=CH,d=ch.stems.d;const dom=ch.cnt.indexOf(Math.ma
    <div class="pl wide"><div class="t">인도 · 달</div><div class="h">${ZOD[sign(vm)]} · ${NAK[ch.nk]}<br>대운 ${ch.fwd?"순행":"역행"} ${ch.dwStart.toFixed(1)}세~</div></div>
    <div class="pl wide"><div class="t">수비학 · 마야</div><div class="h">인생 수 ${ch.lp}<br>${ch.tone} ${MS[ch.msign][0]}</div></div>`}
 
-/* ---------- network ---------- */
-const net={cv:document.getElementById("net"),nodes:[],edges:[],running:false};
-function renderNetCtl(){const c=document.getElementById("netctl");c.innerHTML=HZ.map((h,i)=>`<button type="button" aria-pressed="${i===netH}" data-h="${i}">${h.n}</button>`).join("");
-  c.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{netH=+b.dataset.h;renderNetCtl();buildNet()}))}
-function buildNet(){const cv=net.cv;if(!cv.clientWidth)return;const dpr=Math.min(devicePixelRatio||1,2),w=cv.clientWidth,h=cv.clientHeight;cv.width=w*dpr;cv.height=h*dpr;Object.assign(net,{dpr,w,h});
-  const narrow=w<620,X=narrow?[.10,.36,.66,.90]:[.07,.33,.63,.88];const col=(n,a,b)=>Array.from({length:n},(_,i)=>a+(b-a)*(n===1?.5:i/(n-1)));
-  const yi=col(4,h*.2,h*.8),ym=col(6,h*.1,h*.88),yc=col(4,h*.16,h*.84);const row=R[netH];net.nodes=[];net.edges=[];
-  ["생년월일","출생 시각","출생지","이름·카드"].forEach((l,i)=>net.nodes.push({x:X[0]*w,y:yi[i],r:6,c:"#4fd1e8",l,pos:"b"}));
-  M.forEach((m,j)=>net.nodes.push({x:X[1]*w,y:ym[j],r:7,c:m.c,l:m.n,pos:narrow?"b":"r"}));
-  CATS.forEach((c,k)=>net.nodes.push({x:X[2]*w,y:yc[k],r:7+row[k].mean/14,c:c.c,l:c.n,s:String(row[k].mean),pos:narrow?"b":"r"}));
-  const avg=Math.round(row.reduce((a,b)=>a+b.mean,0)/4);net.nodes.push({x:X[3]*w,y:h/2,r:20,c:"#e9c46a",l:HZ[netH].n,s:"종합 "+avg,pos:"b",big:1});
-  [[0,1],[0,1,2],[0,1,2],[0,3],[0],[3]].forEach((ws,j)=>ws.forEach(i=>net.edges.push({a:net.nodes[i],b:net.nodes[4+j],w:.5,c:"#4fd1e8",live:i===0})));
-  M.forEach((m,j)=>CATS.forEach((c,k)=>{const v=row[k].v[j][0];net.edges.push({a:net.nodes[4+j],b:net.nodes[10+k],w:v/100,c:m.c,live:v>=70})}));
-  CATS.forEach((c,k)=>net.edges.push({a:net.nodes[10+k],b:net.nodes[14],w:row[k].mean/100,c:c.c,live:true}));
-  net.edges.forEach((e,i)=>{e.t=(i*.137)%1;e.v=.0009+((i*37)%10)/10*.0009});if(reduceM)drawNet(0)}
-function bez(e,t){const mx=(e.a.x+e.b.x)/2,u=1-t;return[u*u*u*e.a.x+3*u*u*t*mx+3*u*t*t*mx+t*t*t*e.b.x,u*u*u*e.a.y+3*u*u*t*e.a.y+3*u*t*t*e.b.y+t*t*t*e.b.y]}
-function drawNet(time){const x=net.cv.getContext("2d");x.setTransform(net.dpr,0,0,net.dpr,0,0);x.clearRect(0,0,net.w,net.h);
-  for(const e of net.edges){const mx=(e.a.x+e.b.x)/2;x.strokeStyle=e.c;x.globalAlpha=e.live?.14+e.w*.16:.04;x.lineWidth=e.live?.8+e.w*1.3:.6;x.beginPath();x.moveTo(e.a.x,e.a.y);x.bezierCurveTo(mx,e.a.y,mx,e.b.y,e.b.x,e.b.y);x.stroke()}
-  x.globalCompositeOperation="lighter";
-  for(const e of net.edges){if(!e.live)continue;if(!reduceM){e.t+=e.v;if(e.t>1)e.t-=1}
-    for(let k=0;k<14;k++){const tt=e.t-k*.012;if(tt<0)break;const[px,py]=bez(e,tt);x.globalAlpha=(1-k/14)*.7;x.fillStyle=e.c;x.beginPath();x.arc(px,py,k?1.4:2.2,0,6.28);x.fill()}
-    const[hx,hy]=bez(e,e.t);const g=x.createRadialGradient(hx,hy,0,hx,hy,9);g.addColorStop(0,e.c);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.5;x.fillStyle=g;x.beginPath();x.arc(hx,hy,9,0,6.28);x.fill()}
-  for(const n of net.nodes){const Rr=n.r*3.2*(1+.06*Math.sin(time*.0015+n.y));const g=x.createRadialGradient(n.x,n.y,0,n.x,n.y,Rr);g.addColorStop(0,n.c);g.addColorStop(1,"rgba(0,0,0,0)");x.globalAlpha=.28;x.fillStyle=g;x.beginPath();x.arc(n.x,n.y,Rr,0,6.28);x.fill()}
-  x.globalCompositeOperation="source-over";x.globalAlpha=1;
-  for(const n of net.nodes){x.fillStyle="#120e0a";x.strokeStyle=n.c;x.lineWidth=1.4;x.beginPath();x.arc(n.x,n.y,n.r,0,6.28);x.fill();x.stroke();
-    x.save();x.setLineDash([2,4]);x.lineDashOffset=-time*.01;x.globalAlpha=.6;x.beginPath();x.arc(n.x,n.y,n.r+5,0,6.28);x.stroke();x.restore();
-    x.fillStyle=n.c;x.beginPath();x.arc(n.x,n.y,Math.max(2,n.r*.3),0,6.28);x.fill();x.textBaseline="middle";x.fillStyle="#e3f1ec";
-    if(n.pos==="r"){x.textAlign="left";x.font="500 13px 'IBM Plex Sans KR',sans-serif";x.fillText(n.l,n.x+n.r+12,n.y-(n.s?7:0));if(n.s){x.fillStyle=n.c;x.font="12px 'Cinzel',serif";x.fillText(n.s,n.x+n.r+12,n.y+9)}}
-    else{x.textAlign="center";x.font=(n.big?"700 14px ":"500 11.5px ")+"'IBM Plex Sans KR',sans-serif";x.fillText(n.l,n.x,n.y+n.r+16);if(n.s){x.fillStyle=n.c;x.font="12px 'Cinzel',serif";x.fillText(n.s,n.x,n.y+n.r+31)}}}
-  if(!reduceM&&net.running)requestAnimationFrame(drawNet)}
-document.getElementById("p-net").addEventListener("toggle",e=>{net.running=e.target.open;if(net.running){renderNetCtl();buildNet();requestAnimationFrame(drawNet)}});
-addEventListener("resize",()=>{if(net.running)buildNet()});
+/* ---------- evidence cluster network ---------- */
+function netData(){if(netP<4)return {r:R[netP][netC],label:`${HZ[netP].n} · ${new Date().getFullYear()+HZ[netP].off}`};
+  const a=selDec*10+5;return {r:LY[a][netC],label:`${selDec*10}대 중반 · ${Math.floor(CH.birthYear+a+.5)}년`}}
+function renderNetCtl(){const p=document.getElementById("netP"),c=document.getElementById("netC");
+  p.innerHTML=HZ.map((h,i)=>`<button type="button" data-p="${i}" aria-pressed="${i===netP}">${h.n}</button>`).join("")+`<button type="button" data-p="4" aria-pressed="${netP===4}">${selDec*10}대</button>`;
+  c.innerHTML=CATS.map((x,i)=>`<button type="button" data-c="${i}" aria-pressed="${i===netC}" style="--c:${x.c}">${x.n}</button>`).join("");
+  p.querySelectorAll("button").forEach(b=>b.onclick=()=>{netP=+b.dataset.p;renderNet()});c.querySelectorAll("button").forEach(b=>b.onclick=()=>{netC=+b.dataset.c;renderNet()})}
+function renderNet(){renderNetCtl();const svg=document.getElementById("net");const W=Math.max(320,svg.parentElement.clientWidth||700);const nar=W<620;const H=nar?Math.round(W*1.7):580;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);const {r,label}=netData();const cat=CATS[netC];const cx=W/2,cy=H/2;const n=r.v.length;
+  const rx=nar?W*.24:W*.26,ry=nar?H*.32:H*.30,rf=nar?44:72,fs=nar?10:11.5;const POS="#3dffb0",NEG="#ff5d73";
+  const o=[`<defs><filter id="ng"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><radialGradient id="hubg"><stop offset="0" stop-color="${cat.c}" stop-opacity=".45"/><stop offset="1" stop-color="${cat.c}" stop-opacity="0"/></radialGradient></defs>`];
+  const halos=[],edges=[],nodes=[],labels=[];const tips=[];
+  r.v.forEach((x,i)=>{const m=M[i];const ang=(-90+i*360/n)*rad;const ox=cx+rx*Math.cos(ang),oy=cy+ry*Math.sin(ang);
+    halos.push(`<circle cx="${ox}" cy="${oy}" r="${rf+18}" fill="${m.c}" fill-opacity=".045" stroke="${m.c}" stroke-opacity=".16" stroke-dasharray="2 5"/>`);
+    const dv=x[0]-50,col=dv>=0?POS:NEG,wdt=1+Math.abs(dv)/9;const mx=(ox+cx)/2+(oy-cy)*.12,my=(oy+cy)/2-(ox-cx)*.12;
+    edges.push(`<path d="M${ox},${oy} Q${mx},${my} ${cx},${cy}" fill="none" stroke="${col}" stroke-opacity=".28" stroke-width="${wdt}"/><path class="flow" d="M${ox},${oy} Q${mx},${my} ${cx},${cy}" fill="none" stroke="${col}" stroke-width="${Math.min(3,wdt)}" style="animation-duration:${(3.2-Math.min(2,Math.abs(dv)/25)).toFixed(2)}s"/>`);
+    const F=x[3]||[];const k=F.length;const spread=(k>=4?(nar?38:34):k===3?(nar?32:28):(nar?28:24))*rad;
+    F.forEach((f,j)=>{const a2=ang+(j-(k-1)/2)*spread;const fx=ox+rf*Math.cos(a2),fy=oy+rf*Math.sin(a2);const fc=f[1]>=0?POS:NEG;const fr=Math.min(10,3+Math.abs(f[1])/5);
+      edges.push(`<line x1="${fx}" y1="${fy}" x2="${ox}" y2="${oy}" stroke="${fc}" stroke-opacity=".3" stroke-width="${.6+Math.min(4,Math.abs(f[1])/7)}"/><line class="flow" x1="${fx}" y1="${fy}" x2="${ox}" y2="${oy}" stroke="${fc}" stroke-width="${.8+Math.min(2,Math.abs(f[1])/12)}"/>`);
+      const ti=tips.length;tips.push(`<b style="color:${m.c}">${m.n}</b> · ${f[0]} <b style="color:${fc}">${f[1]>0?"+":""}${f[1]}</b>`);
+      nodes.push(`<circle data-t="${ti}" cx="${fx}" cy="${fy}" r="${fr}" fill="#120e0a" stroke="${fc}" stroke-width="1.4"/><circle cx="${fx}" cy="${fy}" r="${Math.max(1.5,fr*.35)}" fill="${fc}" pointer-events="none"/>`);
+      const c2=Math.cos(a2),s2=Math.sin(a2);const vert=Math.abs(c2)<.35;const off=fr+5+(vert&&k>2?(j%2)*13:0);
+      let lx=fx+c2*off,ly=fy+s2*off;let anc=c2>.3?"start":c2<-.3?"end":"middle";const dy=s2>.3?10:s2<-.3?-4:4;
+      const txt=nar?f[0].split(" ").slice(0,2).join(" "):f[0];const tw=(txt.length+4)*fs*.62;
+      if(anc==="start"&&lx+tw>W-4){anc="end";lx=W-4}else if(anc==="end"&&lx-tw<4){anc="start";lx=4}else if(anc==="middle"){lx=clamp(lx,tw/2+4,W-tw/2-4)}
+      labels.push(`<text x="${lx}" y="${ly+dy}" text-anchor="${anc}" font-size="${fs}" fill="#d8cfc1" pointer-events="none">${txt} <tspan fill="${fc}" font-family="IBM Plex Mono,monospace">${f[1]>0?"+":""}${f[1]}</tspan></text>`)});
+    const ti=tips.length;tips.push(`<b style="color:${m.c}">${m.n} ${x[0]}점</b><br>${x[1]}`);
+    nodes.push(`<g class="onode" data-t="${ti}"><circle cx="${ox}" cy="${oy}" r="${nar?13:16}" fill="#120e0a" stroke="${m.c}" stroke-width="2" filter="url(#ng)"/><circle cx="${ox}" cy="${oy}" r="${nar?22:26}" fill="none" stroke="${m.c}" stroke-opacity=".5" stroke-dasharray="2 4" class="spin"/></g>`);
+    const inward=Math.sin(ang)>0?-1:1;
+    labels.push(`<text x="${ox}" y="${oy+(nar?4:5)}" text-anchor="middle" font-size="${nar?11:13}" font-family="Cinzel,serif" font-weight="700" fill="${m.c}" pointer-events="none">${x[0]}</text><text x="${ox}" y="${oy+inward*(nar?32:38)+4}" text-anchor="middle" font-size="${nar?11:12.5}" font-weight="600" fill="#efe9df" pointer-events="none">${m.n}</text>`)});
+  const hr=nar?30:38;
+  nodes.push(`<circle cx="${cx}" cy="${cy}" r="${hr*2.6}" fill="url(#hubg)"/><circle cx="${cx}" cy="${cy}" r="${hr}" fill="#120e0a" stroke="${cat.c}" stroke-width="2.5" filter="url(#ng)"/><circle cx="${cx}" cy="${cy}" r="${hr+9}" fill="none" stroke="${cat.c}" stroke-opacity=".55" stroke-dasharray="3 5" class="spin rev"/>`);
+  labels.push(`<text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="${nar?12:14}" font-weight="600" fill="#efe9df">${cat.n}</text><text x="${cx}" y="${cy+(nar?14:17)}" text-anchor="middle" font-size="${nar?16:20}" font-family="Cinzel,serif" font-weight="700" fill="${cat.c}">${r.mean}</text>`);
+  o.push(halos.join(""),edges.join(""),nodes.join(""),labels.join(""));svg.innerHTML=o.join("");
+  document.getElementById("netLabel").textContent=`${label} · ${cat.n} ${r.mean}점 · 일치도 ${r.agree}%`;
+  const tip=document.getElementById("netTip"),wrap=svg.parentElement;
+  svg.onpointermove=e=>{const t=e.target.closest("[data-t]");if(!t){tip.hidden=true;return}const wr=wrap.getBoundingClientRect();tip.innerHTML=tips[+t.dataset.t];tip.hidden=false;
+    const x=e.clientX-wr.left;tip.style.left=Math.min(Math.max(x,120),wr.width-120)+"px";tip.style.top=(e.clientY-wr.top)+"px"};
+  svg.onpointerleave=()=>{tip.hidden=true}}
+document.getElementById("p-net").addEventListener("toggle",e=>{if(e.target.open)renderNet()});
+let rsT;addEventListener("resize",()=>{clearTimeout(rsT);rsT=setTimeout(()=>{if(!CH)return;renderTrend();if(document.getElementById("p-net").open)renderNet()},150)});
 
 /* ---------- sky: dusty dusk, ruins, emerald energy ---------- */
 (function sky(){const cv=document.getElementById("sky"),x=cv.getContext("2d");let W,Hh,dpr=Math.min(devicePixelRatio||1,2),ash=[],sig=[],ruins=null;
@@ -686,8 +776,9 @@ function fillForm(v){$("in-name").value=v.name||"";$("in-roman").value=v.roman||
   place=typeof v.place==="number"?placeFromIdx(v.place):v.place;showPlace()}
 function renderWho(v){const [y,m,d]=v.date.split("-");const dt=v.cal==="l"?`음 ${v.ly}.${String(v.lm).padStart(2,"0")}.${String(v.ld).padStart(2,"0")}${v.leap?"(윤)":""}`:`${y}.${m}.${d}`;
   $("whoSum").innerHTML=[v.name||"이름 없음",`${dt} ${v.notime?"시각 모름":v.time}`,v.place.name,v.sex==="f"?"여":"남"].map(t=>`<span>${t}</span>`).join("")}
-function run(v,animate){renderWho(v);CH=buildChart(v);draws=0;drawTarot(CH);compute();if(animate)cast();renderAll()}
-function renderAll(){renderSigil();renderVerdict();renderTrend();renderCats();renderNatal();if(net.running){renderNetCtl();buildNet()}}
+function run(v,animate){renderWho(v);CH=buildChart(v);draws=0;drawTarot(CH);compute();selDec=clamp(Math.floor(nowAge()/10),0,DECS-1);if(animate)cast();renderAll()}
+function renderAll(){renderSigil();renderVerdict();renderTrend();renderCats();renderNatal();if(document.getElementById("p-net").open)renderNet()}
+document.querySelectorAll("#modeTabs button").forEach(b=>b.addEventListener("click",()=>{if(mode===b.dataset.m)return;mode=b.dataset.m;cast();renderTrend();renderCats()}));
 $("ask").addEventListener("submit",e=>{e.preventDefault();const v=readForm();
   if(v.err){$("err").textContent=v.err;return}
   const [y]=v.date.split("-").map(Number);
