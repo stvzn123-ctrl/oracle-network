@@ -333,6 +333,17 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 @keyframes destiny-turn{to{transform:rotate(1turn)}}
 @media(max-width:760px){#fate-cosmos{right:-18vw;width:108vw;height:65svh;opacity:.24;mask-image:linear-gradient(180deg,transparent 0%,#000 26%,#000 80%,transparent 100%);}}
 @media(prefers-reduced-motion:reduce){.destiny-wheel{animation:none!important}}
+/* Result sharing: preview includes no identifying birth information. */
+.share-actions{margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.share-actions button,.share-dialog button{font:inherit;cursor:pointer;border:1px solid var(--line2);border-radius:10px;padding:10px 16px;background:var(--field);color:var(--emerald)}
+.share-actions small,.share-dialog p{color:var(--muted)}
+.share-dialog{width:min(480px,calc(100% - 32px));max-height:85dvh;overflow:auto;border:1px solid var(--line2);border-radius:18px;padding:24px;background:var(--bg);color:var(--fg)}
+.share-dialog::backdrop{background:var(--panel)}
+.share-dialog h2{font-size:24px;margin:0}
+.share-dialog textarea{display:block;width:100%;min-height:220px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--field);color:var(--fg);font:inherit;line-height:1.7}
+.share-dialog .share-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.share-dialog button:focus-visible,.share-actions button:focus-visible{outline:2px solid var(--emerald);outline-offset:3px}
+#share-status{min-height:1.7em;margin-bottom:0}
 </style>
 
 <div id="fate-cosmos" aria-hidden="true"><svg viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
@@ -387,9 +398,21 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
       <div class="orb"><b id="fateIdx">–</b><small>운명 지수</small></div>
       <div class="vtext" style="flex:1;min-width:240px;max-width:62ch"><p class="type" id="typeName"></p><div id="typeText"></div></div>
     </div>
+    <div class="share-actions"><button type="button" id="share-open">내 운명 결과 공유하기 ↗</button><small>이름·생년월일·출생지는 공유되지 않아요.</small></div>
   </div>
 </header>
 
+<dialog class="share-dialog" id="share-dialog" aria-labelledby="share-title">
+  <h2 id="share-title">내 운명 결과 공유</h2>
+  <p>아래 결과 문구와 사이트 링크를 공유해요. 링크를 연 친구는 자신의 운명을 볼 수 있어요.</p>
+  <textarea id="share-preview" aria-label="공유할 결과" readonly></textarea>
+  <div class="share-buttons">
+    <button type="button" id="share-native" hidden>공유하기</button>
+    <button type="button" id="share-copy">결과 복사</button>
+    <button type="button" id="share-close">닫기</button>
+  </div>
+  <p id="share-status" role="status" aria-live="polite"></p>
+</dialog>
 <section>
   <div class="sec-head"><span class="eyebrow">Prophecy</span><h2>여섯 점술이 말하는 당신의 운</h2></div>
   <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="near" aria-pressed="true">가까운 미래<small>1·3·5·10년</small></button><button type="button" data-m="life" aria-pressed="false">평생 지도<small>10년 단위</small></button></div>
@@ -1016,6 +1039,42 @@ $("ask").addEventListener("submit",e=>{e.preventDefault();const v=readForm();
   if(!v.name){$("err").textContent="이름을 입력해 주세요.";return}
   $("err").textContent="";try{localStorage.setItem("fate-input",JSON.stringify(v))}catch(_){}
   toggleMap(false);$("askbox").open=false;run(v,true);document.querySelector(".hero").nextElementSibling.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})});
+/* Share only a derived description and scores; never encode the birth input in URLs. */
+const SHARE_URL="https://stvzn123-ctrl.github.io/oracle-network/";
+function resultShareText(){
+  const type=DMA[ST[CH.stems.d]];
+  return ["나의 운명은 ‘"+type+"’ ✨","",
+    "1년 뒤 나의 운 흐름",
+    ...CATS.map((c,i)=>c.n+" "+D(R[0][i].mean)+"점"),
+    "","너는 어떤 운명을 타고났을까?","운명 신경망 · 재미로 보는 해석, 예측력 없음",SHARE_URL].join("\n");
+}
+$("share-open").addEventListener("click",()=>{
+  $("share-preview").value=resultShareText();
+  $("share-status").textContent="";
+  $("share-native").hidden=typeof navigator.share!=="function";
+  $("share-dialog").showModal();
+});
+$("share-close").addEventListener("click",()=>$("share-dialog").close());
+$("share-copy").addEventListener("click",async()=>{
+  const area=$("share-preview"),text=area.value;
+  try{
+    if(!navigator.clipboard?.writeText)throw new Error("Clipboard unavailable");
+    await navigator.clipboard.writeText(text);
+    $("share-status").textContent="결과와 링크를 복사했어요. 친구에게 붙여넣어 주세요.";
+  }catch(_){
+    area.focus();area.select();
+    $("share-status").textContent="자동 복사를 사용할 수 없어요. 선택된 글을 길게 누르거나 Ctrl+C / ⌘C로 복사해 주세요.";
+  }
+});
+$("share-native").addEventListener("click",async()=>{
+  try{
+    await navigator.share({title:"나의 운명 신경망",text:$("share-preview").value});
+    $("share-status").textContent="공유 창을 닫았어요.";
+  }catch(e){
+    if(e.name!=="AbortError")$("share-status").textContent="공유 창을 열지 못했어요. 결과 복사를 이용해 주세요.";
+  }
+});
+
 fillDays();$("in-d").value=22;$("in-m").value=11;fillDays();$("in-d").value=22;showPlace();
 let start=readForm(),saved=false;try{const sv=JSON.parse(localStorage.getItem("fate-input")||"null");if(sv&&sv.date){fillForm(sv);start=readForm();if(start.err)start=sv;saved=true}}catch(_){}
 $("askbox").open=!saved;
