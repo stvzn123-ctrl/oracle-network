@@ -360,6 +360,32 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 #unlock-status:empty{display:none}
 #unlock-status{color:var(--emerald);font-size:13px}
 @media(prefers-reduced-motion:reduce){#graph-content{transition:none}}
+
+/* Compact natal summary and the site's own four-axis type. */
+.natalbox .type{margin:12px 0 20px;font-size:clamp(18px,3vw,23px)}
+.trait-head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+.trait-head strong{font-family:var(--display);font-size:21px;color:var(--emerald)}
+.trait-head span,.trait-note{font-size:12px;color:var(--muted)}
+.trait-summary{font-size:13px;color:var(--muted);margin:8px 0 16px}
+.trait-table{width:100%;border-collapse:separate;border-spacing:0 6px;table-layout:fixed}
+.trait-table caption{text-align:left;font-size:13px;color:var(--muted);margin-bottom:6px}
+.trait-table thead{font-size:11px;color:var(--muted)}
+.trait-table th:first-child{width:22%}
+.trait-table tbody th{font-size:13px;font-weight:500;text-align:left}
+.trait-table td{text-align:center;padding:10px 6px;border:1px solid var(--line);color:var(--muted);font-size:15px}
+.trait-table td:nth-child(2){border-radius:9px 0 0 9px}
+.trait-table td:last-child{border-radius:0 9px 9px 0}
+.trait-table td.chosen{border-color:var(--emerald);color:var(--emerald);background:var(--field);font-weight:600}
+.trait-note{line-height:1.7;margin:10px 0}
+.trait-more,.natal-more{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.trait-more summary,.natal-more summary{cursor:pointer;color:var(--emerald);font-size:13px;padding:5px 0}
+.trait-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}
+.trait-grid>div{padding:12px;border:1px solid var(--line);border-radius:10px;min-width:0}
+.trait-grid b{display:block;font-size:13px;font-weight:500;overflow-wrap:anywhere}
+.trait-grid small{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+.trait-grid .current{border-color:var(--emerald);color:var(--emerald)}
+.natal-more .natal{margin-top:20px}
+@media(max-width:440px){.trait-grid{grid-template-columns:1fr}.trait-head strong{font-size:19px}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -396,10 +422,12 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
     </form>
     </details>
 
-    <div class="verdict">
-      <div class="vtext" style="flex:1;min-width:240px;max-width:62ch"><p class="type" id="typeName"></p><div id="typeText"></div></div>
+    <div class="natalbox">
+      <h3 class="nat-h">타고난 운명</h3>
+      <p class="type" id="typeName"></p>
+      <div id="fate-traits"></div>
+      <details class="natal-more"><summary>타고난 선물·약점과 사주 정보 펼쳐보기</summary><div id="typeText"></div><div class="natal" id="natal"></div><div class="pillars" id="pillars"></div></details>
     </div>
-    <div class="natalbox"><h3 class="nat-h">타고난 운명</h3><div class="natal" id="natal"></div><div class="pillars" id="pillars"></div></div>
   </div>
 </header>
 
@@ -872,6 +900,33 @@ function natalGifts(ch){const g=[];const d=ch.stems.d;
   g.push(["사주 강약",ch.strong?`스스로 길을 여는 힘이 강한 <b>신강 사주</b>예요. 내가 판을 주도할 때 운이 가장 커집니다.`:`주변의 도움을 끌어당기는 <b>신약 사주</b>예요. 좋은 사람을 곁에 둘수록 운이 크게 불어납니다.`]);
   g.push(["마야",`마야력으로는 <b>${MS[ch.msign][0]}(${MS[ch.msign][1]})</b>의 날에 태어나 ${MS[ch.msign][2]}의 힘을 품고 있어요.`]);
   return g}
+
+/* Own symbolic classification v1: five-element counts and Sun sign modality, never a psychological test.
+   Ties choose the left label for a stable 16-type index and are explicitly marked balanced. */
+const FATE_AXES=[
+ {name:"움직임",left:"개척",right:"탐색",l:[0,1],r:[2,4],about:["먼저 시도하며 길을 여는 편","살펴보고 방향을 잡는 편"]},
+ {name:"관계",left:"교감",right:"자율",l:[1,2],r:[3,4],about:["사람과 마음을 나누는 편","자기 공간과 기준을 지키는 편"]},
+ {name:"선택",left:"직관",right:"분석",l:[0,4],r:[2,3],about:["가능성과 흐름을 먼저 보는 편","근거와 구조부터 확인하는 편"]},
+ {name:"지속",left:"몰입",right:"변화",l:[2,3],r:[0,1],about:["한 가지를 꾸준히 깊게 파는 편","새로운 시도와 전환을 즐기는 편"]}
+];
+const FATE_TYPES=["공감하는 개척가","유연한 연결가","든든한 실행가","민첩한 조율가","독립적인 선구자","자유로운 탐험가","치밀한 설계자","과감한 실험가","깊이 듣는 동반자","열린 마음의 관찰자","차분한 중재자","유연한 협력가","고요한 통찰가","자유로운 사색가","신중한 전략가","호기심 많은 연구자"];
+function fateTraits(ch){
+ const rows=FATE_AXES.map((a,i)=>{const fixed=[1,4,7,10].includes(Math.floor(((ch.sun%360)+360)%360/30));const l=i===3?Number(fixed):a.l.reduce((s,j)=>s+ch.cnt[j],0),r=i===3?Number(!fixed):a.r.reduce((s,j)=>s+ch.cnt[j],0);return {...a,lCount:l,rCount:r,side:l>=r?0:1,tie:l===r}});
+ const index=rows.reduce((s,a)=>s*2+a.side,0);
+ return {rows,index,name:FATE_TYPES[index],code:"ON-"+rows.map(a=>a.side).join("")};
+}
+function renderFateTraits(){
+ const t=fateTraits(CH);
+ document.getElementById("fate-traits").innerHTML=`
+ <div class="trait-head"><strong>${t.name}</strong><span>${t.code} · 16가지 운명 성향</span></div>
+ <p class="trait-summary">${t.rows.map(a=>a.about[a.side]).join(" · ")}</p>
+ <table class="trait-table"><caption>나의 네 가지 운명 성향</caption><thead><tr><th scope="col">축</th><th scope="col">왼쪽 성향</th><th scope="col">오른쪽 성향</th></tr></thead><tbody>${t.rows.map(a=>`<tr><th scope="row">${a.name}</th><td class="${a.side===0?"chosen":""}">${a.left}${a.side===0?'<span class="trait-check"> ✓</span>':""}</td><td class="${a.side===1?"chosen":""}">${a.right}${a.side===1?'<span class="trait-check"> ✓</span>':""}</td></tr>`).join("")}</tbody></table>
+ <p class="trait-note">출생 사주의 오행을 조합한 재미용 분류예요. MBTI·심리검사나 실제 성격 예측이 아닙니다.${t.rows.some(a=>a.tie)?" 동률인 축은 균형 성향이며, 유형 코드에서는 왼쪽으로 분류해요.":""}</p>
+ <details class="trait-more"><summary>16가지 성향과 분류 기준 보기</summary>
+ <div class="trait-grid">${FATE_TYPES.map((name,i)=>{const bits=[3,2,1,0].map(b=>(i>>b)&1);return `<div class="${i===t.index?"current":""}"><b>${name}${i===t.index?" · 나":""}</b><small>${FATE_AXES.map((a,k)=>bits[k]?a.right:a.left).join(" · ")}</small></div>`}).join("")}</div>
+ <p class="trait-note">자체 분류 규칙 v1 · 천간·지지의 기존 오행 개수를 사용합니다. 움직임: 목+화 / 토+수, 관계: 화+토 / 금+수, 선택: 목+수 / 토+금, 앞의 세 축은 개수 합이 큰 쪽을 선택합니다. 지속은 태양이 고정궁(황소·사자·전갈·물병)이면 몰입, 나머지는 변화로 분류합니다. 확률·과학적 성향 점수를 의미하지 않으며, 기존 운세 점수에는 영향을 주지 않아요.</p></details>`;
+}
+
 function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b)=>a+b.mean,0)/all.length);
   const dm=LD.map(r=>r.reduce((a,b)=>a+b.mean,0)/4);const cD=clamp(Math.floor(nowAge()/10),0,DECS-1);const pv=dm.slice(1,Math.max(2,cD)),nx=dm.slice(cD,cD+3);const early=pv.reduce((a,b)=>a+b,0)/pv.length,late=nx.reduce((a,b)=>a+b,0)/nx.length;
   const traj=late-early>3?"지금부터 크게 피어나는":early-late>3?"일찍부터 빛을 내온":"한결같이 빛나는";
@@ -1063,7 +1118,7 @@ function fillForm(v){$("in-name").value=v.name||"";$("in-roman").value=v.roman||
 function renderWho(v){const [y,m,d]=v.date.split("-");const dt=v.cal==="l"?`음 ${v.ly}.${String(v.lm).padStart(2,"0")}.${String(v.ld).padStart(2,"0")}${v.leap?"(윤)":""}`:`${y}.${m}.${d}`;
   $("whoSum").innerHTML=[v.name||"이름 없음",`${dt} ${v.notime?"시각 모름":v.time}`,v.place.name,v.sex==="f"?"여":"남"].map(t=>`<span>${t}</span>`).join("")}
 function run(v,animate){renderWho(v);CH=buildChart(v);drawTarot(CH);compute();selDec=clamp(Math.floor(nowAge()/10),0,DECS-1);if(animate)cast();renderAll()}
-function renderAll(){renderSigil();renderVerdict();renderTrend();renderCats();renderNatal();if(document.getElementById("p-net").open)renderNet()}
+function renderAll(){renderSigil();renderVerdict();renderFateTraits();renderTrend();renderCats();renderNatal();if(document.getElementById("p-net").open)renderNet()}
 document.querySelectorAll("#modeTabs button").forEach(b=>b.addEventListener("click",()=>{if(mode===b.dataset.m)return;mode=b.dataset.m;cast();renderTrend();renderCats()}));
 $("ask").addEventListener("submit",e=>{e.preventDefault();const v=readForm();
   if(v.err){$("err").textContent=v.err;return}
