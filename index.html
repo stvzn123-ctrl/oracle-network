@@ -914,14 +914,24 @@ function fateTraits(ch){
  const index=rows.reduce((s,a)=>s*2+a.side,0);
  return {rows,index,name:FATE_TYPES[index],code:"ON-"+rows.map(a=>a.side).join("")};
 }
+/* Intro pairs a mild version of the existing dominant-element weakness with its strength. */
 function traitDescription(ch){
- const t=fateTraits(ch),s=t.rows.map(a=>a.side);
- return [
- s[0]?"충분히 살펴본 뒤 움직이고":"새로운 일을 먼저 시도하고",
- s[1]?"자기 기준으로 판단하는 편이에요.":"사람들과 의견을 나누며 결정하는 편이에요.",
- s[2]?"근거와 구조를 먼저 확인하며,":"가능성과 흐름을 먼저 떠올리며,",
- s[3]?"새로운 방법과 변화를 즐기는 쪽으로 해석돼요.":"관심 있는 일은 깊게 파고드는 쪽으로 해석돼요."
- ].join(" ");
+ const dom=ch.cnt.indexOf(Math.max(...ch.cnt));
+ const weak=[
+  "관심이 넓어 마무리가 늦어지는 편",
+  "마음의 온도가 빠르게 바뀌는 편",
+  "익숙한 방식을 쉽게 놓지 못하는 편",
+  "생각을 곧게 전하다 단호하게 보이는 편",
+  "생각이 깊어 결정을 미루는 편"
+ ];
+ const strength=[
+  "남들이 망설이는 곳에서 가능성을 발견하고 새로운 길을 여는 개척자와",
+  "사람들의 마음을 움직이고 자신의 열정으로 주변을 밝히는 주인공과",
+  "흔들리는 순간에도 중심을 잡고 사람들의 신뢰를 쌓아가는 버팀목과",
+  "복잡한 문제의 핵심을 꿰뚫고 자신만의 성과를 만들어가는 전략가와",
+  "남들이 놓친 흐름을 읽고 깊은 통찰로 자신만의 길을 만들어가는 선구자와"
+ ];
+ return `당신은 ${weak[dom]}이지만, ${strength[dom]} 같은 운명을 타고난 사람입니다.`;
 }
 function renderFateTraits(){
  const t=fateTraits(CH);
