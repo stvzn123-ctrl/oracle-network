@@ -832,7 +832,7 @@ let rsT;addEventListener("resize",()=>{clearTimeout(rsT);rsT=setTimeout(()=>{if(
   if(!matchMedia("(prefers-reduced-motion: reduce)").matches)requestAnimationFrame(frame)}
  size();addEventListener("resize",size);if(matchMedia("(prefers-reduced-motion: reduce)").matches){last=performance.now();frame(last+50)}else requestAnimationFrame(frame)})();
 
-+/* ---------- form ---------- */
+/* ---------- form ---------- */
 const $=id=>document.getElementById(id);
 const placeFromIdx=i=>{const p=PLACES[i];return {name:p[0],lat:p[1],lon:p[2],tz:p[3],kr:p[3]===9&&p[2]>124&&p[2]<132&&p[1]>33&&p[1]<39}};
 let place={name:"경기도 성남시",lat:37.42,lon:127.13,tz:9,kr:true};
