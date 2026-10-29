@@ -188,21 +188,68 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
 .chips button{font:inherit;font-size:13px;background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 13px;cursor:pointer;transition:all .2s}
 .chips button[aria-pressed="true"]{color:var(--c,var(--emerald));border-color:var(--c,var(--emerald));background:color-mix(in srgb,var(--c,#3dffb0) 10%,transparent)}
-.netlabel{font-family:var(--mono);font-size:12px;color:var(--muted);margin:6px 0}
-.netwrap{position:relative}
-#net{display:block;width:100%;height:auto}
-#net .flow{stroke-dasharray:2 9;animation:dash 2.4s linear infinite}
-@keyframes dash{to{stroke-dashoffset:-22}}
-#net .spin{animation:spin 30s linear infinite;transform-box:fill-box;transform-origin:center}
-#net .spin.rev{animation-direction:reverse;animation-duration:40s}
-#net [data-t]{cursor:help}
-#net .onode:hover circle:first-child{stroke-width:3}
-.ntip{max-width:280px;white-space:normal;line-height:1.5;transform:translate(-50%,-115%)}
 .modetabs{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:14px;background:var(--panel)}
 .modetabs button{font:inherit;font-size:14px;background:transparent;border:0;color:var(--muted);padding:9px 18px;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.3;transition:all .25s}
 .modetabs button small{font-family:var(--mono);font-size:10.5px;opacity:.8}
 .modetabs button[aria-pressed="true"]{color:#032016;background:var(--emerald);box-shadow:0 0 22px rgba(61,255,176,.35)}
-.tnote{margin:6px 8px 0;font-size:12.5px;color:var(--dim)}
+.tnote{margin:10px 4px 0;font-size:12.5px;color:var(--dim)}
+/* life map */
+.lm{display:grid;grid-template-columns:64px repeat(var(--n),minmax(0,1fr));gap:4px;align-items:stretch}
+.lh{background:transparent;border:0;padding:2px 0 6px;text-align:center;color:var(--muted);font:inherit;position:relative;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.25}
+.lh b{font-size:13px;color:var(--fg);font-weight:500}.lh small{font-family:var(--mono);font-size:10px;color:var(--dim)}
+.lh.sel b{color:var(--emerald)}.lh.past b{color:var(--muted)}
+.lh em{font-style:normal;font-size:10px;border-radius:999px;padding:0 6px;margin-top:3px;white-space:nowrap}
+.lh .now{background:#e9c46a;color:#1a1208}.lh .pk{border:1px solid #3dffb0;color:#3dffb0}.lh .lw{border:1px solid #ff5d73;color:#ff5d73}
+.rl{font-size:12.5px;display:flex;align-items:center;color:var(--muted);white-space:nowrap}
+.tl{position:relative;height:56px}
+.tl svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.tlv{position:absolute;inset:auto 0 -2px 0;display:grid;grid-template-columns:repeat(8,1fr);text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.tlv .on{color:#e9c46a}
+.cell{font:inherit;border:1px solid transparent;border-radius:7px;height:44px;cursor:pointer;position:relative;background:color-mix(in srgb,var(--c) calc(var(--a)*70%),#120e0a);transition:transform .2s,box-shadow .2s}
+.cell span{font-family:var(--mono);font-size:12.5px;color:#0b0907;font-weight:600}
+.cell:hover{transform:translateY(-2px);box-shadow:0 0 14px color-mix(in srgb,var(--c) 45%,transparent)}
+.cell.past{filter:saturate(.35) brightness(.7)}
+.cell.sel{border-color:#efe9df;box-shadow:0 0 0 1px #efe9df,0 0 16px color-mix(in srgb,var(--c) 50%,transparent)}
+.lsum{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-top:14px;padding:12px 14px;border-radius:10px;background:linear-gradient(90deg,rgba(61,255,176,.08),transparent);border-left:2px solid var(--emerald);font-size:14px}
+.lsum .chap{font-family:var(--display);font-weight:700;color:var(--gold);font-size:16px}
+@media (max-width:560px){.lm{grid-template-columns:44px repeat(var(--n),minmax(0,1fr));gap:3px}.lh b{font-size:11.5px}.lh small{display:none}.lh em{font-size:9px;padding:0 3px}.rl{font-size:11px;white-space:normal;line-height:1.2}.cell{height:38px}.cell span{font-size:11px}}
+/* forecast */
+.fc{display:grid;grid-template-columns:76px repeat(4,minmax(0,1fr));gap:6px}
+.fh{text-align:center;padding-bottom:6px;display:flex;flex-direction:column;align-items:center;line-height:1.3}
+.fh b{font-family:var(--display);font-size:17px}.fh small{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.fh p{margin:4px 0 0;font-size:11.5px;color:var(--muted)}.fh .bad{color:#ff5d73}
+.fcell{font:inherit;color:var(--fg);background:rgba(18,14,11,.6);border:1px solid var(--line);border-radius:10px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;transition:all .2s}
+.fcell:hover{border-color:var(--c);transform:translateY(-2px)}
+.fcell.sel{border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,rgba(18,14,11,.6));box-shadow:0 0 14px color-mix(in srgb,var(--c) 30%,transparent)}
+.fcell b{font-family:var(--latin);font-size:17px;color:var(--c)}.fcell small{font-size:11px;color:var(--muted)}
+.trend svg.wx,svg.wx{width:30px;height:32px;flex:none}
+@media (max-width:560px){.fc{grid-template-columns:50px repeat(4,minmax(0,1fr));gap:4px}.fh b{font-size:14px}.fh p{font-size:10.5px}.fcell b{font-size:14px}.trend svg.wx{width:24px;height:26px}.fcell small{font-size:10px}}
+/* score receipt */
+.why-head{display:flex;gap:12px;align-items:center;margin:10px 0 14px}
+.why-head svg.wx{width:44px;height:46px}
+.wq{margin:0;font-size:13px;color:var(--muted)}.wa{margin:0;font-size:16px}.wa b{font-family:var(--latin);font-size:22px;color:var(--c)}
+.why-top{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:16px}
+.why-top .lb{font-size:12px;color:var(--muted);margin-right:4px}
+.reason{font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;display:inline-flex;gap:6px;align-items:center}
+.reason i{width:7px;height:7px;border-radius:50%}
+.reason.up b{color:#3dffb0}.reason.down b{color:#ff5d73}
+.wr.axis{font-size:11px;color:var(--dim);margin-bottom:-4px}
+.ax{display:flex;justify-content:space-between}.ax em{font-style:normal}
+.why{display:flex;flex-direction:column;gap:12px}
+.wg{display:flex;flex-direction:column;gap:4px;padding-top:10px;border-top:1px solid var(--line)}
+.wo{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:13.5px}
+.wo i{width:8px;height:8px;border-radius:50%;align-self:center}
+.ws{font-family:var(--mono);font-size:12.5px}.wc{font-size:12px;color:var(--dim)}
+.wr{display:grid;grid-template-columns:40% minmax(0,1fr) 40px;gap:8px;align-items:center;font-size:12.5px}
+.wl{color:#d8cfc1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wb{position:relative;height:10px;background:linear-gradient(90deg,transparent calc(50% - .5px),rgba(239,233,223,.35) calc(50% - .5px),rgba(239,233,223,.35) calc(50% + .5px),transparent calc(50% + .5px))}
+.wb i{position:absolute;top:1px;bottom:1px;border-radius:3px;animation:grow .7s cubic-bezier(.2,.8,.2,1) both}
+.wb i.up{left:50%;background:linear-gradient(90deg,rgba(61,255,176,.5),#3dffb0);box-shadow:0 0 8px rgba(61,255,176,.5)}
+.wb i.down{right:50%;background:linear-gradient(270deg,rgba(255,93,115,.5),#ff5d73);box-shadow:0 0 8px rgba(255,93,115,.45)}
+@keyframes grow{from{width:0}}
+.wv{font-family:var(--mono);text-align:right}.wv.up{color:#3dffb0}.wv.down{color:#ff5d73}
+.why-foot{margin:14px 0 0;font-size:13px;color:var(--muted)}.why-foot b{color:var(--fg)}
+@media (max-width:560px){.wr{grid-template-columns:44% minmax(0,1fr) 34px}}
 .decbars{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px;padding:0 18px 12px;height:66px}
 .decbars button{font:inherit;position:relative;background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:6px;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;padding:0;overflow:hidden}
 .decbars button i{display:block;background:var(--c);opacity:.55;border-radius:3px 3px 0 0;margin:0 3px 16px}
@@ -259,8 +306,8 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 
 <section>
   <div class="sec-head"><span class="eyebrow">Prophecy</span><h2>여섯 점술이 말하는 당신의 운</h2></div>
-  <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="life" aria-pressed="true">평생 흐름<small>0~80세</small></button><button type="button" data-m="near" aria-pressed="false">가까운 미래<small>1·3·5·10년</small></button></div>
-  <div class="trend"><svg id="trend" viewBox="0 0 760 280" role="img" aria-label="10년간 네 가지 운의 흐름"></svg><div class="legend" id="legend"></div><p class="tnote" id="trendNote"></p></div>
+  <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="near" aria-pressed="true">가까운 미래<small>1·3·5·10년</small></button><button type="button" data-m="life" aria-pressed="false">평생 지도<small>10년 단위</small></button></div>
+  <div class="trend"><div id="viz"></div><p class="tnote" id="trendNote"></p></div>
   <div class="cats" id="cats"><svg class="flash" id="flash" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
   <div class="tarotrow" id="tarot"></div>
 </section>
@@ -272,11 +319,9 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
   </details>
 
   <details class="panel" id="p-net">
-    <summary><svg class="g" viewBox="0 0 34 34"><circle cx="6" cy="10" r="2.5" fill="#4fd1e8"/><circle cx="6" cy="24" r="2.5" fill="#4fd1e8"/><circle cx="17" cy="17" r="3" fill="#3dffb0"/><circle cx="28" cy="17" r="3.5" fill="#e9c46a"/><path d="M6 10 Q12 10 17 17 M6 24 Q12 24 17 17 M17 17 H28" stroke="#3dffb0" stroke-opacity=".6" fill="none"/></svg><div><h3>분석 구조</h3><p>어떤 근거가 운을 올리고 깎았는지 보여주는 근거 지도</p></div><span class="chev">⌄</span></summary>
+    <summary><svg class="g" viewBox="0 0 34 34"><line x1="17" y1="5" x2="17" y2="29" stroke="#ab9f8c" stroke-opacity=".5"/><rect x="17" y="8" width="12" height="4" rx="1" fill="#3dffb0"/><rect x="9" y="15" width="8" height="4" rx="1" fill="#ff5d73"/><rect x="17" y="22" width="8" height="4" rx="1" fill="#3dffb0"/></svg><div><h3>분석 구조</h3><p>1·3·5·10년 뒤 점수가 어떤 근거로 올라가고 깎였는지 보여주는 계산서</p></div><span class="chev">⌄</span></summary>
     <div class="pbody"><div class="netctl"><div class="chips" id="netP" role="group" aria-label="시점"></div><div class="chips" id="netC" role="group" aria-label="운"></div></div>
-      <p class="netlabel" id="netLabel"></p>
-      <div class="netwrap"><svg id="net" role="img" aria-label="점술별 근거가 운 점수로 모이는 클러스터 네트워크"></svg><div class="maptip ntip" id="netTip" hidden></div></div>
-      <p class="note" style="margin-top:8px">가운데가 고른 운, 그 둘레가 여섯 점술, 바깥 점들이 각 점술이 실제로 본 근거입니다. <span style="color:#3dffb0">초록</span>은 점수를 올린 근거, <span style="color:#ff5d73">빨강</span>은 깎은 근거이고 선이 굵을수록 영향이 큽니다. 점에 마우스를 올리면 설명이 나옵니다.</p></div>
+      <div id="whoWhy"></div><div id="whyBox"></div></div>
   </details>
 
   <details class="panel">
@@ -312,7 +357,7 @@ const NAK="아슈위니 바라니 크리티카 로히니 므리가시라 아르�
 const DL=["Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury"],DY=[7,20,6,10,7,18,16,19,17];
 const PK={Sun:"태양",Moon:"달",Mars:"화성",Mercury:"수성",Jupiter:"목성",Venus:"금성",Saturn:"토성",Rahu:"라후",Ketu:"케투"};
 const M=[{k:"saju",n:"사주",c:"#e9c46a"},{k:"west",n:"서양 점성술",c:"#4fd1e8"},{k:"vedic",n:"인도 점성술",c:"#3dffb0"},{k:"num",n:"수비학",c:"#b49cff"},{k:"maya",n:"마야력",c:"#ff9a3c"},{k:"tarot",n:"타로",c:"#ff86b0"}];
-const CATS=[{k:"money",n:"금전운",c:"#f2c45a"},{k:"love",n:"애정운",c:"#ff86b0"},{k:"work",n:"직업운",c:"#52d6ff"},{k:"health",n:"건강운",c:"#48f0a6"}];
+const CATS=[{k:"money",n:"금전운",c:"#f2c45a"},{k:"love",n:"애정운",c:"#ff86b0"},{k:"work",n:"직업·학업운",c:"#52d6ff"},{k:"health",n:"건강운",c:"#48f0a6"}];
 const HZ=[{n:"1년 뒤",off:1},{n:"3년 뒤",off:3},{n:"5년 뒤",off:5},{n:"10년 뒤",off:10}];
 
 const LUNAR=[["1920-02-20",0,1179],["1921-02-08",0,2635],["1922-01-28",5,5707],["1923-02-16",0,1705],["1924-02-05",0,2772],["1925-01-24",4,5813],["1926-02-13",0,694],["1927-02-02",0,2395],["1928-01-23",2,2359],["1929-02-10",0,1175],["1930-01-30",6,3222],["1931-02-17",0,3658],["1932-02-06",0,3749],["1933-01-26",5,3497],["1934-02-14",0,1461],["1935-02-04",0,694],["1936-01-24",3,4782],["1937-02-11",0,2350],["1938-01-31",7,6445],["1939-02-19",0,3221],["1940-02-08",0,3402],["1941-01-27",6,6986],["1942-02-15",0,2921],["1943-02-05",0,1389],["1944-01-26",4,1371],["1945-02-13",0,605],["1946-02-02",0,2349],["1947-01-22",2,6443],["1948-02-10",0,2709],["1949-01-29",7,6805],["1950-02-17",0,2890],["1951-02-06",0,2901],["1952-01-27",5,2773],["1953-02-14",0,1243],["1954-02-04",0,603],["1955-01-24",3,4695],["1956-02-12",0,1323],["1957-01-31",8,5419],["1958-02-19",0,1685],["1959-02-08",0,1706],["1960-01-28",6,5546],["1961-02-15",0,2741],["1962-02-05",0,1206],["1963-01-25",4,5294],["1964-02-13",0,2647],["1965-02-02",0,1319],["1966-01-22",3,3366],["1967-02-09",0,3477],["1968-01-30",7,3413],["1969-02-17",0,1386],["1970-02-06",0,2477],["1971-01-27",5,2397],["1972-02-15",0,1198],["1973-02-03",0,2638],["1974-01-23",4,6733],["1975-02-11",0,3365],["1976-01-31",8,6825],["1977-02-18",0,2900],["1978-02-07",0,3434],["1979-01-28",6,4826],["1980-02-16",0,2395],["1981-02-05",0,1179],["1982-01-25",4,5275],["1983-02-13",0,2635],["1984-02-02",10,5707],["1985-02-20",0,1701],["1986-02-09",0,1748],["1987-01-29",6,5813],["1988-02-18",0,694],["1989-02-06",0,2395],["1990-01-27",5,2359],["1991-02-15",0,1175],["1992-02-04",0,1611],["1993-01-23",3,3402],["1994-02-10",0,3749],["1995-01-31",8,3497],["1996-02-19",0,1453],["1997-02-08",0,694],["1998-01-28",5,4718],["1999-02-16",0,2350],["2000-02-05",0,3222],["2001-01-24",4,7317],["2002-02-12",0,3402],["2003-02-01",0,3493],["2004-01-22",2,2901],["2005-02-09",0,1388],["2006-01-29",7,5467],["2007-02-18",0,605],["2008-02-07",0,2349],["2009-01-26",5,6443],["2010-02-14",0,2709],["2011-02-03",0,2890],["2012-01-23",3,5962],["2013-02-10",0,2901],["2014-01-31",9,2741],["2015-02-19",0,1210],["2016-02-08",0,2651],["2017-01-28",5,2647],["2018-02-16",0,1323],["2019-02-05",0,2709],["2020-01-25",4,5781],["2021-02-12",0,1706],["2022-02-01",0,2773],["2023-01-22",2,2741],["2024-02-10",0,1206],["2025-01-29",6,5294],["2026-02-17",0,2647]];
@@ -371,7 +416,7 @@ const ELS=["성장 욕구와 기획력","열정과 표현력","신뢰와 버티�
 const ELIMG=["곧은 나무","타오르는 불","단단한 땅","벼린 쇠","깊은 물"];
 const HEAD={money:["재물이 크게 들어오는 시기","수입이 늘어나는 흐름","들고 나는 게 비슷한 시기","지출을 조심할 시기","재물이 새기 쉬운 시기"],
  love:["인연이 강하게 끌려오는 시기","좋은 만남이 이어지는 흐름","잔잔하게 흘러가는 시기","관계에 시험이 오는 시기","거리를 두게 되는 시기"],
- work:["크게 도약하는 시기","인정받고 올라가는 흐름","제자리를 다지는 시기","방향을 다시 잡아야 할 시기","정체와 압박이 큰 시기"],
+ work:["일과 공부 모두 크게 도약하는 시기","성과와 성적이 오르는 흐름","실력을 다지는 시기","방향을 다시 잡아야 할 시기","정체와 압박이 큰 시기"],
  health:["컨디션이 가장 좋은 시기","무난하게 유지되는 흐름","관리가 필요한 시기","무리하면 탈이 나는 시기","가장 조심해야 할 시기"]};
 
 /* =========================================================
@@ -511,7 +556,7 @@ const ORC=[oSaju,oWest,oVedic,oNum,oMaya];
 const amp=(avg,k)=>Math.round(clamp(55+(avg-56)*k,5,98));
 function summarize(v,k){const sc=v.map(x=>x[0]);const avg=sc.reduce((a,b)=>a+b)/sc.length;const sd=Math.sqrt(sc.reduce((a,b)=>a+(b-avg)**2,0)/sc.length);
   return {v,avg,mean:amp(avg,k),agree:Math.max(0,Math.round(100-sd*2.2))}}
-let CH=null,R=null,LY=null,LD=null,LS=null;const sel={money:0,love:0,work:0,health:0};let mode="life",selDec=0,netP=0,netC=0;
+let CH=null,R=null,LY=null,LD=null,LS=null;const sel={money:0,love:0,work:0,health:0};let mode="near",selDec=0,netP=0,netC=0;
 const AGES=81,DECS=8;
 const nowAge=()=>{const n=new Date();return n.getFullYear()+(n.getMonth()+.5)/12-CH.birthYear};
 function compute(){
@@ -555,44 +600,41 @@ function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b
   document.getElementById("typeText").textContent=`${line} 평생 가장 강한 10년은 ${best.d*10}대의 ${CATS[best.ci].n}(${best.m}). 가까운 미래에선 ${HZ[soon.hi].n} ${CATS[soon.ci].n}(${soon.m})이 가장 밝고, ${HZ[warn.hi].n} ${CATS[warn.ci].n}(${warn.m})을 조심하세요.`;
   document.getElementById("whoName").textContent=CH.inp.name||"당신"}
 
-function chartW(){const el=document.getElementById("trend");return Math.max(320,Math.round((el.parentElement.clientWidth||760)-32))}
+const SHORT=["금전","애정","직업·학업","건강"];
+function wx(v){return v>=75?["맑음","sun"]:v>=60?["구름 조금","part"]:v>=45?["흐림","cloud"]:v>=30?["비","rain"]:["폭풍","storm"]}
+function wxIcon(k,c){const g=`fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"`;const sun=(cx,cy,r)=>`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${c}" fill-opacity=".9"/>`+Array.from({length:8},(_,i)=>{const a=i*Math.PI/4;return `<line x1="${cx+Math.cos(a)*(r+3)}" y1="${cy+Math.sin(a)*(r+3)}" x2="${cx+Math.cos(a)*(r+6)}" y2="${cy+Math.sin(a)*(r+6)}" stroke="${c}"/>`}).join("");
+  const cloud=(fill)=>`<path d="M9 25h15a5 5 0 0 0 0-10a7 7 0 0 0-13-1a5.5 5.5 0 0 0-2 11z" fill="${fill}" stroke="#d8cfc1"/>`;
+  const body={sun:sun(16,16,6),part:sun(20,12,4.5)+cloud("rgba(20,16,12,.85)"),cloud:cloud("rgba(171,159,140,.25)"),
+    rain:cloud("rgba(171,159,140,.18)")+`<line x1="12" y1="28" x2="10" y2="31" stroke="#52d6ff"/><line x1="17" y1="28" x2="15" y2="31" stroke="#52d6ff"/><line x1="22" y1="28" x2="20" y2="31" stroke="#52d6ff"/>`,
+    storm:cloud("rgba(90,80,70,.5)")+`<path d="M17 25l-3 5h4l-2 4" stroke="#ff5d73"/>`}[k];
+  return `<svg class="wx" viewBox="0 0 32 34" aria-hidden="true" ${g}>${body}</svg>`}
 function renderTrend(){document.querySelectorAll("#modeTabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===mode));
-  document.getElementById("trendNote").textContent=mode==="life"?"점마다 다섯 점술(타로 제외)의 5년 이동 평균입니다. 지나온 구간은 흐리게, 앞으로는 밝게 표시했고, 10년 구간을 누르면 아래 카드가 그 시기로 바뀝니다.":"점마다 여섯 점술의 평균입니다. 가로축은 실제 햇수 간격이고, 카드마다 고른 시점이 큰 점으로 표시됩니다.";
-  mode==="life"?renderLife():renderNear()}
-function gridY(W,L,R0,ys,o){[0,20,40,60,80,100].forEach(v=>{o.push(`<line x1="${L}" x2="${W-R0}" y1="${ys(v)}" y2="${ys(v)}" stroke="rgba(110,230,160,${v===60?.16:.08})"/><text x="${L-8}" y="${ys(v)}" fill="#ab9f8c" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="end" dominant-baseline="middle">${v}</text>`)})}
-function curve(pts){let d=`M${pts[0][0]},${pts[0][1]}`;for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],mx=(a[0]+b[0])/2;d+=` C${mx},${a[1]} ${mx},${b[1]} ${b[0]},${b[1]}`}return d}
-function renderNear(){const s=document.getElementById("trend");const W=chartW(),Hh=270,L=36,R0=22,Tp=12,B=34;s.setAttribute("viewBox",`0 0 ${W} ${Hh}`);
-  const xs=y=>L+(W-L-R0)*(y/10),ys=v=>Tp+(Hh-Tp-B)*(1-v/100);const o=[];gridY(W,L,R0,ys,o);const y0=new Date().getFullYear();const nar=W<520;
-  o.push(`<text x="${xs(0)}" y="${Hh-B+20}" fill="#76695a" font-size="11" text-anchor="middle">지금</text>`);
-  HZ.forEach(h=>{o.push(`<line x1="${xs(h.off)}" x2="${xs(h.off)}" y1="${Tp}" y2="${Hh-B}" stroke="rgba(110,230,160,.1)"/><text x="${xs(h.off)}" y="${Hh-B+20}" fill="#ab9f8c" font-size="${nar?10.5:12}" text-anchor="${h.off===10?"end":"middle"}">${h.n}${nar?"":" · "+(y0+h.off)}</text>`)});
-  CATS.forEach((c,ci)=>{const pts=HZ.map((h,hi)=>[xs(h.off),ys(R[hi][ci].mean)]);o.push(`<path d="${curve(pts)}" fill="none" stroke="${c.c}" stroke-width="2.2" style="filter:drop-shadow(0 0 5px ${c.c})"/>`);
-    pts.forEach((p,hi)=>{const on=sel[c.k]===hi;o.push(`<circle cx="${p[0]}" cy="${p[1]}" r="${on?5.5:3.2}" fill="${on?c.c:"#0b0907"}" stroke="${c.c}" stroke-width="1.8"/>`)})});
-  s.innerHTML=o.join("");legend()}
-function legend(){document.getElementById("legend").innerHTML=CATS.map(c=>`<span><i style="background:${c.c};box-shadow:0 0 6px ${c.c}"></i>${c.n}</span>`).join("")}
-function renderLife(){const s=document.getElementById("trend");const W=chartW(),nar=W<520;const L=nar?30:36,R0=14,Tp=22,CB=200,Hh=nar?318:322;s.setAttribute("viewBox",`0 0 ${W} ${Hh}`);
-  const xs=a=>L+(W-L-R0)*(a/80),ys=v=>Tp+(CB-Tp)*(1-v/100);const o=[];const na=clamp(nowAge(),0,80);
-  o.push(`<defs><clipPath id="cpP"><rect x="0" y="0" width="${xs(na)}" height="${CB+2}"/></clipPath><clipPath id="cpF"><rect x="${xs(na)}" y="0" width="${W}" height="${CB+2}"/></clipPath></defs>`);
-  o.push(`<rect x="${xs(selDec*10)}" y="${Tp}" width="${xs(10)-xs(0)}" height="${CB-Tp}" fill="rgba(61,255,176,.07)" stroke="rgba(61,255,176,.35)" stroke-dasharray="3 4"/>`);
-  gridY(W,L,R0,ys,o);
-  for(let a=0;a<=80;a+=10)o.push(`<line x1="${xs(a)}" x2="${xs(a)}" y1="${Tp}" y2="${CB}" stroke="rgba(110,230,160,.06)"/>`);
-  const lines=CATS.map((c,ci)=>`<path d="${curve(LS[ci].map((v,a)=>[xs(a),ys(v)]))}" fill="none" stroke="${c.c}" stroke-width="2" stroke-linejoin="round" style="filter:drop-shadow(0 0 4px ${c.c})"/>`).join("");
-  o.push(`<g clip-path="url(#cpP)" opacity=".3">${lines}</g><g clip-path="url(#cpF)">${lines}</g>`);
-  o.push(`<line x1="${xs(na)}" x2="${xs(na)}" y1="${Tp-8}" y2="${CB}" stroke="#e9c46a" stroke-width="1.2"/><circle cx="${xs(na)}" cy="${Tp-8}" r="3" fill="#e9c46a"/><text x="${xs(na)+6}" y="${Tp-6}" fill="#e9c46a" font-size="11" font-family="IBM Plex Sans KR,sans-serif">지금 ${Math.floor(na)}세</text>`);
-  // decade labels
-  const dy=CB+18;for(let d=0;d<DECS;d++){const on=d===selDec;o.push(`<text x="${(xs(d*10)+xs(d*10+10))/2}" y="${dy}" text-anchor="middle" font-size="${nar?10.5:12}" fill="${on?"#3dffb0":"#ab9f8c"}" font-weight="${on?600:400}">${d*10}대</text>`)}
-  if(!nar)for(let d=0;d<DECS;d++)o.push(`<text x="${(xs(d*10)+xs(d*10+10))/2}" y="${dy+14}" text-anchor="middle" font-size="10" fill="#76695a" font-family="IBM Plex Mono,monospace">${Math.floor(CH.birthYear+d*10+.5)}</text>`);
-  // bands
-  const band=(y,label,segs,col)=>{o.push(`<text x="${L-6}" y="${y+9}" text-anchor="end" font-size="10" fill="#76695a">${label}</text>`);
-    segs.forEach(([a0,a1,t])=>{const x0=xs(clamp(a0,0,80)),x1=xs(clamp(a1,0,80));if(x1-x0<1)return;const past=a1<=na;
-      o.push(`<rect x="${x0+.5}" y="${y}" width="${x1-x0-1}" height="18" rx="3" fill="${col}" fill-opacity="${past?.05:.12}" stroke="${col}" stroke-opacity="${past?.15:.35}"/>`);
-      if(x1-x0>(nar?18:22))o.push(`<text x="${(x0+x1)/2}" y="${y+12.5}" text-anchor="middle" font-size="${nar?9.5:11}" fill="${past?"#76695a":"#efe9df"}" font-family="Nanum Myeongjo,serif">${t}</text>`)})};
-  const segs=[[0,CH.dwStart,"월주"]];for(let k=1;CH.dwStart+10*(k-1)<80;k++)segs.push([CH.dwStart+10*(k-1),CH.dwStart+10*k,pillar(CH.mIdx+(CH.fwd?k:-k))]);
-  const by0=dy+(nar?10:24);band(by0,"대운",segs,"#e9c46a");
-  band(by0+24,"다샤",CH.dashas.map(x=>[x.start-CH.birthYear,x.end-CH.birthYear,PK[x.lord]]),"#3dffb0");
-  for(let d=0;d<DECS;d++)o.push(`<rect class="dhit" data-d="${d}" x="${xs(d*10)}" y="0" width="${xs(10)-xs(0)}" height="${dy+6}" fill="transparent" style="cursor:pointer"><title>${d*10}대 보기</title></rect>`);
-  s.innerHTML=o.join("");legend();
-  s.querySelectorAll(".dhit").forEach(r=>r.addEventListener("click",()=>{selDec=+r.dataset.d;cast();renderTrend();renderCats();if(document.getElementById("p-net").open)renderNet()}))}
-
+  document.getElementById("trendNote").textContent=mode==="life"?"칸 색이 진할수록 좋은 10년입니다. 지나온 10년은 흐리게 표시했어요. 칸을 누르면 아래 카드가 그 시기의 풀이로 바뀝니다.":"여섯 점술의 종합 점수를 날씨로 바꿨어요. 칸을 누르면 아래 카드에서 점술별 풀이를 볼 수 있습니다.";
+  mode==="life"?renderLifeMap():renderForecast()}
+function chapter(d){const row=LD[d].map(c=>c.mean);const mx=Math.max(...row);if(mx<55)return "다지는 10년";return ["재물의 10년","인연의 10년","성취의 10년","활력의 10년"][row.indexOf(mx)]}
+function renderLifeMap(){const v=document.getElementById("viz");const na=nowAge();const curD=clamp(Math.floor(na/10),0,DECS-1);
+  const tot=LD.map(r=>Math.round(r.reduce((a,b)=>a+b.mean,0)/4));const peak=tot.indexOf(Math.max(...tot)),low=tot.indexOf(Math.min(...tot));
+  const col=d=>`${d===selDec?" sel":""}${(d*10+10)<=na?" past":""}`;
+  let h=`<div class="lm" style="--n:${DECS}"><div class="lh"></div>`;
+  for(let d=0;d<DECS;d++)h+=`<button type="button" class="lh dh${col(d)}" data-d="${d}"><b>${d*10}대</b><small>${Math.floor(CH.birthYear+d*10+.5)}~</small>${d===curD?'<em class="now">지금</em>':d===peak?'<em class="pk">최고</em>':d===low?'<em class="lw">주의</em>':""}</button>`;
+  h+=`<div class="rl">종합</div><div class="tl" style="grid-column:2/-1"><svg viewBox="0 0 ${DECS*100} 60" preserveAspectRatio="none"><polyline points="${tot.map((t,d)=>`${d*100+50},${56-t*.52}`).join(" ")}" fill="none" stroke="#e9c46a" stroke-width="2" vector-effect="non-scaling-stroke"/>${tot.map((t,d)=>`<circle cx="${d*100+50}" cy="${56-t*.52}" r="3.5" fill="${d===selDec?"#e9c46a":"#120e0a"}" stroke="#e9c46a" stroke-width="1.5" vector-effect="non-scaling-stroke"/>`).join("")}</svg><div class="tlv">${tot.map((t,d)=>`<span class="${d===selDec?"on":""}">${t}</span>`).join("")}</div></div>`;
+  CATS.forEach((c,ci)=>{h+=`<div class="rl" style="color:${c.c}">${SHORT[ci]}</div>`;
+    for(let d=0;d<DECS;d++){const s=LD[d][ci].mean;const a=clamp((s-25)/65,.06,1);h+=`<button type="button" class="cell${col(d)}" data-d="${d}" data-c="${ci}" style="--c:${c.c};--a:${a.toFixed(2)}" title="${d*10}대 ${c.n} ${s}점"><span>${s}</span></button>`}});
+  h+=`</div><div class="lsum"><b>${selDec*10}대 · ${decRange(selDec)}</b><span class="chap">${chapter(selDec)}</span><span>${lifeLine(selDec)}</span></div>`;
+  v.innerHTML=h;
+  v.querySelectorAll("[data-d]").forEach(b=>b.addEventListener("click",()=>{selDec=+b.dataset.d;cast();renderTrend();renderCats();if(b.dataset.c!=null)focusCard(+b.dataset.c)}))}
+function lifeLine(d){const row=LD[d].map((c,ci)=>[c.mean,ci]).sort((a,b)=>b[0]-a[0]);const best=row[0],worst=row[3];
+  return `${SHORT[best[1]]}이 가장 밝고(${best[0]}), ${SHORT[worst[1]]}은 ${worst[0]<45?"조심해야 해요":"상대적으로 약해요"}(${worst[0]}).`}
+function renderForecast(){const v=document.getElementById("viz");const y0=new Date().getFullYear();
+  let h=`<div class="fc"><div></div>`;
+  HZ.forEach((hz,hi)=>{const row=R[hi].map((c,ci)=>[c.mean,ci]).sort((a,b)=>b[0]-a[0]);
+    h+=`<div class="fh"><b>${hz.n}</b><small>${y0+hz.off}</small><p><span style="color:${CATS[row[0][1]].c}">${SHORT[row[0][1]]} ${wx(row[0][0])[0]}</span>${row[3][0]<50?` · <span class="bad">${SHORT[row[3][1]]} ${wx(row[3][0])[0]}</span>`:""}</p></div>`});
+  CATS.forEach((c,ci)=>{h+=`<div class="rl" style="color:${c.c}">${SHORT[ci]}</div>`;
+    HZ.forEach((hz,hi)=>{const s=R[hi][ci].mean;const [w,k]=wx(s);const on=sel[c.k]===hi;h+=`<button type="button" class="fcell${on?" sel":""}" data-h="${hi}" data-c="${ci}" style="--c:${c.c}" title="${hz.n} ${c.n} ${s}점 · ${w}">${wxIcon(k,k==="sun"||k==="part"?"#e9c46a":c.c)}<b>${s}</b><small>${w}</small></button>`})});
+  h+=`</div>`;v.innerHTML=h;
+  v.querySelectorAll(".fcell").forEach(b=>b.addEventListener("click",()=>{const ci=+b.dataset.c;sel[CATS[ci].k]=+b.dataset.h;renderTrend();renderCat(ci,true);focusCard(ci)}))}
+function focusCard(ci){const el=document.getElementById("card-"+CATS[ci].k);if(!el)return;el.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"center"});el.animate?.([{boxShadow:`0 0 0 transparent`},{boxShadow:`0 0 40px ${CATS[ci].c}66`},{boxShadow:`0 0 0 transparent`}],{duration:1100})}
+function legend(){}
 function ringSvg(v,c){const r=28,L=2*Math.PI*r;return `<svg class="ring" viewBox="0 0 68 68"><circle cx="34" cy="34" r="32" fill="none" stroke="${c}" stroke-opacity=".25" stroke-dasharray="1 3"/><circle cx="34" cy="34" r="${r}" fill="none" stroke="rgba(80,200,170,.15)" stroke-width="4"/><circle class="arc" cx="34" cy="34" r="${r}" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${(L*v/100).toFixed(1)} ${L.toFixed(1)}" transform="rotate(-90 34 34)" style="filter:drop-shadow(0 0 5px ${c})"/><text x="34" y="35" text-anchor="middle" dominant-baseline="middle" fill="#efe9df" font-family="Cinzel,serif" font-size="19" font-weight="700">${v}</text></svg>`}
 const openState={};
 function tier(v){return v>=80?0:v>=65?1:v>=50?2:v>=35?3:4}
@@ -635,48 +677,26 @@ function renderNatal(){const ch=CH,d=ch.stems.d;const dom=ch.cnt.indexOf(Math.ma
    <div class="pl wide"><div class="t">인도 · 달</div><div class="h">${ZOD[sign(vm)]} · ${NAK[ch.nk]}<br>대운 ${ch.fwd?"순행":"역행"} ${ch.dwStart.toFixed(1)}세~</div></div>
    <div class="pl wide"><div class="t">수비학 · 마야</div><div class="h">인생 수 ${ch.lp}<br>${ch.tone} ${MS[ch.msign][0]}</div></div>`}
 
-/* ---------- evidence cluster network ---------- */
-function netData(){if(netP<4)return {r:R[netP][netC],label:`${HZ[netP].n} · ${new Date().getFullYear()+HZ[netP].off}`};
-  const a=selDec*10+5;return {r:LY[a][netC],label:`${selDec*10}대 중반 · ${Math.floor(CH.birthYear+a+.5)}년`}}
+/* ---------- 분석 구조: 점수 계산서 (가까운 미래 4시점만) ---------- */
 function renderNetCtl(){const p=document.getElementById("netP"),c=document.getElementById("netC");
-  p.innerHTML=HZ.map((h,i)=>`<button type="button" data-p="${i}" aria-pressed="${i===netP}">${h.n}</button>`).join("")+`<button type="button" data-p="4" aria-pressed="${netP===4}">${selDec*10}대</button>`;
-  c.innerHTML=CATS.map((x,i)=>`<button type="button" data-c="${i}" aria-pressed="${i===netC}" style="--c:${x.c}">${x.n}</button>`).join("");
+  p.innerHTML=HZ.map((h,i)=>`<button type="button" data-p="${i}" aria-pressed="${i===netP}">${h.n}</button>`).join("");
+  c.innerHTML=CATS.map((x,i)=>`<button type="button" data-c="${i}" aria-pressed="${i===netC}" style="--c:${x.c}">${SHORT[i]}</button>`).join("");
   p.querySelectorAll("button").forEach(b=>b.onclick=()=>{netP=+b.dataset.p;renderNet()});c.querySelectorAll("button").forEach(b=>b.onclick=()=>{netC=+b.dataset.c;renderNet()})}
-function renderNet(){renderNetCtl();const svg=document.getElementById("net");const W=Math.max(320,svg.parentElement.clientWidth||700);const nar=W<620;const H=nar?Math.round(W*1.7):580;
-  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);const {r,label}=netData();const cat=CATS[netC];const cx=W/2,cy=H/2;const n=r.v.length;
-  const rx=nar?W*.24:W*.26,ry=nar?H*.32:H*.30,rf=nar?44:72,fs=nar?10:11.5;const POS="#3dffb0",NEG="#ff5d73";
-  const o=[`<defs><filter id="ng"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><radialGradient id="hubg"><stop offset="0" stop-color="${cat.c}" stop-opacity=".45"/><stop offset="1" stop-color="${cat.c}" stop-opacity="0"/></radialGradient></defs>`];
-  const halos=[],edges=[],nodes=[],labels=[];const tips=[];
-  r.v.forEach((x,i)=>{const m=M[i];const ang=(-90+i*360/n)*rad;const ox=cx+rx*Math.cos(ang),oy=cy+ry*Math.sin(ang);
-    halos.push(`<circle cx="${ox}" cy="${oy}" r="${rf+18}" fill="${m.c}" fill-opacity=".045" stroke="${m.c}" stroke-opacity=".16" stroke-dasharray="2 5"/>`);
-    const dv=x[0]-50,col=dv>=0?POS:NEG,wdt=1+Math.abs(dv)/9;const mx=(ox+cx)/2+(oy-cy)*.12,my=(oy+cy)/2-(ox-cx)*.12;
-    edges.push(`<path d="M${ox},${oy} Q${mx},${my} ${cx},${cy}" fill="none" stroke="${col}" stroke-opacity=".28" stroke-width="${wdt}"/><path class="flow" d="M${ox},${oy} Q${mx},${my} ${cx},${cy}" fill="none" stroke="${col}" stroke-width="${Math.min(3,wdt)}" style="animation-duration:${(3.2-Math.min(2,Math.abs(dv)/25)).toFixed(2)}s"/>`);
-    const F=x[3]||[];const k=F.length;const spread=(k>=4?(nar?38:34):k===3?(nar?32:28):(nar?28:24))*rad;
-    F.forEach((f,j)=>{const a2=ang+(j-(k-1)/2)*spread;const fx=ox+rf*Math.cos(a2),fy=oy+rf*Math.sin(a2);const fc=f[1]>=0?POS:NEG;const fr=Math.min(10,3+Math.abs(f[1])/5);
-      edges.push(`<line x1="${fx}" y1="${fy}" x2="${ox}" y2="${oy}" stroke="${fc}" stroke-opacity=".3" stroke-width="${.6+Math.min(4,Math.abs(f[1])/7)}"/><line class="flow" x1="${fx}" y1="${fy}" x2="${ox}" y2="${oy}" stroke="${fc}" stroke-width="${.8+Math.min(2,Math.abs(f[1])/12)}"/>`);
-      const ti=tips.length;tips.push(`<b style="color:${m.c}">${m.n}</b> · ${f[0]} <b style="color:${fc}">${f[1]>0?"+":""}${f[1]}</b>`);
-      nodes.push(`<circle data-t="${ti}" cx="${fx}" cy="${fy}" r="${fr}" fill="#120e0a" stroke="${fc}" stroke-width="1.4"/><circle cx="${fx}" cy="${fy}" r="${Math.max(1.5,fr*.35)}" fill="${fc}" pointer-events="none"/>`);
-      const c2=Math.cos(a2),s2=Math.sin(a2);const vert=Math.abs(c2)<.35;const off=fr+5+(vert&&k>2?(j%2)*13:0);
-      let lx=fx+c2*off,ly=fy+s2*off;let anc=c2>.3?"start":c2<-.3?"end":"middle";const dy=s2>.3?10:s2<-.3?-4:4;
-      const txt=nar?f[0].split(" ").slice(0,2).join(" "):f[0];const tw=(txt.length+4)*fs*.62;
-      if(anc==="start"&&lx+tw>W-4){anc="end";lx=W-4}else if(anc==="end"&&lx-tw<4){anc="start";lx=4}else if(anc==="middle"){lx=clamp(lx,tw/2+4,W-tw/2-4)}
-      labels.push(`<text x="${lx}" y="${ly+dy}" text-anchor="${anc}" font-size="${fs}" fill="#d8cfc1" pointer-events="none">${txt} <tspan fill="${fc}" font-family="IBM Plex Mono,monospace">${f[1]>0?"+":""}${f[1]}</tspan></text>`)});
-    const ti=tips.length;tips.push(`<b style="color:${m.c}">${m.n} ${x[0]}점</b><br>${x[1]}`);
-    nodes.push(`<g class="onode" data-t="${ti}"><circle cx="${ox}" cy="${oy}" r="${nar?13:16}" fill="#120e0a" stroke="${m.c}" stroke-width="2" filter="url(#ng)"/><circle cx="${ox}" cy="${oy}" r="${nar?22:26}" fill="none" stroke="${m.c}" stroke-opacity=".5" stroke-dasharray="2 4" class="spin"/></g>`);
-    const inward=Math.sin(ang)>0?-1:1;
-    labels.push(`<text x="${ox}" y="${oy+(nar?4:5)}" text-anchor="middle" font-size="${nar?11:13}" font-family="Cinzel,serif" font-weight="700" fill="${m.c}" pointer-events="none">${x[0]}</text><text x="${ox}" y="${oy+inward*(nar?32:38)+4}" text-anchor="middle" font-size="${nar?11:12.5}" font-weight="600" fill="#efe9df" pointer-events="none">${m.n}</text>`)});
-  const hr=nar?30:38;
-  nodes.push(`<circle cx="${cx}" cy="${cy}" r="${hr*2.6}" fill="url(#hubg)"/><circle cx="${cx}" cy="${cy}" r="${hr}" fill="#120e0a" stroke="${cat.c}" stroke-width="2.5" filter="url(#ng)"/><circle cx="${cx}" cy="${cy}" r="${hr+9}" fill="none" stroke="${cat.c}" stroke-opacity=".55" stroke-dasharray="3 5" class="spin rev"/>`);
-  labels.push(`<text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="${nar?12:14}" font-weight="600" fill="#efe9df">${cat.n}</text><text x="${cx}" y="${cy+(nar?14:17)}" text-anchor="middle" font-size="${nar?16:20}" font-family="Cinzel,serif" font-weight="700" fill="${cat.c}">${r.mean}</text>`);
-  o.push(halos.join(""),edges.join(""),nodes.join(""),labels.join(""));svg.innerHTML=o.join("");
-  document.getElementById("netLabel").textContent=`${label} · ${cat.n} ${r.mean}점 · 일치도 ${r.agree}%`;
-  const tip=document.getElementById("netTip"),wrap=svg.parentElement;
-  svg.onpointermove=e=>{const t=e.target.closest("[data-t]");if(!t){tip.hidden=true;return}const wr=wrap.getBoundingClientRect();tip.innerHTML=tips[+t.dataset.t];tip.hidden=false;
-    const x=e.clientX-wr.left;tip.style.left=Math.min(Math.max(x,120),wr.width-120)+"px";tip.style.top=(e.clientY-wr.top)+"px"};
-  svg.onpointerleave=()=>{tip.hidden=true}}
+function renderNet(){renderNetCtl();const r=R[netP][netC],cat=CATS[netC],hz=HZ[netP];const y=new Date().getFullYear()+hz.off;
+  const all=[];r.v.forEach((x,i)=>(x[3]||[]).forEach(f=>all.push([f[0],f[1],i])));
+  const mx=Math.max(10,...all.map(f=>Math.abs(f[1])));
+  const top=[...all].sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,3);
+  const [w,k]=wx(r.mean);
+  let h=`<div class="why-head" style="--c:${cat.c}">${wxIcon(k,k==="sun"||k==="part"?"#e9c46a":cat.c)}<div><p class="wq">${hz.n}(${y}) ${cat.n}</p><p class="wa"><b>${r.mean}점</b> · ${w} · ${HEAD[cat.k][tier(r.mean)]}</p></div></div>
+   <div class="why-top"><span class="lb">이 점수를 만든 가장 큰 이유</span>${top.map(f=>`<span class="reason ${f[1]>=0?"up":"down"}"><i style="background:${M[f[2]].c}"></i>${M[f[2]].n} · ${f[0]} <b>${f[1]>0?"+":""}${f[1]}</b></span>`).join("")}</div>
+   <div class="wr axis"><span></span><span class="ax"><em>← 깎은 근거</em><em>올린 근거 →</em></span><span></span></div><div class="why">`;
+  r.v.forEach((x,i)=>{const m=M[i];h+=`<div class="wg"><div class="wo"><i style="background:${m.c}"></i><b>${m.n}</b><span class="ws" style="color:${x[0]>=50?"#3dffb0":"#ff5d73"}">${x[0]}점</span><span class="wc">${x[2]}</span></div>`;
+    (x[3]||[]).forEach(f=>{const pct=Math.abs(f[1])/mx*50;h+=`<div class="wr"><span class="wl">${f[0]}</span><span class="wb"><i class="${f[1]>=0?"up":"down"}" style="width:${pct.toFixed(1)}%"></i></span><span class="wv ${f[1]>=0?"up":"down"}">${f[1]>0?"+":""}${f[1]}</span></div>`});
+    h+=`</div>`});
+  h+=`</div><p class="why-foot">여섯 점술 점수 평균 <b>${Math.round(r.avg)}</b>점을 0~100 범위로 넓혀 종합 <b>${r.mean}</b>점이 됐어요. 점술끼리 일치도는 ${r.agree}%입니다.</p>`;
+  document.getElementById("whyBox").innerHTML=h}
 document.getElementById("p-net").addEventListener("toggle",e=>{if(e.target.open)renderNet()});
-let rsT;addEventListener("resize",()=>{clearTimeout(rsT);rsT=setTimeout(()=>{if(!CH)return;renderTrend();if(document.getElementById("p-net").open)renderNet()},150)});
-
+let rsT;addEventListener("resize",()=>{clearTimeout(rsT);rsT=setTimeout(()=>{if(!CH)return;renderTrend()},150)});
 /* ---------- sky: dusty dusk, ruins, emerald energy ---------- */
 (function sky(){const cv=document.getElementById("sky"),x=cv.getContext("2d");let W,Hh,dpr=Math.min(devicePixelRatio||1,2),ash=[],sig=[],ruins=null;
   function newAsh(any){const g=Math.random()<.22;return{x:Math.random()*W,y:any?Math.random()*Hh:Hh+10,vx:(Math.random()*.3+.05)*dpr,vy:-(Math.random()*.35+.08)*dpr,r:(Math.random()*1.6+.4)*dpr,a:.15+Math.random()*.5,w:Math.random()*6.28,g}}
