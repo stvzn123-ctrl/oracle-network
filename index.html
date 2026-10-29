@@ -22,7 +22,7 @@ html{background:var(--bg)}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.65;overflow-x:hidden}
 #sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 72px;display:flex;flex-direction:column;gap:52px}
+.wrap{position:relative;z-index:2;max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 72px;display:flex;flex-direction:column;gap:52px}
 .eyebrow{font-family:var(--latin);font-size:12px;letter-spacing:.32em;color:var(--emerald);text-transform:uppercase}
 h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,6vw,58px);line-height:1.12;margin:12px 0 14px;text-wrap:balance}
 h1 em{font-style:normal;color:var(--emerald);text-shadow:0 0 18px rgba(61,255,176,.55),0 0 50px rgba(61,255,176,.25)}
@@ -275,59 +275,30 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .rules b{display:block;color:var(--fg);margin-bottom:2px}
 @media (prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}.natalpts{opacity:.55}#net .flow{stroke-dasharray:none}}
 
-/* Original, quiet background scene */
-#seated-oracle{position:fixed;z-index:2;right:0;bottom:0;width:min(94vw,980px);height:min(100svh,960px);pointer-events:none;opacity:.38;overflow:hidden;mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.12) 16%,#000 64%);}
-#seated-oracle svg{width:100%;height:100%;display:block;}
-#seated-oracle .head-sway{transform-box:fill-box;transform-origin:50% 88%;animation:oracle-sway 8s ease-in-out infinite;}
-@keyframes oracle-sway{0%,100%{transform:rotate(-2.2deg) translateX(-2px)}50%{transform:rotate(2.2deg) translateX(2px)}}
-@media(max-width:760px){#seated-oracle{right:-23vw;width:120vw;height:68svh;opacity:.23;mask-image:linear-gradient(180deg,transparent 0%,#000 24%,#000 82%,transparent 100%);}}
-@media(prefers-reduced-motion:reduce){#seated-oracle .head-sway{animation:none;transform:none}}
+/* Still, original graphic for cosmic order and fate */
+.sigil{display:none!important}.r1,.r2,.r3,.natalpts{animation:none!important;}
+#fate-cosmos{position:fixed;z-index:1;right:0;bottom:0;width:min(82vw,850px);height:min(92svh,900px);pointer-events:none;opacity:.29;overflow:hidden;mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.16) 18%,#000 72%);}
+#fate-cosmos svg{width:100%;height:100%;display:block;}
+@media(max-width:760px){#fate-cosmos{right:-18vw;width:108vw;height:65svh;opacity:.19;mask-image:linear-gradient(180deg,transparent 0%,#000 26%,#000 80%,transparent 100%);}}
 </style>
 
-<div id="seated-oracle" aria-hidden="true"><svg viewBox="0 0 1000 960" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
-<defs>
- <radialGradient id="scene-glow"><stop stop-color="#6b4927" stop-opacity=".55"/><stop offset="1" stop-color="#17100b" stop-opacity="0"/></radialGradient>
- <linearGradient id="stone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8e6240" stop-opacity=".36"/><stop offset="1" stop-color="#291c14" stop-opacity=".5"/></linearGradient>
- <linearGradient id="robe" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#32413b"/><stop offset=".5" stop-color="#18231f"/><stop offset="1" stop-color="#0d1312"/></linearGradient>
- <linearGradient id="hood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4a4438"/><stop offset=".5" stop-color="#201e1a"/><stop offset="1" stop-color="#100f0d"/></linearGradient>
- <radialGradient id="aura"><stop stop-color="#54ffb9" stop-opacity=".29"/><stop offset="1" stop-color="#3dffb0" stop-opacity="0"/></radialGradient>
- <filter id="soft"><feGaussianBlur stdDeviation="24"/></filter>
-</defs>
-<ellipse cx="660" cy="665" rx="365" ry="345" fill="url(#scene-glow)"/>
-<g fill="none" stroke="#a0784d" stroke-opacity=".25">
- <path stroke-width="26" d="M220 760V365a355 355 0 0 1 710 0v395"/><path stroke-width="8" d="M272 758V378a303 303 0 0 1 606 0v380"/>
- <path stroke-width="13" d="M310 500h530M291 544h568M278 730h595"/>
- <path stroke-width="6" d="M354 240v274m90-367v367m308-364v364m91-274v274M321 622h523"/>
+<div id="fate-cosmos" aria-hidden="true"><svg viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="cosmos-glow"><stop stop-color="#e9c46a" stop-opacity=".24"/><stop offset=".5" stop-color="#3dffb0" stop-opacity=".09"/><stop offset="1" stop-color="#0b0907" stop-opacity="0"/></radialGradient><linearGradient id="orbit-ink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e9c46a"/><stop offset=".52" stop-color="#5adfb0"/><stop offset="1" stop-color="#e9c46a"/></linearGradient></defs>
+<circle cx="484" cy="455" r="350" fill="url(#cosmos-glow)"/>
+<g fill="none" stroke="url(#orbit-ink)" stroke-linecap="round">
+ <circle cx="484" cy="455" r="296" stroke-opacity=".42" stroke-width="1.2"/>
+ <circle cx="484" cy="455" r="271" stroke-opacity=".18" stroke-width=".8" stroke-dasharray="1 9"/>
+ <ellipse cx="484" cy="455" rx="248" ry="102" stroke-opacity=".48" stroke-width="1.2" transform="rotate(-28 484 455)"/>
+ <ellipse cx="484" cy="455" rx="248" ry="102" stroke-opacity=".37" stroke-width="1.1" transform="rotate(31 484 455)"/>
+ <ellipse cx="484" cy="455" rx="247" ry="102" stroke-opacity=".28" stroke-width="1" transform="rotate(83 484 455)"/>
+ <path d="M163 455h642M484 131v648" stroke-opacity=".16" stroke-width=".8" stroke-dasharray="2 11"/>
+ <path d="m484 421 7 27-7 41-7-41z M450 455l27-7 41 7-41 7z" stroke-opacity=".58" stroke-width="1"/>
+ <circle cx="484" cy="455" r="34" stroke-opacity=".38" stroke-width="1"/><circle cx="484" cy="455" r="9" fill="#e9c46a" fill-opacity=".72" stroke="none"/>
 </g>
-<g fill="url(#stone)" stroke="#b38353" stroke-opacity=".17">
- <path d="M97 280h96v492H97zM133 224l-64 56h154l-54-56zM845 242h91v530h-91zM879 190l-67 52h156l-57-52z"/>
- <path d="m0 794 116-68 90 45 88-52 75 84-31 89H0zm740 98 42-96 84-42 64 50 70-22v178H723z"/>
-</g>
-<g fill="#c39459" fill-opacity=".22">
- <circle cx="187" cy="575" r="4"/><circle cx="834" cy="392" r="3"/><circle cx="304" cy="338" r="3"/><circle cx="926" cy="630" r="4"/><circle cx="415" cy="181" r="3"/>
-</g>
-<ellipse cx="611" cy="664" rx="251" ry="226" fill="url(#aura)" filter="url(#soft)"/>
-<g fill="none" stroke="#4dffc0" stroke-opacity=".22">
- <circle cx="610" cy="575" r="208" stroke-width="2"/><circle cx="610" cy="575" r="221" stroke-width="1" stroke-dasharray="2 13"/><path d="M610 335v38m0 403v38m-241-239h39m405 0h39"/>
-</g>
-<!-- A quiet, original robed figure; the hood is in deep shadow with no facial detail. -->
-<ellipse cx="610" cy="829" rx="246" ry="28" fill="#0a0e0c" fill-opacity=".76"/>
-<path d="M483 498q-82 21-134 91l-72 115q75 49 171 42l78-97zm254 2q85 21 137 91l69 113q-72 48-170 41l-77-95z" fill="#292a24" stroke="#776448" stroke-opacity=".48" stroke-width="5"/>
-<path d="M513 465q-46 18-59 65l-22 171q55 50 178 51 123-1 178-51l-22-171q-13-47-59-65z" fill="url(#robe)" stroke="#708075" stroke-opacity=".25" stroke-width="4"/>
-<path d="M537 480q73 85 73 269m-37-276q4 120 4 276m71-269q-73 85-73 269m37-276q-4 120-4 276" fill="none" stroke="#8e9b89" stroke-opacity=".16" stroke-width="3"/>
-<path d="M577 425h67v78q-33 30-67 0z" fill="#191b18"/>
-<g class="head-sway">
- <path d="M520 397q-16-106 90-135 109 19 92 135l-25 82q-24 44-68 50-43-8-65-51z" fill="url(#hood)" stroke="#9a805b" stroke-opacity=".55" stroke-width="6"/>
- <path d="M536 388q4-82 73-100 67 16 76 100-32-25-75-23-42-2-74 23z" fill="#090b0a"/>
- <path d="M553 399q27-22 56-22 31 0 57 22l-15 60q-14 29-42 34-28-6-42-34z" fill="#080a09"/>
- <path d="M530 401q-9-88 36-118m110 0q44 30 34 118" fill="none" stroke="#c0a275" stroke-opacity=".22" stroke-width="4"/>
-</g>
-<path d="M514 498q-42 61-57 137m234-137q44 61 58 137" fill="none" stroke="#a5a28a" stroke-opacity=".22" stroke-width="4"/>
-<!-- Folded legs rest on a low stone seat. -->
-<path d="M500 668q-82 6-135 74-41 54 22 80 92 38 221-25l30-63-48-55z" fill="#202622" stroke="#727d6e" stroke-opacity=".36" stroke-width="5"/>
-<path d="M716 668q83 6 137 74 40 54-23 80-92 38-220-25l-30-63 47-55z" fill="#202622" stroke="#727d6e" stroke-opacity=".36" stroke-width="5"/>
-<path d="M387 822q119 19 221-33 101 52 221 33v29H387z" fill="#30291f" stroke="#937348" stroke-opacity=".45" stroke-width="4"/>
-<g fill="#3dffb0" fill-opacity=".7"><circle cx="610" cy="600" r="3"/><circle cx="539" cy="617" r="2"/><circle cx="683" cy="633" r="2"/></g>
+<g fill="#e9c46a" fill-opacity=".75"><circle cx="265" cy="333" r="3"/><circle cx="664" cy="281" r="2.5"/><circle cx="710" cy="565" r="3"/><circle cx="345" cy="675" r="2.5"/><circle cx="484" cy="159" r="2"/><circle cx="484" cy="751" r="2"/><circle cx="190" cy="455" r="2"/><circle cx="778" cy="455" r="2"/></g>
+<g fill="none" stroke="#52d6ff" stroke-opacity=".37" stroke-width="1"><path d="m220 217 40-25 33 28 46-12 25 43M664 637l35 29 45-17 25 31M255 687l29-37 43 9 26-30"/><path d="m586 179 17-31 20 18-13 34zM338 775l21-26 24 12-6 31z"/></g>
+<g fill="#52d6ff" fill-opacity=".72"><circle cx="220" cy="217" r="2"/><circle cx="260" cy="192" r="2"/><circle cx="293" cy="220" r="2"/><circle cx="339" cy="208" r="2"/><circle cx="364" cy="251" r="2"/><circle cx="664" cy="637" r="2"/><circle cx="699" cy="666" r="2"/><circle cx="744" cy="649" r="2"/><circle cx="769" cy="680" r="2"/><circle cx="255" cy="687" r="2"/><circle cx="284" cy="650" r="2"/><circle cx="327" cy="659" r="2"/><circle cx="353" cy="629" r="2"/></g>
+<g fill="#efe9df" fill-opacity=".62"><circle cx="173" cy="302" r="1.4"/><circle cx="383" cy="142" r="1.2"/><circle cx="720" cy="208" r="1.5"/><circle cx="744" cy="380" r="1.1"/><circle cx="610" cy="726" r="1.4"/><circle cx="417" cy="741" r="1.1"/><circle cx="171" cy="555" r="1.5"/><circle cx="558" cy="302" r="1.2"/></g>
 </svg></div>
 <canvas id="sky" aria-hidden="true"></canvas>
 <div class="wrap">
@@ -754,43 +725,17 @@ function renderNet(){renderNetCtl();const r=R[netP][netC],cat=CATS[netC],hz=HZ[n
   document.getElementById("whyBox").innerHTML=h}
 document.getElementById("p-net").addEventListener("toggle",e=>{if(e.target.open)renderNet()});
 let rsT;addEventListener("resize",()=>{clearTimeout(rsT);rsT=setTimeout(()=>{if(!CH)return;renderTrend()},150)});
-/* ---------- sky: dusty dusk, ruins, emerald energy ---------- */
-(function sky(){const cv=document.getElementById("sky"),x=cv.getContext("2d");let W,Hh,dpr=Math.min(devicePixelRatio||1,2),ash=[],sig=[],ruins=null;
-  function newAsh(any){const g=Math.random()<.22;return{x:Math.random()*W,y:any?Math.random()*Hh:Hh+10,vx:(Math.random()*.3+.05)*dpr,vy:-(Math.random()*.35+.08)*dpr,r:(Math.random()*1.6+.4)*dpr,a:.15+Math.random()*.5,w:Math.random()*6.28,g}}
-  function buildRuins(){ruins=document.createElement("canvas");ruins.width=W;ruins.height=Hh;const r=ruins.getContext("2d");const rnd=rng(7);
-    const base=Hh*.86;
-    // far haze layer
-    r.fillStyle="rgba(40,30,22,.55)";r.beginPath();r.moveTo(0,Hh);let xx=0;while(xx<W){const w=(40+rnd()*120)*dpr,h=(30+rnd()*Hh*.22);r.lineTo(xx,base-h*.6);r.lineTo(xx+w*.3,base-h*.6-rnd()*20*dpr);r.lineTo(xx+w,base-h*.4);xx+=w}r.lineTo(W,Hh);r.fill();
-    // near jagged ruins + broken pillars
-    r.fillStyle="rgba(9,7,5,.94)";r.beginPath();r.moveTo(0,Hh);xx=0;while(xx<W){const w=(30+rnd()*90)*dpr,h=rnd()<.25?(Hh*.18+rnd()*Hh*.14):(10+rnd()*Hh*.08);r.lineTo(xx,base+20*dpr-h);r.lineTo(xx+w*.2,base+20*dpr-h-rnd()*18*dpr);r.lineTo(xx+w*.6,base+20*dpr-h+rnd()*14*dpr);xx+=w}r.lineTo(W,Hh);r.fill();
-    for(let i=0;i<4;i++){const px=rnd()*W,ang=(rnd()-.5)*.9,len=(Hh*.16+rnd()*Hh*.18),wd=(8+rnd()*14)*dpr;r.save();r.translate(px,base+10*dpr);r.rotate(ang);r.fillStyle="rgba(8,6,4,.96)";r.fillRect(-wd/2,-len,wd,len);
-      r.fillStyle="rgba(210,140,70,.10)";r.fillRect(-wd/2,-len,2*dpr,len);r.restore()}
-    const lg=r.createLinearGradient(0,base-Hh*.3,0,Hh);lg.addColorStop(0,"rgba(11,9,7,0)");lg.addColorStop(1,"rgba(11,9,7,.9)");r.fillStyle=lg;r.fillRect(0,0,W,Hh)}
-  function size(){W=cv.width=innerWidth*dpr;Hh=cv.height=innerHeight*dpr;ash=Array.from({length:Math.round(innerWidth*innerHeight/9000)+30},()=>newAsh(true));
-    sig=Array.from({length:innerWidth<700?2:4},()=>({x:Math.random()*W,y:Math.random()*Hh*.8,r:(45+Math.random()*70)*dpr,a:Math.random()*6.28,v:(Math.random()<.5?-1:1)*(.0015+Math.random()*.002),n:5+Math.floor(Math.random()*4)}));buildRuins()}
-  size();addEventListener("resize",size);
-  function sigil(s){x.save();x.translate(s.x,s.y);x.rotate(s.a);x.strokeStyle="rgba(70,255,150,.13)";x.lineWidth=dpr;x.shadowColor="rgba(70,255,150,.6)";x.shadowBlur=8*dpr;
-    x.beginPath();x.arc(0,0,s.r,0,6.28);x.stroke();x.beginPath();x.arc(0,0,s.r*.78,0,6.28);x.stroke();
-    x.beginPath();for(let i=0;i<=s.n;i++){const a=i*2*6.283/s.n,px=Math.cos(a)*s.r*.78,py=Math.sin(a)*s.r*.78;i?x.lineTo(px,py):x.moveTo(px,py)}x.stroke();
-    for(let i=0;i<24;i++){const a=i/24*6.283;x.beginPath();x.moveTo(Math.cos(a)*s.r,Math.sin(a)*s.r);x.lineTo(Math.cos(a)*s.r*.92,Math.sin(a)*s.r*.92);x.stroke()}x.restore()}
-  const ribbons=[{y:.58,A:.07,k:1.6,sp:.00025,ph:0,w:1},{y:.66,A:.05,k:2.3,sp:-.0003,ph:2,w:.8},{y:.5,A:.09,k:1.1,sp:.0002,ph:4,w:.6}];
-  function ribbon(rb,t){x.beginPath();for(let i=0;i<=60;i++){const u=i/60,px=u*W,py=Hh*(rb.y+rb.A*Math.sin(u*rb.k*6.28+t*rb.sp+rb.ph)+.02*Math.sin(u*9+t*rb.sp*3));i?x.lineTo(px,py):x.moveTo(px,py)}}
-  function f(t){
-    const bg=x.createLinearGradient(0,0,0,Hh);bg.addColorStop(0,"#2b2117");bg.addColorStop(.45,"#15100b");bg.addColorStop(1,"#0b0907");x.fillStyle=bg;x.fillRect(0,0,W,Hh);
-    const sun=x.createRadialGradient(W*.78,Hh*.08,0,W*.78,Hh*.08,W*.65);sun.addColorStop(0,"rgba(245,190,120,.42)");sun.addColorStop(.35,"rgba(200,130,70,.16)");sun.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=sun;x.fillRect(0,0,W,Hh);
-    x.save();x.globalCompositeOperation="lighter";for(let i=0;i<3;i++){x.save();x.translate(W*(.6+i*.12),0);x.rotate(.35);const sh=x.createLinearGradient(0,0,90*dpr,0);sh.addColorStop(0,"rgba(255,200,140,0)");sh.addColorStop(.5,`rgba(255,200,140,${.035+.015*Math.sin(t*.0004+i)})`);sh.addColorStop(1,"rgba(255,200,140,0)");x.fillStyle=sh;x.fillRect(0,0,90*dpr,Hh*1.4);x.restore()}x.restore();
-    for(const s of sig){if(!reduceM)s.a+=s.v;sigil(s)}
-    x.save();x.globalCompositeOperation="lighter";
-    for(const rb of ribbons){ribbon(rb,reduceM?0:t);x.shadowColor="rgba(60,255,140,.9)";x.shadowBlur=24*dpr;x.strokeStyle=`rgba(60,255,140,${.10*rb.w})`;x.lineWidth=14*dpr*rb.w;x.stroke();x.shadowBlur=8*dpr;x.strokeStyle=`rgba(170,255,210,${.28*rb.w})`;x.lineWidth=1.4*dpr;x.stroke()}
-    x.restore();
-    if(ruins)x.drawImage(ruins,0,0);
-    x.save();x.globalCompositeOperation="lighter";
-    for(let i=0;i<ash.length;i++){const e=ash[i];if(!reduceM){e.x+=e.vx+Math.sin(e.w)*.15*dpr;e.y+=e.vy;e.w+=.015}if(e.y<-10||e.x>W+10)ash[i]=newAsh(false);
-      x.fillStyle=e.g?`rgba(110,255,170,${e.a})`:`rgba(220,180,130,${e.a*.7})`;x.beginPath();x.arc(e.x,e.y,e.r,0,6.28);x.fill()}
-    x.restore();
-    const vg=x.createRadialGradient(W/2,Hh/2,Math.min(W,Hh)*.3,W/2,Hh/2,Math.max(W,Hh)*.75);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.55)");x.fillStyle=vg;x.fillRect(0,0,W,Hh);
-    if(!reduceM)requestAnimationFrame(f)}
-  requestAnimationFrame(f)})();
+/* ---------- sky: still dusk with sparse stars ---------- */
+(function sky(){const cv=document.getElementById("sky");if(!cv)return;const x=cv.getContext("2d");let W,Hh,dpr;
+ function draw(){dpr=Math.min(devicePixelRatio||1,2);W=cv.width=Math.round(innerWidth*dpr);Hh=cv.height=Math.round(innerHeight*dpr);cv.style.width=innerWidth+"px";cv.style.height=innerHeight+"px";
+  const bg=x.createLinearGradient(0,0,0,Hh);bg.addColorStop(0,"#241b14");bg.addColorStop(.52,"#120e0a");bg.addColorStop(1,"#0b0907");x.fillStyle=bg;x.fillRect(0,0,W,Hh);
+  const glow=x.createRadialGradient(W*.76,Hh*.24,0,W*.76,Hh*.24,W*.56);glow.addColorStop(0,"rgba(214,157,91,.17)");glow.addColorStop(.55,"rgba(117,82,47,.07)");glow.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=glow;x.fillRect(0,0,W,Hh);
+  let seed=87;const rnd=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};
+  for(let i=0;i<Math.round(innerWidth*innerHeight/13000);i++){const px=rnd()*W,py=rnd()*Hh,r=(.45+rnd()*1.1)*dpr;x.beginPath();x.arc(px,py,r,0,Math.PI*2);x.fillStyle=rnd()<.72?"rgba(226,188,135,.42)":"rgba(94,255,185,.3)";x.fill()}
+  const base=Hh*.9;x.fillStyle="rgba(24,19,15,.58)";x.beginPath();x.moveTo(0,Hh);x.lineTo(0,base);x.lineTo(W*.1,base-Hh*.025);x.lineTo(W*.2,base);x.lineTo(W*.31,base-Hh*.035);x.lineTo(W*.4,base);x.lineTo(W*.56,base-Hh*.02);x.lineTo(W*.7,base);x.lineTo(W*.84,base-Hh*.03);x.lineTo(W,base);x.lineTo(W,Hh);x.fill();
+  x.fillStyle="rgba(8,7,6,.56)";x.beginPath();x.moveTo(0,Hh);x.lineTo(0,base+Hh*.025);x.lineTo(W*.14,base+Hh*.01);x.lineTo(W*.23,Hh);x.lineTo(W*.71,Hh);x.lineTo(W*.8,base+Hh*.015);x.lineTo(W*.93,base+Hh*.025);x.lineTo(W,Hh);x.fill();
+  const fade=x.createLinearGradient(0,base-Hh*.12,0,Hh);fade.addColorStop(0,"rgba(11,9,7,0)");fade.addColorStop(1,"rgba(11,9,7,.8)");x.fillStyle=fade;x.fillRect(0,0,W,Hh)}
+ draw();addEventListener("resize",draw)})();
 
 /* ---------- form ---------- */
 const $=id=>document.getElementById(id);
