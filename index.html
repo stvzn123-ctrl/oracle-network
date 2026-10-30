@@ -450,6 +450,8 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .cread h4{margin:18px 0 6px;font-size:var(--fs-b);font-weight:600;display:flex;gap:8px;align-items:baseline}
 .cread h4:first-child{margin-top:6px}
 .cread h4 span{font-weight:400;font-size:var(--fs-s);color:var(--muted)}
+.cread h4 .yh{display:inline-flex;flex-direction:column;line-height:1.25;font-weight:600;font-size:var(--fs-b);color:var(--fg)}
+.cread h4 .yh small{font-weight:400;font-size:var(--fs-s);color:var(--muted)}
 .cread p{margin:0;font-family:var(--display);font-size:16px;line-height:1.9;color:var(--ink);word-break:keep-all}
 .mini-turns{margin-top:14px;gap:14px}
 .mini-turns p{font-size:15px;line-height:1.8}
@@ -1005,8 +1007,8 @@ function catTurns(ci){const ch=CH,na=nowAge(),lim=Math.min(80,na+45),d=ch.stems.
   for(let n=1;n<10;n++){const a=ch.dwStart+10*(n-1);if(a<=na||a>lim)continue;const dw=ch.mIdx+(ch.fwd?n:-n);const st=mod(dw,60)%10;const tg=tenGod(d,st);
     out.push([a,`${pillar(dw)} 대운이 시작돼요. ${TGP[tg][k]}.`])}
   ch.dashas.forEach(x=>{const a=x.start-ch.birthYear;if(a<=na||a>lim)return;out.push([a,`${PK[x.lord]} 다샤가 ${DY[x.L]}년 이어져요. ${PP[x.lord][ci]}.`])});
-  return out.sort((a,b)=>a[0]-b[0]).map(([a,t])=>`<li><span class="t-age">${Math.floor(a)}세<small>${Math.floor(ch.birthYear+a)}년</small></span><p>${t}</p></li>`).join("")}
-function catReading(ci){return HZ.map((h,hi)=>{const x=catHorizon(ci,hi);return `<h4>${new Date().getFullYear()+h.off}년<span>${h.n} · 만 ${Math.floor(nowAge()+h.off)}세</span><em class="yscore" style="color:${CATS[ci].c}">${D(R[hi][ci].mean)}점</em></h4><p class="ysum">${x.mark?"<span class=\"ymark\">전환점</span>":""}${x.sum}</p><p>${x.t}</p>`}).join("")+
+  return out.sort((a,b)=>a[0]-b[0]).map(([a,t])=>`<li><span class="t-age">${Math.floor(ch.birthYear+a)-ch.Y+1}세<small>${Math.floor(ch.birthYear+a)}년</small></span><p>${t}</p></li>`).join("")}
+function catReading(ci){return HZ.map((h,hi)=>{const x=catHorizon(ci,hi);return `<h4><span class="yh">${new Date().getFullYear()+h.off}년<small>${new Date().getFullYear()+h.off-CH.Y+1}세</small></span><span>${h.n}</span><em class="yscore" style="color:${CATS[ci].c}">${D(R[hi][ci].mean)}점</em></h4><p class="ysum">${x.mark?"<span class=\"ymark\">전환점</span>":""}${x.sum}</p><p>${x.t}</p>`}).join("")+
   `<h4>평생의 흐름<span>10대~70대</span></h4><p>${storyFor(ci).t}</p><ol class="turns mini-turns">${catTurns(ci)}</ol>`}
 /* ---------- 평생 지도 아래: 운별 10대~70대 흐름 이야기 + 종합 ---------- */
 const NOUN=["재물운","애정운","일과 공부의 운","건강운"];
@@ -1220,7 +1222,7 @@ function renderReading(){const box=document.getElementById("readBody");if(!box||
   const np=natalProse(CH);const tp=turningPoints(CH);
   document.getElementById("readTeaser").textContent=traitDescription(CH);
   box.innerHTML=`<section class="r-ch"><h3>어떤 운명을 타고났나</h3>${np.map((p,i)=>`<p${i===3?' class="r-weak"':""}>${p}</p>`).join("")}</section>
-   <section class="r-ch"><h3>평생 흐름의 전환점</h3><p>${lifeIntro(CH)}</p><ol class="turns">${tp.map(e=>`<li><span class="t-age">${Math.floor(e.a)}세<small>${e.y}년</small></span><p>${e.t}<em>${e.src}</em></p></li>`).join("")}</ol></section>`}
+   <section class="r-ch"><h3>평생 흐름의 전환점</h3><p>${lifeIntro(CH)}</p><ol class="turns">${tp.map(e=>`<li><span class="t-age">${e.y-CH.Y+1}세<small>${e.y}년</small></span><p>${e.t}<em>${e.src}</em></p></li>`).join("")}</ol></section>`}
 
 /* ---------- 분석 구조: 점수 계산서 (가까운 미래 4시점만) ---------- */
 function renderNetCtl(){const p=document.getElementById("netP"),c=document.getElementById("netC");
