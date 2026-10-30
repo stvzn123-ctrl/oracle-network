@@ -70,6 +70,7 @@ form.ask{border-top:1px solid var(--line);padding:16px;animation:open .45s ease;
 .ymd select,.ymd input{padding-inline:8px}
 .sub{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-height:20px}
 .conv{font-family:var(--mono);font-size:11.5px;color:var(--gold)}
+.fnote{font-size:11.5px;line-height:1.5;color:var(--dim);word-break:keep-all}.fnote b{font-family:var(--mono);font-weight:500;color:var(--gold);letter-spacing:.04em}
 .noplace{margin:0 0 8px}.noplace small{color:var(--dim)}
 .psearch{position:relative;margin-bottom:6px}
 .psearch input{font:inherit;font-size:14px;width:100%;color:var(--fg);background:var(--field);border:1px solid var(--line2);border-radius:9px;padding:9px 12px 9px 34px;background-image:radial-gradient(circle at 15px 50%,transparent 5px,var(--emerald) 5.5px,var(--emerald) 6.5px,transparent 7px);background-repeat:no-repeat}
@@ -524,7 +525,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
     <summary><span class="who-sum" id="whoSum"></span><span class="edit">정보 수정 <span class="chev">⌄</span></span></summary>
     <form class="ask" id="ask" novalidate>
       <div class="f s2"><label for="in-name">이름</label><input id="in-name" value="오은석" autocomplete="off"></div>
-      <div class="f s2"><label for="in-roman">영문 이름 (수비학)</label><input id="in-roman" value="Oh Eunseok" autocomplete="off"></div>
+      <div class="f s2"><label for="in-roman">영문 이름 (수비학)</label><input id="in-roman" value="Oh Eunseok" autocomplete="off" placeholder="여권 영문 이름 (예: Hong Gildong)" aria-describedby="romanNote"><small class="fnote" id="romanNote"></small></div>
       <div class="f s2"><span class="lb">성별 (사주 대운)</span><div class="seg"><label><input type="radio" name="sex" value="m" id="sx-m" checked><span>남</span></label><label><input type="radio" name="sex" value="f" id="sx-f"><span>여</span></label></div></div>
       <div class="f s2"><span class="lb">달력</span><div class="seg"><label><input type="radio" name="cal" value="s" id="cal-s" checked><span>양력</span></label><label><input type="radio" name="cal" value="l" id="cal-l"><span>음력</span></label></div></div>
       <div class="f s2 wm"><span class="lb" id="dateLb">생년월일 (양력)</span><div class="ymd"><input id="in-y" type="number" inputmode="numeric" min="1920" max="2025" value="1998" aria-label="태어난 해"><select id="in-m" aria-label="월"></select><select id="in-d" aria-label="일"></select></div>
@@ -1367,11 +1368,27 @@ fillSido();fillSgg("");syncSel();
 const NOPLACE={name:"출생지 미선택",lat:null,lon:127.5,tz:9,kr:true,none:true};
 function setNoPlace(on){$("in-noplace").checked=on;$("placeBox").hidden=on;if(on)toggleMap(false)}
 $("in-noplace").addEventListener("change",e=>setNoPlace(e.target.checked));
+/* 한글 이름 → 영문(성은 여권에서 흔한 철자, 이름은 국어의 로마자 표기법 음절 단위) */
+const RR_I=["g","kk","n","d","tt","r","m","b","pp","s","ss","","j","jj","ch","k","t","p","h"],RR_V=["a","ae","ya","yae","eo","e","yeo","ye","o","wa","wae","oe","yo","u","wo","we","wi","yu","eu","ui","i"],RR_F=["","k","k","k","n","n","n","t","l","k","m","l","l","l","p","l","m","p","p","t","t","ng","t","t","k","t","p","t"];
+const SURN2={"남궁":"Namgung","제갈":"Jegal","황보":"Hwangbo","선우":"Sunwoo","독고":"Dokgo","사공":"Sagong","서문":"Seomun"};
+const SURN=Object.fromEntries("김Kim 이Lee 박Park 최Choi 정Jung 강Kang 조Cho 윤Yoon 장Jang 임Lim 한Han 오Oh 서Seo 신Shin 권Kwon 황Hwang 안Ahn 송Song 류Ryu 유Yoo 홍Hong 전Jeon 고Ko 문Moon 양Yang 손Son 배Bae 백Baek 허Heo 남Nam 심Shim 노Noh 하Ha 곽Kwak 성Sung 차Cha 주Joo 우Woo 구Koo 민Min 진Jin 나Na 엄Eom 채Chae 원Won 천Cheon 방Bang 공Kong 현Hyun 함Ham 변Byun 염Yeom 여Yeo 추Choo 도Do 소So 석Seok 선Sun 설Seol 마Ma 길Gil 연Yeon 위Wi 표Pyo 명Myung 기Ki 반Ban 왕Wang 금Keum 옥Ok 육Yook 인In 맹Maeng 제Je 모Mo 탁Tak 국Kook 어Eo 은Eun 편Pyeon 용Yong 예Ye 경Kyung 봉Bong 사Sa 부Boo 가Ka 복Bok 태Tae 목Mok 형Hyung 피Pi 두Doo 감Kam 호Ho 동Dong 온On 좌Jwa 상Sang".split(" ").map(t=>[t[0],t.slice(1)]));
+function rrWord(w){let o="",pf=-1;for(const c of w){const k=c.charCodeAt(0)-0xAC00;if(k<0||k>11171){o+=c;pf=-1;continue}
+  const i=Math.floor(k/588),v=Math.floor(k%588/28),f=k%28;let ini=RR_I[i];if(i===5&&pf===8)ini="l";o+=ini+RR_V[v]+RR_F[f];pf=f}return o}
+function romanize(name){const n=(name||"").replace(/\s+/g,"");if(!/^[가-힣]{2,}$/.test(n))return "";
+  const cap=t=>t?t[0].toUpperCase()+t.slice(1):"";
+  let sur,given;if(n.length>=4&&SURN2[n.slice(0,2)]){sur=SURN2[n.slice(0,2)];given=n.slice(2)}else{sur=SURN[n[0]]||cap(rrWord(n[0]));given=n.slice(1)}
+  return `${sur} ${cap(rrWord(given))}`}
+let romanTouched=false;
+function romanNote(){const v=$("in-roman").value,l=v.toLowerCase().replace(/[^a-z]/g,"");
+  $("romanNote").innerHTML=(l?`계산 글자 <b>${l.toUpperCase()}</b><br>`:"비우면 한글 이름을 자동 변환해요<br>")+"여권 철자대로. 띄어쓰기·순서·대소문자는 상관없어요."}
+$("in-roman").addEventListener("input",()=>{romanTouched=$("in-roman").value.trim()!=="";romanNote()});
+$("in-name").addEventListener("input",()=>{if(!romanTouched){$("in-roman").value=romanize($("in-name").value);romanNote()}});
+romanNote();
 function readForm(){const cal=$("cal-l").checked?"l":"s";const y=+$("in-y").value,m=+$("in-m").value,d=+$("in-d").value,leap=cal==="l"&&$("in-leap").checked;
   let sol={y,m,d};if(cal==="l"){const r=lunarToSolar(y,m,d,leap);if(r.err)return {err:r.err};sol=r}
   const date=`${sol.y}-${String(sol.m).padStart(2,"0")}-${String(sol.d).padStart(2,"0")}`;
-  return {name:$("in-name").value.trim(),roman:$("in-roman").value.trim(),sex:$("sx-f").checked?"f":"m",cal,ly:y,lm:m,ld:d,leap,date,time:$("in-time").value||"12:00",notime:$("in-notime").checked,place:$("in-noplace").checked?{...NOPLACE}:{...place}}}
-function fillForm(v){$("in-name").value=v.name||"";$("in-roman").value=v.roman||"";$(v.sex==="f"?"sx-f":"sx-m").checked=true;
+  return {name:$("in-name").value.trim(),roman:$("in-roman").value.trim()||romanize($("in-name").value),sex:$("sx-f").checked?"f":"m",cal,ly:y,lm:m,ld:d,leap,date,time:$("in-time").value||"12:00",notime:$("in-notime").checked,place:$("in-noplace").checked?{...NOPLACE}:{...place}}}
+function fillForm(v){$("in-name").value=v.name||"";$("in-roman").value=v.roman||"";romanTouched=!!v.roman&&v.roman!==romanize(v.name);romanNote();$(v.sex==="f"?"sx-f":"sx-m").checked=true;
   const [sy,sm,sd]=v.date.split("-").map(Number);const isL=v.cal==="l";$(isL?"cal-l":"cal-s").checked=true;
   $("in-y").value=isL?v.ly:sy;$("in-m").value=isL?v.lm:sm;fillDays();$("in-d").value=isL?v.ld:sd;$("in-leap").checked=!!v.leap;updConv();
   $("in-time").value=v.time;$("in-notime").checked=!!v.notime;$("in-time").disabled=!!v.notime;
