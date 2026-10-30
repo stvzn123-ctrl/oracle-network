@@ -467,6 +467,32 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .reading details{background:rgba(12,10,8,.94);border:1px solid var(--line2);border-radius:16px;padding:0 24px;box-shadow:0 18px 50px rgba(0,0,0,.45)}
 @media (max-width:560px){.reading details{padding:0 16px}}
 @media (prefers-reduced-motion:reduce){.flow-line.draw,.mini-l.draw{animation:none;stroke-dashoffset:0}}
+
+/* 출생 정보 요약 */
+:root{--el0:#48f0a6;--el1:#ff7a6b;--el2:#e9c46a;--el3:#d9d4ca;--el4:#52d6ff}
+.pillars{display:block;margin-top:20px}
+.cs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px 28px}
+.cs-block h4,.cs-rows dt{margin:0 0 8px;font-size:var(--fs-s);color:var(--muted);font-weight:500}
+.pzs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.pz{border:1px solid var(--line);border-radius:10px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.pz.me{border-color:var(--emerald);box-shadow:0 0 16px rgba(61,255,176,.18)}
+.pz-l{font-size:11px;color:var(--muted)}.pz.me .pz-l{color:var(--emerald)}
+.pz-h{font-family:var(--display);font-size:22px;line-height:1.2;display:flex;flex-direction:column;align-items:center}
+.pz-h i{font-style:normal}
+.pz-k{font-size:12px;color:var(--fg)}
+.cs-note{margin:8px 0 0;font-size:var(--fs-s);color:#d8cfc1;line-height:1.6}
+.ebs{display:flex;flex-direction:column;gap:6px}
+.eb{display:grid;grid-template-columns:56px minmax(0,1fr) 18px;gap:8px;align-items:center;font-size:var(--fs-s)}
+.eb i{height:8px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden}
+.eb s{display:block;height:100%;border-radius:4px}
+.eb b{font-family:var(--mono);font-weight:500;text-align:right}
+.cs-rows{grid-column:1/-1;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 28px}
+.cs-rows div{min-width:0;padding-top:10px;border-top:1px solid var(--line)}
+.cs-rows dt{margin-bottom:2px}
+.cs-rows dd{margin:0;display:flex;flex-direction:column;gap:1px}
+.cs-rows dd b{font-family:var(--display);font-size:16px;color:var(--gold);font-weight:700}
+.cs-rows dd span{font-size:var(--fs-s);color:#d8cfc1;line-height:1.55}
+@media (max-width:620px){.cs{grid-template-columns:minmax(0,1fr)}.cs-rows{grid-template-columns:minmax(0,1fr)}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1089,11 +1115,32 @@ function renderNatal(){const ch=CH,d=ch.stems.d;const dom=ch.cnt.indexOf(Math.ma
    <div><h4>타고난 기질</h4><p>일간 ${ST[d]}${EL[SE[d]]}는 ${DM[ST[d]]} 사람이에요. 오행은 ${cs}로 ${ELK[dom]}(${EL[dom]})의 힘이 가장 셉니다. ${ascS!=null?`첫인상을 만드는 상승궁은 ${ZOD[ascS]}자리라 '${SUNP[ascS]}'으로 기억됩니다.`:""} 인생 수는 ${ch.lp}${ch.expr?`, 표현 수 ${ch.expr}`:""}${ch.soul?`, 영혼 수 ${ch.soul}`:""}입니다.</p></div>
    <div><h4>또 다른 선물</h4><p>${gifts.slice(3,6).map(g=>g[1]).join(" ")}</p></div>
    <div><h4>약점</h4><p>${weakText(ch,dom,miss)}</p></div>`;
-  const hp=ch.stems.h!=null?ST[ch.stems.h]+"<br>"+BR[ch.brs.h]:"?<br>?";
-  document.getElementById("pillars").innerHTML=`<div class="pl"><div class="t">시주</div><div class="h">${hp}</div></div><div class="pl me"><div class="t">일주 · 나</div><div class="h">${ST[d]}<br>${BR[ch.brs.d]}</div></div><div class="pl"><div class="t">월주</div><div class="h">${ST[ch.stems.m]}<br>${BR[ch.brs.m]}</div></div><div class="pl"><div class="t">연주</div><div class="h">${ST[ch.stems.y]}<br>${BR[ch.brs.y]}</div></div>
-   <div class="pl wide"><div class="t">태양 · 달 · 상승궁</div><div class="h">${ZOD[sunS]} ${(ch.sun%30).toFixed(1)}°<br>${ZOD[moonS]} · ${ascS!=null?ZOD[ascS]:"–"}</div></div>
-   <div class="pl wide"><div class="t">인도 · ${ch.chandra?"달 기준":"라그나"}</div><div class="h">${ZOD[ch.lagna]} · ${NAK[ch.nk]}<br>대운 ${ch.fwd?"순행":"역행"} ${ch.dwStart.toFixed(1)}세~</div></div>
-   <div class="pl wide"><div class="t">수비학 · 마야</div><div class="h">인생 수 ${ch.lp}<br>${ch.tone} ${MS[ch.msign][0]}</div></div>`}
+  document.getElementById("pillars").innerHTML=chartSummary(ch)}
+/* 출생 정보 요약: 기호보다 '나에게 무슨 뜻인지'를 먼저 */
+const ELNAME=["나무","불","흙","쇠","물"],ELCOL=["var(--el0)","var(--el1)","var(--el2)","var(--el3)","var(--el4)"];
+const SIGNWORD=["양","황소","쌍둥이","게","사자","처녀","천칭","전갈","사수","염소","물병","물고기"];
+function chartSummary(ch){const d=ch.stems.d,na=nowAge(),y0=new Date().getFullYear();
+  const cols=[["태어난 해",ch.stems.y,ch.brs.y],["태어난 달",ch.stems.m,ch.brs.m],["태어난 날",ch.stems.d,ch.brs.d],["태어난 시",ch.stems.h,ch.brs.h]];
+  const pil=cols.map(([lb,st,br],i)=>st==null?`<div class="pz"><span class="pz-l">${lb}</span><b class="pz-h">?</b><span class="pz-k">시각 모름</span></div>`
+    :`<div class="pz${i===2?" me":""}"><span class="pz-l">${i===2?"나 자신":lb}</span><b class="pz-h"><i style="color:${ELCOL[SE[st]]}">${ST[st]}</i><i style="color:${ELCOL[SE[BMAIN[br]]]}">${BR[br]}</i></b><span class="pz-k">${STK[st]}${BRK[br]}</span></div>`).join("");
+  const tot=ch.cnt.reduce((a,b)=>a+b,0),mx=Math.max(...ch.cnt),dom=ch.cnt.indexOf(mx),miss=ch.cnt.map((v,i)=>v?null:ELNAME[i]).filter(Boolean);
+  const bars=ch.cnt.map((v,i)=>`<div class="eb"><span>${EL[i]} ${ELNAME[i]}</span><i><s style="width:${v/mx*100}%;background:${ELCOL[i]}"></s></i><b>${v}</b></div>`).join("");
+  const age=na;let dwt="";if(age<ch.dwStart)dwt=`첫 대운은 ${ch.dwStart.toFixed(0)}세에 시작해요`;else{const k=Math.floor((age-ch.dwStart)/10)+1;const dw=ch.mIdx+(ch.fwd?k:-k);const a0=Math.round(ch.dwStart+10*(k-1));dwt=`${pillar(dw)}(${STK[mod(dw,60)%10]}${BRK[mod(dw,60)%12]}) 대운 · ${a0}~${a0+9}세`;var dwtg=tenGod(d,mod(dw,60)%10)}
+  const fr=y0+.5;const md=ch.dashas.find(x=>fr>=x.start&&fr<x.end);const dsh=md?`${PK[md.lord]} 다샤 · ~${Math.floor(md.end)}년`:"";
+  const sunS=sign(ch.sun),moonS=sign(ch.moon),ascS=ch.asc!=null?sign(ch.asc):null;
+  const rows=[
+   ["태양 별자리 · 겉으로 드러나는 나",`${SIGNWORD[sunS]}자리`,SUNG[sunS]],
+   ["달 별자리 · 속마음",`${SIGNWORD[moonS]}자리`,`속마음에는 ${J(SUNG[moonS],"이","가")} 있어요`],
+   ascS!=null?["상승궁 · 첫인상",`${SIGNWORD[ascS]}자리`,`처음 만난 사람에게는 '${SUNP[ascS]}'의 사람으로 보여요`]:null,
+   ["인도 점성술 · 달의 별",NAK[ch.nk],NAKG[DL[ch.nk%9]]],
+   ["수비학 · 인생 수",String(ch.lp),LPM[ch.lp]||""],
+   ["마야력 · 탄생 기호",`${ch.tone} ${MS[ch.msign][0]}(${MS[ch.msign][1]})`,`${MS[ch.msign][2]}의 날`],
+   ["지금 지나는 큰 흐름",dwt,`${typeof dwtg!=="undefined"?`나에게 ${dwtg}의 10년 · `:""}${dsh?`인도 점성술로는 ${dsh}`:""}`]
+  ].filter(Boolean);
+  return `<div class="cs">
+   <div class="cs-block"><h4>사주 여덟 글자</h4><div class="pzs">${pil}</div><p class="cs-note">'나 자신' 칸의 위 글자 ${ST[d]}(${STK[d]})${bat(STK[d])?"이":"가"} 나를 나타내요. ${DMA[ST[d]]}의 기운이에요.</p></div>
+   <div class="cs-block"><h4>오행 균형</h4><div class="ebs">${bars}</div><p class="cs-note">${ELNAME[dom]} 기운이 ${mx}개로 가장 많아요.${miss.length?` ${miss.join("·")} 기운은 없어서 그 기운이 들어오는 해에 균형이 맞춰져요.`:" 다섯 기운이 모두 있는 고른 사주예요."}</p></div>
+   <dl class="cs-rows">${rows.map(r=>`<div><dt>${r[0]}</dt><dd><b>${r[1]}</b><span>${r[2]}</span></dd></div>`).join("")}</dl></div>`}
 
 /* ---------- 운명 풀이 전문: 다섯 점술을 하나로 엮은 줄글 ---------- */
 const LPM={1:"스스로 길을 여는 개척자의 수",2:"사람과 사람을 잇는 조율자의 수",3:"표현하고 창조하는 수",4:"기반을 다지는 건축가의 수",5:"자유와 변화를 따르는 수",6:"돌보고 책임지는 수",7:"탐구하고 통찰하는 수",8:"성취와 권한의 수",9:"넓게 품고 완성하는 수",11:"직관과 영감을 뜻하는 마스터 넘버",22:"큰 꿈을 현실로 짓는 마스터 넘버",33:"사람을 가르치고 치유하는 마스터 넘버"};
