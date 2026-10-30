@@ -120,6 +120,14 @@ body.fresh .natalbox,body.fresh #forecast,body.fresh .reading,body.fresh .panels
 .go{grid-column:1/-1;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .go button{font:inherit;font-weight:600;font-size:14.5px;color:#032016;background:var(--emerald);border:0;border-radius:10px;padding:10px 22px;cursor:pointer;box-shadow:0 0 22px rgba(61,255,176,.4);transition:transform .2s}
 .go button:hover{transform:translateY(-1px)}
+.askbox.casting{border-color:var(--emerald);animation:cast-glow 1.1s ease-in-out}
+.askbox.casting form{position:relative;pointer-events:none}
+.askbox.casting form>*:not(.go){opacity:.45;transition:opacity .4s}
+.askbox.casting form::after{content:"";position:absolute;inset:0;border-radius:12px;background:linear-gradient(100deg,transparent 30%,color-mix(in srgb,var(--emerald) 22%,transparent) 50%,transparent 70%);background-size:250% 100%;animation:cast-sweep 1.1s ease-in-out}
+.askbox.casting .go button{animation:cast-btn .55s ease-in-out 2}
+@keyframes cast-glow{0%,100%{box-shadow:0 0 0 transparent}50%{box-shadow:0 0 42px color-mix(in srgb,var(--emerald) 35%,transparent)}}
+@keyframes cast-sweep{from{background-position:120% 0}to{background-position:-120% 0}}
+@keyframes cast-btn{0%,100%{transform:scale(1)}50%{transform:scale(1.05);box-shadow:0 0 38px var(--emerald)}}
 .go small{font-size:12px;color:var(--dim)}
 #err{color:var(--rose);font-size:13px}
 
@@ -545,7 +553,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
           <div class="mapwrap"><svg id="map" role="img" aria-label="출생지 선택 지도"></svg><div class="maptip" id="mapTip" hidden></div></div>
           <div class="mapfoot"><div class="quick" id="quick"></div><label class="tz" for="in-tz">UTC<input id="in-tz" type="number" step="0.25" min="-12" max="14" value="9"></label><button type="button" class="done" id="mapDone">완료</button></div>
         </div></div></div>
-      <div class="go"><button type="submit">나의 운명 확인하기</button><small>입력값은 이 브라우저에만 남고, 어디로도 보내지 않습니다.</small><span id="err" role="alert"></span></div>
+      <div class="go"><button type="submit">나의 운명 확인하기</button><small>입력값은 저장하지 않고, 어디로도 보내지 않습니다.</small><span id="err" role="alert"></span></div>
     </form>
     </details>
 
@@ -571,7 +579,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
   <p id="share-status" role="status" aria-live="polite"></p>
 </dialog>
 <section id="forecast">
-  <div class="sec-head"><h2>다섯 점술이 말하는 당신의 운</h2></div>
+  <div class="sec-head"><h2>당신의 운명</h2></div>
   <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="near" aria-pressed="true">가까운 미래<small>1~10년</small></button><button type="button" data-m="life" aria-pressed="false">평생 지도<small>10년 단위</small></button></div>
   <div class="trend is-locked" id="result-gate">
     <div id="graph-content" inert aria-hidden="true"><div id="viz"></div><p class="tnote" id="trendNote"></p></div>
@@ -1414,8 +1422,12 @@ $("ask").addEventListener("submit",e=>{e.preventDefault();const ce=checkForm();i
   if(v.err){$("err").textContent=v.err;return}
   const [y]=v.date.split("-").map(Number);
   if(!(y>=1920&&y<=2026)){$("err").textContent="태어난 해를 1920~2025년 사이로 입력해 주세요.";return}
-  $("err").textContent="";try{localStorage.setItem("fate-input",JSON.stringify(v))}catch(_){}
-  toggleMap(false);$("askbox").open=false;document.body.classList.remove("fresh");run(v,true);requestAnimationFrame(()=>document.querySelector(".natalbox").scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"}))});
+  $("err").textContent="";toggleMap(false);
+  const ab=$("askbox"),btn=$("ask").querySelector("button[type=submit]");if(ab.classList.contains("casting"))return;
+  const finish=()=>{ab.classList.remove("casting");btn.textContent="나의 운명 확인하기";ab.open=false;document.body.classList.remove("fresh");run(v,true);
+    requestAnimationFrame(()=>{const nb=document.querySelector(".natalbox");if(nb.getBoundingClientRect().top<0)nb.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})})};
+  if(reduceM){finish();return}
+  ab.classList.add("casting");btn.textContent="운명을 읽는 중…";setTimeout(finish,1100)});
 /* Share a fixed introduction and site URL only; never include birth input or personal results. */
 const SHARE_URL="https://stvzn123-ctrl.github.io/oracle-network/";
 function resultShareText(){
@@ -1465,9 +1477,8 @@ $("share-native").addEventListener("click",async()=>{
 applyGraphLock();
 
 fillDays();showPlace();syncSel();
-let start=null;try{const sv=JSON.parse(localStorage.getItem("fate-input")||"null");if(sv&&sv.date){fillForm(sv);start=readForm();if(start.err)start=sv}}catch(_){}
-$("askbox").open=!start;
-if(start)run(start,false);else{document.body.classList.add("fresh");$("whoSum").innerHTML="<span>태어난 순간을 입력해 주세요</span>"}
+try{localStorage.removeItem("fate-input")}catch(_){}
+$("askbox").open=true;document.body.classList.add("fresh");$("whoSum").innerHTML="<span>태어난 순간을 입력해 주세요</span>";
 </script>
 
 
