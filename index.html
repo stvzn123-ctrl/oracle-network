@@ -430,6 +430,33 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .turns p{margin:0}
 .turns em{display:block;font-style:normal;font-family:var(--body);font-size:var(--fs-s);color:var(--dim);margin-top:2px}
 @media (max-width:560px){.r-ch p{font-size:16px;line-height:1.9}.turns li{grid-template-columns:minmax(0,1fr);gap:2px}.t-age{flex-direction:row;gap:8px;align-items:baseline}.reading summary{flex-direction:column;align-items:flex-start}}
+
+/* 운 카드 미니 그래프와 풀이 */
+.mini{position:relative;height:132px;margin:2px 18px 6px}
+.mini svg{position:absolute;left:0;top:0;width:100%;height:96px;overflow:visible}
+.mini-g{stroke:var(--line);stroke-dasharray:3 5;vector-effect:non-scaling-stroke}
+.mini-l{fill:none;stroke:var(--c);stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.mini-pt{position:absolute;transform:translate(-50%,-50%);width:44px;height:44px;border:0;padding:0;background:transparent;cursor:pointer;display:grid;place-items:center;font:inherit;color:var(--muted)}
+.mini-pt i{width:10px;height:10px;border-radius:50%;border:2px solid var(--c);background:var(--bg)}
+.mini-pt b{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:var(--fs-s);font-weight:500}
+.mini-pt[aria-pressed="true"] i{background:var(--c);box-shadow:0 0 0 5px color-mix(in srgb,var(--c) 22%,transparent)}
+.mini-pt[aria-pressed="true"] b{color:var(--c);font-weight:700}
+.mini-pt:focus-visible{outline:2px solid var(--c);outline-offset:-4px;border-radius:50%}
+.mini-x{position:absolute;left:0;right:0;top:100px;height:30px}
+.mini-x span{position:absolute;transform:translateX(-50%);text-align:center;white-space:nowrap;font-size:var(--fs-s);color:var(--muted);line-height:1.3}
+.mini-x small{display:block;font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.mini-x .on{color:var(--fg);font-weight:600}
+.cread{padding:4px 18px 18px;animation:open .4s ease}
+.cread h4{margin:18px 0 6px;font-size:var(--fs-b);font-weight:600;display:flex;gap:8px;align-items:baseline}
+.cread h4:first-child{margin-top:6px}
+.cread h4 span{font-weight:400;font-size:var(--fs-s);color:var(--muted)}
+.cread p{margin:0;font-family:var(--display);font-size:16px;line-height:1.9;color:var(--ink);word-break:keep-all}
+.mini-turns{margin-top:14px;gap:14px}
+.mini-turns p{font-size:15px;line-height:1.8}
+.mini-turns li{grid-template-columns:64px minmax(0,1fr)}
+@media (max-width:560px){.mini{margin-inline:14px}.cread{padding-inline:14px}.mini-turns li{grid-template-columns:minmax(0,1fr)}}
+.cats{align-items:start}
+.mini{height:124px}.mini-x{top:94px}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -901,13 +928,39 @@ function renderCat(ci,anim){const c=CATS[ci];const box=document.getElementById("
   const top=r.v.map((x,i)=>[x[0],i]).sort((a,b)=>b[0]-a[0]);const lead=r.mean>=50?M[top[0][1]].n:M[top[top.length-1][1]].n;
   const sub=life?`${selDec*10}대 · ${decRange(selDec)}`:`${HZ[hi].n} · ${new Date().getFullYear()+HZ[hi].off}`;
   const na=nowAge();
-  const nav=life?"":`<div class="hz" style="--c:${c.c}">${HZ.map((h,i)=>`<button type="button" aria-pressed="${i===hi}" data-h="${i}"><b>${h.n}</b><span>${D(R[i][ci].mean)}</span></button>`).join("")}</div>`;
+  const nav=life?"":miniGraph(ci,hi);
   box.innerHTML=`<div class="cat-top">${ringSvg(D(r.mean),c.c)}<div style="min-width:0"><h3>${c.n}<small>${sub}</small></h3><p class="head">${HEAD[c.k][tier(r.mean)]}</p>
    <div class="agree">${r.mean>=50?"가장 강하게 밀어주는 점술":"가장 강하게 경고하는 점술"}: ${lead} · 일치도 ${r.agree}%</div></div></div>${nav}
-   <div class="dots">${r.v.map((x,i)=>`<span class="dot" style="--c:${M[i].c}"><i></i>${M[i].n} <b>${D(x[0])}</b></span>`).join("")}</div>`;
-  box.querySelectorAll(".hz button").forEach(b=>b.addEventListener("click",()=>{sel[c.k]=+b.dataset.h;renderCat(ci,true);renderTrend()}));
+   <div class="dots">${r.v.map((x,i)=>`<span class="dot" style="--c:${M[i].c}"><i></i>${M[i].n} <b>${D(x[0])}</b></span>`).join("")}</div>
+   ${life?"":`<details class="more catread" ${openState[c.k]?"open":""}><summary>1·3·5·10년 뒤와 평생 풀이 읽기 <span class="chev">⌄</span></summary><div class="cread">${catReading(ci)}</div></details>`}`;
+  box.querySelectorAll(".mini-pt").forEach(b=>b.addEventListener("click",()=>{sel[c.k]=+b.dataset.h;renderCat(ci,true);renderTrend()}));
+  box.querySelector(".catread")?.addEventListener("toggle",e=>{openState[c.k]=e.target.open});
   box.querySelectorAll(".decbars button").forEach(b=>b.addEventListener("click",()=>{selDec=+b.dataset.d;cast();renderTrend();renderCats();if(document.getElementById("p-net").open)renderNet()}));
   if(anim){box.animate?.([{boxShadow:`0 0 0 ${c.c}00`},{boxShadow:`0 0 36px ${c.c}55`},{boxShadow:`0 0 0 ${c.c}00`}],{duration:900,easing:"ease-out"})}}
+/* ---------- 운 카드: 1·3·5·10년 미니 그래프 + 운별 풀이 ---------- */
+function miniGraph(ci,hi){const sc=R.map(row=>D(row[ci].mean));const x=i=>8+84*(HZ[i].off-1)/9,y=v=>12+(100-v)/30*70;const y0=new Date().getFullYear();
+  return `<div class="mini" style="--c:${CATS[ci].c}"><svg viewBox="0 0 1000 96" preserveAspectRatio="none" aria-hidden="true"><line class="mini-g" x1="40" x2="960" y1="${y(85)}" y2="${y(85)}"/><polyline class="mini-l" points="${sc.map((v,i)=>x(i)*10+","+y(v)).join(" ")}"/></svg>
+   ${sc.map((v,i)=>`<button type="button" class="mini-pt" data-h="${i}" style="left:${x(i)}%;top:${y(v)}px" aria-pressed="${i===hi}" aria-label="${HZ[i].n} ${CATS[ci].n} ${v}점 보기"><b>${v}</b><i></i></button>`).join("")}
+   <div class="mini-x">${HZ.map((h,i)=>`<span class="${i===hi?"on":""}" style="left:${x(i)}%">${h.n}<small>${y0+h.off}</small></span>`).join("")}</div></div>`}
+const REST_ALT=["새는 돈을 막는 습관을 만들 기회예요","대화를 늘리면 관계가 더 단단해져요","관점을 바꾸면 다음 길이 보여요","규칙적인 휴식이 회복을 앞당겨요"];
+function catHorizon(ci,hi){const r=R[hi][ci],y=new Date().getFullYear()+HZ[hi].off,age=Math.floor(nowAge()+HZ[hi].off);
+  const head=HEAD[CATS[ci].k][tier(r.mean)].split(" · ")[0];
+  const ord=r.v.slice(0,5).map((x,i)=>[x[0],i]).sort((a,b)=>b[0]-a[0]);
+  let t=`${y}년, 만 ${age}세 무렵의 ${J(NOUN[ci],"은","는")} ${D(r.mean)}점, ${J(head,"이에요","예요")}. `;
+  ord.filter(([v,i])=>i<4).slice(0,2).forEach(([v,i])=>{if(i===1){const f=(r.v[1][3]||[]).filter(f=>f[1]>0).sort((a,b)=>b[1]-a[1])[0];if(f){const ph=f[0].replace(/^(목성|토성) (\d+)H (.+)$/,"$1의 $2하우스($3) 통과");t+=`서양 점성술에서는 ${J(ph,"이","가")} ${J(NOUN[ci],"을","를")} 밀어줘요. `}return}
+    const tx=plain(r.v[i][1]).split(/(?<=[.!?])\s+/).slice(0,2).join(" ");if(tx)t+=`${ro(M[i].n)} 보면 ${tx} `});
+  t+=r.agree>=75?"여러 점술이 같은 방향을 가리켜 신호가 뚜렷한 해예요. ":r.agree<60?"점술마다 보는 방향이 조금씩 달라, 흐름을 지켜보며 움직이면 좋아요. ":"";
+  const [lv,li]=ord[ord.length-1];if(lv<50){const f=(r.v[li][3]||[]).filter(f=>f[1]<0).sort((a,b)=>a[1]-b[1])[0];
+    t+=`반면 ${M[li].n}에서는 ${f?f[0].replace(/^(목성|토성) (\d+)H (.+)$/,"$1의 $2하우스($3) 통과")+"의 영향으로 ":""}${CAUTION[ci]}. 그래도 ${(hi%2?REST_ALT:REST)[ci]}. `}
+  const tc=tarot[hi];t+=`이 해의 타로는 ${tc[1]} 카드로, '${tc[2+ci]}'${bat(tc[2+ci])?"이라는":"라는"} 메시지를 보태요.`;
+  return t}
+function catTurns(ci){const ch=CH,na=nowAge(),lim=Math.min(80,na+45),d=ch.stems.d,k=CATS[ci].k,out=[];
+  for(let n=1;n<10;n++){const a=ch.dwStart+10*(n-1);if(a<=na||a>lim)continue;const dw=ch.mIdx+(ch.fwd?n:-n);const st=mod(dw,60)%10;const tg=tenGod(d,st);
+    out.push([a,`${pillar(dw)} 대운이 시작돼요. ${TGP[tg][k]}.`])}
+  ch.dashas.forEach(x=>{const a=x.start-ch.birthYear;if(a<=na||a>lim)return;out.push([a,`${PK[x.lord]} 다샤가 ${DY[x.L]}년 이어져요. ${PP[x.lord][ci]}.`])});
+  return out.sort((a,b)=>a[0]-b[0]).map(([a,t])=>`<li><span class="t-age">${Math.floor(a)}세<small>${Math.floor(ch.birthYear+a)}년</small></span><p>${t}</p></li>`).join("")}
+function catReading(ci){return HZ.map((h,hi)=>`<h4>${h.n}<span>${new Date().getFullYear()+h.off}년</span></h4><p>${catHorizon(ci,hi)}</p>`).join("")+
+  `<h4>평생의 흐름<span>10대~70대</span></h4><p>${storyFor(ci).t}</p><ol class="turns mini-turns">${catTurns(ci)}</ol>`}
 /* ---------- 평생 지도 아래: 운별 10대~70대 흐름 이야기 + 종합 ---------- */
 const NOUN=["재물운","애정운","일과 공부의 운","건강운"];
 const SUMREST=["돈은 꾸준히 관리할수록 오래 남는 복이 됩니다","관계는 천천히 다질수록 깊어집니다","일과 공부는 꾸준히 쌓을수록 늦게 크게 빛납니다","몸은 아껴 쓸수록 평생의 힘이 됩니다"];
@@ -1101,10 +1154,9 @@ function lifeIntro(ch){const tot=LD.map(r=>avgOf(r.map(c=>c.mean)));const cD=cla
   const avg=CATS.map((_,ci)=>[avgOf(LD.slice(1).map(r=>r[ci].mean)),ci]).sort((a,b)=>b[0]-a[0]);
   return `당신의 평생은 ${traj} 흐름이에요. 평생을 관통하는 큰 복은 ${SHORT[avg[0][1]]}운이고, ${SHORT[avg[1][1]]}운이 그 뒤를 받칩니다. ${SHORT[avg[3][1]]}운은 상대적으로 잔잔한 편이니, ${SUMREST[avg[3][1]]}. 아래는 여러 점술이 앞으로 흐름이 바뀐다고 짚는 지점들이에요.`}
 function renderReading(){const box=document.getElementById("readBody");if(!box||!CH)return;
-  const np=natalProse(CH);const hp=HZ.map((_,hi)=>horizonProse(hi));const tp=turningPoints(CH);
+  const np=natalProse(CH);const tp=turningPoints(CH);
   document.getElementById("readTeaser").textContent=traitDescription(CH);
   box.innerHTML=`<section class="r-ch"><h3>어떤 운명을 타고났나</h3>${np.map((p,i)=>`<p${i===3?' class="r-weak"':""}>${p}</p>`).join("")}</section>
-   <section class="r-ch"><h3>1년, 3년, 5년, 10년 뒤</h3>${hp.map(x=>`<h4>${x.h}<span>${x.sub}</span></h4><p>${x.t}</p>`).join("")}</section>
    <section class="r-ch"><h3>평생 흐름의 전환점</h3><p>${lifeIntro(CH)}</p><ol class="turns">${tp.map(e=>`<li><span class="t-age">${Math.floor(e.a)}세<small>${e.y}년</small></span><p>${e.t}<em>${e.src}</em></p></li>`).join("")}</ol></section>`}
 
 /* ---------- 분석 구조: 점수 계산서 (가까운 미래 4시점만) ---------- */
