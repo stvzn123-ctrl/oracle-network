@@ -71,6 +71,8 @@ form.ask{border-top:1px solid var(--line);padding:16px;animation:open .45s ease;
 .sub{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-height:20px}
 .conv{font-family:var(--mono);font-size:11.5px;color:var(--gold)}
 .opt{color:var(--dim);letter-spacing:0}
+body.fresh .natalbox,body.fresh #forecast,body.fresh .reading,body.fresh .panels{display:none}
+.natalbox{scroll-margin-top:16px}
 #whoName.noname{cursor:pointer;text-decoration:underline dotted;text-decoration-thickness:2px;text-underline-offset:.18em;text-decoration-color:var(--emerald)}#whoName.noname:hover,#whoName.noname:focus-visible{color:var(--emerald);outline:none}
 .fnote{font-size:11.5px;line-height:1.5;color:var(--dim);word-break:keep-all}.fnote b{font-family:var(--mono);font-weight:500;color:var(--gold);letter-spacing:.04em}
 .noplace{margin:0 0 8px}.noplace small{color:var(--dim)}
@@ -520,19 +522,19 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
   <div class="sigil" aria-hidden="true"><svg id="sigil" viewBox="0 0 500 500"></svg></div>
   <div class="hero-in">
     <div class="hero-top"><div class="eyebrow">The Oracle Network</div><div class="share-actions"><button type="button" id="share-open" aria-label="내 운명 결과 공유하기">공유하기 ↗</button></div></div>
-    <h1><span id="whoName">오은석</span>님의<br><em>운명 네트워크</em></h1>
-    <p class="lede">태어난 순간을 입력하면 사주, 서양·인도 점성술, 수비학, 마야력이 각자의 규칙으로 계산해 1~10년 뒤의 운을 말합니다.</p>
+    <h1><span id="whoName">운명을 걷는 사람</span>님의<br><em>운명 네트워크</em></h1>
+    <p class="lede">태어난 순간을 입력하면 사주, 서양·인도 점성술, 수비학, 마야력이 각자의 규칙으로 계산해 당신의 운명을 알려드립니다.</p>
 
     <details class="askbox" id="askbox">
     <summary><span class="who-sum" id="whoSum"></span><span class="edit">정보 수정 <span class="chev">⌄</span></span></summary>
     <form class="ask" id="ask" novalidate>
-      <div class="f s2"><label for="in-name">이름 <span class="opt">(선택)</span></label><input id="in-name" value="오은석" autocomplete="off" placeholder="비워도 돼요"></div>
-      <div class="f s2"><label for="in-roman">영문 이름 (수비학) <span class="opt">(선택)</span></label><input id="in-roman" value="Oh Eunseok" autocomplete="off" placeholder="여권 영문 이름 (예: Hong Gildong)" aria-describedby="romanNote"><small class="fnote" id="romanNote"></small></div>
-      <div class="f s2"><span class="lb">성별 (사주 대운)</span><div class="seg"><label><input type="radio" name="sex" value="m" id="sx-m" checked><span>남</span></label><label><input type="radio" name="sex" value="f" id="sx-f"><span>여</span></label></div></div>
+      <div class="f s2"><label for="in-name">이름 <span class="opt">(선택)</span></label><input id="in-name" autocomplete="off" placeholder="비워도 돼요"></div>
+      <div class="f s2"><label for="in-roman">영문 이름 (수비학) <span class="opt">(선택)</span></label><input id="in-roman" autocomplete="off" placeholder="여권 영문 이름 (예: Hong Gildong)" aria-describedby="romanNote"><small class="fnote" id="romanNote"></small></div>
+      <div class="f s2"><span class="lb">성별 (사주 대운)</span><div class="seg"><label><input type="radio" name="sex" value="m" id="sx-m"><span>남</span></label><label><input type="radio" name="sex" value="f" id="sx-f"><span>여</span></label></div></div>
       <div class="f s2"><span class="lb">달력</span><div class="seg"><label><input type="radio" name="cal" value="s" id="cal-s" checked><span>양력</span></label><label><input type="radio" name="cal" value="l" id="cal-l"><span>음력</span></label></div></div>
-      <div class="f s2 wm"><span class="lb" id="dateLb">생년월일 (양력)</span><div class="ymd"><input id="in-y" type="number" inputmode="numeric" min="1920" max="2025" value="1998" aria-label="태어난 해"><select id="in-m" aria-label="월"></select><select id="in-d" aria-label="일"></select></div>
+      <div class="f s2 wm"><span class="lb" id="dateLb">생년월일 (양력)</span><div class="ymd"><input id="in-y" type="number" inputmode="numeric" min="1920" max="2025" placeholder="태어난 해" aria-label="태어난 해"><select id="in-m" aria-label="월"></select><select id="in-d" aria-label="일"></select></div>
         <div class="sub"><label class="chk" id="leapWrap" hidden><input type="checkbox" id="in-leap">윤달</label><span class="conv" id="conv"></span></div></div>
-      <div class="f s2"><label for="in-time">출생 시각</label><input id="in-time" type="time" value="10:30"><label class="chk"><input type="checkbox" id="in-notime">시각을 몰라요</label></div>
+      <div class="f s2"><label for="in-time">출생 시각</label><input id="in-time" type="time"><label class="chk"><input type="checkbox" id="in-notime">시각을 몰라요</label></div>
       <div class="f full"><span class="lb">출생지</span>
         <label class="chk noplace"><input type="checkbox" id="in-noplace">출생지를 고르지 않을래요 <small>(대한민국 표준시로 계산)</small></label>
         <div id="placeBox"><div class="psearch"><input id="placeQ" type="text" autocomplete="off" placeholder="도시·구·군 이름으로 검색 (예: 분당, 해운대, 도쿄)" role="combobox" aria-expanded="false" aria-controls="placeList" aria-label="출생지 검색"><ul id="placeList" class="plist" role="listbox" hidden></ul></div>
@@ -543,7 +545,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
           <div class="mapwrap"><svg id="map" role="img" aria-label="출생지 선택 지도"></svg><div class="maptip" id="mapTip" hidden></div></div>
           <div class="mapfoot"><div class="quick" id="quick"></div><label class="tz" for="in-tz">UTC<input id="in-tz" type="number" step="0.25" min="-12" max="14" value="9"></label><button type="button" class="done" id="mapDone">완료</button></div>
         </div></div></div>
-      <div class="go"><button type="submit">운명 읽기</button><small>입력값은 이 브라우저에만 남고, 어디로도 보내지 않습니다.</small><span id="err" role="alert"></span></div>
+      <div class="go"><button type="submit">나의 운명 확인하기</button><small>입력값은 이 브라우저에만 남고, 어디로도 보내지 않습니다.</small><span id="err" role="alert"></span></div>
     </form>
     </details>
 
@@ -1282,17 +1284,17 @@ let rsT;addEventListener("resize",()=>{clearTimeout(rsT);rsT=setTimeout(()=>{if(
 /* ---------- form ---------- */
 const $=id=>document.getElementById(id);
 const placeFromIdx=i=>{const p=PLACES[i];return {name:p[0],lat:p[1],lon:p[2],tz:p[3],kr:p[3]===9&&p[2]>124&&p[2]<132&&p[1]>33&&p[1]<39}};
-let place={name:"경기도 성남시",lat:37.42,lon:127.13,tz:9,kr:true};
-$("in-m").innerHTML=Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}월</option>`).join("");
-function fillDays(){const cal=$("cal-l").checked;const n=cal?30:new Date(+$("in-y").value||2000,+$("in-m").value,0).getDate();const cur=+$("in-d").value||1;
-  $("in-d").innerHTML=Array.from({length:n},(_,i)=>`<option value="${i+1}">${i+1}일</option>`).join("");$("in-d").value=Math.min(cur,n)}
+let place={name:"",unset:true,lat:36.5,lon:127.8,tz:9,kr:true};
+$("in-m").innerHTML=`<option value="">월</option>`+Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}월</option>`).join("");
+function fillDays(){const cal=$("cal-l").checked;const n=cal?30:new Date(+$("in-y").value||2000,+$("in-m").value,0).getDate();const cur=+$("in-d").value||0;
+  $("in-d").innerHTML=`<option value="">일</option>`+Array.from({length:n},(_,i)=>`<option value="${i+1}">${i+1}일</option>`).join("");$("in-d").value=cur?Math.min(cur,n):""}
 function updConv(){const cal=$("cal-l").checked;$("dateLb").textContent=`생년월일 (${cal?"음력":"양력"})`;$("leapWrap").hidden=!cal;
   if(!cal){$("conv").textContent="";return}const r=lunarToSolar(+$("in-y").value,+$("in-m").value,+$("in-d").value,$("in-leap").checked);
   $("conv").textContent=r.err?r.err:`양력 ${r.y}.${String(r.m).padStart(2,"0")}.${String(r.d).padStart(2,"0")}`;$("conv").style.color=r.err?"var(--rose)":""}
 ["in-y","in-m"].forEach(id=>$(id).addEventListener("change",()=>{fillDays();updConv()}));$("in-d").addEventListener("change",updConv);$("in-leap").addEventListener("change",updConv);$("in-y").addEventListener("input",updConv);
 ["cal-s","cal-l"].forEach(id=>$(id).addEventListener("change",()=>{fillDays();updConv()}));
 $("in-notime").addEventListener("change",e=>{$("in-time").disabled=e.target.checked});
-function showPlace(){$("placeName").textContent=place.name;$("placeCoord").textContent=`${Math.abs(place.lat).toFixed(2)}°${place.lat>=0?"N":"S"} ${Math.abs(place.lon).toFixed(2)}°${place.lon>=0?"E":"W"} · UTC${place.tz>=0?"+":""}${place.tz}`;$("in-tz").value=place.tz}
+function showPlace(){$("placeName").textContent=place.unset?"아직 고르지 않았어요":place.name;$("placeCoord").textContent=place.unset?"":`${Math.abs(place.lat).toFixed(2)}°${place.lat>=0?"N":"S"} ${Math.abs(place.lon).toFixed(2)}°${place.lon>=0?"E":"W"} · UTC${place.tz>=0?"+":""}${place.tz}`;$("in-tz").value=place.tz}
 
 /* map */
 let mapView="kr";
@@ -1306,7 +1308,7 @@ function drawMap(){const svg=$("map");const [KW,KH]=MAPS.kv;
   document.querySelectorAll(".maptabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===mapView));drawMarker()}
 function proj(lat,lon){if(mapView==="kr")return [(lon-MAPS.kv[2])*MAPS.kv[4]*MAPS.kv[5],(MAPS.kv[3]-lat)*MAPS.kv[4]];return [(lon+180)*2.2,(84-lat)*2.2]}
 function unproj(x,y){if(mapView==="kr")return [MAPS.kv[3]-y/MAPS.kv[4],MAPS.kv[2]+x/(MAPS.kv[4]*MAPS.kv[5])];return [84-y/2.2,x/2.2-180]}
-function drawMarker(){const g=document.getElementById("mk");if(!g)return;const [x,y]=proj(place.lat,place.lon);const r=mapView==="kr"?4:3;
+function drawMarker(){const g=document.getElementById("mk");if(!g)return;if(place.unset){g.innerHTML="";return}const [x,y]=proj(place.lat,place.lon);const r=mapView==="kr"?4:3;
   g.innerHTML=`<circle class="mkr" cx="${x}" cy="${y}" r="${r*2}"/><circle class="mk" cx="${x}" cy="${y}" r="${r}"/>`}
 function svgPt(e){const svg=$("map"),p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
 function hitName(t){if(t.dataset.i!=null){const r=MAPS.kor[+t.dataset.i];return {name:(r[1]?r[1]+" ":"")+r[0],kr:true,iso:"KOR"}}
@@ -1349,7 +1351,7 @@ function fillSgg(sd,keep){const el=$("sgg");if(!sd){el.innerHTML=`<option value=
   if(sd==="abroad"){el.innerHTML=`<option value="">나라·도시 선택</option><optgroup label="주요 도시">${ABROAD.map(([p,i])=>`<option value="city:${i}">${p[0]}</option>`).join("")}</optgroup><optgroup label="나라">${WORLD.map(([n,i])=>`<option value="w:${i}">${n}</option>`).join("")}</optgroup>`}
   else el.innerHTML=`<option value="">시·군·구 선택</option>`+MAPS.kor.map((r,i)=>[r,i]).filter(([r])=>r[1]===sd).sort((a,b)=>a[0][0].localeCompare(b[0][0],"ko")).map(([r,i])=>`<option value="kr:${i}">${kname(r[0])}</option>`).join("");
   if(keep)el.value=keep}
-function syncSel(){if(place.ki!=null){const sd=MAPS.kor[place.ki][1];$("sido").value=sd;fillSgg(sd,"kr:"+place.ki)}
+function syncSel(){if(place.unset){$("sido").value="";fillSgg("");return}if(place.ki!=null){const sd=MAPS.kor[place.ki][1];$("sido").value=sd;fillSgg(sd,"kr:"+place.ki)}
   else if(place.ci!=null){$("sido").value="abroad";fillSgg("abroad","city:"+place.ci)}else if(place.wi!=null){$("sido").value="abroad";fillSgg("abroad","w:"+place.wi)}
   else if(place.kr){const sd=SIDO.find(n=>place.name.startsWith(n));$("sido").value=sd||"";fillSgg(sd||"")}}
 $("sido").addEventListener("change",e=>fillSgg(e.target.value));
@@ -1403,12 +1405,17 @@ function renderAll(){drawGraph=true;setTimeout(()=>{drawGraph=false},0);renderRe
 document.querySelectorAll("#modeTabs button").forEach(b=>b.addEventListener("click",()=>{if(mode===b.dataset.m)return;mode=b.dataset.m;drawGraph=true;cast();renderTrend();renderCats();drawGraph=false}));
 function askName(){const wn=$("whoName");if(!wn.classList.contains("noname"))return;$("askbox").open=true;$("askbox").scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"});setTimeout(()=>$("in-name").focus({preventScroll:true}),reduceM?0:350)}
 $("whoName").addEventListener("click",askName);$("whoName").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();askName()}});
-$("ask").addEventListener("submit",e=>{e.preventDefault();const v=readForm();
+function checkForm(){const y=+$("in-y").value,m=+$("in-m").value,d=+$("in-d").value;
+  if(!y||!m||!d)return "생년월일을 모두 입력해 주세요.";
+  if(!$("sx-m").checked&&!$("sx-f").checked)return "성별을 골라 주세요.";
+  if(!$("in-time").value&&!$("in-notime").checked)return "출생 시각을 입력하거나 '시각을 몰라요'를 체크해 주세요.";
+  if(place.unset&&!$("in-noplace").checked)return "출생지를 고르거나 '출생지를 고르지 않을래요'를 체크해 주세요.";return ""}
+$("ask").addEventListener("submit",e=>{e.preventDefault();const ce=checkForm();if(ce){$("err").textContent=ce;return}const v=readForm();
   if(v.err){$("err").textContent=v.err;return}
   const [y]=v.date.split("-").map(Number);
   if(!(y>=1920&&y<=2026)){$("err").textContent="태어난 해를 1920~2025년 사이로 입력해 주세요.";return}
   $("err").textContent="";try{localStorage.setItem("fate-input",JSON.stringify(v))}catch(_){}
-  toggleMap(false);$("askbox").open=false;run(v,true);document.getElementById("forecast").scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})});
+  toggleMap(false);$("askbox").open=false;document.body.classList.remove("fresh");run(v,true);requestAnimationFrame(()=>document.querySelector(".natalbox").scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"}))});
 /* Share a fixed introduction and site URL only; never include birth input or personal results. */
 const SHARE_URL="https://stvzn123-ctrl.github.io/oracle-network/";
 function resultShareText(){
@@ -1457,10 +1464,10 @@ $("share-native").addEventListener("click",async()=>{
 });
 applyGraphLock();
 
-fillDays();$("in-d").value=22;$("in-m").value=11;fillDays();$("in-d").value=22;showPlace();
-let start=readForm(),saved=false;try{const sv=JSON.parse(localStorage.getItem("fate-input")||"null");if(sv&&sv.date){fillForm(sv);start=readForm();if(start.err)start=sv;saved=true}}catch(_){}
-$("askbox").open=!saved;
-run(start,false);
+fillDays();showPlace();syncSel();
+let start=null;try{const sv=JSON.parse(localStorage.getItem("fate-input")||"null");if(sv&&sv.date){fillForm(sv);start=readForm();if(start.err)start=sv}}catch(_){}
+$("askbox").open=!start;
+if(start)run(start,false);else{document.body.classList.add("fresh");$("whoSum").innerHTML="<span>태어난 순간을 입력해 주세요</span>"}
 </script>
 
 
