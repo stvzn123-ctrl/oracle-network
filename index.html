@@ -389,6 +389,47 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 @keyframes artwork-light{0%,100%{opacity:.025}50%{opacity:.075}}
 @media(max-width:760px){#oracle-dream img{right:0;bottom:0;width:100%;height:100%;object-fit:cover;object-position:center center;opacity:.42;mask-image:none}#oracle-dream::after{background:radial-gradient(ellipse at 50% 72%,var(--emerald),transparent 65%)}}
 @media(prefers-reduced-motion:reduce){#oracle-dream img,#oracle-dream::after{animation:none!important;will-change:auto}}
+
+/* ---- 2026-10 정리: 글자 3단계, 그래프는 상자 없이, 폰에서 칩 숨김, 풀이 전문 ---- */
+:root{--fs-s:13px;--fs-b:15px;--fs-r:17px;--ink:#e8decd}
+.lede,.gifts li,.vline,.flow-summary,.story-t,.cat .head,.story-sum p{font-size:var(--fs-b)}
+.cat .agree,.flow-head span,.tnote,.rare,.dot,.tarotrow,.tarotrow span,.chap .cd,.hz button b{font-size:var(--fs-s)}
+.trend{border:0;background:transparent;backdrop-filter:none;padding:4px 0 0}
+.flow{border:0;border-top:2px solid color-mix(in srgb,var(--c) 45%,transparent);border-radius:0;background:transparent;padding:14px 2px 8px}
+.flows{gap:22px 36px}
+.tarotrow{border:0;background:transparent;padding:6px 0 0}
+.gifts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:4px 0 16px}
+.gifts li{padding:0;display:flex;flex-direction:column;gap:2px;color:var(--muted);font-size:var(--fs-s);line-height:1.55}
+.gifts li::before{display:none}
+.gifts li b{font-family:var(--display);font-size:var(--fs-b);color:var(--gold);font-weight:700}
+@media (max-width:620px){.gifts{grid-template-columns:minmax(0,1fr);gap:10px}.cat .dots{display:none}}
+.reading{margin-top:8px}
+.reading details{border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.reading summary{list-style:none;cursor:pointer;display:flex;gap:16px;align-items:center;padding:22px 2px}
+.reading summary::-webkit-details-marker{display:none}
+.r-head{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+.r-title{font-family:var(--display);font-weight:800;font-size:clamp(22px,3vw,28px);color:var(--fg)}
+.r-teaser{font-family:var(--display);font-size:var(--fs-b);line-height:1.7;color:var(--muted);max-width:44em}
+.r-open{flex:none;font-size:var(--fs-s);color:#032016;background:var(--emerald);border-radius:999px;padding:8px 16px;font-weight:600}
+.reading details[open] .r-open{background:transparent;color:var(--emerald);box-shadow:inset 0 0 0 1px var(--emerald)}
+.reading details[open] .r-open::after{content:" 접기"}
+.reading details[open] .r-open{font-size:0}.reading details[open] .r-open::after{font-size:var(--fs-s)}
+.reading summary:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.r-body{padding:4px 0 36px;max-width:40em}
+.r-ch{margin-top:30px}
+.r-ch h3{margin:0 0 14px;font-family:var(--display);font-size:22px;color:var(--gold);font-weight:700}
+.r-ch h4{margin:26px 0 8px;font-size:var(--fs-b);font-weight:600;color:var(--fg);display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.r-ch h4 span{font-weight:400;font-size:var(--fs-s);color:var(--muted);font-variant-numeric:tabular-nums}
+.r-ch p{margin:0 0 14px;font-family:var(--display);font-size:var(--fs-r);line-height:1.95;color:var(--ink);word-break:keep-all}
+.r-ch .r-weak{padding-left:14px;border-left:2px solid rgba(255,134,176,.45)}
+.turns{list-style:none;margin:18px 0 0;padding:0 0 0 18px;border-left:1px solid var(--line2);display:flex;flex-direction:column;gap:20px}
+.turns li{position:relative;display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px}
+.turns li::before{content:"";position:absolute;left:-23px;top:9px;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(233,196,106,.15)}
+.t-age{font-weight:600;font-size:var(--fs-b);color:var(--fg);font-variant-numeric:tabular-nums;display:flex;flex-direction:column;line-height:1.4}
+.t-age small{font-weight:400;font-size:var(--fs-s);color:var(--muted)}
+.turns p{margin:0}
+.turns em{display:block;font-style:normal;font-family:var(--body);font-size:var(--fs-s);color:var(--dim);margin-top:2px}
+@media (max-width:560px){.r-ch p{font-size:16px;line-height:1.9}.turns li{grid-template-columns:minmax(0,1fr);gap:2px}.t-age{flex-direction:row;gap:8px;align-items:baseline}.reading summary{flex-direction:column;align-items:flex-start}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -431,7 +472,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
       <h3 class="nat-h">타고난 운명</h3>
       <p class="type" id="typeName"></p>
       <div id="fate-traits"></div>
-      <div class="natal-more"><div id="typeText"></div><div class="natal" id="natal"></div><div class="pillars" id="pillars"></div></div>
+      <div class="natal-more"><div id="typeText"></div><div class="pillars" id="pillars"></div></div>
     </div>
   </div>
 </header>
@@ -449,7 +490,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
   <p id="share-status" role="status" aria-live="polite"></p>
 </dialog>
 <section id="forecast">
-  <div class="sec-head"><span class="eyebrow">Prophecy</span><h2>여섯 점술이 말하는 당신의 운</h2></div>
+  <div class="sec-head"><h2>여섯 점술이 말하는 당신의 운</h2></div>
   <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="near" aria-pressed="true">가까운 미래<small>1·3·5·10년</small></button><button type="button" data-m="life" aria-pressed="false">평생 지도<small>10년 단위</small></button></div>
   <div class="trend is-locked" id="result-gate">
     <div id="graph-content" inert aria-hidden="true"><div id="viz"></div><p class="tnote" id="trendNote"></p></div>
@@ -457,6 +498,13 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
   </div><p id="unlock-status" role="status" aria-live="polite"></p>
   <div class="cats" id="cats"><svg class="flash" id="flash" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
   <div class="tarotrow" id="tarot"></div>
+</section>
+
+<section class="reading" aria-labelledby="readTitle">
+  <details id="readMore">
+    <summary><span class="r-head"><span class="r-title" id="readTitle">운명 풀이 전문</span><span class="r-teaser" id="readTeaser"></span></span><span class="r-open">펼쳐 읽기</span></summary>
+    <div class="r-body" id="readBody"></div>
+  </details>
 </section>
 
 <section class="panels">
@@ -856,11 +904,9 @@ function renderCat(ci,anim){const c=CATS[ci];const box=document.getElementById("
   const nav=life?"":`<div class="hz" style="--c:${c.c}">${HZ.map((h,i)=>`<button type="button" aria-pressed="${i===hi}" data-h="${i}"><b>${h.n}</b><span>${D(R[i][ci].mean)}</span></button>`).join("")}</div>`;
   box.innerHTML=`<div class="cat-top">${ringSvg(D(r.mean),c.c)}<div style="min-width:0"><h3>${c.n}<small>${sub}</small></h3><p class="head">${HEAD[c.k][tier(r.mean)]}</p>
    <div class="agree">${r.mean>=50?"가장 강하게 밀어주는 점술":"가장 강하게 경고하는 점술"}: ${lead} · 일치도 ${r.agree}%</div></div></div>${nav}
-   <div class="dots">${r.v.map((x,i)=>`<span class="dot" style="--c:${M[i].c}"><i></i>${M[i].n} <b>${D(x[0])}</b></span>`).join("")}</div>
-   <details class="more" ${openState[c.k]?"open":""}><summary>점술별 풀이 보기 <span class="chev">⌄</span></summary><ul class="voices">${r.v.map((x,i)=>`<li style="--c:${M[i].c}"><span class="who">${M[i].n}</span><span class="sc">${D(x[0])}</span><span>${voiceText(x,ci)}<em>${i<5?x[2]:""}</em></span></li>`).join("")}</ul></details>`;
+   <div class="dots">${r.v.map((x,i)=>`<span class="dot" style="--c:${M[i].c}"><i></i>${M[i].n} <b>${D(x[0])}</b></span>`).join("")}</div>`;
   box.querySelectorAll(".hz button").forEach(b=>b.addEventListener("click",()=>{sel[c.k]=+b.dataset.h;renderCat(ci,true);renderTrend()}));
   box.querySelectorAll(".decbars button").forEach(b=>b.addEventListener("click",()=>{selDec=+b.dataset.d;cast();renderTrend();renderCats();if(document.getElementById("p-net").open)renderNet()}));
-  box.querySelector("details").addEventListener("toggle",e=>{openState[c.k]=e.target.open});
   if(anim){box.animate?.([{boxShadow:`0 0 0 ${c.c}00`},{boxShadow:`0 0 36px ${c.c}55`},{boxShadow:`0 0 0 ${c.c}00`}],{duration:900,easing:"ease-out"})}}
 /* ---------- 평생 지도 아래: 운별 10대~70대 흐름 이야기 + 종합 ---------- */
 const NOUN=["재물운","애정운","일과 공부의 운","건강운"];
@@ -902,7 +948,7 @@ document.getElementById("flash").innerHTML=`<g fill="none" stroke="#3dffb0" stro
 
 function natalGifts(ch){const g=[];const d=ch.stems.d;
   if(ch.has.gui)g.push(["천을귀인",`사주에 <b>천을귀인</b>이 있어요. 결정적인 순간마다 도와주는 사람이 나타나는, 사주에서 가장 귀하게 치는 길성입니다.`]);
-  if(ch.masters.length)g.push(["마스터 넘버",`생일 숫자에 <b>마스터 넘버 ${[...new Set(ch.masters)].join("·")}</b>가 들어 있어요. 수비학에서 큰 사명을 지닌 사람에게 나타난다고 보는 흔치 않은 배열입니다.`]);
+  if(ch.masters.length)g.push(["마스터 넘버",`생일 숫자에 <b>마스터 넘버 ${[...new Set(ch.masters)].join("·")}</b>${bat([...new Set(ch.masters)].slice(-1)[0])?"이":"가"} 들어 있어요. 수비학에서 큰 사명을 지닌 사람에게 나타난다고 보는 흔치 않은 배열입니다.`]);
   if(ch.has.munc)g.push(["문창귀인",`<b>문창귀인</b>을 타고나 배우고 표현하는 재능이 남다릅니다. 공부와 글, 말로 이름을 얻는 사주예요.`]);
   if(ch.has.dohwa)g.push(["도화",`<b>도화</b>가 있어 사람을 끌어당기는 매력이 타고났어요. 어디서든 눈에 띄는 사람입니다.`]);
   if(ch.has.yeokma)g.push(["역마",`<b>역마</b>가 있어 멀리 나아갈수록 기회가 커집니다. 이동과 해외, 새로운 무대에서 운이 열려요.`]);
@@ -962,10 +1008,15 @@ function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b
   let soon={m:-1};R.forEach((row,hi)=>row.forEach((c,ci)=>{if(c.mean>soon.m)soon={m:c.mean,hi,ci}}));
   const d=CH.stems.d;const gifts=natalGifts(CH).slice(0,3);
   document.getElementById("typeName").textContent=traitDescription(CH);
-  document.getElementById("typeText").innerHTML=`<ul class="gifts">${gifts.map(g=>`<li>${g[1]}</li>`).join("")}</ul>
+  document.getElementById("typeText").innerHTML=`<ul class="gifts">${gifts.map(g=>`<li>${giftShort(CH,g)}</li>`).join("")}</ul>
    <p class="vline">${traj} 운명이에요. 앞으로 가장 빛나는 10년은 <b>${best.d*10}대의 ${CATS[best.ci].n}</b>(${D(best.m)}), 가까운 미래에는 <b>${HZ[soon.hi].n} ${CATS[soon.ci].n}</b>(${D(soon.m)})이 가장 밝게 열립니다.</p>
    <p class="rare">사주 여덟 글자의 조합은 약 51만 가지. 같은 날 같은 시에 태어나지 않는 한 똑같은 판은 거의 없습니다.</p>`;
   document.getElementById("whoName").textContent=CH.inp.name||"당신"}
+function giftShort(ch,g){const k=g[0];if(GIFT_SHORT[k])return `<b>${k==="마스터 넘버"?`마스터 넘버 ${[...new Set(ch.masters)].join("·")}`:k}</b><span>${GIFT_SHORT[k]}</span>`;
+  if(k==="태양")return `<b>${ZOD[sign(ch.sun)]}자리 태양</b><span>${SUNG[sign(ch.sun)]}</span>`;
+  if(k==="낙샤트라")return `<b>${NAK[ch.nk]}의 달</b><span>${NAKG[DL[ch.nk%9]]}</span>`;
+  if(k==="사주 강약")return `<b>${ch.strong?"신강":"신약"} 사주</b><span>${ch.strong?"내가 판을 주도할 때 운이 커져요":"좋은 사람을 곁에 둘수록 운이 불어나요"}</span>`;
+  return `<b>${MS[ch.msign][0]}(${MS[ch.msign][1]})의 날</b><span>${MS[ch.msign][2]}의 힘</span>`}
 /* 타고난 약점: 좋은 말로 바꾸지 않고 객관적으로 쓴다 */
 const ELWK=["시작은 많고 마무리가 약한 편이에요","감정이 쉽게 달아오르고 쉽게 식어 기복이 있어요","변화에 느리고 고집이 센 편이에요","말과 태도가 날카로워 보이고 융통성이 부족할 수 있어요","생각과 걱정이 많아 결정을 미루기 쉬워요"];
 const MISSW=["계획을 세우고 키워 나가는 힘이","표현력과 추진하는 열정이","중심을 잡고 오래 버티는 힘이","결단하고 마무리하는 힘이","유연하게 넘기고 쉬어 가는 힘이"];
@@ -981,7 +1032,7 @@ function renderNatal(){const ch=CH,d=ch.stems.d;const dom=ch.cnt.indexOf(Math.ma
   const cs=ch.cnt.map((v,i)=>`${EL[i]}${v}`).join(" ");const miss=ch.cnt.map((v,i)=>v?null:ELK[i]).filter(Boolean);
   const sunS=sign(ch.sun),ascS=ch.asc!=null?sign(ch.asc):null,moonS=sign(ch.moon);const vm=norm(ch.moon-ch.ayan);
   const gifts=natalGifts(ch);
-  document.getElementById("natal").innerHTML=`
+  (document.getElementById("natal")||{}).innerHTML=`
    <div><h4>타고난 기질</h4><p>일간 ${ST[d]}${EL[SE[d]]}는 ${DM[ST[d]]} 사람이에요. 오행은 ${cs}로 ${ELK[dom]}(${EL[dom]})의 힘이 가장 셉니다. ${ascS!=null?`첫인상을 만드는 상승궁은 ${ZOD[ascS]}자리라 '${SUNP[ascS]}'으로 기억됩니다.`:""} 인생 수는 ${ch.lp}${ch.expr?`, 표현 수 ${ch.expr}`:""}${ch.soul?`, 영혼 수 ${ch.soul}`:""}입니다.</p></div>
    <div><h4>또 다른 선물</h4><p>${gifts.slice(3,6).map(g=>g[1]).join(" ")}</p></div>
    <div><h4>약점</h4><p>${weakText(ch,dom,miss)}</p></div>`;
@@ -990,6 +1041,71 @@ function renderNatal(){const ch=CH,d=ch.stems.d;const dom=ch.cnt.indexOf(Math.ma
    <div class="pl wide"><div class="t">태양 · 달 · 상승궁</div><div class="h">${ZOD[sunS]} ${(ch.sun%30).toFixed(1)}°<br>${ZOD[moonS]} · ${ascS!=null?ZOD[ascS]:"–"}</div></div>
    <div class="pl wide"><div class="t">인도 · ${ch.chandra?"달 기준":"라그나"}</div><div class="h">${ZOD[ch.lagna]} · ${NAK[ch.nk]}<br>대운 ${ch.fwd?"순행":"역행"} ${ch.dwStart.toFixed(1)}세~</div></div>
    <div class="pl wide"><div class="t">수비학 · 마야</div><div class="h">인생 수 ${ch.lp}<br>${ch.tone} ${MS[ch.msign][0]}</div></div>`}
+
+/* ---------- 운명 풀이 전문: 여섯 점술을 하나로 엮은 줄글 ---------- */
+const LPM={1:"스스로 길을 여는 개척자의 수",2:"사람과 사람을 잇는 조율자의 수",3:"표현하고 창조하는 수",4:"기반을 다지는 건축가의 수",5:"자유와 변화를 따르는 수",6:"돌보고 책임지는 수",7:"탐구하고 통찰하는 수",8:"성취와 권한의 수",9:"넓게 품고 완성하는 수",11:"직관과 영감을 뜻하는 마스터 넘버",22:"큰 꿈을 현실로 짓는 마스터 넘버",33:"사람을 가르치고 치유하는 마스터 넘버"};
+const GIFT_SHORT={천을귀인:"결정적인 순간마다 도와주는 사람이 나타나요","마스터 넘버":"큰 사명을 뜻하는 드문 숫자 배열이에요",문창귀인:"배우고 표현하는 재능이 남달라요",도화:"사람을 끌어당기는 매력을 타고났어요",역마:"멀리 나아갈수록 기회가 커져요"};
+const plain=h=>String(h).replace(/<small[^>]*>.*?<\/small>/g,"").replace(/<[^>]+>/g,"").trim();
+const basisOf=h=>{const m=String(h).match(/<small[^>]*>(.*?)<\/small>/);return m?m[1]:""};
+const STK="갑을병정무기경신임계",BRK="자축인묘진사오미신유술해";
+function bat(w){let c=String(w).trim().slice(-1);if(/[0-9]/.test(c))c="영일이삼사오육칠팔구"[+c];let k=ST.indexOf(c);if(k>=0)c=STK[k];k=BR.indexOf(c);if(k>=0)c=BRK[k];
+  const code=c.charCodeAt(0)-0xac00;if(code<0||code>11171)return 0;const f=code%28;return f===0?0:f===8?2:1}
+const J=(w,a,b)=>w+(bat(w)?a:b);const ro=w=>w+(bat(w)===1?"으로":"로");
+const firstSentence=t=>{const p=plain(t).split(/(?<=[.!?])\s+/)[0]||"";return p};
+
+function natalProse(ch){const d=ch.stems.d,dom=ch.cnt.indexOf(Math.max(...ch.cnt));const miss=ch.cnt.map((v,i)=>v?null:ELK[i]).filter(Boolean);
+  const cs=ch.cnt.map((v,i)=>`${EL[i]} ${v}`).join(", ");const ascS=ch.asc!=null?sign(ch.asc):null;const gifts=natalGifts(ch);
+  const p1=`당신의 일간은 ${ST[d]}${EL[SE[d]]}, ${DMA[ST[d]]}예요. ${DM[ST[d]]} 사람으로, 사주 여덟 글자의 오행은 ${cs}개로 ${ELK[dom]}(${EL[dom]})의 힘이 가장 셉니다. ${ch.strong?"스스로 판을 주도하는 힘이 강한 신강 사주라, 남의 길을 따르기보다 내 기준으로 움직일 때 운이 커져요.":"주변의 도움을 끌어당기는 신약 사주라, 좋은 사람과 환경을 곁에 둘 때 운이 크게 불어나요."}`;
+  const p2=`서양 점성술로 보면 태양이 ${ZOD[sign(ch.sun)]}자리에 있어 ${SUNG[sign(ch.sun)]}을 지녔고, 달은 ${ZOD[sign(ch.moon)]}자리에 있어요.${ascS!=null?` 첫인상을 만드는 상승궁은 ${ZOD[ascS]}자리라 사람들은 당신을 먼저 '${SUNP[ascS]}'의 사람으로 기억합니다.`:""} 인도 점성술에서는 달이 ${NAK[ch.nk]} 낙샤트라에 있어 ${NAKG[DL[ch.nk%9]]}을 타고났어요. 수비학의 인생 수 ${J(String(ch.lp),"은","는")} ${LPM[ch.lp]||""}이고, 마야력으로는 ${ch.tone} ${MS[ch.msign][0]}(${MS[ch.msign][1]})의 날에 태어나 ${MS[ch.msign][2]}의 기운을 품고 있습니다.`;
+  const top=gifts.filter(g=>GIFT_SHORT[g[0]]);
+  const p3=top.length?`여섯 점술이 공통으로 짚는 타고난 선물도 있어요. ${top.map(g=>plain(g[1])).join(" ")}`:`특별한 신살보다는 오행과 별의 배치 자체가 고르게 받쳐 주는 사주라, 한 가지 행운보다 꾸준함이 무기가 되는 사람이에요.`;
+  const p4=`다만 약점도 분명해요. ${weakText(ch,dom,miss)}`;
+  return [p1,p2,p3,p4]}
+function horizonProse(hi){const r=R[hi],y=new Date().getFullYear()+HZ[hi].off,age=Math.floor(nowAge()+HZ[hi].off);
+  const ord=r.map((c,ci)=>[c.mean,ci]).sort((a,b)=>b[0]-a[0]);const avg=ord.reduce((a,b)=>a+b[0],0)/4;
+  const da=D(avg);const tone=da>=93?"네 가지 운이 고르게 밝은 해예요":da>=88?"전반적으로 순풍이 부는 해예요":da>=83?"차분히 다지면서 기회를 잡는 해예요":"속도를 조절하며 기반을 다지는 해예요";
+  const jd=jdUTC(y,7,1,0);const ctx=r[0].v;
+  let t=`${y}년, 만 ${age}세 무렵은 ${tone}. 사주로는 ${ctx[0][2]}, 인도 점성술로는 ${ctx[2][2]}, 수비학으로는 ${ctx[3][2]}에 해당하고, 하늘에서는 목성이 ${ZOD[sign(jupLon(jd))]}자리, 토성이 ${ZOD[sign(satLon(jd))]}자리를 지나요. `;
+  const [bm,bc]=ord[0];const bv=r[bc].v.map((x,i)=>[x[0],i]).sort((a,b)=>b[0]-a[0]);
+  const top=r[bc].v[bv[0][1]],s1=firstSentence(top[1]).replace(/[.]$/,""),bs=basisOf(top[1]);
+  t+=`가장 밝은 건 ${SHORT[bc]}운(${D(bm)}점)이에요. ${ro(M[bv[0][1]].n)} 보면 ${s1}. ${M[bv[1][1]].n}도 같은 방향을 가리켜요. `;
+  const mid=ord.slice(1,3).map(([m,ci])=>`${SHORT[ci]}운은 ${HEAD[CATS[ci].k][tier(m)].split(" · ")[0]}`);
+  t+=`${mid[0]}이고, ${J(mid[1],"이에요","예요")}. `;
+  const [wm,wc]=ord[3];
+  if(wm<58){const neg=[];r[wc].v.forEach((x,i)=>(x[3]||[]).forEach(f=>{if(f[1]<0)neg.push([f[1],f[0],i])}));neg.sort((a,b)=>a[0]-b[0]);
+    t+=neg.length?`조심할 곳은 ${SHORT[wc]}운이에요. ${M[neg[0][2]].n}에서 ${neg[0][1]}의 영향으로 ${CAUTION[wc]}. 그래도 ${REST[wc]}.`:`${SHORT[wc]}운은 상대적으로 약해요. ${REST[wc]}.`}
+  else t+=`${SHORT[wc]}운은 다른 운보다 잔잔하지만 ${J(HEAD[CATS[wc].k][tier(wm)].split(" · ")[0],"이에요","예요")}.`;
+  const tc=tarot[hi];t+=` 이 해에 뽑힌 타로는 ${tc[1]} 카드로, '${tc[2+bc]}'${bat(tc[2+bc])?"이라는":"라는"} 메시지를 덧붙여요.`;
+  return {h:HZ[hi].n,sub:`${y}년 · 만 ${age}세 무렵`,t}}
+function turningPoints(ch){const na=nowAge(),y0=new Date().getFullYear(),lim=Math.min(80,na+45);const ev=[];const by=a=>Math.floor(ch.birthYear+a);
+  const d=ch.stems.d;
+  for(let k=1;k<10;k++){const a=ch.dwStart+10*(k-1);if(a<=na||a>lim)continue;const dw=ch.mIdx+(ch.fwd?k:-k);const s=mod(dw,60)%10;const tg=tenGod(d,s);
+    const idx=[0,ch.male?1:2,3,4];const bc=[0,1,2,3].sort((x,z)=>TGW[tg][idx[z]]-TGW[tg][idx[x]])[0];const fav=ch.goodG.includes(Math.floor(TG.indexOf(tg)/2));
+    ev.push([a,"사주",`${pillar(dw)} 대운이 시작돼 10년의 큰 흐름이 바뀌어요. 천간 ${ST[s]}(${STK[s]})${bat(STK[s])?"이":"가"} 나에게 ${J(tg,"이라","라")}, ${TGP[tg][CATS[bc].k]}. ${fav?"내 사주에 필요한 기운이라 10년의 바탕이 밝아요.":"내 사주와 결이 달라 속도를 조절하며 쓰면 좋은 기운이에요."}`])}
+  ch.dashas.forEach(x=>{const a=x.start-ch.birthYear;if(a<=na||a>lim)return;const w=PW[x.lord].map((v,i)=>v+ch.FW[x.lord][i]);const bc=w.indexOf(Math.max(...w));
+    const role=["라그나 주인","요가카라카","행운 하우스 주인"].includes(ch.prole[x.lord])?` 당신의 차트에서 ${J(PK[x.lord],"은","는")} ${ch.prole[x.lord]}이라 특히 힘이 셉니다.`:"";
+    ev.push([a,"인도 점성술",`${PK[x.lord]} 다샤가 ${DY[x.L]}년 동안 이어져요. ${PP[x.lord][bc]}.${role}`])});
+  let lastS=-99,lastJ=-99,jc=0;
+  for(let yy=Math.ceil(ch.birthYear+na);yy<=by(lim);yy++){const jd=jdUTC(yy,7,1,0);const a=yy-ch.birthYear;
+    if(sep(satLon(jd),ch.natSat)<7&&yy-lastS>20){lastS=yy;ev.push([a,"서양 점성술",`토성이 태어날 때의 자리로 돌아오는 토성 회귀예요. 삶의 구조를 새로 세우고, 책임만큼 단단한 결과를 얻는 성숙의 관문으로 봅니다.`])}
+    if(sep(jupLon(jd),ch.natJup)<9&&yy-lastJ>8&&jc<2){lastJ=yy;jc++;ev.push([a,"서양 점성술",`목성이 태어날 때의 자리로 돌아오는 목성 회귀예요. 12년 만에 행운의 주기가 새로 시작돼 기회의 폭이 넓어집니다.`])}}
+  for(let yy=y0+1;yy<=y0+9;yy++){const py=reduceNum(reduceNum(ch.Mo,false)+reduceNum(ch.D,false)+reduceNum(digitsum(yy),false),false);if(py===1){ev.push([yy-ch.birthYear+.5,"수비학",`개인년 1이 돌아와 9년 주기가 새로 시작돼요. 이때 심은 일이 다음 9년의 바탕이 됩니다.`]);break}}
+  const tot=LD.map(r=>r.reduce((a,b)=>a+b.mean,0)/4);const cD=clamp(Math.floor(na/10),0,DECS-1);let up=[0,-1],dn=[0,-1];
+  for(let dd=cD+1;dd<DECS;dd++){const df=tot[dd]-tot[dd-1];if(df>up[0])up=[df,dd];if(df<dn[0])dn=[df,dd]}
+  if(up[1]>0&&up[0]>2)ev.push([up[1]*10,"종합",`${up[1]*10}대로 넘어가며 네 가지 운의 흐름이 눈에 띄게 올라가요(종합 ${D(tot[up[1]-1])}→${D(tot[up[1]])}). 앞선 10년에 준비한 것이 결실로 이어지는 구간이에요.`]);
+  if(dn[1]>0&&dn[0]<-3){const row=LD[dn[1]].map((c,ci)=>[c.mean,ci]).sort((a,b)=>a[0]-b[0])[0][1];ev.push([dn[1]*10,"종합",`${dn[1]*10}대에는 흐름이 한 단계 차분해져요(종합 ${D(tot[dn[1]-1])}→${D(tot[dn[1]])}). 특히 ${SHORT[row]}운은 ${REST[row]}.`])}
+  return ev.sort((a,b)=>a[0]-b[0]).map(([a,src,t])=>({a,y:Math.floor(ch.birthYear+a),src,t}))}
+function lifeIntro(ch){const tot=LD.map(r=>avgOf(r.map(c=>c.mean)));const cD=clamp(Math.floor(nowAge()/10),0,DECS-1);
+  const past=tot.slice(1,Math.max(2,cD)),next=tot.slice(cD,cD+3);const e=avgOf(past),l=avgOf(next);
+  const traj=l-e>3?"지금부터 본격적으로 피어나는":e-l>3?"일찍 꽃피운 힘을 앞으로도 오래 지켜가는":"큰 굴곡 없이 고르게 이어지는";
+  const avg=CATS.map((_,ci)=>[avgOf(LD.slice(1).map(r=>r[ci].mean)),ci]).sort((a,b)=>b[0]-a[0]);
+  return `당신의 평생은 ${traj} 흐름이에요. 평생을 관통하는 큰 복은 ${SHORT[avg[0][1]]}운이고, ${SHORT[avg[1][1]]}운이 그 뒤를 받칩니다. ${SHORT[avg[3][1]]}운은 상대적으로 잔잔한 편이니, ${SUMREST[avg[3][1]]}. 아래는 여러 점술이 앞으로 흐름이 바뀐다고 짚는 지점들이에요.`}
+function renderReading(){const box=document.getElementById("readBody");if(!box||!CH)return;
+  const np=natalProse(CH);const hp=HZ.map((_,hi)=>horizonProse(hi));const tp=turningPoints(CH);
+  document.getElementById("readTeaser").textContent=traitDescription(CH);
+  box.innerHTML=`<section class="r-ch"><h3>어떤 운명을 타고났나</h3>${np.map((p,i)=>`<p${i===3?' class="r-weak"':""}>${p}</p>`).join("")}</section>
+   <section class="r-ch"><h3>1년, 3년, 5년, 10년 뒤</h3>${hp.map(x=>`<h4>${x.h}<span>${x.sub}</span></h4><p>${x.t}</p>`).join("")}</section>
+   <section class="r-ch"><h3>평생 흐름의 전환점</h3><p>${lifeIntro(CH)}</p><ol class="turns">${tp.map(e=>`<li><span class="t-age">${Math.floor(e.a)}세<small>${e.y}년</small></span><p>${e.t}<em>${e.src}</em></p></li>`).join("")}</ol></section>`}
 
 /* ---------- 분석 구조: 점수 계산서 (가까운 미래 4시점만) ---------- */
 function renderNetCtl(){const p=document.getElementById("netP"),c=document.getElementById("netC");
@@ -1146,7 +1262,7 @@ function fillForm(v){$("in-name").value=v.name||"";$("in-roman").value=v.roman||
 function renderWho(v){const [y,m,d]=v.date.split("-");const dt=v.cal==="l"?`음 ${v.ly}.${String(v.lm).padStart(2,"0")}.${String(v.ld).padStart(2,"0")}${v.leap?"(윤)":""}`:`${y}.${m}.${d}`;
   $("whoSum").innerHTML=[v.name||"이름 없음",`${dt} ${v.notime?"시각 모름":v.time}`,v.place.name,v.sex==="f"?"여":"남"].map(t=>`<span>${t}</span>`).join("")}
 function run(v,animate){renderWho(v);CH=buildChart(v);drawTarot(CH);compute();selDec=clamp(Math.floor(nowAge()/10),0,DECS-1);if(animate)cast();renderAll()}
-function renderAll(){renderSigil();renderVerdict();renderFateTraits();renderTrend();renderCats();renderNatal();if(document.getElementById("p-net").open)renderNet()}
+function renderAll(){renderReading();renderSigil();renderVerdict();renderFateTraits();renderTrend();renderCats();renderNatal();if(document.getElementById("p-net").open)renderNet()}
 document.querySelectorAll("#modeTabs button").forEach(b=>b.addEventListener("click",()=>{if(mode===b.dataset.m)return;mode=b.dataset.m;cast();renderTrend();renderCats()}));
 $("ask").addEventListener("submit",e=>{e.preventDefault();const v=readForm();
   if(v.err){$("err").textContent=v.err;return}
