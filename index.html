@@ -68,6 +68,8 @@ form.ask{border-top:1px solid var(--line);padding:16px;animation:open .45s ease;
 .f.full{grid-column:1/-1}
 .ymd{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6px}
 .ymd select,.ymd input{padding-inline:8px}
+.ymd .unit{position:relative;display:block;min-width:0}.ymd .unit input{width:100%;padding-right:26px}.ymd .unit span{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
+.ymd input[type=number]{-moz-appearance:textfield;appearance:textfield}.ymd input::-webkit-outer-spin-button,.ymd input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .sub{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-height:20px}
 .conv{font-family:var(--mono);font-size:11.5px;color:var(--gold)}
 .opt{color:var(--dim);letter-spacing:0}
@@ -536,11 +538,11 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
     <details class="askbox" id="askbox">
     <summary><span class="who-sum" id="whoSum"></span><span class="edit">정보 수정 <span class="chev">⌄</span></span></summary>
     <form class="ask" id="ask" novalidate>
-      <div class="f s2"><label for="in-name">이름 <span class="opt">(선택)</span></label><input id="in-name" autocomplete="off" placeholder="비워도 돼요"></div>
-      <div class="f s2"><label for="in-roman">영문 이름 (수비학) <span class="opt">(선택)</span></label><input id="in-roman" autocomplete="off" placeholder="여권 영문 이름 (예: Hong Gildong)" aria-describedby="romanNote"><small class="fnote" id="romanNote"></small></div>
+      <div class="f s2"><label for="in-name">이름</label><input id="in-name" autocomplete="off" placeholder="홍길동" required></div>
+      <div class="f s2"><label for="in-roman">영문 이름 <span class="opt">(자동 입력)</span></label><input id="in-roman" autocomplete="off" placeholder="여권 영문 이름 (예: Hong Gildong)" aria-describedby="romanNote"><small class="fnote" id="romanNote"></small></div>
       <div class="f s2"><span class="lb">성별 (사주 대운)</span><div class="seg"><label><input type="radio" name="sex" value="m" id="sx-m"><span>남</span></label><label><input type="radio" name="sex" value="f" id="sx-f"><span>여</span></label></div></div>
       <div class="f s2"><span class="lb">달력</span><div class="seg"><label><input type="radio" name="cal" value="s" id="cal-s" checked><span>양력</span></label><label><input type="radio" name="cal" value="l" id="cal-l"><span>음력</span></label></div></div>
-      <div class="f s2 wm"><span class="lb" id="dateLb">생년월일 (양력)</span><div class="ymd"><input id="in-y" type="number" inputmode="numeric" min="1920" max="2025" placeholder="태어난 해" aria-label="태어난 해"><select id="in-m" aria-label="월"></select><select id="in-d" aria-label="일"></select></div>
+      <div class="f s2 wm"><span class="lb" id="dateLb">생년월일 (양력)</span><div class="ymd"><input id="in-y" type="number" inputmode="numeric" min="1920" max="2025" placeholder="태어난 해" aria-label="태어난 해"><label class="unit"><input id="in-m" type="number" inputmode="numeric" min="1" max="12" placeholder="월" aria-label="태어난 월 (1~12)"><span>월</span></label><label class="unit"><input id="in-d" type="number" inputmode="numeric" min="1" max="31" placeholder="일" aria-label="태어난 일 (1~31)"><span>일</span></label></div>
         <div class="sub"><label class="chk" id="leapWrap" hidden><input type="checkbox" id="in-leap">윤달</label><span class="conv" id="conv"></span></div></div>
       <div class="f s2"><label for="in-time">출생 시각</label><input id="in-time" type="time"><label class="chk"><input type="checkbox" id="in-notime">시각을 몰라요</label></div>
       <div class="f full"><span class="lb">출생지</span>
@@ -1293,13 +1295,14 @@ let rsT;addEventListener("resize",()=>{clearTimeout(rsT);rsT=setTimeout(()=>{if(
 const $=id=>document.getElementById(id);
 const placeFromIdx=i=>{const p=PLACES[i];return {name:p[0],lat:p[1],lon:p[2],tz:p[3],kr:p[3]===9&&p[2]>124&&p[2]<132&&p[1]>33&&p[1]<39}};
 let place={name:"",unset:true,lat:36.5,lon:127.8,tz:9,kr:true};
-$("in-m").innerHTML=`<option value="">월</option>`+Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}월</option>`).join("");
-function fillDays(){const cal=$("cal-l").checked;const n=cal?30:new Date(+$("in-y").value||2000,+$("in-m").value,0).getDate();const cur=+$("in-d").value||0;
-  $("in-d").innerHTML=`<option value="">일</option>`+Array.from({length:n},(_,i)=>`<option value="${i+1}">${i+1}일</option>`).join("");$("in-d").value=cur?Math.min(cur,n):""}
+function dayMax(){return $("cal-l").checked?30:31}
+function clampNum(el,max){let t=el.value.replace(/\D/g,"").slice(0,2);if(t!==""&&+t>max)t=String(max);if(t==="0"||t==="00")t="1";if(el.value!==t)el.value=t}
+function fillDays(){const n=dayMax();$("in-d").max=n;if(+$("in-d").value>n)$("in-d").value=n}
+$("in-m").addEventListener("input",()=>{clampNum($("in-m"),12);updConv()});$("in-d").addEventListener("input",()=>{clampNum($("in-d"),dayMax());updConv()});
 function updConv(){const cal=$("cal-l").checked;$("dateLb").textContent=`생년월일 (${cal?"음력":"양력"})`;$("leapWrap").hidden=!cal;
-  if(!cal){$("conv").textContent="";return}const r=lunarToSolar(+$("in-y").value,+$("in-m").value,+$("in-d").value,$("in-leap").checked);
+  if(!cal||!+$("in-y").value||!+$("in-m").value||!+$("in-d").value){$("conv").textContent="";return}const r=lunarToSolar(+$("in-y").value,+$("in-m").value,+$("in-d").value,$("in-leap").checked);
   $("conv").textContent=r.err?r.err:`양력 ${r.y}.${String(r.m).padStart(2,"0")}.${String(r.d).padStart(2,"0")}`;$("conv").style.color=r.err?"var(--rose)":""}
-["in-y","in-m"].forEach(id=>$(id).addEventListener("change",()=>{fillDays();updConv()}));$("in-d").addEventListener("change",updConv);$("in-leap").addEventListener("change",updConv);$("in-y").addEventListener("input",updConv);
+$("in-y").addEventListener("change",updConv);$("in-leap").addEventListener("change",updConv);$("in-y").addEventListener("input",updConv);
 ["cal-s","cal-l"].forEach(id=>$(id).addEventListener("change",()=>{fillDays();updConv()}));
 $("in-notime").addEventListener("change",e=>{$("in-time").disabled=e.target.checked});
 function showPlace(){$("placeName").textContent=place.unset?"아직 고르지 않았어요":place.name;$("placeCoord").textContent=place.unset?"":`${Math.abs(place.lat).toFixed(2)}°${place.lat>=0?"N":"S"} ${Math.abs(place.lon).toFixed(2)}°${place.lon>=0?"E":"W"} · UTC${place.tz>=0?"+":""}${place.tz}`;$("in-tz").value=place.tz}
@@ -1393,7 +1396,7 @@ function romanize(name){const n=(name||"").replace(/\s+/g,"");if(!/^[가-힣]{2,
   return `${sur} ${cap(rrWord(given))}`}
 let romanTouched=false;
 function romanNote(){const v=$("in-roman").value,l=v.toLowerCase().replace(/[^a-z]/g,"");
-  $("romanNote").innerHTML=(l?`계산 글자 <b>${l.toUpperCase()}</b><br>`:"비우면 한글 이름을 자동 변환해요<br>")+"여권 철자대로. 띄어쓰기·순서·대소문자는 상관없어요."}
+  $("romanNote").innerHTML=(l?`계산 글자 <b>${l.toUpperCase()}</b><br>`:"한글 이름을 쓰면 자동으로 채워져요<br>")+"여권 철자대로. 띄어쓰기·순서·대소문자는 상관없어요."}
 $("in-roman").addEventListener("input",()=>{romanTouched=$("in-roman").value.trim()!=="";romanNote()});
 $("in-name").addEventListener("input",()=>{if(!romanTouched){$("in-roman").value=romanize($("in-name").value);romanNote()}});
 romanNote();
@@ -1414,7 +1417,11 @@ document.querySelectorAll("#modeTabs button").forEach(b=>b.addEventListener("cli
 function askName(){const wn=$("whoName");if(!wn.classList.contains("noname"))return;$("askbox").open=true;$("askbox").scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"});setTimeout(()=>$("in-name").focus({preventScroll:true}),reduceM?0:350)}
 $("whoName").addEventListener("click",askName);$("whoName").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();askName()}});
 function checkForm(){const y=+$("in-y").value,m=+$("in-m").value,d=+$("in-d").value;
+  if(!$("in-name").value.trim())return "이름을 입력해 주세요. 수비학 계산에 쓰여요.";
+  if(!$("in-roman").value.trim()&&!romanize($("in-name").value))return "영문 이름을 입력해 주세요.";
   if(!y||!m||!d)return "생년월일을 모두 입력해 주세요.";
+  if(m<1||m>12)return "월은 1~12 사이로 입력해 주세요.";
+  if(!$("cal-l").checked){const n=new Date(y,m,0).getDate();if(d<1||d>n)return `${m}월은 ${n}일까지 있어요.`}else if(d<1||d>30)return "음력 날짜는 1~30일 사이로 입력해 주세요.";
   if(!$("sx-m").checked&&!$("sx-f").checked)return "성별을 골라 주세요.";
   if(!$("in-time").value&&!$("in-notime").checked)return "출생 시각을 입력하거나 '시각을 몰라요'를 체크해 주세요.";
   if(place.unset&&!$("in-noplace").checked)return "출생지를 고르거나 '출생지를 고르지 않을래요'를 체크해 주세요.";return ""}
