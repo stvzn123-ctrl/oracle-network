@@ -678,7 +678,7 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
     <summary><span class="who-sum" id="whoSum"></span><span class="edit">정보 수정 <span class="chev">⌄</span></span></summary>
     <form class="ask" id="ask" novalidate>
       <div class="f s2"><label for="in-name">이름</label><input id="in-name" autocomplete="off" placeholder="홍길동" required></div>
-      <div class="f s2"><label for="in-roman">영문 이름 <span class="opt">(자동 입력)</span></label><input id="in-roman" autocomplete="off" placeholder="여권 영문 이름 (예: Hong Gildong)" aria-describedby="romanNote"><small class="fnote" id="romanNote"></small></div>
+      <div class="f s2"><label for="in-roman">영문 이름 <span class="opt">(자동 입력)</span></label><input id="in-roman" autocomplete="off" placeholder="영문 이름 (예: Hong Gildong)" aria-describedby="romanNote"><small class="fnote" id="romanNote"></small></div>
       <div class="f s2"><span class="lb">성별 (사주 대운)</span><div class="seg"><label><input type="radio" name="sex" value="m" id="sx-m"><span>남</span></label><label><input type="radio" name="sex" value="f" id="sx-f"><span>여</span></label></div></div>
       <div class="f s2"><span class="lb">달력</span><div class="seg"><label><input type="radio" name="cal" value="s" id="cal-s" checked><span>양력</span></label><label><input type="radio" name="cal" value="l" id="cal-l"><span>음력</span></label></div></div>
       <div class="f s2 wm"><span class="lb" id="dateLb">생년월일 (양력)</span><div class="ymd"><input id="in-y" type="number" inputmode="numeric" min="1920" max="2025" placeholder="태어난 해" aria-label="태어난 해"><label class="unit"><input id="in-m" type="number" inputmode="numeric" min="1" max="12" placeholder="월" aria-label="태어난 월 (1~12)"><span>월</span></label><label class="unit"><input id="in-d" type="number" inputmode="numeric" min="1" max="31" placeholder="일" aria-label="태어난 일 (1~31)"><span>일</span></label></div>
@@ -686,8 +686,8 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
       <div class="f s2"><label for="in-time">출생 시각</label><input id="in-time" type="time"><label class="chk"><input type="checkbox" id="in-notime">시각을 몰라요</label></div>
       <div class="f full"><span class="lb">출생지</span>
         <label class="chk noplace"><input type="checkbox" id="in-noplace">출생지를 고르지 않을래요 <small>(대한민국 표준시로 계산)</small></label>
-        <div id="placeBox"><div class="psearch"><input id="placeQ" type="text" autocomplete="off" placeholder="도시·구·군 이름으로 검색 (예: 분당, 해운대, 도쿄)" role="combobox" aria-expanded="false" aria-controls="placeList" aria-label="출생지 검색"><ul id="placeList" class="plist" role="listbox" hidden></ul></div>
-        <div class="psel"><select id="sido" aria-label="시·도"></select><select id="sgg" aria-label="시·군·구"></select></div>
+        <div id="placeBox"><div class="psearch"><input id="placeQ" type="text" autocomplete="off" placeholder="시·도, 도시·구·군 검색 (예: 경기도, 성남, 도쿄)" role="combobox" aria-expanded="false" aria-controls="placeList" aria-label="출생지 검색"><ul id="placeList" class="plist" role="listbox" hidden></ul></div>
+        <div class="psel"><select id="sido" aria-label="시·도"></select><select id="sgg" aria-label="시·군·구"></select></div><small class="fnote" id="placeNote">시·도까지만 골라도 확인할 수 있어요. 시·군·구까지 고르면 출생지에 더 맞춰 계산해요.</small>
         <div class="placebar"><span class="pin" aria-hidden="true"></span><span class="pname" id="placeName">경기도 성남시</span><span class="coords" id="placeCoord"></span><button type="button" id="mapBtn" aria-expanded="false" aria-controls="mapbox">지도로 보기</button></div>
         <div class="mapbox" id="mapbox" hidden>
           <div class="maptabs" role="group" aria-label="지도 범위"><button type="button" data-v="kr" aria-pressed="true">대한민국</button><button type="button" data-v="w" aria-pressed="false">세계</button><span class="maphint" id="mapHint">지도를 눌러 태어난 곳을 고르세요</span></div>
@@ -1511,10 +1511,10 @@ function fillSgg(sd,keep){const el=$("sgg");if(!sd){el.innerHTML=`<option value=
   if(sd==="abroad"){el.innerHTML=`<option value="">나라·도시 선택</option><optgroup label="주요 도시">${ABROAD.map(([p,i])=>`<option value="city:${i}">${p[0]}</option>`).join("")}</optgroup><optgroup label="나라">${WORLD.map(([n,i])=>`<option value="w:${i}">${n}</option>`).join("")}</optgroup>`}
   else el.innerHTML=`<option value="">시·군·구 선택</option>`+MAPS.kor.map((r,i)=>[r,i]).filter(([r])=>r[1]===sd).sort((a,b)=>a[0][0].localeCompare(b[0][0],"ko")).map(([r,i])=>`<option value="kr:${i}">${kname(r[0])}</option>`).join("");
   if(keep)el.value=keep}
-function syncSel(){if(place.unset){$("sido").value="";fillSgg("");return}if(place.ki!=null){const sd=MAPS.kor[place.ki][1];$("sido").value=sd;fillSgg(sd,"kr:"+place.ki)}
+function syncSel(){if(place.unset){$("sido").value="";fillSgg("");return}if(place.ki!=null){const sd=MAPS.kor[place.ki][1];$("sido").value=sd;fillSgg(sd,"kr:"+place.ki)}else if(place.sidoOnly){$("sido").value=place.name;fillSgg(place.name)}
   else if(place.ci!=null){$("sido").value="abroad";fillSgg("abroad","city:"+place.ci)}else if(place.wi!=null){$("sido").value="abroad";fillSgg("abroad","w:"+place.wi)}
   else if(place.kr){const sd=SIDO.find(n=>place.name.startsWith(n));$("sido").value=sd||"";fillSgg(sd||"")}}
-$("sido").addEventListener("change",e=>fillSgg(e.target.value));
+$("sido").addEventListener("change",e=>{const sd=e.target.value;fillSgg(sd);if(!sd||sd==="abroad")return;const places=MAPS.kor.map((r,i)=>[r,i]).filter(([r])=>r[1]===sd);if(!places.length)return;const coords=places.map(([,i])=>KC[i]);const lat=coords.reduce((a,p)=>a+p[0],0)/coords.length,lon=coords.reduce((a,p)=>a+p[1],0)/coords.length;place={name:sd,lat:+lat.toFixed(3),lon:+lon.toFixed(3),tz:9,kr:true,sidoOnly:true};showPlace();if(!$("mapbox").hidden)drawMap()});
 $("sgg").addEventListener("change",e=>{const v=e.target.value;if(!v)return;const [k,i]=v.split(":");choosePlace({k,i:+i})});
 let pHits=[],pAct=-1;
 function renderHits(){const ul=$("placeList");if(!pHits.length){ul.hidden=true;$("placeQ").setAttribute("aria-expanded","false");return}
@@ -1533,7 +1533,7 @@ fillSido();fillSgg("");syncSel();
 const NOPLACE={name:"출생지 미선택",lat:null,lon:127.5,tz:9,kr:true,none:true};
 function setNoPlace(on){$("in-noplace").checked=on;$("placeBox").hidden=on;if(on)toggleMap(false)}
 $("in-noplace").addEventListener("change",e=>setNoPlace(e.target.checked));
-/* 한글 이름 → 영문(성은 여권에서 흔한 철자, 이름은 국어의 로마자 표기법 음절 단위) */
+/* 한글 이름 → 영문(성은 흔히 쓰는 철자, 이름은 국어의 로마자 표기법 음절 단위) */
 const RR_I=["g","kk","n","d","tt","r","m","b","pp","s","ss","","j","jj","ch","k","t","p","h"],RR_V=["a","ae","ya","yae","eo","e","yeo","ye","o","wa","wae","oe","yo","u","wo","we","wi","yu","eu","ui","i"],RR_F=["","k","k","k","n","n","n","t","l","k","m","l","l","l","p","l","m","p","p","t","t","ng","t","t","k","t","p","t"];
 const SURN2={"남궁":"Namgung","제갈":"Jegal","황보":"Hwangbo","선우":"Sunwoo","독고":"Dokgo","사공":"Sagong","서문":"Seomun"};
 const SURN=Object.fromEntries("김Kim 이Lee 박Park 최Choi 정Jung 강Kang 조Cho 윤Yoon 장Jang 임Lim 한Han 오Oh 서Seo 신Shin 권Kwon 황Hwang 안Ahn 송Song 류Ryu 유Yoo 홍Hong 전Jeon 고Ko 문Moon 양Yang 손Son 배Bae 백Baek 허Heo 남Nam 심Shim 노Noh 하Ha 곽Kwak 성Sung 차Cha 주Joo 우Woo 구Koo 민Min 진Jin 나Na 엄Eom 채Chae 원Won 천Cheon 방Bang 공Kong 현Hyun 함Ham 변Byun 염Yeom 여Yeo 추Choo 도Do 소So 석Seok 선Sun 설Seol 마Ma 길Gil 연Yeon 위Wi 표Pyo 명Myung 기Ki 반Ban 왕Wang 금Keum 옥Ok 육Yook 인In 맹Maeng 제Je 모Mo 탁Tak 국Kook 어Eo 은Eun 편Pyeon 용Yong 예Ye 경Kyung 봉Bong 사Sa 부Boo 가Ka 복Bok 태Tae 목Mok 형Hyung 피Pi 두Doo 감Kam 호Ho 동Dong 온On 좌Jwa 상Sang".split(" ").map(t=>[t[0],t.slice(1)]));
@@ -1545,7 +1545,7 @@ function romanize(name){const n=(name||"").replace(/\s+/g,"");if(!/^[가-힣]{2,
   return `${sur} ${cap(rrWord(given))}`}
 let romanTouched=false;
 function romanNote(){const v=$("in-roman").value,l=v.toLowerCase().replace(/[^a-z]/g,"");
-  $("romanNote").innerHTML=(l?`계산 글자 <b>${l.toUpperCase()}</b><br>`:"한글 이름을 쓰면 자동으로 채워져요<br>")+"여권 철자대로. 띄어쓰기·순서·대소문자는 상관없어요."}
+  $("romanNote").innerHTML=(l?`계산 글자 <b>${l.toUpperCase()}</b><br>`:"한글 이름을 쓰면 자동으로 채워져요<br>")+"사용하는 영문 이름을 입력해 주세요. 띄어쓰기·순서·대소문자는 상관없어요."}
 $("in-roman").addEventListener("input",()=>{romanTouched=$("in-roman").value.trim()!=="";romanNote()});
 $("in-name").addEventListener("input",()=>{if(!romanTouched){$("in-roman").value=romanize($("in-name").value);romanNote()}});
 romanNote();
@@ -1573,7 +1573,7 @@ function checkForm(){const y=+$("in-y").value,m=+$("in-m").value,d=+$("in-d").va
   if(!$("cal-l").checked){const n=new Date(y,m,0).getDate();if(d<1||d>n)return `${m}월은 ${n}일까지 있어요.`}else if(d<1||d>30)return "음력 날짜는 1~30일 사이로 입력해 주세요.";
   if(!$("sx-m").checked&&!$("sx-f").checked)return "성별을 골라 주세요.";
   if(!$("in-time").value&&!$("in-notime").checked)return "출생 시각을 입력하거나 '시각을 몰라요'를 체크해 주세요.";
-  if(place.unset&&!$("in-noplace").checked)return "출생지를 고르거나 '출생지를 고르지 않을래요'를 체크해 주세요.";return ""}
+  if((place.unset||place.sidoOnly)&&!$("in-noplace").checked)return "출생지의 시·도를 고르거나 '출생지를 고르지 않을래요'를 체크해 주세요.";return ""}
 $("ask").addEventListener("submit",e=>{e.preventDefault();const ce=checkForm();if(ce){$("err").textContent=ce;return}const v=readForm();
   if(v.err){$("err").textContent=v.err;return}
   const [y]=v.date.split("-").map(Number);
@@ -1740,7 +1740,7 @@ function reportNum(ch){
   const years=HZ.map(h=>{const {y}=horizonDate(h.off),py=reduceNum(reduceNum(ch.Mo,false)+reduceNum(ch.D,false)+reduceNum(digitsum(y),false),false);return [`${y}년`,String(py),NYP[py][2],NYP[py][1]]});
   return `<p class="r-lead">인생 수 ${ch.lp}은 ${LPM[ch.lp]}예요. 생일에서 읽는 삶의 방향, 이름에서 읽는 표현 방식과 속마음, 해마다 달라지는 개인년을 나누어 살펴봐요.</p>${reportCards([["생일 · 삶의 방향",`인생 수 ${ch.lp}`,LPM[ch.lp]],["영문 이름 전체 · 표현 방식",ch.expr==null?"계산할 이름 없음":`표현 수 ${ch.expr}`,ch.expr==null?"영문 이름의 알파벳이 있어야 계산할 수 있어요.":LPM[ch.expr]],["영문 이름의 모음 · 내면의 동기",ch.soul==null?"계산할 모음 없음":`영혼 수 ${ch.soul}`,ch.soul==null?"a·e·i·o·u가 없어 영혼 수를 만들지 않았어요.":LPM[ch.soul]]])}
   <h3>인생 수가 만들어지는 과정</h3><div class="r-prose"><p>양력 생일 ${ch.Y}년 ${ch.Mo}월 ${ch.D}일을 사용해요. 월·일·연도를 먼저 각각 줄이고 합계를 다시 줄이는 구간 축약법이에요. 월은 한 자리로, 일·연도·최종 합계에서는 11·22·33을 남겨 두어요.</p></div>${reportTable(["구간","계산"],[["월",`${ch.Mo} → ${parts[0]}`],["일",`${ch.D} → ${parts[1]}`],["연도",`${ch.Y} → 숫자 합 ${digitsum(ch.Y)} → ${parts[2]}`],["최종 합계",`${parts.join(" + ")} = ${parts.reduce((a,b)=>a+b,0)} → 인생 수 ${ch.lp}`]])}
-  <h3>이름의 철자가 만드는 두 숫자</h3><div class="r-prose"><p>알파벳은 A=1부터 I=9까지 대응하고 J=1부터 다시 반복해요. 표현 수는 모든 알파벳을, 영혼 수는 a·e·i·o·u만 더해요. 순서·띄어쓰기·대소문자보다 실제 철자가 결과에 영향을 줘요.</p></div>${reportTable(["항목","사용한 글자","합계와 결과"],[["표현 수",nm?nm.toUpperCase():"없음",ch.expr==null?"미계산":`${total} → ${ch.expr}`],["영혼 수",vowels.length?vowels.join("").toUpperCase():"없음",ch.soul==null?"미계산":`${soulTotal} → ${ch.soul}`]])}<p class="r-note">한글 이름에서 자동으로 변환한 철자는 여권 표기와 다를 수 있어요. 이름 입력 화면에서 평소 사용하는 영문 철자로 바꾸면 다시 계산돼요. 이 계산에서는 Y를 모음에 넣지 않아요.</p>
+  <h3>이름의 철자가 만드는 두 숫자</h3><div class="r-prose"><p>알파벳은 A=1부터 I=9까지 대응하고 J=1부터 다시 반복해요. 표현 수는 모든 알파벳을, 영혼 수는 a·e·i·o·u만 더해요. 순서·띄어쓰기·대소문자보다 실제 철자가 결과에 영향을 줘요.</p></div>${reportTable(["항목","사용한 글자","합계와 결과"],[["표현 수",nm?nm.toUpperCase():"없음",ch.expr==null?"미계산":`${total} → ${ch.expr}`],["영혼 수",vowels.length?vowels.join("").toUpperCase():"없음",ch.soul==null?"미계산":`${soulTotal} → ${ch.soul}`]])}<p class="r-note">한글 이름에서 자동으로 바꾼 영문 표기는 평소 사용하는 이름과 다를 수 있어요. 이름 입력 화면에서 평소 사용하는 영문 철자로 바꾸면 다시 계산돼요. 이 계산에서는 Y를 모음에 넣지 않아요.</p>
   <h3>마스터 넘버 읽기</h3><div class="r-prose"><p>${masters.length?`생일의 중간 계산과 최종 인생 수에 ${masters.join("·")}이 남아 있어요. ${masters.map(n=>`${n}은 ${LPM[n]}`).join(". ")}. 중간 단계의 숫자와 최종 인생 수는 구분해서 읽어 주세요.`:"생일 계산에는 별도로 남겨 둔 마스터 넘버가 없어요. 한 자리 수에도 각자의 방향과 강점이 있으므로 숫자의 크기를 재능의 순위로 읽지 않아요."} 표현 수와 영혼 수 역시 각각의 계산에서 11·22·33을 보존해요.</p></div>
   <h3>개인년: 해마다의 작은 주제</h3><p class="r-note">개인년 = 한 자리로 줄인 출생 월 + 출생 일 + 해당 연도의 숫자 합을 다시 한 자리로 줄인 값이에요. 1월부터 12월까지 한 해에 같은 개인년을 사용하며 1~9가 반복돼요.</p>${reportTable(["연도","개인년","일과 배움","관계"],years)}${reportYearFlow(ch,3)}<div class="r-advice"><span class="eyebrow">나에게 맞는 활용법</span><p>인생 수 ${ch.lp}의 방향을 장기 목표에, 개인년의 주제를 올해의 작은 계획에 연결해 보세요. 숫자는 선택을 돌아보는 상징이며 능력이나 미래를 확정하는 판정은 아니에요.</p></div>`}
 function reportMaya(ch){
