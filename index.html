@@ -677,16 +677,6 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 
 .feng-map .feng-pin circle{stroke:none!important;stroke-width:0!important}.feng-halo,.feng-dot{pointer-events:none}.feng-criteria{margin:8px 0 14px;color:var(--fg)}.feng-criteria>summary{display:inline-flex;align-items:center;cursor:pointer;list-style:none;min-height:36px;color:var(--emerald);font-size:var(--fs-s);gap:6px}.feng-criteria>summary::-webkit-details-marker{display:none}.feng-criteria>p{font-size:var(--fs-s);line-height:1.9;margin:8px 0 0;padding:14px;border:1px solid var(--line2);border-radius:10px;background:var(--field)}
 .feng-place-heading{display:flex;align-items:baseline;gap:12px;margin:22px 0 10px}.feng-place-heading h3{flex:1;min-width:0;margin:0!important}.feng-place-heading .feng-criteria{flex:none;position:relative;margin:0}.feng-place-heading .feng-criteria>summary{font-size:11px;min-height:32px;white-space:nowrap;font-weight:400}.feng-place-heading .feng-criteria>p{position:absolute;right:0;top:100%;z-index:10;width:min(420px,calc(100vw - 64px));margin:4px 0 0;box-shadow:0 8px 24px var(--bg)}.action-rationale{margin:10px 0 18px}
-.who{font-size:clamp(15px,2.6vw,18px);color:var(--muted);letter-spacing:.04em;margin-top:18px}
-h1{margin:6px 0 0;letter-spacing:.02em}
-.en-title{font-family:'Cinzel',serif;font-weight:500;font-size:clamp(12px,2.4vw,15px);letter-spacing:.42em;text-transform:uppercase;color:var(--emerald);opacity:.9;margin:10px 0 0;padding-left:.1em}
-.tagline{font-family:var(--display);font-weight:700;font-size:clamp(20px,4vw,28px);color:var(--fg);margin:22px 0 0;padding-top:18px;position:relative}
-.tagline::before{content:"";position:absolute;top:0;left:0;width:44px;height:2px;background:linear-gradient(90deg,var(--emerald),transparent)}
-.five{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0}
-.five span{font-size:13px;padding:5px 12px;border:1px solid rgba(61,255,176,.35);border-radius:999px;color:var(--fg);background:rgba(8,20,18,.55)}
-.hero .lede{margin-top:14px;font-size:var(--fs-b);line-height:1.7;max-width:46ch}
-.hero .lede{text-shadow:0 1px 10px rgba(5,10,10,.95),0 0 3px rgba(5,10,10,.9);color:#d9d0c0}
-@media(max-width:480px){.five{gap:6px}.five span{font-size:12px;padding:4px 9px}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -697,13 +687,9 @@ h1{margin:6px 0 0;letter-spacing:.02em}
 <header class="hero">
   <div class="sigil" aria-hidden="true"><svg id="sigil" viewBox="0 0 500 500"></svg></div>
   <div class="hero-in">
-    <div class="hero-top"><div></div><div class="share-actions"><button type="button" id="share-open" aria-label="내 운명 결과 공유하기">공유하기 ↗</button></div></div>
-    <div class="who"><span id="whoName">운명을 걷는 사람님의</span></div>
-    <h1>운명 네트워크</h1>
-    <div class="en-title">The Oracle Network</div>
-    <p class="tagline">당신의 운명을 알려드립니다.</p>
-    <div class="five" aria-label="다섯 가지 점술"><span>사주</span><span>서양 점성술</span><span>인도 점성술</span><span>수비학</span><span>마야력</span></div>
-    <p class="lede">태어난 순간을 입력하면, 다섯 점술이 각자의 규칙으로 계산해 하나의 운명으로 알려드립니다.</p>
+    <div class="hero-top"><div class="eyebrow">The Oracle Network</div><div class="share-actions"><button type="button" id="share-open" aria-label="내 운명 결과 공유하기">공유하기 ↗</button></div></div>
+    <h1><span id="whoName">당신의</span><br><em>운명 네트워크</em></h1>
+    <p class="lede">태어난 순간을 입력하면 사주, 서양·인도 점성술, 수비학, 마야력이 각자의 규칙으로 계산해 당신의 운명을 알려드립니다.</p>
 
     <details class="askbox" id="askbox">
     <summary><span class="who-sum" id="whoSum"></span><span class="edit">정보 수정 <span class="chev">⌄</span></span></summary>
@@ -1300,7 +1286,7 @@ function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b
   document.getElementById("typeText").innerHTML=`<ul class="gifts">${gifts.map(g=>`<li>${giftShort(CH,g)}</li>`).join("")}</ul>
    <p class="vline">${traj} 운명이에요. 앞으로 가장 빛나는 10년은 <b>${best.d*10}대의 ${CATS[best.ci].n}</b>(${D(best.m)}), 가까운 미래에는 <b>${HZ[soon.hi].n} ${CATS[soon.ci].n}</b>(${D(soon.m)})이 가장 밝게 열립니다.</p>
    <p class="rare">사주 여덟 글자의 조합은 약 51만 가지. 같은 날 같은 시에 태어나지 않는 한 똑같은 판은 거의 없습니다.</p>`;
-  const wn=document.getElementById("whoName");wn.textContent=CH.inp.name?CH.inp.name+"님의":"운명을 걷는 사람님의";wn.classList.toggle("noname",!CH.inp.name);
+  const wn=document.getElementById("whoName");wn.textContent=CH.inp.name||"당신의";wn.classList.toggle("noname",!CH.inp.name);
   if(CH.inp.name){wn.removeAttribute("role");wn.removeAttribute("tabindex");wn.removeAttribute("title")}else{wn.setAttribute("role","button");wn.setAttribute("tabindex","0");wn.title="눌러서 이름 입력"}}
 function giftShort(ch,g){const k=g[0];if(GIFT_SHORT[k])return `<b>${k==="마스터 넘버"?`마스터 넘버 ${[...new Set(ch.masters)].join("·")}`:k}</b><span>${GIFT_SHORT[k]}</span>`;
   if(k==="태양")return `<b>${ZOD[sign(ch.sun)]}자리 태양</b><span>${SUNG[sign(ch.sun)]}</span>`;
