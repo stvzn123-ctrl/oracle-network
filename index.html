@@ -523,7 +523,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .ymark{display:inline-block;font-size:11px;font-weight:600;color:#1a1208;background:var(--gold);border-radius:999px;padding:1px 8px;margin-right:6px;vertical-align:2px}
 
 
-.bigchart{margin:0 0 22px;padding:18px 16px 12px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
+.bigchart{margin:22px 0 4px;padding:18px 0 4px;border-top:1px solid var(--line)}
 .bc-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 16px;margin-bottom:6px}
 .bc-head h3{font-family:var(--display);font-size:clamp(19px,2.6vw,23px);color:var(--gold);margin:0}
 .bc-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--muted)}
@@ -537,7 +537,7 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .bc-pt.top{stroke:var(--bg);stroke-width:2.5}
 .bc-pt:hover,.bc-pt:focus-visible{outline:none;stroke:var(--fg);stroke-width:2}
 .bc-note{margin:6px 0 0;font-size:12px;color:var(--dim)}
-@media(max-width:560px){.bigchart{padding:14px 10px 10px}.bc-line{stroke-width:2.2}}
+@media(max-width:560px){.bigchart{padding:14px 0 4px}.bc-line{stroke-width:2.2}}
 /* hook + lock zone + report */
 .hook{margin:14px 0 18px;padding:16px 18px;border:1px solid var(--line2);border-radius:14px;background:var(--panel);font-family:var(--display);font-size:clamp(17px,2.4vw,19px);line-height:1.8;color:var(--ink);word-break:keep-all}
 .hook b{color:var(--fg)}
@@ -666,6 +666,7 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
       <h3 class="nat-h">타고난 운명</h3>
       <p class="type" id="typeName"></p>
       <div id="fate-traits"></div>
+      <div class="bigchart" id="bigchart"></div>
       <div class="natal-more"><div id="typeText"></div><div class="pillars" id="pillars"></div></div>
     </div>
   </div>
@@ -687,7 +688,6 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 <section id="forecast">
   <div class="sec-head"><h2>당신의 운명</h2></div>
   <p class="hook" id="hook"></p>
-  <div class="bigchart" id="bigchart"></div>
   <div class="trend is-locked" id="result-gate">
     <div id="graph-content" inert aria-hidden="true">
   <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="near" aria-pressed="true">가까운 미래<small>1~10년</small></button><button type="button" data-m="life" aria-pressed="false">평생 지도<small>10년 단위</small></button></div>
@@ -1619,7 +1619,7 @@ function reportSummary(ch){const tags=reportTags(ch),b=bestCell(),d=ch.stems.d,d
   <div class="r-kw">${kw}</div>
   <h3>다섯 점술이 함께 짚은 것</h3><ul class="r-agree">${agl}</ul>
   <p class="r-hook">${reportHook(ch)}</p>
-  <h3>앞으로 10년의 모양</h3><div class="r-chart">${rChart()}</div>
+  <h3>앞으로 10년의 흐름</h3><div class="r-chart">${rChart()}</div>
   <div class="r-legend">${CATS.map((c,ci)=>`<span><i style="background:var(--${c.k})"></i>${SHORT[ci]}</span>`).join("")}</div>
   <div class="r-tbl"><table><thead><tr><th>분야</th><th>가장 밝은 해</th><th>한 줄 요약</th></tr></thead><tbody>${best}</tbody></table></div>
   <h3>꼭 기억할 전환점</h3><ol class="r-tl">${tps}</ol>
@@ -1688,7 +1688,7 @@ function renderBig(){const el=$("bigchart");if(!el||!CH)return;bigW=el.clientWid
   CATS.forEach((c,ci)=>{const p=S.map((r,k)=>[x(k),y(r[ci])]);g+=`<path class="bc-line${drawCls()}" pathLength="1" d="${smoothPath(p.map(q=>q.join(",")).join(" "))}" stroke="var(--${c.k})"/>`;
     let bi=0;S.forEach((r,k)=>{if(r[ci]>S[bi][ci])bi=k});
     p.forEach((q,k)=>{const top=k===bi;pts+=`<circle class="bc-pt${top?" top":""}" cx="${q[0]}" cy="${q[1]}" r="${top?(nr?6:6.5):(nr?3.2:3.4)}" fill="var(--${c.k})" data-c="${ci}" data-h="${k}" tabindex="0" role="button" aria-label="${y0+k}년 ${c.n} ${S[k][ci]}점"><title>${y0+k}년 ${c.n} ${S[k][ci]}점</title></circle>`})});
-  el.innerHTML=`<div class="bc-head"><h3>앞으로 10년의 모양</h3><div class="bc-legend">${CATS.map((c,ci)=>`<span><i style="background:var(--${c.k})"></i>${SHORT[ci]}</span>`).join("")}</div></div>
+  el.innerHTML=`<div class="bc-head"><h3>앞으로 10년의 흐름</h3><div class="bc-legend">${CATS.map((c,ci)=>`<span><i style="background:var(--${c.k})"></i>${SHORT[ci]}</span>`).join("")}</div></div>
    <div class="bc-plot"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="2027년부터 10년 동안 금전·애정·직업·건강 점수">${g}${pts}</svg></div>
    <p class="bc-note">큰 점은 분야별로 가장 밝은 해예요. 점을 누르면 그해의 풀이로 이동해요.</p>`;
   const go=t=>{const ci=+t.dataset.c,hi=+t.dataset.h;if(!graphUnlocked){openShare();return}sel[CATS[ci].k]=hi;if(mode!=="near"){mode="near";renderTrend();renderCats()}else renderCat(ci,true);focusCard(ci)};
