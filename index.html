@@ -660,7 +660,8 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 .rc-book em,.rc-book b{white-space:nowrap}
 @media(max-width:620px){.report-cta.report-cta{grid-template-columns:minmax(0,1fr);text-align:center}.rc-book{width:160px;margin:0 auto}.rc-book em{font-size:22px}.rc-book b{font-size:17px}.rc-toc{text-align:left}}
 .r-detail{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}.r-detail summary{cursor:pointer;color:var(--gold);font-size:var(--fs-b)}.r-page td{overflow-wrap:anywhere}.r-page .r-tbl{max-width:100%}
-.action-guide{margin:18px 0 24px}.action-guide h3{font-family:var(--display);color:var(--gold);margin:22px 0 8px}.action-guide .r-lead{margin-top:14px}.action-guide .r-note{line-height:1.8}.action-guide a{color:var(--emerald)}.action-week{margin-top:20px;padding-top:8px;border-top:1px solid var(--line)}.action-days{border:0;padding:0;margin:16px 0;display:flex;gap:8px;flex-wrap:wrap}.action-days legend{font-size:var(--fs-s);color:var(--muted);margin-bottom:10px}.action-days label{position:relative;cursor:pointer}.action-days input{position:absolute;opacity:0}.action-days span{display:grid;place-items:center;min-width:44px;min-height:44px;border:1px solid var(--line2);border-radius:50%;color:var(--muted)}.action-days input:checked+span{background:var(--emerald);color:var(--bg);border-color:var(--emerald)}.action-days input:focus-visible+span{outline:2px solid var(--gold);outline-offset:3px}
+.action-guide{margin:18px 0 24px}.action-guide h3{font-family:var(--display);color:var(--gold);margin:22px 0 8px}.action-guide .r-lead{margin-top:14px}.action-guide .r-note{line-height:1.8}.action-guide a{color:var(--emerald)}
+.action-toggle>summary{display:flex;justify-content:space-between;align-items:center;gap:16px;cursor:pointer;list-style:none;color:var(--fg);font-family:var(--display);font-size:clamp(19px,2.6vw,23px);font-weight:700}.action-toggle>summary::-webkit-details-marker{display:none}.action-toggle>summary .chev{font-family:var(--body);color:var(--emerald)}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -725,7 +726,6 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 <section id="forecast">
   <div class="sec-head"><h2>당신의 운명</h2></div>
   <p class="hook" id="hook"></p>
-  <section class="sumbox action-guide" aria-labelledby="actionTitle"><span class="eyebrow">My small ritual</span><h2 id="actionTitle">운명을 가꾸는 나의 실천</h2><div id="actionBody"></div></section>
   <div class="trend is-locked" id="result-gate">
     <div id="graph-content" inert aria-hidden="true">
   <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="near" aria-pressed="true">가까운 미래<small>1~10년</small></button><button type="button" data-m="life" aria-pressed="false">평생 지도<small>10년 단위</small></button></div>
@@ -733,6 +733,7 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
       <div class="cats" id="cats"><svg class="flash" id="flash" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
       <section class="reading" aria-labelledby="readTitle">
   <div class="sumbox"><h3 class="r-title" id="readTitle">운명 풀이 요약</h3><div class="sum-prose" id="readBody"></div></div>
+<details class="sumbox action-guide action-toggle"><summary>나의 운명을 개선해나가는 법 <span class="chev" aria-hidden="true">⌄</span></summary><div id="actionBody"></div></details>
 </section>
       <div class="report-cta"><div class="rc-book" aria-hidden="true"><span class="eyebrow">Destiny Report</span><b id="rcName">당신의</b><em>운명 리포트</em><small>사주 · 서양 · 인도 · 수비학 · 마야</small></div>
         <div class="rc-info"><span class="eyebrow">더 자세한 나의 운명</span><h3>한 권으로 읽는 나의 운명 리포트</h3><p>위 요약은 결론만 담았어요. 리포트에서는 다섯 점술이 왜 그렇게 말하는지, 근거부터 해마다의 흐름까지 깊이 풀어 드려요.</p>
@@ -1710,11 +1711,11 @@ function reportSaju(ch){const d=ch.stems.d,dom=ch.cnt.indexOf(Math.max(...ch.cnt
 
 /* 오행 상징을 일상의 실천으로 옮긴 자체 가이드. 운세 점수에 영향 없음. */
 const ACTION_ELEMENTS=[
- {theme:"성장과 시작",gift:"작은 시작을 눈에 보이는 결과로 남기기",boost:"아침에 오늘 끝낼 일 하나를 적고, 첫 5분을 바로 시작해 보세요.",shadow:"벌여 놓은 일을 줄이고 하나를 마무리하기",calm:"새 일을 추가하기 전에 미완성 목록에서 5분 안에 끝낼 일 하나를 마무리해 보세요.",balance:"미뤘던 배움을 5분만 시작하기",task:"식사 후 관심 있는 글을 5분 읽고 새로 안 것 한 줄 쓰기",space:"나무가 보이는 동네 공원이나 산책길",ritual:"걸으며 오늘 시작할 일을 하나 정해 보세요. 먼 산까지 가지 않아도 괜찮아요."},
- {theme:"표현과 온기",gift:"내 안의 열정을 사람과 나누기",boost:"오늘 떠오른 생각을 짧은 글이나 말로 한 번 표현해 보세요.",shadow:"감정이 올라오는 순간에 여백 만들기",calm:"급하게 답하고 싶을 때 메시지를 초안으로 남기고, 잠시 뒤 다시 읽어 보세요.",balance:"작은 관심을 말로 전하기",task:"점심 후 가까운 사람에게 구체적인 고마움 한 문장 전하기",space:"밝은 창가나 편안히 대화할 수 있는 작은 쉼터",ritual:"잠시 앉아 오늘 고마웠던 장면 하나를 떠올려 보세요."},
- {theme:"안정과 지속",gift:"믿음직한 꾸준함을 내 편으로 만들기",boost:"이미 잘하는 일 하나를 정해 오늘도 같은 시간에 짧게 이어 가세요.",shadow:"익숙한 방식에 작은 변화 더하기",calm:"늘 하던 순서나 길에서 부담 없는 것 하나만 바꿔 보세요.",balance:"돌아올 수 있는 일상의 자리 만들기",task:"저녁 식사 후 책상 한 뼘을 3분 동안 정리하기",space:"걷기 편한 평지나 자주 가는 조용한 동네 공간",ritual:"익숙한 자리에서 이번 주 지킬 약속을 하나 적어 보세요."},
- {theme:"정리와 기준",gift:"선명한 기준을 완성으로 연결하기",boost:"오늘 할 일의 완료 기준을 한 문장으로 적고 그만큼 끝내 보세요.",shadow:"날카로운 판단에 부드러운 말 더하기",calm:"고칠 점을 말하기 전에 상대가 잘한 점 하나를 구체적으로 말해 보세요.",balance:"중요한 것 하나를 남기기",task:"일과를 마칠 때 내일 가장 중요한 일 하나만 적기",space:"정돈된 책상이나 조용한 도서관의 열린 열람 공간",ritual:"눈앞의 물건 세 개를 제자리에 놓고 한 가지 일에 집중해 보세요."},
- {theme:"성찰과 유연함",gift:"깊이 생각하는 힘을 기록으로 남기기",boost:"떠오른 생각을 세 줄로 적고, 그중 실행할 수 있는 것 하나를 골라 보세요.",shadow:"길어진 생각을 작은 행동으로 바꾸기",calm:"고민 중인 일을 2분 안에 할 수 있는 첫 동작으로 나눠 지금 해보세요.",balance:"생각과 할 일을 잠깐 내려놓기",task:"저녁에 화면을 잠시 내려두고 오늘 느낀 점을 세 줄 쓰기",space:"조용한 공원 벤치나 안전하게 걸을 수 있는 물가 산책로",ritual:"주변 소리 세 가지를 알아차리고, 오늘 내려놓을 생각 하나를 적어 보세요."}
+ {theme:"성장과 시작",gift:"작은 시작을 눈에 보이는 결과로 남기기",boost:"아침에 오늘 끝낼 일 하나를 적고, 첫 5분을 바로 시작해 보세요.",shadow:"벌여 놓은 일을 줄이고 하나를 마무리하기",calm:"새 일을 추가하기 전에 미완성 목록에서 5분 안에 끝낼 일 하나를 마무리해 보세요.",balance:"미뤘던 배움을 5분만 시작하기",task:"식사 후 관심 있는 글을 5분 읽고 새로 안 것 한 줄 쓰기",space:"집에서 걸어갈 수 있는 근린공원의 나무 그늘길이나 수목원의 완만한 숲길",ritual:"갈림길이 적고 벤치가 있는 10~15분 코스를 골라 천천히 걸어 보세요. 벤치에 앉아 지금 시작하고 싶은 일과 첫 행동을 한 줄씩 적어 보세요."},
+ {theme:"표현과 온기",gift:"내 안의 열정을 사람과 나누기",boost:"오늘 떠오른 생각을 짧은 글이나 말로 한 번 표현해 보세요.",shadow:"감정이 올라오는 순간에 여백 만들기",calm:"급하게 답하고 싶을 때 메시지를 초안으로 남기고, 잠시 뒤 다시 읽어 보세요.",balance:"작은 관심을 말로 전하기",task:"점심 후 가까운 사람에게 구체적인 고마움 한 문장 전하기",space:"오전 햇빛이 드는 도서관 휴게실 창가나 동네 문화센터의 소규모 모임 공간",ritual:"창가에 잠시 앉아 고마운 사람에게 전할 말을 적어 보세요. 사람과 어울리고 싶다면 관심 있는 글쓰기·그림 모임의 공개 프로그램을 살펴보세요."},
+ {theme:"안정과 지속",gift:"믿음직한 꾸준함을 내 편으로 만들기",boost:"이미 잘하는 일 하나를 정해 오늘도 같은 시간에 짧게 이어 가세요.",shadow:"익숙한 방식에 작은 변화 더하기",calm:"늘 하던 순서나 길에서 부담 없는 것 하나만 바꿔 보세요.",balance:"돌아올 수 있는 일상의 자리 만들기",task:"저녁 식사 후 책상 한 뼘을 3분 동안 정리하기",space:"집 근처 공원의 평탄한 순환 산책로, 또는 매번 같은 자리에 앉을 수 있는 동네 도서관",ritual:"계단이나 가파른 경사가 없는 짧은 코스를 골라 익숙한 시간에 돌아보세요. 늘 앉는 벤치나 도서관 자리에서 이번 주 지킬 작은 약속 하나를 정해 보세요."},
+ {theme:"정리와 기준",gift:"선명한 기준을 완성으로 연결하기",boost:"오늘 할 일의 완료 기준을 한 문장으로 적고 그만큼 끝내 보세요.",shadow:"날카로운 판단에 부드러운 말 더하기",calm:"고칠 점을 말하기 전에 상대가 잘한 점 하나를 구체적으로 말해 보세요.",balance:"중요한 것 하나를 남기기",task:"일과를 마칠 때 내일 가장 중요한 일 하나만 적기",space:"공공도서관의 조용한 자료실에서 통로와 떨어진 한 사람 자리, 또는 집의 물건을 치운 책상 한쪽",ritual:"책상 위에 지금 쓸 책과 필기구만 남겨 보세요. 15분 동안 끝낼 한 가지를 정하고, 마칠 때 다음에 할 일을 한 줄 적어 보세요."},
+ {theme:"성찰과 유연함",gift:"깊이 생각하는 힘을 기록으로 남기기",boost:"떠오른 생각을 세 줄로 적고, 그중 실행할 수 있는 것 하나를 골라 보세요.",shadow:"길어진 생각을 작은 행동으로 바꾸기",calm:"고민 중인 일을 2분 안에 할 수 있는 첫 동작으로 나눠 지금 해보세요.",balance:"생각과 할 일을 잠깐 내려놓기",task:"저녁에 화면을 잠시 내려두고 오늘 느낀 점을 세 줄 쓰기",space:"난간과 보행로가 갖춰진 하천변 산책길이나 호수공원의 물이 보이는 벤치",ritual:"밝은 낮 시간에 평탄한 보행로를 골라 물가와 거리를 두고 천천히 걸어 보세요. 벤치에서 주변 소리 세 가지를 듣고, 내려놓을 생각 하나와 오늘 할 행동 하나를 적어 보세요."}
 ];
 function actionProfile(ch){
  const dominant=ch.cnt.indexOf(Math.max(...ch.cnt));
@@ -1723,17 +1724,15 @@ function actionProfile(ch){
  const support=candidates[0];
  return {dominant,support,strong:ACTION_ELEMENTS[dominant],fill:ACTION_ELEMENTS[support]};
 }
-function actionGuideHTML(ch,interactive){const p=actionProfile(ch),a=p.strong,b=p.fill;
- const fixed=[1,4,7,10].includes(sign(ch.sun));
+function actionGuideHTML(ch){const p=actionProfile(ch),a=p.strong,b=p.fill;
  return '<p class="r-lead">타고난 결을 알고, 오늘의 작은 선택을 바꿔 보세요.</p>'+reportCards([
  ["01 · 강점 살리기",a.gift,a.boost],
  ["02 · 과한 성향 가라앉히기",a.shadow,a.calm],
- ["03 · 균형 채우기",b.balance,b.task+"."]])+ '<h3>나에게 어울리는 작은 쉼터</h3><div class="r-prose"><p><strong>'+b.space+'</strong>에서 '+b.ritual+' 장소는 오행의 상징을 떠올리는 배경이에요. 특정 장소가 운명을 바꾼다는 뜻은 아니에요.</p></div>'+
+ ["03 · 균형 채우기",b.balance,b.task+"."]])+ '<h3>나의 운명을 개선할수있는 장소</h3><div class="r-prose"><p><strong>'+b.space+'</strong>에서 '+b.ritual+' 장소는 오행의 상징을 떠올리는 배경이에요. 특정 장소가 운명을 바꾼다는 뜻은 아니에요.</p></div>'+
  '<details class="r-detail"><summary>왜 나에게 이 실천을 추천하나요?</summary><p class="r-note">내 차트에서 가장 많은 '+ELK[p.dominant]+'('+EL[p.dominant]+') '+ch.cnt[p.dominant]+'개의 주제인 '+a.theme+'을 강점과 주의점으로 풀었어요. '+(ch.strong?'신강':'신약')+'에 따른 기존 보완 그룹 중 '+ELK[p.support]+'('+EL[p.support]+') '+ch.cnt[p.support]+'개를 균형 주제로 골랐어요. 개수가 같으면 목·화·토·금·수 순서로 선택해요. 정밀한 용신 판정은 아니며, 행동·공간 추천은 이 사이트가 만든 상징적 해석이에요.'+(ch.inp.notime?' 출생 시각이 없어 시주를 뺀 차트 기준이에요.':'')+'</p></details>'+
- (interactive?'<div class="action-week"><h3>7일 작은 실천</h3><p>이번에는 <strong>'+b.task+'</strong>.</p><p class="r-note">'+(fixed?'익숙한 흐름을 살려 같은 일상 뒤에 붙여 보세요.':'시작은 작게, 실행할 상황은 일정하게 정해 보세요.')+' 7일은 나에게 맞는지 살펴보는 체험 기간이에요. 빠뜨린 날이 있어도 다음 날 다시 이어 가세요.</p><fieldset class="action-days"><legend>해본 날을 표시해 보세요</legend>'+Array.from({length:7},(_,i)=>'<label><input type="checkbox" data-action-day="'+i+'"><span>'+(i+1)+'일</span></label>').join('')+'</fieldset><p class="r-note" data-action-progress aria-live="polite">0 / 7일 · 오늘 한 번부터 시작해 보세요.</p><p class="r-note">체크는 이 화면에만 남고 새로 계산하거나 새로고침하면 초기화돼요. 체크로 운세 점수가 변하지 않아요.</p></div>':'<div class="r-advice"><span class="eyebrow">이번 주 한 가지</span><p>'+b.task+'. 같은 일상 뒤에 붙여 가볍게 반복해 보세요.</p></div>')+
- '<details class="r-detail"><summary>실천 가이드의 자료와 읽는 법</summary><p class="r-note">오행의 변화·균형 개념을 일상의 주제로 옮긴 재미용 가이드예요. 에너지 제거 또는 운명 변화의 효과가 입증된 처방은 아니에요. 습관 자료는 반복과 기록의 구성에, 자연 활동 자료는 가까운 쉼터 제안에 참고했어요. 개인 차트와 행동의 대응을 입증하는 자료는 아니에요.</p><ul class="r-note"><li><a href="https://plato.stanford.edu/entries/chinese-metaphysics/" target="_blank" rel="noopener noreferrer">Stanford Encyclopedia of Philosophy · 오행과 변화</a></li><li><a href="https://www.ucl.ac.uk/epidemiology-health-care/sites/epidemiology-health-care/files/HealthHabitsforLifeBooklet.pdf" target="_blank" rel="noopener noreferrer">UCL · 일상에서 습관 만들기</a></li><li><a href="https://www.environment.sa.gov.au/topics/park-management/statewide-park-strategies/healthy-parks-healthy-people/five-ways-wellbeing-nature" target="_blank" rel="noopener noreferrer">남호주 환경부 · 자연 속 작은 실천</a></li></ul></details>';
+ '';
 }
-function renderActionGuide(){const el=document.getElementById('actionBody');if(!el||!CH)return;el.innerHTML=actionGuideHTML(CH,true);el.onchange=e=>{if(!e.target.matches('[data-action-day]'))return;const n=el.querySelectorAll('[data-action-day]:checked').length;el.querySelector('[data-action-progress]').textContent=n+' / 7일 · '+(n===7?'일곱 번의 실천을 남겼어요. 도움이 됐다면 가볍게 이어 가세요.':'해본 만큼 쌓이고 있어요. 편한 속도로 이어 가세요.')}}
+function renderActionGuide(){const el=document.getElementById('actionBody');if(el&&CH)el.innerHTML=actionGuideHTML(CH)}
 
 function reportTable(head,rows){return `<div class="r-tbl"><table><thead><tr>${head.map(h=>`<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
 function reportCards(rows){return `<div class="r-kv">${rows.map(([label,value,text])=>`<div><small>${label}</small><b>${value}</b><span>${text}</span></div>`).join("")}</div>`}
@@ -1787,7 +1786,7 @@ function renderReport(){const ch=CH,name=ch.inp.name||"운명을 걷는 사람";
   const chap=[["r-sum","1","종합"],["r-saju","2","사주"],...pv.map((p,i)=>["r-"+p[0],String(i+3),p[1]])];
   $("reportBody").innerHTML=`<header class="r-cover"><div class="eyebrow">The Oracle Network · Destiny Report</div><h2>${name}님의<br><em>운명 리포트</em></h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 종합 분석</p></header>
   <nav class="r-rail" aria-label="장 이동">${chap.map(c=>`<a href="#${c[0]}"><b>${c[1]}</b>${c[2]}</a>`).join("")}</nav>
-  <section class="r-page" id="r-sum"><div class="r-ph"><span class="eyebrow">Chapter 1 · Synthesis</span></div><h2>종합 리포트<small>다섯 점술의 결론을 먼저 한 장에 모았어요</small></h2>${reportSummary(ch)}<h3>운명을 가꾸는 나의 실천</h3>${actionGuideHTML(ch,false)}</section>
+  <section class="r-page" id="r-sum"><div class="r-ph"><span class="eyebrow">Chapter 1 · Synthesis</span></div><h2>종합 리포트<small>다섯 점술의 결론을 먼저 한 장에 모았어요</small></h2>${reportSummary(ch)}<details class="r-detail action-guide action-toggle"><summary>나의 운명을 개선해나가는 법 <span class="chev" aria-hidden="true">⌄</span></summary>${actionGuideHTML(ch)}</details></section>
   <section class="r-page" id="r-saju"><div class="r-ph"><span class="eyebrow">Chapter 2 · Saju</span></div><h2>사주 분석<small>태어난 해·달·날·시의 여덟 글자로 보는 타고난 그릇</small></h2>${reportSaju(ch)}</section>
   ${pv.map((p,i)=>`<section class="r-page" id="r-${p[0]}"><div class="r-ph"><span class="eyebrow">Chapter ${i+3}</span></div><h2>${p[1]} 분석<small>타고난 성향과 시간의 흐름을 함께 읽어요</small></h2>${p[2](ch)}</section>`).join("")}
   <p class="r-foot">각 점술의 계산 규칙을 따라 만든 재미용 해석이에요. 미래를 맞힌다는 과학적 근거는 없어요.</p>`;
