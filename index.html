@@ -671,7 +671,7 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
   <div class="sigil" aria-hidden="true"><svg id="sigil" viewBox="0 0 500 500"></svg></div>
   <div class="hero-in">
     <div class="hero-top"><div class="eyebrow">The Oracle Network</div><div class="share-actions"><button type="button" id="share-open" aria-label="내 운명 결과 공유하기">공유하기 ↗</button></div></div>
-    <h1><span id="whoName">운명을 걷는 사람</span>님의<br><em>운명 네트워크</em></h1>
+    <h1><span id="whoName">당신의</span><br><em>운명 네트워크</em></h1>
     <p class="lede">태어난 순간을 입력하면 사주, 서양·인도 점성술, 수비학, 마야력이 각자의 규칙으로 계산해 당신의 운명을 알려드립니다.</p>
 
     <details class="askbox" id="askbox">
@@ -1268,7 +1268,7 @@ function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b
   document.getElementById("typeText").innerHTML=`<ul class="gifts">${gifts.map(g=>`<li>${giftShort(CH,g)}</li>`).join("")}</ul>
    <p class="vline">${traj} 운명이에요. 앞으로 가장 빛나는 10년은 <b>${best.d*10}대의 ${CATS[best.ci].n}</b>(${D(best.m)}), 가까운 미래에는 <b>${HZ[soon.hi].n} ${CATS[soon.ci].n}</b>(${D(soon.m)})이 가장 밝게 열립니다.</p>
    <p class="rare">사주 여덟 글자의 조합은 약 51만 가지. 같은 날 같은 시에 태어나지 않는 한 똑같은 판은 거의 없습니다.</p>`;
-  const wn=document.getElementById("whoName");wn.textContent=CH.inp.name||"운명을 걷는 사람";wn.classList.toggle("noname",!CH.inp.name);
+  const wn=document.getElementById("whoName");wn.textContent=CH.inp.name||"당신의";wn.classList.toggle("noname",!CH.inp.name);
   if(CH.inp.name){wn.removeAttribute("role");wn.removeAttribute("tabindex");wn.removeAttribute("title")}else{wn.setAttribute("role","button");wn.setAttribute("tabindex","0");wn.title="눌러서 이름 입력"}}
 function giftShort(ch,g){const k=g[0];if(GIFT_SHORT[k])return `<b>${k==="마스터 넘버"?`마스터 넘버 ${[...new Set(ch.masters)].join("·")}`:k}</b><span>${GIFT_SHORT[k]}</span>`;
   if(k==="태양")return `<b>${ZOD[sign(ch.sun)]}자리 태양</b><span>${SUNG[sign(ch.sun)]}</span>`;
