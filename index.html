@@ -522,6 +522,22 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 
 .ymark{display:inline-block;font-size:11px;font-weight:600;color:#1a1208;background:var(--gold);border-radius:999px;padding:1px 8px;margin-right:6px;vertical-align:2px}
 
+
+.bigchart{margin:0 0 22px;padding:18px 16px 12px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
+.bc-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 16px;margin-bottom:6px}
+.bc-head h3{font-family:var(--display);font-size:clamp(19px,2.6vw,23px);color:var(--gold);margin:0}
+.bc-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--muted)}
+.bc-legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.bc-plot svg{display:block;width:100%;height:auto}
+.bc-grid{stroke:var(--line)}
+.bc-t{font:12px var(--mono);fill:var(--dim)}
+.bc-line{fill:none;stroke-width:2.4}
+.bc-line.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:drawline 1.4s cubic-bezier(.4,0,.2,1) forwards}
+.bc-pt{cursor:pointer;transition:r .2s}
+.bc-pt.top{stroke:var(--bg);stroke-width:2.5}
+.bc-pt:hover,.bc-pt:focus-visible{outline:none;stroke:var(--fg);stroke-width:2}
+.bc-note{margin:6px 0 0;font-size:12px;color:var(--dim)}
+@media(max-width:560px){.bigchart{padding:14px 10px 10px}.bc-line{stroke-width:2.2}}
 /* hook + lock zone + report */
 .hook{margin:14px 0 18px;padding:16px 18px;border:1px solid var(--line2);border-radius:14px;background:var(--panel);font-family:var(--display);font-size:clamp(17px,2.4vw,19px);line-height:1.8;color:var(--ink);word-break:keep-all}
 .hook b{color:var(--fg)}
@@ -671,6 +687,7 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 <section id="forecast">
   <div class="sec-head"><h2>당신의 운명</h2></div>
   <p class="hook" id="hook"></p>
+  <div class="bigchart" id="bigchart"></div>
   <div class="trend is-locked" id="result-gate">
     <div id="graph-content" inert aria-hidden="true">
   <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="near" aria-pressed="true">가까운 미래<small>1~10년</small></button><button type="button" data-m="life" aria-pressed="false">평생 지도<small>10년 단위</small></button></div>
@@ -1040,7 +1057,7 @@ function renderSigil(){const s=document.getElementById("sigil");s.innerHTML="";c
 
 const SHORT=["금전","애정","직업·학업","건강"];
 function renderTrend(){document.querySelectorAll("#modeTabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===mode));
-  document.getElementById("trendNote").textContent=mode==="life"?"각 분야의 10년 단위 평균 점수입니다. 점선은 지나온 10년, 세로 점선은 지금이에요. 점을 누르면 아래 카드가 그 10년의 풀이로 바뀝니다.":"앞으로 10년을 해마다 계산한 흐름이에요. 점을 누르면 아래 카드에서 그해의 풀이를 볼 수 있어요.";
+  document.getElementById("trendNote").textContent=mode==="life"?"각 분야의 10년 단위 평균 점수입니다. 점선은 지나온 10년, 세로 점선은 지금이에요. 점을 누르면 아래 카드가 그 10년의 풀이로 바뀝니다.":"";
   mode==="life"?renderLifeMap():renderForecast()}
 function chapter(d){const row=LD[d].map(c=>c.mean);const mx=Math.max(...row);if(mx<55)return "다지는 10년";return ["재물의 10년","인연의 10년","성취의 10년","활력의 10년"][row.indexOf(mx)]}
 function renderLifeMap(){const v=document.getElementById("viz");const na=nowAge();const curD=clamp(Math.floor(na/10),0,DECS-1);
@@ -1059,7 +1076,7 @@ function renderLifeMap(){const v=document.getElementById("viz");const na=nowAge(
   v.querySelectorAll('.flow-point').forEach(b=>b.addEventListener('click',()=>{selDec=+b.dataset.d;renderTrend();renderCats();focusCard(+b.dataset.c)}))}
 function lifeLine(d){const row=LD[d].map((c,ci)=>[c.mean,ci]).sort((a,b)=>b[0]-a[0]);const best=row[0],worst=row[3];
   return `${SHORT[best[1]]}운이 가장 밝게 빛나는 10년이에요. ${SHORT[worst[1]]}운은 ${worst[0]<50?"상대적으로 약하니 무리하지 말고 다지는 데 쓰면 다음 10년의 힘이 됩니다":"다른 운보다 잔잔하지만 안정적으로 이어집니다"}.`}
-function renderForecast(){const v=document.getElementById("viz"),y0=new Date().getFullYear();
+function renderForecast(){const v=document.getElementById("viz"),y0=new Date().getFullYear();v.innerHTML="";return;
   const xy=k=>8+84*(k-1)/9,x=hi=>xy(HZ[hi].off),y=s=>Y(D(s));
   v.innerHTML='<div class="flows">'+CATS.map((c,ci)=>{const scores=R.map(row=>row[ci].mean),peak=scores.indexOf(Math.max(...scores));
     return `<section class="flow" style="--c:var(--${c.k})" aria-label="${c.n} 흐름"><div class="flow-head"><h3>${SHORT[ci]}</h3><span>100점 만점 · 최저 ${D(Math.min(...scores))} / 최고 ${D(scores[peak])}</span></div><p class="flow-summary">${HZ[peak].n} 점수가 가장 높아요 · ${D(scores[peak])}점</p>
@@ -1082,7 +1099,7 @@ function renderCat(ci,anim){const c=CATS[ci];const box=document.getElementById("
   const sub=life?`${selDec*10}대 · ${decRange(selDec)}`:`${HZ[hi].n} · ${new Date().getFullYear()+HZ[hi].off}`;
   const na=nowAge();
   const nav=life?"":miniGraph(ci,hi);
-  box.innerHTML=`<div class="cat-top">${ringSvg(D(r.mean),c.c)}<div style="min-width:0"><h3>${c.n}<small>${sub}</small></h3><p class="head">${HEAD[c.k][tier(r.mean)]}</p>
+  box.innerHTML=`<div class="cat-top"><div style="min-width:0"><h3>${c.n}<small>${sub}</small></h3><p class="head">${HEAD[c.k][tier(r.mean)]}</p>
    <div class="agree">${r.mean>=50?"가장 강하게 밀어주는 점술":"가장 강하게 경고하는 점술"}: ${lead} · 일치도 ${r.agree}%</div></div></div>${nav}
    <div class="dots">${r.v.map((x,i)=>`<span class="dot" style="--c:${M[i].c}"><i></i>${M[i].n} <b>${D(x[0])}</b></span>`).join("")}</div>
    ${life?"":`<details class="more catread" ${openState[c.k]?"open":""}><summary>1~10년 뒤와 평생 풀이 읽기 <span class="chev">⌄</span></summary><div class="cread">${catReading(ci)}</div></details>`}`;
@@ -1141,7 +1158,7 @@ function lifeSummary(){const st=CATS.map((_,ci)=>storyFor(ci));const rank=st.map
   return `<b>종합하면</b>, 당신의 평생은 ${traj}입니다. 평생을 관통하는 가장 큰 복은 <b>${SHORT[rank[0][1]]}</b>(평균 ${D(rank[0][0])}점)이고, ${SHORT[rank[1][1]]}이 그 뒤를 든든히 받칩니다. 앞으로 네 가지 운이 함께 가장 밝아지는 때는 <b>${bd*10}대</b>(종합 ${D(dsum[bd])}점)예요. ${SHORT[rank[3][1]]}은 상대적으로 잔잔하지만, ${SUMREST[rank[3][1]]}. ${DMA[ST[CH.stems.d]]}의 운명답게, ${ending}.`}
 function renderStory(){const box=document.getElementById("cats");box.querySelectorAll(".cat,.story-sum").forEach(e=>e.remove());const na=nowAge();
   CATS.forEach((c,ci)=>{const x=storyFor(ci);const a=document.createElement("article");a.className="cat story";a.id="card-"+c.k;a.style.setProperty("--c",c.c);
-    a.innerHTML=`<div class="cat-top">${ringSvg(D(x.avg),c.c)}<div style="min-width:0"><h3>${c.n}<small>10대~70대 평균</small></h3><p class="head">10대부터 70대까지의 흐름</p></div></div>
+    a.innerHTML=`<div class="cat-top"><div style="min-width:0"><h3>${c.n}<small>10대~70대 평균</small></h3><p class="head">10대부터 70대까지의 흐름</p></div></div>
      <div class="dchips">${x.s.slice(1).map((v,i)=>{const d=i+1;return `<span class="${d===selDec?"on":""}${(d*10+10)<=na?" past":""}" style="--a:${clamp((D(v)-60)/40,.12,1).toFixed(2)}"><b>${d*10}대</b>${D(v)}</span>`}).join("")}</div>
      <p class="story-t">${x.t}</p>`;box.append(a)});
   const sm=document.createElement("div");sm.className="story-sum";sm.innerHTML=`<p>${lifeSummary()}</p>`;box.append(sm)}
@@ -1503,7 +1520,7 @@ function fillForm(v){$("in-name").value=v.name||"";$("in-roman").value=v.roman||
 function renderWho(v){const [y,m,d]=v.date.split("-");const dt=v.cal==="l"?`음 ${v.ly}.${String(v.lm).padStart(2,"0")}.${String(v.ld).padStart(2,"0")}${v.leap?"(윤)":""}`:`${y}.${m}.${d}`;
   $("whoSum").innerHTML=[v.name||"이름 미입력",`${dt} ${v.notime?"시각 모름":v.time}`,v.place.name,v.sex==="f"?"여":"남"].map(t=>`<span>${t}</span>`).join("")}
 function run(v,animate){renderWho(v);CH=buildChart(v);compute();selDec=clamp(Math.floor(nowAge()/10),0,DECS-1);if(animate)cast();renderAll()}
-function renderAll(){renderHook();drawGraph=true;setTimeout(()=>{drawGraph=false},0);renderReading();renderSigil();renderVerdict();renderFateTraits();renderTrend();renderCats();renderNatal();if(document.getElementById("p-net").open)renderNet()}
+function renderAll(){renderHook();drawGraph=true;renderBig();setTimeout(()=>{drawGraph=false},0);renderReading();renderSigil();renderVerdict();renderFateTraits();renderTrend();renderCats();renderNatal();if(document.getElementById("p-net").open)renderNet()}
 document.querySelectorAll("#modeTabs button").forEach(b=>b.addEventListener("click",()=>{if(mode===b.dataset.m)return;mode=b.dataset.m;drawGraph=true;cast();renderTrend();renderCats();drawGraph=false}));
 function askName(){const wn=$("whoName");if(!wn.classList.contains("noname"))return;$("askbox").open=true;$("askbox").scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"});setTimeout(()=>$("in-name").focus({preventScroll:true}),reduceM?0:350)}
 $("whoName").addEventListener("click",askName);$("whoName").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();askName()}});
@@ -1664,6 +1681,19 @@ function openReport(){if(!CH)return;renderReport();$("report").hidden=false;docu
 function closeReport(){$("report").hidden=true;document.documentElement.classList.remove("rep-lock");$("reportOpen").focus({preventScroll:true})}
 $("reportOpen").addEventListener("click",openReport);$("reportClose").addEventListener("click",closeReport);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("report").hidden)closeReport()});
+function renderBig(){const el=$("bigchart");if(!el||!CH)return;bigW=el.clientWidth;const S=R.map(r=>r.map(c=>D(c.mean))),y0=new Date().getFullYear()+1;
+  const nr=el.clientWidth<560,W=nr?400:760,H=nr?280:300,L=nr?30:40,Rr=nr?12:20,T=nr?16:20,B=nr?30:36,x=k=>L+(W-L-Rr)*k/9,y=v=>T+(100-v)/40*(H-T-B);let g="",pts="";
+  [60,70,80,90,100].forEach(v=>{g+=`<line x1="${L}" x2="${W-Rr}" y1="${y(v)}" y2="${y(v)}" class="bc-grid"/><text x="${L-10}" y="${y(v)+4}" text-anchor="end" class="bc-t">${v}</text>`});
+  for(let k=0;k<10;k++)g+=`<text x="${x(k)}" y="${H-10}" text-anchor="middle" class="bc-t">${nr?"’"+String(y0+k).slice(2):y0+k}</text>`;
+  CATS.forEach((c,ci)=>{const p=S.map((r,k)=>[x(k),y(r[ci])]);g+=`<path class="bc-line${drawCls()}" pathLength="1" d="${smoothPath(p.map(q=>q.join(",")).join(" "))}" stroke="var(--${c.k})"/>`;
+    let bi=0;S.forEach((r,k)=>{if(r[ci]>S[bi][ci])bi=k});
+    p.forEach((q,k)=>{const top=k===bi;pts+=`<circle class="bc-pt${top?" top":""}" cx="${q[0]}" cy="${q[1]}" r="${top?(nr?6:6.5):(nr?3.2:3.4)}" fill="var(--${c.k})" data-c="${ci}" data-h="${k}" tabindex="0" role="button" aria-label="${y0+k}년 ${c.n} ${S[k][ci]}점"><title>${y0+k}년 ${c.n} ${S[k][ci]}점</title></circle>`})});
+  el.innerHTML=`<div class="bc-head"><h3>앞으로 10년의 모양</h3><div class="bc-legend">${CATS.map((c,ci)=>`<span><i style="background:var(--${c.k})"></i>${SHORT[ci]}</span>`).join("")}</div></div>
+   <div class="bc-plot"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="2027년부터 10년 동안 금전·애정·직업·건강 점수">${g}${pts}</svg></div>
+   <p class="bc-note">큰 점은 분야별로 가장 밝은 해예요. 점을 누르면 그해의 풀이로 이동해요.</p>`;
+  const go=t=>{const ci=+t.dataset.c,hi=+t.dataset.h;if(!graphUnlocked){openShare();return}sel[CATS[ci].k]=hi;if(mode!=="near"){mode="near";renderTrend();renderCats()}else renderCat(ci,true);focusCard(ci)};
+  el.querySelectorAll(".bc-pt").forEach(t=>{t.addEventListener("click",()=>go(t));t.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go(t)}})})}
+let bigW=0;addEventListener("resize",()=>{const w=$("bigchart")?.clientWidth||0;if(CH&&Math.abs(w-bigW)>80&&(w<560)!==(bigW<560)){bigW=w;renderBig()}});
 function renderHook(){const h=$("hook");if(h&&CH)h.innerHTML=reportHook(CH)}
 
 /* Share a fixed introduction and site URL only; never include birth input or personal results. */
