@@ -659,6 +659,7 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 .rc-info p{color:var(--muted);margin:0 0 14px}
 .rc-book em,.rc-book b{white-space:nowrap}
 @media(max-width:620px){.report-cta.report-cta{grid-template-columns:minmax(0,1fr);text-align:center}.rc-book{width:160px;margin:0 auto}.rc-book em{font-size:22px}.rc-book b{font-size:17px}.rc-toc{text-align:left}}
+.r-detail{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}.r-detail summary{cursor:pointer;color:var(--gold);font-size:var(--fs-b)}.r-page td{overflow-wrap:anywhere}.r-page .r-tbl{max-width:100%}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -733,7 +734,7 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 </section>
       <div class="report-cta"><div class="rc-book" aria-hidden="true"><span class="eyebrow">Destiny Report</span><b id="rcName">당신의</b><em>운명 리포트</em><small>사주 · 서양 · 인도 · 수비학 · 마야</small></div>
         <div class="rc-info"><span class="eyebrow">더 자세한 나의 운명</span><h3>한 권으로 읽는 나의 운명 리포트</h3><p>위 요약은 결론만 담았어요. 리포트에서는 다섯 점술이 왜 그렇게 말하는지, 근거부터 해마다의 흐름까지 깊이 풀어 드려요.</p>
-        <ol class="rc-toc"><li><b>1장 종합 리포트</b><span>다섯 점술의 공통점, 타고난 선물, 10년 흐름, 평생 전환점 전체, 한 줄 조언</span></li><li><b>2장 사주 분석</b><span>여덟 글자와 십신, 오행 균형, 신강·신약, 신살, 합·충, 대운 7개</span></li><li class="soon"><b>3~6장 서양·인도 점성술, 수비학, 마야력</b><span>상세 분석 준비 중 · 지금은 요약으로 제공</span></li></ol>
+        <ol class="rc-toc"><li><b>1장 종합 리포트</b><span>다섯 점술의 공통점, 타고난 선물, 10년 흐름, 평생 전환점 전체, 한 줄 조언</span></li><li><b>2장 사주 분석</b><span>여덟 글자와 십신, 오행 균형, 신강·신약, 신살, 합·충, 대운 7개</span></li><li><b>3장 서양 점성술</b><span>태양·달·상승궁, 하우스, 목성·토성의 흐름</span></li><li><b>4장 인도 점성술</b><span>낙샤트라, 행성의 역할, 다샤와 보조 기간</span></li><li><b>5장 수비학</b><span>인생 수·표현 수·영혼 수의 계산과 개인년</span></li><li><b>6장 마야력</b><span>촐킨 탄생 기호와 숫자, 260일 주기의 달력</span></li></ol>
         <button type="button" id="reportOpen">나의 운명 리포트 펼치기</button></div></div>
     </div>
     <div class="graph-gate" id="graph-gate"><div class="gate-card"><span class="eyebrow">Unlock your flow</span><h3>10년 흐름과 운명 리포트가 궁금하다면</h3><p>친구에게 운명 네트워크를 소개하고<br>분야별 흐름, 해마다 풀이, 운명 리포트를 열어 보세요.</p><button type="button" id="gate-share">친구에게 공유하고 전체 결과 보기 ↗</button><small>공유 창 완료 또는 결과 복사 후 열립니다.<br>실제 전송 여부는 확인하지 않아요.</small></div></div>
@@ -1703,19 +1704,62 @@ function reportSaju(ch){const d=ch.stems.d,dom=ch.cnt.indexOf(Math.max(...ch.cnt
   <h3>대운: 10년마다 바뀌는 큰 계절</h3><div class="r-tbl"><table><thead><tr><th>나이(만)</th><th>대운</th><th>나에게 뜻</th></tr></thead><tbody>${rows}</tbody></table></div>
   <div class="r-prose"><p>${dwP}</p></div>`}
 
-function reportPreview(ch){const vm=norm(ch.moon-ch.ayan),cur=ch.dashas.find(x=>x.start<=ch.birthYear+nowAge()&&x.end>ch.birthYear+nowAge());
-  return [["west","서양 점성술",`태양 ${ZOD[sign(ch.sun)]}자리, 달 ${ZOD[sign(ch.moon)]}자리${ch.asc!=null?`, 상승궁 ${ZOD[sign(ch.asc)]}자리`:""}. ${SUNG[sign(ch.sun)]}을 지녔어요.`],
-   ["vedic","인도 점성술",`달 ${NAK[ch.nk]} 낙샤트라${ch.lagna!=null?`, 라그나 ${ZOD[ch.lagna]}자리`:""}${cur?`, 지금은 ${PK[cur.lord]} 다샤`:""}. ${NAKG[DL[ch.nk%9]]}을 타고났어요.`],
-   ["num","수비학",`인생 수 ${ch.lp}${ch.expr?`, 표현 수 ${ch.expr}`:""}${ch.soul?`, 영혼 수 ${ch.soul}`:""}. ${LPM[ch.lp]||""}예요.`],
-   ["maya","마야력",`${ch.tone} ${MS[ch.msign][0]}(${MS[ch.msign][1]}). ${MS[ch.msign][2]}의 날에 태어났어요.`]]}
+/* 상세 리포트: 기존 출생 차트와 점술 반환값을 그대로 읽는다. */
+function reportTable(head,rows){return `<div class="r-tbl"><table><thead><tr>${head.map(h=>`<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
+function reportCards(rows){return `<div class="r-kv">${rows.map(([label,value,text])=>`<div><small>${label}</small><b>${value}</b><span>${text}</span></div>`).join("")}</div>`}
+function reportYearFlow(ch,oi){
+  const years=HZ.map(h=>{const t=horizonDate(h.off);return {t,v:CATS.map((_,ci)=>ORC[oi](ch,t,ci))}});
+  const peaks=CATS.map((c,ci)=>{const best=years.reduce((a,b)=>D(b.v[ci][0])>D(a.v[ci][0])?b:a);return [c.n,`${best.t.y}년 · ${D(best.v[ci][0])}점`,voiceText(best.v[ci],ci)]});
+  return `<h3>이 점술로 본 앞으로 10년</h3><p class="r-note">각 해의 계산 시점과 표시 점수는 결과 화면과 같아요. 이 장의 점수는 ${M[oi].n} 하나의 해석이며, 1장의 다섯 점술 종합 점수와는 달라요. 같은 점수라면 먼저 오는 해를 표시해요.</p>${reportTable(["분야","상대적으로 밝은 해","해석과 근거"],peaks)}<details class="r-detail"><summary>해마다의 점수와 계산 기준 보기</summary>${reportTable(["연도",...CATS.map(c=>c.n),"계산 기준"],years.map(({t,v})=>[`${t.y}년`,...v.map(x=>`${D(x[0])}점`),v[0][2]]))}</details>`}
+function reportDegree(v){return `${ZOD[sign(v)]}자리 ${(norm(v)%30).toFixed(1)}°`}
+function reportWest(ch){
+  const sun=sign(ch.sun),moon=sign(ch.moon),base=sign(ch.asc??ch.sun);
+  const cards=[["태양 · 삶의 방향",reportDegree(ch.sun),`${SUNG[sun]}을 삶의 중심에 두어요.`],["달 · 마음의 반응",reportDegree(ch.moon),`마음이 편해지려면 '${SUNP[moon]}'의 면을 돌볼 시간이 필요해요.`],["상승궁 · 세상을 만나는 방식",ch.asc==null?"계산하지 않음":reportDegree(ch.asc),ch.asc==null?"출생 시각과 장소가 모두 있어야 계산할 수 있어요.":`처음 만나는 사람에게 '${SUNP[sign(ch.asc)]}'의 인상을 남기는 것으로 읽어요.`]];
+  const houses=Array.from({length:12},(_,i)=>[`${i+1}하우스 · ${HOUSE[i+1]}`,`${ZOD[(base+i)%12]}자리`]);
+  const natal=[["태양",ch.sun],["달",ch.moon],["목성",ch.natJup],["토성",ch.natSat]].map(([n,v])=>[n,reportDegree(v),ch.asc==null?"하우스 미확정":`${mod(sign(v)-base,12)+1}하우스 · ${HOUSE[mod(sign(v)-base,12)+1]}`]);
+  const focus=["직접 해보며 추진력을 키우되, 답하기 전 한 번 숨을 골라 보세요.","익숙한 방식을 쌓는 힘을 살리면서 작은 변화 하나를 시도해 보세요.","관심사를 기록하고 한 번에 끝낼 주제를 하나 고르면 생각이 결과로 남아요.","돌보는 마음을 지키면서 내 시간과 상대의 시간을 구분해 보세요.","자신의 표현을 즐기고 주변 사람의 기여도 함께 드러내 보세요.","세밀한 기준을 살리되 완성 기준과 마감 시간을 먼저 정해 보세요.","서로의 입장을 듣고 마지막에는 자신의 선호를 말로 정리해 보세요.","깊이 파고드는 힘을 살리면서 혼자 품은 생각을 믿는 사람과 나눠 보세요.","큰 목표를 작은 일정으로 나누면 확장하는 힘에 지속성이 더해져요.","책임을 잘 나누고 성과와 별개로 쉴 시간을 일정에 남겨 보세요.","새로운 생각을 작은 실험으로 보여 주면 함께할 사람을 찾기 쉬워져요.","공감하고 상상하는 시간을 누리되 일상의 경계를 분명하게 정해 보세요."][sun];
+  return `<p class="r-lead">태양은 ${ZOD[sun]}자리, 달은 ${ZOD[moon]}자리예요. 삶을 밀고 나가는 방향과 마음이 반응하는 방식을 함께 읽으면, 바깥의 모습과 속마음 사이의 균형을 살펴볼 수 있어요.</p>${reportCards(cards)}
+  <h3>출생 당시의 별 배치</h3>${reportTable(["천체","회귀황도 위치","출생 하우스"],natal)}<p class="r-note">태양·달과 목성·토성은 이 사이트의 근사 천문식으로 계산해요. 수성·금성·화성 등 계산하지 않은 천체의 배치는 해석에 덧붙이지 않아요.${ch.inp.notime?" 시각을 몰라 태양과 달은 현지 정오를 기준으로 한 참고값이에요. 별자리 경계에서는 실제 출생 시각에 따라 달라질 수 있어요.":""}</p>
+  <h3>${ch.asc==null?"시각·장소가 없을 때의 기준":"홀사인 하우스로 읽는 삶의 영역"}</h3><div class="r-prose"><p>${ch.asc==null?"상승궁과 실제 출생 하우스는 확정하지 않았어요. 앞으로의 흐름 점수는 기존 계산과 같이 태양 별자리를 임시 1번 영역으로 삼아요. 이는 출생 상승궁에 기초한 홀사인 하우스와 구분해서 읽어 주세요.":`상승궁이 있는 ${ZOD[base]}자리 전체를 1하우스로 삼고, 다음 별자리를 2하우스로 이어 가요. 하우스는 좋고 나쁨의 순위가 아니라 삶의 어느 영역인지 가리키는 이름이에요.`}</p></div>${ch.asc==null?"":reportTable(["삶의 영역","대응 별자리"],houses)}
+  <h3>기회와 책임을 함께 읽기</h3><div class="r-prose"><p>목성은 확장과 기회의 상징으로, 토성은 책임과 기반을 다지는 상징으로 읽어요. 이 사이트는 두 행성이 지나는 영역과 출생 태양·상승궁과의 일부 각도, 출생 목성·토성 자리로 돌아오는 회귀를 함께 계산해요. 연도별 점수는 그해 7월 1일 기준의 흐름이며 정확한 사건 날짜를 뜻하지 않아요.</p></div>${reportYearFlow(ch,1)}<div class="r-advice"><span class="eyebrow">나에게 맞는 활용법</span><p>${focus}</p></div>`}
+function reportDashaDate(v){let y=Math.floor(v),m=Math.floor((v-y)*12)+1;return `${y}년 ${m}월경`}
+function reportVedic(ch){
+  const vm=norm(ch.moon-ch.ayan),lord=DL[ch.nk%9],pada=Math.min(4,Math.floor((vm%(360/27))/(360/108))+1),now=new Date(),t=now.getFullYear()+(now.getMonth()+.5)/12;
+  const cur=ch.dashas.find(d=>t>=d.start&&t<d.end),remaining=ch.dashas.filter(d=>d.end>t);
+  const timeline=remaining.map(d=>[`${PK[d.lord]}${d===cur?" · 지금":""}`,`${reportDashaDate(Math.max(d.start,ch.birthYear))} ~ ${reportDashaDate(d.end)}`,`${ch.prole[d.lord]} · ${NAKG[d.lord]}`]);
+  const subs=[];if(cur){let st=cur.start;for(let k=0;k<9;k++){const L=(cur.L+k)%9,end=st+DY[cur.L]*DY[L]/120;if(end>t)subs.push([`${PK[DL[L]]}${st<=t&&t<end?" · 지금":""}`,`${reportDashaDate(st)} ~ ${reportDashaDate(end)}`,PP[DL[L]][2]]);st=end}}
+  const roles=DL.map(p=>[PK[p],ch.prole[p],NAKG[p]]);
+  return `<p class="r-lead">태어난 날의 달은 ${NAK[ch.nk]} 낙샤트라에 있어요. 그 구간의 주인인 ${PK[lord]}을 통해 ${NAKG[lord]}이라는 상징을 읽고, 다샤로 시간이 바뀌는 큰 흐름을 살펴봐요.</p>${reportCards([["달의 항성황도 위치",reportDegree(vm),`회귀황도에서 아야남사 약 ${ch.ayan.toFixed(2)}°를 뺀 위치예요.`],["낙샤트라 · 달의 27구간",`${NAK[ch.nk]} · ${pada}파다`,`주인 ${PK[lord]} · 한 낙샤트라를 다시 네 구간으로 나눈 ${pada}번째 구간이에요.`],[ch.chandra?"찬드라 기준 · 달 별자리":"라그나 · 항성황도의 상승궁",`${ZOD[ch.lagna]}자리`,ch.chandra?"상승궁을 계산할 수 없어 달 별자리를 기준으로 사용해요. 출생 라그나를 확정한 값은 아니에요.":"행성이 담당하는 삶의 영역을 정하는 출발점이에요."]])}
+  <p class="r-note">라히리 아야남사 근사식과 빔쇼타리 다샤를 사용해요.${ch.inp.notime?" 출생 시각을 몰라 현지 정오의 달로 계산했어요. 낙샤트라 경계와 다샤 시작·종료 시점은 실제 시각에 따라 달라질 수 있어요.":""} 월 표시는 소수 연도를 환산한 근사값이에요.</p>
+  <h3>행성마다 맡은 역할</h3><div class="r-prose"><p>${ch.chandra?"달 별자리":"라그나"}를 기준으로 각 별자리의 주인 행성이 어떤 영역을 맡는지 읽어요. 같은 행성도 사람마다 역할이 다르므로, 대운의 주인과 보조 기간의 주인을 함께 살펴봐요. 라후와 케투는 이 계산에서 별자리를 다스리는 주인으로 배정하지 않아요.</p></div>${reportTable(["행성","내 차트에서의 역할","상징적 강점"],roles)}
+  <h3>다샤: 삶의 큰 주제</h3>${timeline.length?reportTable(["주인 행성","기간","읽을 주제"],timeline):'<p class="r-note">현재 연도는 이 차트에 생성된 다샤 기간을 벗어나 있어요.</p>'}<p class="r-note">첫 다샤는 낙샤트라에서 달이 이미 지나온 비율만큼 출생 전에 시작해요. 표는 출생 이후 구간만 표시하며, 사주의 대운과는 다른 주기예요. 행성의 역할 가중치는 이 서비스의 자체 해석 규칙이에요.</p>
+  <h3>현재 다샤 안의 보조 기간</h3>${cur?`<div class="r-prose"><p>현재 ${PK[cur.lord]} 다샤는 ${reportDashaDate(cur.end)}까지 이어져요. 그 안에서 아홉 행성이 순서대로 작은 주제를 더해요. 아래는 지금 지나고 있는 보조 기간과 남은 기간이에요.</p></div>${reportTable(["보조 행성","기간","직업·학업에서 읽을 주제"],subs)}`:'<p class="r-note">현재 다샤를 확인할 수 없어 보조 기간을 표시하지 않았어요.</p>'}${reportYearFlow(ch,2)}<div class="r-advice"><span class="eyebrow">나에게 맞는 활용법</span><p>${NAKG[lord]}을 살릴 일을 하나 골라 꾸준히 이어 가세요. 큰 주기가 바뀌는 때에는 지금까지 쌓은 것을 정리하고 다음에 집중할 주제를 적어 보세요.</p></div>`}
+function reportNum(ch){
+  const keep=n=>reduceNum(n,true),parts=[reduceNum(ch.Mo,false),keep(ch.D),keep(digitsum(ch.Y))],nm=(ch.inp.roman||"").toLowerCase().replace(/[^a-z]/g,""),val=c=>"abcdefghijklmnopqrstuvwxyz".indexOf(c)%9+1;
+  const total=nm.split("").reduce((a,c)=>a+val(c),0),vowels=nm.split("").filter(c=>"aeiou".includes(c)),soulTotal=vowels.reduce((a,c)=>a+val(c),0),masters=[...new Set(ch.masters)];
+  const years=HZ.map(h=>{const {y}=horizonDate(h.off),py=reduceNum(reduceNum(ch.Mo,false)+reduceNum(ch.D,false)+reduceNum(digitsum(y),false),false);return [`${y}년`,String(py),NYP[py][2],NYP[py][1]]});
+  return `<p class="r-lead">인생 수 ${ch.lp}은 ${LPM[ch.lp]}예요. 생일에서 읽는 삶의 방향, 이름에서 읽는 표현 방식과 속마음, 해마다 달라지는 개인년을 나누어 살펴봐요.</p>${reportCards([["생일 · 삶의 방향",`인생 수 ${ch.lp}`,LPM[ch.lp]],["영문 이름 전체 · 표현 방식",ch.expr==null?"계산할 이름 없음":`표현 수 ${ch.expr}`,ch.expr==null?"영문 이름의 알파벳이 있어야 계산할 수 있어요.":LPM[ch.expr]],["영문 이름의 모음 · 내면의 동기",ch.soul==null?"계산할 모음 없음":`영혼 수 ${ch.soul}`,ch.soul==null?"a·e·i·o·u가 없어 영혼 수를 만들지 않았어요.":LPM[ch.soul]]])}
+  <h3>인생 수가 만들어지는 과정</h3><div class="r-prose"><p>양력 생일 ${ch.Y}년 ${ch.Mo}월 ${ch.D}일을 사용해요. 월·일·연도를 먼저 각각 줄이고 합계를 다시 줄이는 구간 축약법이에요. 월은 한 자리로, 일·연도·최종 합계에서는 11·22·33을 남겨 두어요.</p></div>${reportTable(["구간","계산"],[["월",`${ch.Mo} → ${parts[0]}`],["일",`${ch.D} → ${parts[1]}`],["연도",`${ch.Y} → 숫자 합 ${digitsum(ch.Y)} → ${parts[2]}`],["최종 합계",`${parts.join(" + ")} = ${parts.reduce((a,b)=>a+b,0)} → 인생 수 ${ch.lp}`]])}
+  <h3>이름의 철자가 만드는 두 숫자</h3><div class="r-prose"><p>알파벳은 A=1부터 I=9까지 대응하고 J=1부터 다시 반복해요. 표현 수는 모든 알파벳을, 영혼 수는 a·e·i·o·u만 더해요. 순서·띄어쓰기·대소문자보다 실제 철자가 결과에 영향을 줘요.</p></div>${reportTable(["항목","사용한 글자","합계와 결과"],[["표현 수",nm?nm.toUpperCase():"없음",ch.expr==null?"미계산":`${total} → ${ch.expr}`],["영혼 수",vowels.length?vowels.join("").toUpperCase():"없음",ch.soul==null?"미계산":`${soulTotal} → ${ch.soul}`]])}<p class="r-note">한글 이름에서 자동으로 변환한 철자는 여권 표기와 다를 수 있어요. 이름 입력 화면에서 평소 사용하는 영문 철자로 바꾸면 다시 계산돼요. 이 계산에서는 Y를 모음에 넣지 않아요.</p>
+  <h3>마스터 넘버 읽기</h3><div class="r-prose"><p>${masters.length?`생일의 중간 계산과 최종 인생 수에 ${masters.join("·")}이 남아 있어요. ${masters.map(n=>`${n}은 ${LPM[n]}`).join(". ")}. 중간 단계의 숫자와 최종 인생 수는 구분해서 읽어 주세요.`:"생일 계산에는 별도로 남겨 둔 마스터 넘버가 없어요. 한 자리 수에도 각자의 방향과 강점이 있으므로 숫자의 크기를 재능의 순위로 읽지 않아요."} 표현 수와 영혼 수 역시 각각의 계산에서 11·22·33을 보존해요.</p></div>
+  <h3>개인년: 해마다의 작은 주제</h3><p class="r-note">개인년 = 한 자리로 줄인 출생 월 + 출생 일 + 해당 연도의 숫자 합을 다시 한 자리로 줄인 값이에요. 1월부터 12월까지 한 해에 같은 개인년을 사용하며 1~9가 반복돼요.</p>${reportTable(["연도","개인년","일과 배움","관계"],years)}${reportYearFlow(ch,3)}<div class="r-advice"><span class="eyebrow">나에게 맞는 활용법</span><p>인생 수 ${ch.lp}의 방향을 장기 목표에, 개인년의 주제를 올해의 작은 계획에 연결해 보세요. 숫자는 선택을 돌아보는 상징이며 능력이나 미래를 확정하는 판정은 아니에요.</p></div>`}
+function reportMaya(ch){
+  const ms=MS[ch.msign],mt=MT[ch.tone],birth=jdn(ch.Y,ch.Mo,ch.D),today=new Date(),todayJ=jdn(today.getFullYear(),today.getMonth()+1,today.getDate()),next=todayJ+mod(birth-todayJ,260);
+  const dates=Array.from({length:5},(_,i)=>{const j=next+260*i,[y,m,d]=jdnToDate(j);return [`${y}년 ${m}월 ${d}일`,`${ch.tone} ${ms[0]}`,`${Math.round((j-birth)/260)}번째 주기` ]});
+  const annual=HZ.map(h=>{const {y}=horizonDate(h.off),rt=kinReturns(ch,y);return [`${y}년`,`${rt.length}번`,rt.map(j=>{const [,m,d]=jdnToDate(j);return `${m}월 ${d}일`}).join(" · ")]});
+  return `<p class="r-lead">당신의 촐킨 탄생일은 ${ch.tone} ${ms[0]}(${ms[1]})예요. '${ms[2]}'이라는 기호의 주제와 '${mt[0]}'이라는 숫자의 주제를 함께 읽어요.</p>${reportCards([["탄생 기호 · 20개 중 하나",`${ms[0]} · ${ms[1]}`,ms[2]],["탄생 숫자 · 1~13",`${ch.tone} · ${mt[0]}`,"기호와 숫자는 서로 다른 길이의 주기로 하루에 하나씩 나아가요."],["같은 조합의 반복","260일","13개 숫자와 20개 기호의 조합이 260일마다 같은 자리로 돌아와요."]])}
+  <h3>나의 기호를 일상에서 읽기</h3><div class="r-prose"><p>${ms[0]}의 '${ms[2]}'을 지금의 삶에 비춰 보세요. 나에게 이 주제가 드러나는 순간을 떠올리고, '${mt[0]}'을 더할 수 있는 작은 행동을 하나 골라 보는 방식으로 활용할 수 있어요. 기호 이름이 사건의 발생이나 수명을 뜻하는 것은 아니에요.</p></div>
+  <h3>탄생일을 구한 기준</h3>${reportTable(["항목","계산값"],[["사용한 양력 생일",`${ch.Y}년 ${ch.Mo}월 ${ch.D}일`],["율리우스 적일수(JDN)",String(birth)],["GMT 상관상수","584283"],["탄생 숫자",`(JDN − 584283 + 3)을 13으로 나눈 나머지 + 1 = ${ch.tone}`],["탄생 기호",`(JDN − 584283 + 19)을 20으로 나눈 나머지의 기호 = ${ms[0]}`]])}<p class="r-note">전통 촐킨 날짜 체계를 사용해요. 음력 입력은 양력으로 변환한 생일로 계산하고, 시각·장소에 따른 하루 경계는 따로 보정하지 않아요. 기호의 한글 이름은 번역 표기예요. 날짜 계산과 이 서비스가 붙인 성향·점수 해석은 구분해 읽어 주세요.</p>
+  <h3>다가오는 나의 촐킨 탄생일</h3>${reportTable(["양력 날짜","돌아오는 조합","출생일부터의 반복"],dates)}<p class="r-note">오늘을 포함해 앞으로 오는 같은 조합의 날 다섯 번이에요. 양력 생일과 다른 주기이며, 다음 회차까지의 간격은 언제나 260일이에요.</p>
+  <h3>앞으로 10년의 탄생일 달력</h3>${reportTable(["연도","횟수","양력 날짜"],annual)}<div class="r-prose"><p>한 해는 260일보다 길기 때문에 같은 촐킨 탄생일이 한 번 또는 두 번 들어요. 이 사이트는 두 번 드는 해에 반복의 기회를 더하는 자체 점수 규칙을 사용해요. 횟수가 적은 해를 불운의 해로 해석하지는 않아요.</p></div>${reportYearFlow(ch,4)}<div class="r-advice"><span class="eyebrow">나에게 맞는 활용법</span><p>다음 ${ch.tone} ${ms[0]}의 날을 '${ms[2]}'을 돌아보는 날로 삼아 보세요. 260일 동안 이어 갈 작은 습관을 정하면 반복되는 달력을 나만의 기록으로 남길 수 있어요.</p></div>`}
 
-function renderReport(){const ch=CH,name=ch.inp.name||"운명을 걷는 사람";const pv=reportPreview(ch);
+function renderReport(){const ch=CH,name=ch.inp.name||"운명을 걷는 사람";const pv=[["west","서양 점성술",reportWest],["vedic","인도 점성술",reportVedic],["num","수비학",reportNum],["maya","마야력",reportMaya]];
   const chap=[["r-sum","1","종합"],["r-saju","2","사주"],...pv.map((p,i)=>["r-"+p[0],String(i+3),p[1]])];
   $("reportBody").innerHTML=`<header class="r-cover"><div class="eyebrow">The Oracle Network · Destiny Report</div><h2>${name}님의<br><em>운명 리포트</em></h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 종합 분석</p></header>
   <nav class="r-rail" aria-label="장 이동">${chap.map(c=>`<a href="#${c[0]}"><b>${c[1]}</b>${c[2]}</a>`).join("")}</nav>
   <section class="r-page" id="r-sum"><div class="r-ph"><span class="eyebrow">Chapter 1 · Synthesis</span></div><h2>종합 리포트<small>다섯 점술의 결론을 먼저 한 장에 모았어요</small></h2>${reportSummary(ch)}</section>
   <section class="r-page" id="r-saju"><div class="r-ph"><span class="eyebrow">Chapter 2 · Saju</span></div><h2>사주 분석<small>태어난 해·달·날·시의 여덟 글자로 보는 타고난 그릇</small></h2>${reportSaju(ch)}</section>
-  ${pv.map((p,i)=>`<section class="r-page r-soon" id="r-${p[0]}"><div class="r-ph"><span class="eyebrow">Chapter ${i+3}</span><span class="r-badge">상세 분석 준비 중</span></div><h2>${p[1]} 분석</h2><p class="r-sp">${p[2]}</p></section>`).join("")}
+  ${pv.map((p,i)=>`<section class="r-page" id="r-${p[0]}"><div class="r-ph"><span class="eyebrow">Chapter ${i+3}</span></div><h2>${p[1]} 분석<small>타고난 성향과 시간의 흐름을 함께 읽어요</small></h2>${p[2](ch)}</section>`).join("")}
   <p class="r-foot">각 점술의 계산 규칙을 따라 만든 재미용 해석이에요. 미래를 맞힌다는 과학적 근거는 없어요.</p>`;
   $("reportBody").querySelectorAll(".r-rail a").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const t=document.getElementById(a.getAttribute("href").slice(1));if(t)t.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})}))}
 function openReport(){if(!CH)return;renderReport();$("report").hidden=false;document.documentElement.classList.add("rep-lock");$("report").scrollTop=0;$("reportClose").focus({preventScroll:true})}
@@ -1789,6 +1833,7 @@ fillDays();showPlace();syncSel();
 try{localStorage.removeItem("fate-input")}catch(_){}
 $("askbox").open=true;document.body.classList.add("fresh");$("whoSum").innerHTML="<span>태어난 순간을 입력해 주세요</span>";
 </script>
+
 
 
 
