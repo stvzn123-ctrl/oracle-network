@@ -683,6 +683,19 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 .natal-toggle[open]>summary .chev{transform:rotate(180deg)}
 .natal-toggle>#typeText{margin-top:16px}
 .free-reading{margin-top:0}
+.action-box{margin:12px 0 4px;border:1px solid var(--line);border-radius:12px;background:var(--field)}
+.action-box>div{padding:14px 16px}.action-box>div+div{border-top:1px solid var(--line)}
+.action-box small{display:block;font-size:11px;color:var(--muted)}.action-box b{display:block;font-family:var(--display);font-size:18px;margin:2px 0}.action-box span{display:block;font-size:13px;color:var(--muted);line-height:1.6}
+.feng-categories{flex-wrap:nowrap;gap:8px}
+.feng-categories button{flex:1 1 0;min-width:0;align-items:center;text-align:center;padding:10px 6px;word-break:keep-all}
+.feng-categories button>span{justify-content:center;font-size:var(--fs-b);font-weight:600}
+.feng-categories button>em{font-style:normal;font-size:12px;line-height:1.4;color:var(--muted)}
+.feng-categories small{text-align:center}
+@media(max-width:560px){.feng-categories{gap:4px}.feng-categories button{flex:1 1 0;padding:8px 2px}.feng-categories button>span{font-size:14px}.feng-categories button>em{font-size:10px}.feng-categories small{font-size:9px}}
+.feng-criteria>summary{font-size:15px}
+.reading details.feng-criteria{border:0;background:none;box-shadow:none;padding:0;border-radius:0}
+.reading .feng-criteria>summary{padding:0;min-height:32px;min-width:32px;justify-content:center}
+.feng-place-heading .feng-criteria>summary{font-size:17px}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1784,12 +1797,12 @@ function fengExplorerBody(st){const rows=fengFilter(st),chosen=rows.find(p=>p.id
  const groups='<div class="feng-region-list" aria-label="지역별 장소 목록">'+FENG_REGIONS.map(region=>{const places=rows.filter(p=>p.province===region&&!recommendedIds.has(p.id));if(!places.length)return '';const open=st.expanded!=null?st.expanded.split(',').includes(region):chosen?.province===region;return '<details class="feng-region" data-place-group="'+region+'"'+(open?' open':'')+'><summary>'+region+'<span class="chev" aria-hidden="true">⌄</span></summary><div>'+places.map(p=>placeButton(p,false)).join('')+'</div></details>'}).join('')+'</div>';
  const map='<div class="feng-map-wrap"><svg class="feng-map" viewBox="'+v.join(' ')+'" tabindex="0" role="group" aria-label="전국 장소 지도. 확대하면 지역명이 표시됩니다."><g class="feng-land">'+MAPS.kor.map(r=>'<path d="'+r[2]+'"/>').join('')+'</g><g class="feng-geo-labels" aria-hidden="true"></g>'+[...rows.filter(p=>p!==chosen),chosen].filter(Boolean).map(p=>{const [x,y]=fengXY(p),active=p===chosen,size=fengMarkerSize(v,380,active);return '<g class="feng-pin'+(active?' active':'')+'" role="button" tabindex="0" data-feng-pick="'+p.id+'" aria-label="'+fengEscape(p.name+' · '+p.region)+'" aria-pressed="'+active+'"><title>'+fengEscape(p.name+' · '+p.region)+'</title><circle cx="'+x+'" cy="'+y+'" r="'+size.hit+'" class="feng-hit"/><circle class="feng-halo" cx="'+x+'" cy="'+y+'" r="'+size.halo+'" fill="var(--fg)"/><circle class="feng-dot" cx="'+x+'" cy="'+y+'" r="'+size.r+'" fill="var(--el'+p.e+')"/></g>'}).join('')+'</svg></div>';
  const active=st.category==null||st.category===''?+st.support:+st.category;
- const categories='<div class="feng-categories" role="group" aria-label="지도에 표시할 장소 카테고리">'+ELK.map((name,e)=>'<button type="button" data-feng-category="'+e+'" class="'+(e===+st.support?'recommended':'')+'" aria-pressed="'+(e===active)+'" style="--category-color:var(--el'+e+')"><span><i aria-hidden="true"></i>'+name+' · '+ACTION_ELEMENTS[e].theme+'</span>'+(e===+st.support?'<small>나에게 추천</small>':'')+'</button>').join('')+'</div>';
+ const categories='<div class="feng-categories" role="group" aria-label="지도에 표시할 장소 카테고리">'+ELK.map((name,e)=>'<button type="button" data-feng-category="'+e+'" class="'+(e===+st.support?'recommended':'')+'" aria-pressed="'+(e===active)+'" style="--category-color:var(--el'+e+')"><span><i aria-hidden="true"></i>'+name+'</span><em>'+ACTION_ELEMENTS[e].theme+'</em>'+(e===+st.support?'<small>나에게 추천</small>':'')+'</button>').join('')+'</div>';
  return intro+categories+'<div class="feng-map-layout">'+map+'<div class="feng-selected" aria-live="polite">'+(chosen?fengPlaceCard(chosen)+fengLinks(chosen):'')+'</div></div><h4 class="feng-browse-title">지역별 장소 둘러보기</h4>'+groups;
 }
 
-function actionRationale(ch){const p=actionProfile(ch),a=p.strong;return '<p class="action-rationale">내 차트에서 가장 많은 '+ELK[p.dominant]+'('+EL[p.dominant]+') '+ch.cnt[p.dominant]+'개의 주제인 '+a.theme+'을 강점과 주의점으로 풀었어요. '+(ch.strong?'신강':'신약')+'에 따른 기존 보완 그룹 중 '+ELK[p.support]+'('+EL[p.support]+') '+ch.cnt[p.support]+'개를 균형 주제로 골랐어요. 개수가 같으면 목·화·토·금·수 순서로 선택해요. 정밀한 용신 판정은 아니며, 행동·공간 추천은 이 사이트가 만든 상징적 해석이에요.'+(ch.inp.notime?' 출생 시각이 없어 시주를 뺀 차트 기준이에요.':'')+'</p>'}
-function fengPlacesHTML(ch){const p=actionProfile(ch),st={support:String(p.support),category:String(p.support),order:fengOrder(ch).join(','),selected:'',vx:'0',vy:'0',vw:String(MAPS.kv[0]),vh:String(MAPS.kv[1])};return '<div class="feng-place-heading"><h3>나의 운명을 개선할수있는 장소</h3><details class="feng-criteria"><summary title="장소 선정 기준">ⓘ 장소 선정 기준</summary><p>숲과 배움은 목, 밝은 전망과 표현·교류는 화, 안정된 공간은 토, 정돈된 공간과 선택은 금, 물가와 성찰은 수라는 주제로 분류했어요. 내 차트의 보완 오행과 같은 분류를 먼저 추천하며, 같은 분류 안에서는 효과의 순위를 매기지 않아요. 자연의 지형과 실내 공간의 분위기·이용 목적을 연결한 자체 선정 기준이에요.</p></details></div>'+actionRationale(ch)+'<div class="feng-explorer" '+Object.entries(st).map(([k,v])=>'data-'+k+'="'+v+'"').join(' ')+'>'+fengExplorerBody(st)+'</div><p class="r-note">풍수의 오행 상징을 지형·경관에 연결한 자체 추천입니다. 현재 위치는 수집하지 않으며, 출생지로 거리를 추정하지 않아요. 방문 전 각 장소의 운영·예약·외부인 출입 안내를 확인해 주세요.</p>'}
+function actionRationale(ch){const p=actionProfile(ch),a=p.strong;return '<p class="action-rationale">내 차트에서 가장 많은 '+ELK[p.dominant]+'('+EL[p.dominant]+') '+ch.cnt[p.dominant]+'개의 주제인 '+a.theme+'을 강점과 주의점으로 풀었어요. '+(ch.strong?'신강':'신약')+'에 따른 기존 보완 그룹 중 '+ELK[p.support]+'('+EL[p.support]+') '+ch.cnt[p.support]+'개를 균형 주제로 골랐어요. 개수가 같으면 목·화·토·금·수 순서로 선택해요.'+(ch.inp.notime?' 출생 시각이 없어 시주를 뺀 차트 기준이에요.':'')+'</p>'}
+function fengPlacesHTML(ch){const p=actionProfile(ch),st={support:String(p.support),category:String(p.support),order:fengOrder(ch).join(','),selected:'',vx:'0',vy:'0',vw:String(MAPS.kv[0]),vh:String(MAPS.kv[1])};return '<div class="feng-place-heading"><h3>나의 운명을 개선할수있는 장소</h3><details class="feng-criteria"><summary title="장소 선정 기준" aria-label="장소 선정 기준">ⓘ</summary><p>숲과 배움은 목, 밝은 전망과 표현·교류는 화, 안정된 공간은 토, 정돈된 공간과 선택은 금, 물가와 성찰은 수라는 주제로 분류했어요. 내 차트의 보완 오행과 같은 분류를 먼저 추천하며, 같은 분류 안에서는 효과의 순위를 매기지 않아요. 자연의 지형과 실내 공간의 분위기·이용 목적을 연결한 자체 선정 기준이에요.</p></details></div>'+actionRationale(ch)+'<div class="feng-explorer" '+Object.entries(st).map(([k,v])=>'data-'+k+'="'+v+'"').join(' ')+'>'+fengExplorerBody(st)+'</div><p class="r-note">풍수의 오행 상징을 지형·경관에 연결한 자체 추천입니다. 현재 위치는 수집하지 않으며, 출생지로 거리를 추정하지 않아요. 방문 전 각 장소의 운영·예약·외부인 출입 안내를 확인해 주세요.</p>'}
 const fengObserver=typeof ResizeObserver==='function'?new ResizeObserver(entries=>entries.forEach(({target})=>{const el=target.closest('.feng-explorer');if(el)fengPaint(el)})):null;
 
 const FENG_PROVINCE_LABELS=SIDO.map(name=>{const pts=MAPS.kor.map((r,i)=>r[1]===name?KC[i]:null).filter(Boolean);return {name,lat:pts.reduce((n,p)=>n+p[0],0)/pts.length,lon:pts.reduce((n,p)=>n+p[1],0)/pts.length}});
@@ -1835,10 +1848,7 @@ function actionProfile(ch){
  return {dominant,support,strong:ACTION_ELEMENTS[dominant],fill:ACTION_ELEMENTS[support]};
 }
 function actionGuideHTML(ch){const p=actionProfile(ch),a=p.strong,b=p.fill;
- return '<p class="r-lead">타고난 결을 알고, 오늘의 작은 선택을 바꿔 보세요.</p>'+reportCards([
- ["01 · 강점 살리기",a.gift,a.boost],
- ["02 · 과한 성향 가라앉히기",a.shadow,a.calm],
- ["03 · 균형 채우기",b.balance,b.task+"."]])+ fengPlacesHTML(ch)+
+ return '<p class="r-lead">타고난 결을 알고, 오늘의 작은 선택을 바꿔 보세요.</p>'+`<div class="action-box">${[["01 · 강점 살리기",a.gift,a.boost],["02 · 과한 성향 가라앉히기",a.shadow,a.calm],["03 · 균형 채우기",b.balance,b.task+"."]].map(([l,v,t])=>`<div><small>${l}</small><b>${v}</b><span>${t}</span></div>`).join("")}</div>`+ fengPlacesHTML(ch)+
  '';
 }
 function renderActionGuide(){const el=document.getElementById('actionBody');if(el&&CH){el.innerHTML=actionGuideHTML(CH);fengInit(el)}}
