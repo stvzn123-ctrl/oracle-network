@@ -1146,7 +1146,7 @@ function renderCat(ci,anim){const c=CATS[ci];const box=document.getElementById("
 function miniGraph(ci,hi){const sc=R.map(row=>D(row[ci].mean));const xk=k=>6+88*(k-1)/9,x=i=>xk(HZ[i].off),y=v=>14+(100-v)/44*96;const y0=new Date().getFullYear();
   return `<div class="mini" style="--c:${CATS[ci].c}"><svg viewBox="0 0 1000 125" preserveAspectRatio="none" aria-hidden="true"><line class="mini-g" x1="40" x2="960" y1="${y(80)}" y2="${y(80)}"/><path class="mini-l${drawCls()}" pathLength="1" d="${smoothPath(RY.map((row,k)=>xk(k+1)*10+","+y(D(row[ci].mean))).join(" "))}"/></svg>${RY.map((row,k)=>HZ.some(h=>h.off===k+1)?"":`<span class="yr-dot" style="left:${xk(k+1)}%;top:${y(D(row[ci].mean))}px" title="${new Date().getFullYear()+k+1}년 ${D(row[ci].mean)}점"></span>`).join("")}
    ${sc.map((v,i)=>`<button type="button" class="mini-pt" data-h="${i}" style="left:${x(i)}%;top:${y(v)}px" aria-pressed="${i===hi}" aria-label="${HZ[i].n} ${CATS[ci].n} ${v}점 보기"><b>${v}</b><i></i></button>`).join("")}
-   <div class="mini-x">${HZ.map((h,i)=>`<span class="${i===hi?"on":""}" style="left:${x(i)}%">${h.off}년<small>${String(y0+h.off).slice(2)}</small></span>`).join("")}</div></div>`}
+   <div class="mini-x">${HZ.map((h,i)=>`<span class="${i===hi?"on":""}" style="left:${x(i)}%">${h.off}년<small>${y0+h.off-CH.Y+1}살</small></span>`).join("")}</div></div>`}
 const REST_ALT=["새는 돈을 막는 습관을 만들 기회예요","대화를 늘리면 관계가 더 단단해져요","관점을 바꾸면 다음 길이 보여요","규칙적인 휴식이 회복을 앞당겨요"];
 function catHorizon(ci,hi){const r=R[hi][ci],prev=hi?R[hi-1][ci]:null;
   const head=HEAD[CATS[ci].k][tier(r.mean)].split(" · ")[0];
