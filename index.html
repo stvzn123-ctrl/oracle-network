@@ -696,6 +696,81 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 .reading details.feng-criteria{border:0;background:none;box-shadow:none;padding:0;border-radius:0}
 .reading .feng-criteria>summary{padding:0;min-height:32px;min-width:32px;justify-content:center}
 .feng-place-heading .feng-criteria>summary{font-size:17px}
+
+/* Personal birth charts: all colors come from the existing theme. */
+:root{--birth-aspect-soft:var(--emerald);--birth-aspect-hard:var(--rose);--birth-aspect-conj:var(--gold)}
+.birth-atlas{margin-top:30px;display:grid;gap:34px;min-width:0}
+.birth-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.birth-nav a{padding:9px 3px;text-align:center;font-size:12px;color:var(--fg);border:1px solid var(--line);border-radius:8px;text-decoration:none}
+.birth-nav a:hover,.birth-nav a:focus-visible{color:var(--emerald);border-color:var(--emerald)}
+.birth-system{min-width:0;scroll-margin-top:24px;border-top:1px solid var(--line2);padding-top:20px}
+.birth-system h4{font-family:var(--display);font-size:21px;margin:0 0 6px;color:var(--fg)}
+.birth-system h4 small{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--emerald);margin-right:10px}
+.birth-note,.birth-caption{font-size:12px;line-height:1.7;color:var(--muted);margin:8px 0 14px;word-break:keep-all}
+.birth-note a{color:var(--teal)}
+.birth-layout{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:20px;align-items:start}
+.birth-figure{margin:0;min-width:0}
+.birth-wheel{display:block;width:100%;height:auto;color:var(--fg)}
+.birth-wheel text{fill:var(--fg);font-family:var(--body)}
+.birth-wheel .bw-ring{fill:none;stroke:var(--line2)}
+.birth-wheel .bw-guide{stroke:var(--line);fill:none}
+.birth-wheel .bw-sign{font-size:20px;fill:var(--gold)}
+.birth-wheel .bw-label{font-size:18px;fill:var(--emerald)}
+.birth-wheel .bw-degree{font-family:var(--mono);font-size:10px;fill:var(--muted)}
+.birth-wheel .bw-house{font-family:var(--mono);font-size:10px;fill:var(--muted)}
+.birth-wheel .bw-core{font-family:var(--display);font-size:15px;fill:var(--fg)}
+.birth-table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.birth-table caption{text-align:left;color:var(--muted);font-size:12px;padding:0 0 8px}
+.birth-table th,.birth-table td{border-bottom:1px solid var(--line);padding:9px 5px;text-align:left;vertical-align:top}
+.birth-table thead th{color:var(--muted);font-size:11px;font-weight:500}
+.birth-table tbody th{font-weight:500;color:var(--fg)}
+.birth-table td{color:var(--muted)}
+.birth-table .birth-value{color:var(--gold);font-family:var(--mono)}
+.birth-table small{display:block;color:var(--muted);font-size:10px}
+.birth-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11px;color:var(--muted);margin-top:9px}
+.birth-legend i{display:inline-block;width:14px;height:2px;margin:0 5px 3px 0;background:var(--birth-aspect-soft)}
+.birth-legend .hard{background:var(--birth-aspect-hard)}
+.birth-legend .conj{background:var(--birth-aspect-conj)}
+.vedic-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(4,minmax(80px,auto));border-top:1px solid var(--line2);border-left:1px solid var(--line2);position:relative}
+.vedic-cell{border-right:1px solid var(--line2);border-bottom:1px solid var(--line2);padding:7px 6px;min-width:0;background:var(--field)}
+.vedic-cell.is-rising{box-shadow:inset 0 0 0 1px var(--emerald)}
+.vedic-cell>small{display:block;font-size:10px;color:var(--muted)}
+.vedic-cell>span{display:block;font-size:11px;color:var(--gold);line-height:1.7;overflow-wrap:anywhere}
+.vedic-cell .vedic-asc{color:var(--emerald);font-weight:600}
+.vedic-center{grid-column:2/4;grid-row:2/4;border-right:1px solid var(--line2);border-bottom:1px solid var(--line2);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px;gap:7px;min-width:0}
+.vedic-center b{font-family:var(--display);font-size:19px;color:var(--gold)}
+.vedic-center span{font-size:11px;color:var(--muted)}
+.birth-num-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:16px 0}
+.birth-num-card{border:1px solid var(--line);border-radius:10px;padding:14px 9px;text-align:center;min-width:0}
+.birth-num-card small,.birth-num-card span{display:block;color:var(--muted);font-size:11px;line-height:1.7}
+.birth-num-card b{display:block;font-family:var(--display);font-size:34px;color:var(--gold);margin:4px 0}
+.birth-digit-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;max-width:300px;margin:0 auto}
+.birth-digit-grid>div{aspect-ratio:1;border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.birth-digit-grid small{font-size:10px;color:var(--muted)}
+.birth-digit-grid b{font-family:var(--mono);font-size:19px;color:var(--emerald);overflow-wrap:anywhere;text-align:center}
+.birth-digit-grid .empty b{color:var(--dim)}
+.birth-letters{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 16px}
+.birth-letter{display:flex;flex-direction:column;align-items:center;min-width:27px;padding:4px;border:1px solid var(--line);border-radius:5px;font-family:var(--mono);font-size:12px}
+.birth-letter small{font-size:10px;color:var(--muted)}
+.birth-letter.vowel{color:var(--emerald);border-color:var(--line2)}
+.birth-maya-summary{display:flex;align-items:center;gap:16px;margin:14px 0 18px;border-left:2px solid var(--emerald);padding-left:14px}
+.birth-maya-summary b{display:block;font-family:var(--display);font-size:21px;color:var(--gold)}
+.birth-maya-summary span{font-size:12px;color:var(--muted)}
+.maya-grid{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:2px;font-family:var(--mono)}
+.maya-grid caption{text-align:left;color:var(--muted);font:12px/1.7 var(--body);padding-bottom:9px}
+.maya-grid th{font-family:var(--body);font-size:10px;font-weight:400;color:var(--muted);text-align:center}
+.maya-grid .maya-row{width:76px;text-align:left;line-height:1.4;padding-right:4px;overflow-wrap:anywhere}
+.maya-grid .maya-row small{display:block;font-size:9px;color:var(--dim)}
+.maya-grid td{padding:5px 0 4px;text-align:center;border:1px solid var(--line);border-radius:3px;background:var(--field);color:var(--muted);font-size:10px;line-height:1.2}
+.maya-grid .maya-match{border-color:var(--line2);color:var(--fg)}
+.maya-grid .maya-selected{background:var(--gold);border-color:var(--gold);color:var(--bg);box-shadow:0 0 0 2px var(--emerald)}
+.maya-tone{display:block;width:30px;height:16px;flex:none;color:var(--emerald)}
+.maya-grid .maya-tone{width:100%;height:10px;margin-bottom:3px;opacity:.7}
+.maya-selected .maya-tone{color:var(--bg);opacity:1}
+.birth-empty{border:1px dashed var(--line2);border-radius:9px;padding:20px;color:var(--muted);font-size:13px}
+@media(max-width:760px){.birth-layout{grid-template-columns:minmax(0,1fr)}.birth-wheel{max-width:470px;margin:auto}.vedic-board{max-width:470px;width:100%;margin:auto}.birth-system h4{font-size:20px}}
+@media(max-width:420px){.birth-nav a{font-size:10px}.birth-num-card{padding:11px 4px}.birth-num-card span{font-size:10px}.birth-num-card b{font-size:29px}.birth-table th,.birth-table td{padding:8px 3px}.maya-grid{border-spacing:1px}.maya-grid .maya-row{width:54px;font-size:9px}.maya-grid .maya-row small{font-size:8px}.maya-grid td{font-size:8px;padding:5px 0}.maya-grid .maya-tone{height:8px}.vedic-cell{padding:6px 4px}}
+
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1358,7 +1433,81 @@ function chartSummary(ch){const d=ch.stems.d,na=nowAge(),y0=new Date().getFullYe
   return `<div class="cs">
    <div class="cs-block"><h4>사주 여덟 글자</h4><div class="pzs">${pil}</div><p class="cs-note">'나 자신' 칸의 위 글자 ${ST[d]}(${STK[d]})${bat(STK[d])?"이":"가"} 나를 나타내요. ${DMA[ST[d]]}의 기운이에요.</p></div>
    <div class="cs-block"><h4>오행 균형</h4><div class="ebs">${bars}</div><p class="cs-note">${ELNAME[dom]} 기운이 ${mx}개로 가장 많아요.${miss.length?` ${miss.join("·")} 기운은 없어서 그 기운이 들어오는 해에 균형이 맞춰져요.`:" 다섯 기운이 모두 있는 고른 사주예요."}</p></div>
-   <dl class="cs-rows">${rows.map(r=>`<div><dt>${r[0]}</dt><dd><b>${r[1]}</b><span>${r[2]}</span></dd></div>`).join("")}</dl></div>`}
+   <dl class="cs-rows">${rows.map(r=>`<div><dt>${r[0]}</dt><dd><b>${r[1]}</b><span>${r[2]}</span></dd></div>`).join("")}</dl></div>${birthAtlas(ch)}`}
+
+/* Birth chart views read CH; the existing scoring engine stays independent.
+ * Additional planets: JPL SSD, Approximate Positions, Table 1 (1800–2050).
+ * Mean lunar node: Meeus / NREL SPA equation 19, not the true lunar node. */
+const BIRTH_SIGNS=["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
+const BIRTH_ORBITS={
+ Mercury:[.38709927,.00000037,.20563593,.00001906,7.00497902,-.00594749,252.25032350,149472.67411175,77.45779628,.16047689,48.33076593,-.12534081],
+ Venus:[.72333566,.00000390,.00677672,-.00004107,3.39467605,-.00078890,181.97909950,58517.81538729,131.60246718,.00268329,76.67984255,-.27769418],
+ Mars:[1.52371034,.00001847,.09339410,.00007882,1.84969142,-.00813131,-4.55343205,19140.30268499,-23.94362959,.44441088,49.55953891,-.29257343],
+ Uranus:[19.18916464,-.00196176,.04725744,-.00004397,.77263783,-.00242939,313.23810451,428.48202785,170.95427630,.40805281,74.01692503,.04240589],
+ Neptune:[30.06992276,.00026291,.00859048,.00005105,1.77004347,.00035372,-55.12002969,218.45945325,44.96476227,-.32241464,131.78422574,-.00508664]
+};
+function birthHelio(q,T){
+ const a=q[0]+q[1]*T,e=q[2]+q[3]*T,I=(q[4]+q[5]*T)*rad,w=q[8]+q[9]*T,O=(q[10]+q[11]*T)*rad;
+ const M=norm(q[6]+q[7]*T-w)*rad,om=w*rad-O;let E=M;
+ for(let i=0;i<10;i++)E-=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));
+ const x=a*(Math.cos(E)-e),y=a*Math.sqrt(1-e*e)*Math.sin(E),co=Math.cos(om),so=Math.sin(om),cO=Math.cos(O),sO=Math.sin(O),cI=Math.cos(I);
+ return [(co*cO-so*sO*cI)*x+(-so*cO-co*sO*cI)*y,(co*sO+so*cO*cI)*x+(-so*sO+co*cO*cI)*y];
+}
+function birthExtraLon(key,jd){const T=(jd-2451545)/36525,p=birthHelio(BIRTH_ORBITS[key],T),e=helio("E",T);return norm(Math.atan2(p[1]-e[1],p[0]-e[0])/rad+1.3970*T)}
+function birthBodies(ch){
+ const defs=[["Sun","태양","☉",ch.sun],["Moon","달","☽",ch.moon],["Mercury","수성","☿"],["Venus","금성","♀"],["Mars","화성","♂"],["Jupiter","목성","♃",ch.natJup],["Saturn","토성","♄",ch.natSat],["Uranus","천왕성","♅"],["Neptune","해왕성","♆"]];
+ return defs.map(([key,name,glyph,lon])=>({key,name,glyph,lon:lon??birthExtraLon(key,ch.jd)}));
+}
+function birthVedicBodies(ch,bodies){const T=(ch.jd-2451545)/36525,node=norm(125.04452-1934.136261*T+.0020708*T*T+T*T*T/450000);
+ return bodies.filter(p=>!["Uranus","Neptune"].includes(p.key)).map(p=>({...p,lon:norm(p.lon-ch.ayan)})).concat([{key:"Rahu",name:"라후",glyph:"☊",lon:norm(node-ch.ayan)},{key:"Ketu",name:"케투",glyph:"☋",lon:norm(node+180-ch.ayan)}]);
+}
+function birthEscape(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function birthDegree(v){const minutes=Math.round(norm(v)*60)%21600,sg=Math.floor(minutes/1800),within=minutes%1800;return `${SIGNWORD[sg]} ${Math.floor(within/60)}° ${String(within%60).padStart(2,"0")}′`}
+function birthTable(caption,head,rows){return `<table class="birth-table"><caption>${caption}</caption><thead><tr>${head.map(x=>`<th scope="col">${x}</th>`).join("")}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map((x,i)=>i?`<td>${x}</td>`:`<th scope="row">${x}</th>`).join("")}</tr>`).join("")}</tbody></table>`}
+function birthPolar(lon,r,origin){const a=(180+(lon-origin))*rad;return [260+r*Math.cos(a),260-r*Math.sin(a)]}
+function birthArc(a,b,inner,outer,origin){const p=birthPolar(a,outer,origin),q=birthPolar(b,outer,origin),r=birthPolar(b,inner,origin),s=birthPolar(a,inner,origin);return `M${p} A${outer},${outer} 0 0 0 ${q} L${r} A${inner},${inner} 0 0 1 ${s} Z`}
+function birthAspects(bodies){const out=[],defs=[[0,"합",8,"conj"],[60,"육각",5,"soft"],[90,"사각",6,"hard"],[120,"삼각",6,"soft"],[180,"대립",8,"hard"]];
+ for(let i=0;i<bodies.length;i++)for(let j=i+1;j<bodies.length;j++){const a=bodies[i],b=bodies[j],d=sep(a.lon,b.lon),hit=defs.find(x=>Math.abs(d-x[0])<=x[2]);if(hit)out.push({a,b,angle:hit[0],name:hit[1],kind:hit[3],orb:Math.abs(d-hit[0])});}return out;
+}
+function birthSpreadLabels(bodies){
+ const sorted=bodies.map(p=>({...p,label:norm(p.lon)})).sort((a,b)=>a.label-b.label);let gap=-1,start=0;
+ sorted.forEach((p,i)=>{const g=mod(sorted[(i+1)%sorted.length].label-p.label,360);if(g>gap){gap=g;start=(i+1)%sorted.length}});
+ const arranged=sorted.slice(start).concat(sorted.slice(0,start));arranged.forEach((p,i)=>{if(i)while(p.label<arranged[i-1].label)p.label+=360});
+ for(let n=0;n<3;n++){for(let i=1;i<arranged.length;i++)arranged[i].label=Math.max(arranged[i].label,arranged[i-1].label+17);for(let i=arranged.length-2;i>=0;i--)arranged[i].label=Math.min(arranged[i].label,arranged[i+1].label-17)}return arranged;
+}
+function birthWestWheel(ch,bodies,aspects){const origin=ch.asc??0,base=ch.asc==null?null:sign(ch.asc)*30;let svg="";
+ for(let s=0;s<12;s++){const p=birthPolar(s*30+15,222,origin),e=["var(--el1)","var(--el2)","var(--el3)","var(--el4)"][s%4];svg+=`<path d="${birthArc(s*30,(s+1)*30,204,240,origin)}" fill="${e}" fill-opacity=".12" stroke="var(--line2)"/><text x="${p[0]}" y="${p[1]+7}" text-anchor="middle" class="bw-sign">${BIRTH_SIGNS[s]}</text>`;}
+ for(let n=0;n<360;n+=5){const a=birthPolar(n,200,origin),b=birthPolar(n,n%30===0?190:196,origin);svg+=`<path d="M${a}L${b}" class="bw-guide"/>`;}
+ if(base!=null)for(let h=0;h<12;h++){const a=birthPolar(base+h*30,80,origin),b=birthPolar(base+h*30,190,origin),t=birthPolar(base+h*30+15,91,origin);svg+=`<path d="M${a}L${b}" class="bw-guide"/><text x="${t[0]}" y="${t[1]+4}" text-anchor="middle" class="bw-house">${h+1}</text>`;}
+ for(const a of aspects){if(a.angle===0)continue;const p=birthPolar(a.a.lon,135,origin),q=birthPolar(a.b.lon,135,origin);svg+=`<path d="M${p}L${q}" fill="none" stroke="var(--birth-aspect-${a.kind})" stroke-width="1" opacity=".48"><title>${a.a.name} · ${a.b.name} ${a.name}, 오브 ${a.orb.toFixed(1)}도</title></path>`;}
+ svg+='<circle cx="260" cy="260" r="135" class="bw-guide"/>';
+ for(const p of birthSpreadLabels(bodies)){const exact=birthPolar(p.lon,194,origin),label=birthPolar(p.label,166,origin),degree=(norm(p.lon)%30).toFixed(1);svg+=`<path d="M${exact}L${label}" class="bw-guide"/><circle cx="${exact[0]}" cy="${exact[1]}" r="2.5" fill="var(--emerald)"/><text x="${label[0]}" y="${label[1]}" text-anchor="middle" class="bw-label">${p.glyph}<title>${p.name} ${birthDegree(p.lon)}</title></text><text x="${label[0]}" y="${label[1]+13}" text-anchor="middle" class="bw-degree">${degree}°</text>`;}
+ if(ch.asc!=null){const p=birthPolar(ch.asc,246,origin);svg+=`<text x="${p[0]}" y="${p[1]-8}" text-anchor="middle" class="bw-house" style="fill:var(--emerald)">ASC</text>`;}
+ return `<svg class="birth-wheel" viewBox="0 0 520 520" role="img" aria-labelledby="birth-west-title birth-west-desc"><title id="birth-west-title">나의 서양 점성술 출생 차트</title><desc id="birth-west-desc">열두 별자리와 출생 당시 아홉 천체의 위치, 주요 각도.${ch.asc==null?" 출생 하우스는 미확정입니다.":" 상승궁이 왼쪽이며 홀사인 하우스를 표시합니다."} 정확한 수치는 이어지는 표에서 확인할 수 있습니다.</desc>${svg}<circle cx="260" cy="260" r="240" class="bw-ring"/><circle cx="260" cy="260" r="45" fill="var(--bg)"/><text x="260" y="257" text-anchor="middle" class="bw-core">출생 차트</text><text x="260" y="275" text-anchor="middle" class="bw-degree">${ch.Y}.${ch.Mo}.${ch.D}</text></svg>`;
+}
+function birthWest(ch,bodies){const aspects=birthAspects(bodies),base=ch.asc==null?null:sign(ch.asc);
+ const rows=bodies.map(p=>[`${p.glyph} ${p.name}`,`<span class="birth-value">${birthDegree(p.lon)}</span>`,base==null?"미확정":`${mod(sign(p.lon)-base,12)+1}하우스`]);
+ const major=aspects.slice().sort((a,b)=>a.orb-b.orb).slice(0,6);
+ return `<section class="birth-system" id="birth-west"><h4><small>01</small>서양 점성술 · 출생 원형도</h4><p class="birth-note">회귀황도의 열두 별자리에 태어난 순간의 천체를 배치했어요.${base==null?" 시각 또는 장소가 없어 상승궁과 하우스는 표시하지 않았어요.":` 상승궁은 ${birthDegree(ch.asc)}, ${SIGNWORD[base]}자리 전체가 1하우스인 홀사인 방식이에요.`}</p><div class="birth-layout"><figure class="birth-figure">${birthWestWheel(ch,bodies,aspects)}<figcaption class="birth-caption">테두리는 별자리, 안쪽 기호는 천체, 연결선은 천체 사이의 주요 각도예요. 가까운 천체의 글자는 겹치지 않게 옮기고 실제 위치와 선으로 이었어요.</figcaption><div class="birth-legend"><span><i></i>육각·삼각</span><span><i class="hard"></i>사각·대립</span><span>합은 수치표로 표시</span></div></figure><div>${birthTable("출생 당시 천체의 위치",["천체","별자리 · 도수","하우스"],rows)}${base==null?"":`<p class="birth-note">ASC · 상승궁 ${birthDegree(ch.asc)}</p>`}</div></div><details><summary>주요 각도와 계산 기준 보기</summary>${birthTable("오브(기준 각도와의 차이)가 작은 여섯 조합",["천체 조합","각도","오브"],major.map(a=>[`${a.a.name} · ${a.b.name}`,`${a.name} ${a.angle}°`,`${a.orb.toFixed(1)}°`]))}<p class="birth-note">태양·달·목성·토성은 기존 분석과 같은 값을 사용해요. 수성·금성·화성·천왕성·해왕성은 <a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html" target="_blank" rel="noopener noreferrer">JPL 근사 궤도요소</a>로 더한 출생 차트용 위치예요(1800~2050년). 이 다섯 천체와 각도선은 기존 운세 점수에 추가되지 않아요. 광행차·광행시간 등 정밀 보정은 생략한 참고 차트예요. 합·대립은 8°, 사각·삼각은 6°, 육각은 5° 이내를 표시해요.</p></details></section>`;
+}
+function birthVedic(ch,bodies){const planets=birthVedicBodies(ch,bodies),positions=[[0,1],[0,2],[0,3],[1,3],[2,3],[3,3],[3,2],[3,1],[3,0],[2,0],[1,0],[0,0]],base=ch.lagna;
+ const cells=positions.map(([r,c],s)=>{const ps=planets.filter(p=>sign(p.lon)===s),isBase=s===base;return `<div class="vedic-cell${isBase?" is-rising":""}" style="grid-row:${r+1};grid-column:${c+1}"><small>${s+1} · ${SIGNWORD[s]}</small>${isBase?`<span class="vedic-asc">${ch.chandra?"달 기준":"ASC 라그나"}</span>`:""}${ps.map(p=>`<span>${p.glyph} ${p.name}</span>`).join("")}</div>`}).join("");
+ const vm=norm(ch.moon-ch.ayan),pada=Math.min(4,Math.floor((vm%(360/27))/(360/108))+1);
+ return `<section class="birth-system" id="birth-vedic"><h4><small>02</small>인도 점성술 · 라시 차트</h4><p class="birth-note">첨부 예시의 남인도식 배열을 사용했어요. 별자리는 고정되어 있고, 입력한 생일과 시각에 따라 행성 위치가 바뀌어요. 회귀황도에서 라히리 아야남사 ${ch.ayan.toFixed(2)}°를 뺀 항성황도 기준이에요.</p><div class="birth-layout"><figure class="birth-figure"><div class="vedic-board" role="group" aria-label="나의 남인도식 라시 출생 차트">${cells}<div class="vedic-center"><span>SIDEREAL · D1</span><b>나의 라시</b><span>${ch.chandra?"달 기준 · 라그나 미확정":"라그나 · "+SIGNWORD[base]+"자리"}</span><span>${NAK[ch.nk]}<br>${pada}파다 · 주인 ${PK[DL[ch.nk%9]]}</span></div></div><figcaption class="birth-caption">${ch.chandra?"시각 또는 장소가 없어 달이 있는 별자리를 기준으로 표시했어요. 실제 출생 라그나·하우스를 확정한 차트는 아니에요.":"초록 테두리의 라그나 칸이 1하우스예요. 양자리부터 별자리 순서로 하우스를 세어요."} 라후·케투는 실제 행성이 아닌 달 궤도의 평균 교점이에요.</figcaption></figure><div>${birthTable("아홉 그라하의 항성황도 위치",["그라하","별자리 · 도수",ch.chandra?"달 기준 영역":"하우스"],planets.map(p=>[`${p.glyph} ${p.name}`,`<span class="birth-value">${birthDegree(p.lon)}</span>`,`${mod(sign(p.lon)-base,12)+1}${ch.chandra?"번 영역":"하우스"}`]))}</div></div></section>`;
+}
+function birthNumerology(ch){const keep=n=>reduceNum(n,true),parts=[reduceNum(ch.Mo,false),keep(ch.D),keep(digitsum(ch.Y))],letters=(ch.inp.roman||"").toUpperCase().replace(/[^A-Z]/g,""),value=c=>(c.charCodeAt(0)-65)%9+1,vowels=[...letters].filter(c=>"AEIOU".includes(c)),total=[...letters].reduce((a,c)=>a+value(c),0),vtotal=vowels.reduce((a,c)=>a+value(c),0),digits=`${ch.Y}${ch.Mo}${ch.D}`.replace(/0/g,"");
+ const metrics=[["인생 수",ch.lp,LPM[ch.lp]],["표현 수",ch.expr,ch.expr==null?"영문 이름 없음":LPM[ch.expr]],["영혼 수",ch.soul,ch.soul==null?"계산할 모음 없음":LPM[ch.soul]]];
+ const rows=[["출생 월",`${ch.Mo} → ${parts[0]}`],["출생 일",`${ch.D} → ${parts[1]}`],["출생 연도",`${ch.Y} → ${digitsum(ch.Y)} → ${parts[2]}`],["인생 수",`${parts.join(" + ")} = ${parts.reduce((a,b)=>a+b,0)} → <span class="birth-value">${ch.lp}</span>`],["표현 수",letters?`${total} → <span class="birth-value">${ch.expr}</span>`:"영문 이름 없음 · 미계산"],["영혼 수",vowels.length?`${vowels.join("")} = ${vtotal} → <span class="birth-value">${ch.soul}</span>`:"모음 없음 · 미계산"]];
+ return `<section class="birth-system" id="birth-num"><h4><small>03</small>수비학 · 나를 이루는 숫자</h4><p class="birth-note">생년월일과 영문 이름의 숫자를 표로 풀었어요. 아래 계산은 기존 수비학 분석과 같은 피타고라스식 대응과 구간 축약법을 사용해요.</p><div class="birth-num-cards">${metrics.map(([label,n,text])=>`<div class="birth-num-card"><small>${label}</small><b>${n??"—"}</b><span>${text||""}</span></div>`).join("")}</div><div class="birth-layout"><figure class="birth-figure"><div class="birth-digit-grid" role="group" aria-label="양력 생년월일의 숫자 분포, 0 제외">${Array.from({length:9},(_,i)=>{const n=String(i+1),count=[...digits].filter(x=>x===n).length;return `<div class="${count?"filled":"empty"}"><small>숫자 ${n} · ${count}개</small><b>${count?n.repeat(count):"—"}</b></div>`}).join("")}</div><figcaption class="birth-caption">양력 ${ch.Y}년 ${ch.Mo}월 ${ch.D}일에 나타난 1~9의 횟수예요. 0은 제외하며, 빈 칸에 별도 성향이나 점수를 부여하지 않아요.</figcaption></figure><div>${birthTable("인생 수 · 이름 수 계산 과정",["구간","계산과 결과"],rows)}</div></div><p class="birth-note">${letters?`계산한 이름: <b>${birthEscape(letters)}</b> · 초록 글자는 영혼 수에 사용하는 모음(A·E·I·O·U)이에요.`:"영문 이름이 없어 이름 수를 계산하지 않았어요."}</p><div class="birth-letters" aria-label="영문 이름의 글자별 숫자">${[...letters].map(c=>`<span class="birth-letter${"AEIOU".includes(c)?" vowel":""}">${c}<small>${value(c)}</small></span>`).join("")}</div><p class="birth-note">A=1부터 I=9까지 대응하고 J=1부터 반복해요. 월은 한 자리로 줄이고, 일·연도·최종 합계와 이름 수는 11·22·33을 보존해요. 영문 철자를 바꾸면 이름 수가 다시 계산돼요.</p></section>`;
+}
+function birthKin(tone,msign){for(let k=1;k<=260;k++)if(mod(k-1,13)+1===tone&&mod(k-1,20)===msign)return k;return null}
+function birthToneSvg(n){const dots=n%5,bars=Math.floor(n/5);let svg="";for(let i=0;i<dots;i++)svg+=`<circle cx="${15+(i-(dots-1)/2)*5}" cy="3" r="1.7"/>`;for(let i=0;i<bars;i++)svg+=`<rect x="5" y="${7+i*3.2}" width="20" height="2" rx="1"/>`;return `<svg class="maya-tone" viewBox="0 0 30 17" aria-hidden="true" fill="currentColor">${svg}</svg>`}
+function birthMaya(ch){const kin=birthKin(ch.tone,ch.msign),ms=MS[ch.msign];let rows="";
+ for(let s=0;s<20;s++){rows+=`<tr><th scope="row" class="maya-row">${MS[s][1]}<small>${MS[s][0]}</small></th>`;for(let c=0;c<13;c++){const k=c*20+s+1,tone=mod(k-1,13)+1,selected=k===kin;rows+=`<td class="${selected?"maya-selected":s===ch.msign?"maya-match":""}"${selected?' aria-current="date"':""} aria-label="${k}번, ${tone} ${MS[s][0]}${selected?", 나의 탄생일":""}">${birthToneSvg(tone)}${k}</td>`}rows+="</tr>";}
+ return `<section class="birth-system" id="birth-maya"><h4><small>04</small>마야력 · 나의 촐킨표</h4><p class="birth-note">20개 기호와 13개 숫자가 만나 만드는 260칸 달력이에요. 금색 칸이 내 출생일의 조합이며, 가로줄에서 같은 탄생 기호가 다른 숫자와 만나는 자리도 볼 수 있어요.</p><div class="birth-maya-summary">${birthToneSvg(ch.tone)}<div><b>${ch.tone} ${ms[0]} · ${ms[1]}</b><span>${ms[2]} · 탄생 숫자 ${ch.tone} · 표의 ${kin}번 칸</span></div></div><table class="maya-grid"><caption>나의 탄생일: ${ch.Y}.${ch.Mo}.${ch.D} → ${ch.tone} ${ms[0]} · 점 하나는 1, 막대 하나는 5</caption><thead><tr><th scope="col" class="maya-row">기호 / 순번</th>${Array.from({length:13},(_,i)=>`<th scope="col">${i+1}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table><p class="birth-note">각 칸의 큰 숫자는 1 Imix를 첫 칸으로 둔 조합 순번이고, 점·막대는 그날의 탄생 숫자(1~13)예요. 전통 촐킨과 GMT 상관상수 584283을 사용하며 현대 드림스펠의 은하 서명·색상 해석과는 구분해요. 같은 조합은 260일마다 돌아와요.</p>${birthTable("출생일과 촐킨 계산 기준",["항목","값"],[["양력 출생일",`${ch.Y}년 ${ch.Mo}월 ${ch.D}일`],["율리우스 적일수(JDN)",String(jdn(ch.Y,ch.Mo,ch.D))],["탄생 조합",`${ch.tone} ${ms[0]} · 표의 ${kin}번 칸`],["숫자의 의미",MT[ch.tone][0]]])}</section>`;
+}
+function birthAtlas(ch){const bodies=birthBodies(ch);return `<div class="birth-atlas"><nav class="birth-nav" aria-label="내 출생 차트로 이동"><a href="#birth-west">서양 점성술</a><a href="#birth-vedic">인도 점성술</a><a href="#birth-num">수비학</a><a href="#birth-maya">마야력</a></nav>${ch.inp.notime?'<p class="birth-note">출생 시각을 몰라 현지 정오의 천체 위치를 참고값으로 표시했어요. 달의 별자리·낙샤트라와 도수는 실제 출생 시각에 따라 달라질 수 있어요.</p>':""}${birthWest(ch,bodies)}${birthVedic(ch,bodies)}${birthNumerology(ch)}${birthMaya(ch)}</div>`}
+
 
 /* ---------- 운명 풀이 전문: 다섯 점술을 하나로 엮은 줄글 ---------- */
 const LPM={1:"스스로 길을 여는 개척자의 수",2:"사람과 사람을 잇는 조율자의 수",3:"표현하고 창조하는 수",4:"기반을 다지는 건축가의 수",5:"자유와 변화를 따르는 수",6:"돌보고 책임지는 수",7:"탐구하고 통찰하는 수",8:"성취와 권한의 수",9:"넓게 품고 완성하는 수",11:"직관과 영감을 뜻하는 마스터 넘버",22:"큰 꿈을 현실로 짓는 마스터 넘버",33:"사람을 가르치고 치유하는 마스터 넘버"};
