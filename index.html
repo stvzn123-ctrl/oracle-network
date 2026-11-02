@@ -521,6 +521,93 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 @media (max-width:560px){.flow-times span{font-size:11.5px}.flow-times small{display:none}}
 
 .ymark{display:inline-block;font-size:11px;font-weight:600;color:#1a1208;background:var(--gold);border-radius:999px;padding:1px 8px;margin-right:6px;vertical-align:2px}
+
+/* hook + lock zone + report */
+.hook{margin:14px 0 18px;padding:16px 18px;border:1px solid var(--line2);border-radius:14px;background:var(--panel);font-family:var(--display);font-size:clamp(17px,2.4vw,19px);line-height:1.8;color:var(--ink);word-break:keep-all}
+.hook b{color:var(--fg)}
+.is-locked #graph-content{max-height:1150px;overflow:hidden}
+.report-cta{margin-top:28px;padding:26px 22px;border:1px solid rgba(233,196,106,.4);border-radius:18px;background:linear-gradient(135deg,rgba(233,196,106,.09),transparent 70%);text-align:center}
+.report-cta .eyebrow{color:var(--gold);font-size:11px}
+.report-cta h3{font-family:var(--display);font-size:clamp(22px,3vw,28px);margin:8px 0}
+.report-cta p{color:var(--muted);max-width:44ch;margin:0 auto 16px;word-break:keep-all}
+.report-cta button{font:inherit;font-weight:600;color:#1a1204;background:var(--gold);border:0;border-radius:10px;padding:12px 26px;cursor:pointer;box-shadow:0 0 24px rgba(233,196,106,.35)}
+.report-cta button:focus-visible,#reportClose:focus-visible,.r-rail a:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+html.rep-lock,html.rep-lock body{overflow:hidden}
+.report{position:fixed;inset:0;z-index:50;overflow-y:auto;background:var(--bg);-webkit-overflow-scrolling:touch}
+.report-bar{position:sticky;top:0;z-index:3;padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));background:var(--bg);border-bottom:1px solid var(--line)}
+#reportClose{font:inherit;font-size:14px;color:var(--fg);background:var(--field);border:1px solid var(--line2);border-radius:999px;padding:6px 14px;cursor:pointer}
+.report-in{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 64px}
+.r-cover{border:1px solid var(--line2);border-radius:20px;padding:40px 22px 30px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(61,255,176,.12),transparent 70%),var(--panel)}
+.r-cover h2{font-family:var(--display);font-weight:800;font-size:clamp(32px,6vw,48px);line-height:1.2;margin:14px 0 8px}
+.r-cover h2 em{font-style:normal;color:var(--gold)}
+.r-cover p{color:var(--muted);margin:0}
+.r-rail{position:sticky;top:calc(52px + env(safe-area-inset-top,0px));z-index:2;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:14px -4px 0;padding:8px 4px;background:var(--bg)}
+.r-rail::-webkit-scrollbar{display:none}
+.r-rail a{flex:none;font-size:13px;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:var(--field)}
+.r-rail a b{font-family:var(--mono);font-weight:500;color:var(--emerald);margin-right:6px;font-size:11px}
+.r-page{margin-top:18px;border:1px solid var(--line);border-radius:18px;background:#120e0b;padding:28px clamp(16px,4vw,38px) 24px;scroll-margin-top:110px}
+.r-ph{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:20px}
+.r-ph .eyebrow{font-size:11px}
+.r-badge{font-size:11px;color:var(--gold);border:1px dashed rgba(233,196,106,.5);border-radius:6px;padding:1px 8px}
+.r-page h2{font-family:var(--display);font-weight:800;font-size:clamp(24px,4.5vw,30px);line-height:1.3;margin:0}
+.r-page h2 small{display:block;font-family:var(--body);font-weight:400;font-size:14px;color:var(--muted);margin-top:6px}
+.r-page h3{font-family:var(--display);font-weight:700;font-size:20px;color:var(--gold);margin:28px 0 10px}
+.r-lead{font-family:var(--display);font-size:clamp(19px,3.4vw,23px);line-height:1.75;color:var(--fg);margin:18px 0 6px;word-break:keep-all}
+.r-prose p,.r-sp{font-family:var(--display);font-size:17px;line-height:2;color:var(--ink);max-width:36em;word-break:keep-all;margin:0 0 12px}
+.r-prose strong{color:var(--fg)}
+.r-kw{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:20px 0 4px}
+.r-kw div,.r-kv div{border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:var(--field);min-width:0}
+.r-kw b{display:block;font-family:var(--display);font-size:19px;margin-bottom:4px}
+.r-kw span,.r-kv span{display:block;font-size:13px;color:var(--muted);line-height:1.6}
+.r-agree{list-style:none;margin:6px 0 0;padding:0}
+.r-agree li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.r-agree li:last-child{border-bottom:0}
+.r-agree .dots{display:flex;gap:4px;padding-top:8px}
+.r-agree .dots i{width:8px;height:8px;border-radius:50%;background:var(--line2)}
+.r-agree .dots i.on{background:var(--emerald);box-shadow:0 0 8px rgba(61,255,176,.6)}
+.r-agree b{display:block;font-family:var(--display);font-size:17px}
+.r-agree span{display:block;font-size:14px;color:var(--muted)}
+.r-agree small{font-size:12px;color:var(--dim)}
+.r-hook{margin:18px 0 0;padding:14px 16px;border-left:2px solid var(--emerald);background:rgba(61,255,176,.05);font-size:15px;color:var(--ink);word-break:keep-all}
+.r-hook b{color:var(--fg)}
+.r-chart{overflow-x:auto}.r-chart svg{display:block;width:100%;min-width:520px;height:auto}
+.rc-t{font:11px var(--mono);fill:var(--dim)}
+.r-legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin-top:6px}
+.r-legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.r-tbl{overflow-x:auto;margin:10px 0 4px}
+.r-tbl table{border-collapse:collapse;width:100%;font-size:14px;min-width:440px}
+.r-tbl th,.r-tbl td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.r-tbl th{font-weight:500;color:var(--muted);font-size:12px}
+.r-tbl td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.r-tbl tr.now td{color:var(--emerald)}
+.rc{font-weight:600}
+.r-tl{list-style:none;margin:8px 0 0;padding:0 0 0 18px;border-left:1px solid var(--line2)}
+.r-tl li{position:relative;padding:0 0 16px 14px}
+.r-tl li::before{content:"";position:absolute;left:-23px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold)}
+.r-tl .when{font-family:var(--mono);font-size:12px;color:var(--gold)}
+.r-tl b{display:block;font-family:var(--display);font-size:17px;margin:2px 0}
+.r-tl span{display:block;font-size:14px;color:var(--muted);max-width:40em}
+.r-advice{margin-top:24px;border:1px solid rgba(233,196,106,.35);border-radius:14px;padding:16px 18px;background:linear-gradient(135deg,rgba(233,196,106,.08),transparent 70%)}
+.r-advice .eyebrow{color:var(--gold);font-size:11px}
+.r-advice p{font-family:var(--display);font-size:19px;line-height:1.8;margin:6px 0 0;word-break:keep-all}
+.r-pils{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0 8px}
+.r-pil{border:1px solid var(--line);border-radius:12px;padding:12px 4px 10px;text-align:center;background:var(--field);min-width:0}
+.r-pil.me{border-color:var(--emerald)}
+.r-pil small{display:block;font-size:11px;color:var(--muted)}
+.r-pil .g{display:block;font-family:var(--display);font-weight:800;font-size:clamp(26px,7vw,38px);line-height:1.15}
+.r-pil .r{font-size:12px;color:var(--ink)}
+.r-pil .tg{display:block;font-size:11px;color:var(--dim);margin-top:2px}
+.r-note{font-size:13px;color:var(--dim)}
+.r-bars{display:grid;gap:7px;margin:10px 0 12px;max-width:520px}
+.r-bar{display:grid;grid-template-columns:64px minmax(0,1fr) 22px;gap:10px;align-items:center;font-size:13px}
+.r-bar .t{height:8px;border-radius:4px;background:var(--line)}.r-bar .t i{display:block;height:100%;border-radius:4px}
+.r-bar .n{font-family:var(--mono);text-align:right}
+.r-kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 4px}
+.r-kv small{display:block;font-size:11px;color:var(--muted)}
+.r-kv b{display:block;font-family:var(--display);font-size:18px;margin:2px 0}
+.r-soon{opacity:.85}
+.r-foot{margin-top:24px;text-align:center;font-size:12px;color:var(--dim)}
+@media(max-width:560px){.r-kw,.r-kv{grid-template-columns:minmax(0,1fr)}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -580,21 +667,25 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
   </div>
   <p id="share-status" role="status" aria-live="polite"></p>
 </dialog>
+<section class="report" id="report" hidden aria-label="운명 리포트"><div class="report-bar"><button type="button" id="reportClose">← 결과로 돌아가기</button></div><div class="report-in" id="reportBody"></div></section>
 <section id="forecast">
   <div class="sec-head"><h2>당신의 운명</h2></div>
-  <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="near" aria-pressed="true">가까운 미래<small>1~10년</small></button><button type="button" data-m="life" aria-pressed="false">평생 지도<small>10년 단위</small></button></div>
+  <p class="hook" id="hook"></p>
   <div class="trend is-locked" id="result-gate">
-    <div id="graph-content" inert aria-hidden="true"><div id="viz"></div><p class="tnote" id="trendNote"></p></div>
-    <div class="graph-gate" id="graph-gate"><div class="gate-card"><span class="eyebrow">Unlock your flow</span><h3>나의 운명 흐름이 궁금하다면</h3><p>친구에게 운명 네트워크를 소개하고<br>분야별 흐름 그래프를 확인해 보세요.</p><button type="button" id="gate-share">친구에게 공유하고 결과 보기 ↗</button><small>공유 창 완료 또는 결과 복사 후 열립니다.<br>실제 전송 여부는 확인하지 않아요.</small></div></div>
-  </div><p id="unlock-status" role="status" aria-live="polite"></p>
-  <div class="cats" id="cats"><svg class="flash" id="flash" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
-</section>
-
-<section class="reading" aria-labelledby="readTitle">
+    <div id="graph-content" inert aria-hidden="true">
+  <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="near" aria-pressed="true">가까운 미래<small>1~10년</small></button><button type="button" data-m="life" aria-pressed="false">평생 지도<small>10년 단위</small></button></div>
+      <div id="viz"></div><p class="tnote" id="trendNote"></p>
+      <div class="cats" id="cats"><svg class="flash" id="flash" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
+      <section class="reading" aria-labelledby="readTitle">
   <details id="readMore">
     <summary><span class="r-head"><span class="r-title" id="readTitle">운명 풀이 전문</span><span class="r-teaser" id="readTeaser"></span></span><span class="r-open">펼쳐 읽기</span></summary>
     <div class="r-body" id="readBody"></div>
   </details>
+</section>
+      <div class="report-cta"><span class="eyebrow">Destiny Report</span><h3>나의 운명 리포트</h3><p>다섯 점술이 함께 짚은 공통점부터 사주 여덟 글자 상세 풀이까지, 한 권의 리포트로 읽어 보세요.</p><button type="button" id="reportOpen">나의 운명 리포트 펼치기</button></div>
+    </div>
+    <div class="graph-gate" id="graph-gate"><div class="gate-card"><span class="eyebrow">Unlock your flow</span><h3>10년 흐름과 운명 리포트가 궁금하다면</h3><p>친구에게 운명 네트워크를 소개하고<br>분야별 흐름, 해마다 풀이, 운명 리포트를 열어 보세요.</p><button type="button" id="gate-share">친구에게 공유하고 전체 결과 보기 ↗</button><small>공유 창 완료 또는 결과 복사 후 열립니다.<br>실제 전송 여부는 확인하지 않아요.</small></div></div>
+  </div><p id="unlock-status" role="status" aria-live="polite"></p>
 </section>
 
 <section class="panels">
@@ -1412,7 +1503,7 @@ function fillForm(v){$("in-name").value=v.name||"";$("in-roman").value=v.roman||
 function renderWho(v){const [y,m,d]=v.date.split("-");const dt=v.cal==="l"?`음 ${v.ly}.${String(v.lm).padStart(2,"0")}.${String(v.ld).padStart(2,"0")}${v.leap?"(윤)":""}`:`${y}.${m}.${d}`;
   $("whoSum").innerHTML=[v.name||"이름 미입력",`${dt} ${v.notime?"시각 모름":v.time}`,v.place.name,v.sex==="f"?"여":"남"].map(t=>`<span>${t}</span>`).join("")}
 function run(v,animate){renderWho(v);CH=buildChart(v);compute();selDec=clamp(Math.floor(nowAge()/10),0,DECS-1);if(animate)cast();renderAll()}
-function renderAll(){drawGraph=true;setTimeout(()=>{drawGraph=false},0);renderReading();renderSigil();renderVerdict();renderFateTraits();renderTrend();renderCats();renderNatal();if(document.getElementById("p-net").open)renderNet()}
+function renderAll(){renderHook();drawGraph=true;setTimeout(()=>{drawGraph=false},0);renderReading();renderSigil();renderVerdict();renderFateTraits();renderTrend();renderCats();renderNatal();if(document.getElementById("p-net").open)renderNet()}
 document.querySelectorAll("#modeTabs button").forEach(b=>b.addEventListener("click",()=>{if(mode===b.dataset.m)return;mode=b.dataset.m;drawGraph=true;cast();renderTrend();renderCats();drawGraph=false}));
 function askName(){const wn=$("whoName");if(!wn.classList.contains("noname"))return;$("askbox").open=true;$("askbox").scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"});setTimeout(()=>$("in-name").focus({preventScroll:true}),reduceM?0:350)}
 $("whoName").addEventListener("click",askName);$("whoName").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();askName()}});
@@ -1435,6 +1526,146 @@ $("ask").addEventListener("submit",e=>{e.preventDefault();const ce=checkForm();i
     requestAnimationFrame(()=>{const nb=document.querySelector(".natalbox");if(nb.getBoundingClientRect().top<0)nb.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})})};
   if(reduceM){finish();return}
   ab.classList.add("casting");btn.textContent="운명을 읽는 중…";setTimeout(finish,1100)});
+/* ---------- 운명 리포트 (자동 생성: 1장 종합 + 2장 사주, 3~6장 미리보기) ---------- */
+const RTAG={
+ insight:{kw:"깊은 통찰",t:"생각이 깊고 직관이 날카로워요",s:"겉보다 이면을 먼저 보는 눈"},
+ achieve:{kw:"책임과 성취",t:"결국 해내는 책임감과 성취욕이 있어요",s:"맡은 일을 끝까지 완성하는 힘"},
+ pioneer:{kw:"개척과 추진력",t:"먼저 시작하고 길을 여는 힘이 있어요",s:"남보다 한발 앞서 움직이는 용기"},
+ bond:{kw:"공감과 관계",t:"사람의 마음을 읽고 관계를 소중히 해요",s:"사람을 끌어당기고 오래 곁에 두는 힘"},
+ free:{kw:"자유와 변화",t:"변화와 새로운 무대에서 크게 자라요",s:"자리를 옮길수록 커지는 기회"},
+ create:{kw:"표현과 창의",t:"표현하고 만들어 내는 재능이 있어요",s:"생각을 말과 작품으로 꺼내는 재능"},
+ steady:{kw:"꾸준함과 안정",t:"꾸준히 쌓아 올리는 끈기가 있어요",s:"시간이 갈수록 단단해지는 힘"},
+ lead:{kw:"리더십과 존재감",t:"자연스럽게 중심에 서는 존재감이 있어요",s:"사람들이 먼저 기대는 무게감"},
+ help:{kw:"돕고 이끄는 사명",t:"남을 돕고 이끌며 함께 크는 운이에요",s:"가르치고 나눌수록 커지는 복"}
+};
+const TAG_DAY=["lead","bond","lead","bond","steady","bond","pioneer","create","free","insight"];
+const TAG_EL=["pioneer","create","steady","achieve","insight"];
+const TAG_SIGN=["pioneer","steady","create","bond","lead","achieve","bond","insight","free","achieve","create","help"];
+const TAG_NAK={Ketu:"insight",Venus:"create",Sun:"lead",Moon:"bond",Mars:"pioneer",Rahu:"free",Jupiter:"help",Saturn:"steady",Mercury:"create"};
+const TAG_NUM={1:"pioneer",2:"bond",3:"create",4:"steady",5:"free",6:"help",7:"insight",8:"achieve",9:"help",11:"insight",22:"achieve",33:"help"};
+const TAG_MAYA=["help","create","insight","steady","pioneer","free","help","bond","bond","bond","create","free","pioneer","insight","insight","insight","steady","insight","free","lead"];
+const ADVICE={insight:"오래 고민한 답은 대개 맞아요. {Y}년에는 망설이지 말고 그 답대로 움직이세요.",achieve:"작은 성취를 매일 기록하세요. {Y}년에 그 기록이 큰 결과로 돌아와요.",pioneer:"먼저 시작하는 것이 당신의 무기예요. {Y}년에는 첫발을 미루지 마세요.",bond:"곁의 사람이 곧 당신의 운이에요. {Y}년에는 먼저 연락하고 먼저 다가가세요.",free:"답답할 땐 자리를 옮기세요. {Y}년에는 새로운 무대가 기회를 줘요.",create:"생각을 밖으로 꺼내 보여 주세요. {Y}년에는 당신의 표현이 기회를 불러와요.",steady:"꾸준함이 이기는 사주예요. {Y}년에 그동안 쌓은 것이 빛을 봐요.",lead:"앞에 서는 걸 두려워하지 마세요. {Y}년에는 당신이 중심이 될 때 운이 커져요.",help:"남을 도울 때 당신의 운이 커져요. {Y}년에는 가르치고 나누는 일에 힘을 쓰세요."};
+const DAYTXT={
+ 甲:["갑목은 하늘로 곧게 뻗는 큰 나무예요. 목표가 생기면 돌아가지 않고 위로 자라는 사람이라, 어디서든 자연스럽게 앞장서게 돼요.","곧은 나무는 쉽게 휘지 않는 대신 꺾이면 아파요. 자존심을 지키되, 가끔은 바람에 흔들리는 여유를 두면 더 크게 자라요."],
+ 乙:["을목은 바위틈에서도 꽃을 피우는 풀과 덩굴이에요. 환경이 어려워도 길을 찾아 자라는 끈기와 유연함이 당신의 힘이에요.","덩굴은 기댈 곳이 있을 때 가장 높이 올라가요. 좋은 사람과 환경을 고르는 눈이 곧 운을 고르는 눈이에요."],
+ 丙:["병화는 세상을 비추는 태양이에요. 밝고 솔직해서 사람들이 자연스럽게 모이고, 어디서든 분위기를 바꾸는 힘이 있어요.","태양은 쉬지 않고 빛나다 지치기 쉬워요. 모두를 비추려 하기보다 내가 빛날 자리를 고르면 힘이 오래가요."],
+ 丁:["정화는 어둠 속 길을 밝히는 등불이에요. 섬세하고 따뜻해서 가까운 사람의 마음을 깊이 데워 주는 사람이에요.","등불은 바람에 약해요. 감정이 흔들릴 때 잠시 거리를 두는 습관이 당신의 빛을 지켜 줘요."],
+ 戊:["무토는 모두가 기대는 큰 산이에요. 묵직하고 믿음직해서 한번 맡으면 끝까지 지켜 내는 사람이에요.","산은 쉽게 움직이지 않아요. 변화가 필요할 때는 작은 것부터 바꿔 보면 운의 흐름이 열려요."],
+ 己:["기토는 만물을 길러 내는 기름진 땅이에요. 품이 넓고 실속이 있어서 사람과 일을 키우는 데 재능이 있어요.","땅은 모든 것을 받아들이다 지치기도 해요. 내 몫을 분명히 챙기는 연습이 필요해요."],
+ 庚:["경금은 단단히 벼려진 강철이에요. 결단력이 있고 옳다고 믿는 일은 끝까지 밀고 나가는 사람이에요.","강철은 부딪히면 소리가 커요. 말의 날을 조금만 무디게 하면 사람이 모여들어요."],
+ 辛:["신금은 빛을 머금은 보석이에요. 감각이 예리하고 아름다움과 완성도를 알아보는 눈이 있어요.","보석은 작은 흠에도 마음이 쓰여요. 완벽보다 완성을 목표로 하면 훨씬 자유로워져요."],
+ 壬:["임수는 끝없이 흐르는 큰 바다예요. 스케일이 크고 생각의 폭이 넓어서 큰 그림을 그리는 데 능해요.","바다는 방향이 없으면 넘치기 쉬워요. 큰 꿈에 작은 마감일을 붙이면 힘이 한곳으로 모여요."],
+ 癸:["계수는 큰 강물이 아니라 하늘에서 내리는 단비, 땅속으로 스며드는 샘물이에요. 소리 없이 스며들어 메마른 곳을 살리는 기운이라, 앞에 나서기보다 보이지 않는 곳에서 흐름을 바꾸는 사람이 많아요.","단비는 어디에나 스며들 수 있어 적응력이 뛰어나고 사람의 마음을 잘 읽어요. 대신 형태가 정해져 있지 않아 생각이 많고, 상황에 따라 마음이 흔들리기도 해요."]
+};
+const TGT={비견:["든든한 동료","비슷한 사람과 함께할 때 힘이 나요. 경쟁심이 자극이 되는 자리예요."],겁재:["승부욕과 동료","사람을 모으는 힘이 있지만, 돈을 나눌 일은 분명하게 정해 두는 게 좋아요."],식신:["즐기는 재능","좋아하는 일을 꾸준히 할 때 재능이 복으로 돌아와요."],상관:["남다른 표현","틀을 깨는 말과 아이디어가 사람을 끌어당겨요."],편재:["큰 재물의 감각","흐름을 읽어 돈을 만드는 감각이에요. 넓게 벌이는 일에 강해요."],정재:["성실한 재물","꾸준히 모으고 지키는 힘이에요. 계획한 만큼 쌓여요."],편관:["큰 과제와 권한","어려운 일을 맡을수록 위상이 올라가는 자리예요."],정관:["바른 이름","원칙과 신뢰로 인정받는 자리예요. 조직에서 빛나요."],편인:["깊은 공부","직관과 연구의 글자예요. 남다른 분야를 깊이 파요."],정인:["배움과 지원","윗사람의 도움과 공부운이 있는 자리예요."]};
+const POS=[["해","어린 시절과 집안에서"],["달","사회생활과 동료 사이에서"],["날","배우자와 내면의 자리에서"],["시","일의 결과와 말년, 자녀의 자리에서"]];
+const TGG=["동료와 자립","표현과 재능","재물과 결과물","직책과 명예","배움과 지원"];
+const DWM={비견:"동료와 함께 자립하는",겁재:"경쟁 속에서 단련되는",식신:"재능이 꽃피는",상관:"표현력과 아이디어가 빛나는",편재:"큰돈이 움직이고 사업 감각이 살아나는",정재:"성실하게 쌓은 만큼 돈이 모이는",편관:"큰 책임과 권한이 함께 오는",정관:"직책과 평가가 따라오는",편인:"남다른 공부와 연구에 몰두하는",정인:"지원을 받고 배움이 깊어지는"};
+const HAP={1:"흙(土)",13:"나무(木)",25:"쇠(金)"};/* not used directly */
+const HAPEL=[[0,1,"흙"],[2,11,"나무"],[3,10,"불"],[4,9,"쇠"],[5,8,"물"],[6,7,"불"]];
+
+function reportTags(ch){const d=ch.stems.d,dom=ch.cnt.indexOf(Math.max(...ch.cnt));const hits={};
+  const add=(tag,sys,ev)=>{(hits[tag]=hits[tag]||{sys:new Set(),ev:[]});hits[tag].sys.add(sys);hits[tag].ev.push(ev)};
+  add(TAG_DAY[d],"사주",`일간 ${ST[d]}${EL[SE[d]]}`);
+  add(TAG_EL[dom],"사주",`${ELNAME[dom]}(${EL[dom]}) 기운 ${ch.cnt[dom]}개`);
+  add(ch.strong?"lead":"bond","사주",ch.strong?"신강 사주":"신약 사주");
+  if(ch.has.gui)add("help","사주","천을귀인");if(ch.has.munc)add("create","사주","문창귀인");if(ch.has.dohwa)add("bond","사주","도화");if(ch.has.yeokma)add("free","사주","역마");
+  add(TAG_SIGN[sign(ch.sun)],"서양 점성술",`${ZOD[sign(ch.sun)]}자리 태양`);
+  add(TAG_SIGN[sign(ch.moon)],"서양 점성술",`${ZOD[sign(ch.moon)]}자리 달`);
+  if(ch.asc!=null)add(TAG_SIGN[sign(ch.asc)],"서양 점성술",`${ZOD[sign(ch.asc)]}자리 상승궁`);
+  add(TAG_NAK[DL[ch.nk%9]],"인도 점성술",`${NAK[ch.nk]} 낙샤트라`);
+  if(ch.lagna!=null)add(TAG_SIGN[ch.lagna],"인도 점성술",`${ch.chandra?"달 기준 라그나":"라그나"} ${ZOD[ch.lagna]}자리`);
+  add(TAG_NUM[ch.lp],"수비학",`인생 수 ${ch.lp}`);if(ch.soul)add(TAG_NUM[ch.soul],"수비학",`영혼 수 ${ch.soul}`);if(ch.expr)add(TAG_NUM[ch.expr],"수비학",`표현 수 ${ch.expr}`);
+  add(TAG_MAYA[ch.msign],"마야력",`${ch.tone} ${MS[ch.msign][0]}(${MS[ch.msign][1]})`);
+  return Object.entries(hits).map(([k,v])=>({k,n:v.sys.size,sys:[...v.sys],ev:[...new Set(v.ev)]})).sort((a,b)=>b.n-a.n||b.ev.length-a.ev.length)}
+function bestCell(){let b={v:-1};R.forEach((r,hi)=>r.forEach((c,ci)=>{const v=D(c.mean);if(v>b.v)b={v,hi,ci}}));
+  const c=R[b.hi][b.ci];b.n=c.v.filter(x=>x[0]>=60).length;b.y=new Date().getFullYear()+HZ[b.hi].off;return b}
+function reportHook(ch){const b=bestCell();const tp=turningPoints(ch)[0];
+  return `<b>${b.y}년, 당신의 ${SHORT[b.ci]}운이 앞으로 10년 중 가장 크게 열려요.</b> 다섯 점술 중 ${b.n}개가 같은 해를 가리켜요.${tp?` 그리고 ${tp.y-ch.Y+1}세가 되는 ${tp.y}년, ${tp.src}${bat(tp.src)?"이":"가"} 짚는 큰 전환점이 찾아와요.`:""}`}
+
+function rChart(){const S=R.map(r=>r.map(c=>D(c.mean))),y0=new Date().getFullYear()+1;const W=640,H=250,L=36,Rr=16,T=14,B=32;
+  const x=k=>L+(W-L-Rr)*k/9,y=v=>T+(100-v)/40*(H-T-B);let s="";
+  [60,70,80,90,100].forEach(v=>{s+=`<line x1="${L}" x2="${W-Rr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end" class="rc-t">${v}</text>`});
+  for(let k=0;k<10;k++)s+=`<text x="${x(k)}" y="${H-10}" text-anchor="middle" class="rc-t">${y0+k}</text>`;
+  CATS.forEach((c,ci)=>{const p=S.map((r,k)=>[x(k),y(r[ci])]);s+=`<path d="${smoothPath(p.map(q=>q.join(",")).join(" "))}" fill="none" stroke="var(--${c.k})" stroke-width="2"/>`;
+    let bi=0;S.forEach((r,k)=>{if(r[ci]>S[bi][ci])bi=k});p.forEach((q,k)=>{s+=`<circle cx="${q[0]}" cy="${q[1]}" r="${k===bi?5:2.6}" fill="var(--${c.k})"${k===bi?' stroke="var(--bg)" stroke-width="2"':""}/>`})});
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="앞으로 10년 분야별 점수">${s}</svg>`}
+
+function reportSummary(ch){const tags=reportTags(ch),b=bestCell(),d=ch.stems.d,dom=ch.cnt.indexOf(Math.max(...ch.cnt));const miss=ch.cnt.map((v,i)=>v?null:ELK[i]).filter(Boolean);
+  const kw=tags.slice(0,3).map(t=>`<div><b>${RTAG[t.k].kw}</b><span>${RTAG[t.k].s}</span></div>`).join("");
+  const ag=tags.filter(t=>t.n>=2).slice(0,4);const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><span>${J(t.ev.join(", "),"이","가")} ${t.ev.length>1?"모두 같은 이야기를 해요":"이렇게 말해요"}.</span><small>${t.sys.join(" · ")}</small></div></li>`).join("");
+  const y0=new Date().getFullYear();
+  const best=CATS.map((c,ci)=>{let bi=0;R.forEach((r,hi)=>{if(D(r[ci].mean)>D(R[bi][ci].mean))bi=hi});const sum=plain(catHorizon(ci,bi).sum).split(" · ")[0];
+    return `<tr><td><span class="rc" style="color:var(--${c.k})">${SHORT[ci]}</span></td><td class="num">${y0+HZ[bi].off} · ${D(R[bi][ci].mean)}점</td><td>${sum}</td></tr>`}).join("");
+  const tps=turningPoints(ch).slice(0,3).map(e=>`<li><span class="when">${e.y} · ${e.y-ch.Y+1}세</span><b>${e.src}</b><span>${e.t}</span></li>`).join("");
+  return `<p class="r-lead">${plain(traitDescription(ch))}</p>
+  <div class="r-kw">${kw}</div>
+  <h3>다섯 점술이 함께 짚은 것</h3><ul class="r-agree">${agl}</ul>
+  <p class="r-hook">${reportHook(ch)}</p>
+  <h3>앞으로 10년의 모양</h3><div class="r-chart">${rChart()}</div>
+  <div class="r-legend">${CATS.map((c,ci)=>`<span><i style="background:var(--${c.k})"></i>${SHORT[ci]}</span>`).join("")}</div>
+  <div class="r-tbl"><table><thead><tr><th>분야</th><th>가장 밝은 해</th><th>한 줄 요약</th></tr></thead><tbody>${best}</tbody></table></div>
+  <h3>꼭 기억할 전환점</h3><ol class="r-tl">${tps}</ol>
+  <h3>조심할 점</h3><div class="r-prose"><p>${weakText(ch,dom,miss)} <strong>${ELW[dom]}.</strong></p></div>
+  <div class="r-advice"><span class="eyebrow">한 줄 조언</span><p>${ADVICE[tags[0].k].replace("{Y}",b.y)}</p></div>`}
+
+function reportSaju(ch){const d=ch.stems.d,dom=ch.cnt.indexOf(Math.max(...ch.cnt));const miss=ch.cnt.map((v,i)=>v?null:ELK[i]).filter(Boolean);
+  const cols=[[ch.stems.y,ch.brs.y],[ch.stems.m,ch.brs.m],[ch.stems.d,ch.brs.d],[ch.stems.h,ch.brs.h]];
+  const pil=cols.map(([s,b],i)=>s==null?`<div class="r-pil"><small>태어난 시</small><span class="g">?</span><span class="r">시각 모름</span></div>`
+    :`<div class="r-pil${i===2?" me":""}"><small>${i===2?"나 자신":"태어난 "+POS[i][0]}</small><span class="g" style="color:${ELCOL[SE[s]]}">${ST[s]}</span><span class="g" style="color:${ELCOL[SE[BMAIN[b]]]}">${BR[b]}</span><span class="r">${STK[s]}${BRK[b]}</span><span class="tg">${i===2?"일간":tenGod(d,s)} · ${tenGod(d,BMAIN[b])}</span></div>`).join("");
+  const mx=Math.max(...ch.cnt,1);
+  const bars=ch.cnt.map((v,i)=>`<div class="r-bar"><span style="color:${ELCOL[i]}">${EL[i]} ${ELNAME[i]}</span><span class="t"><i style="width:${v/mx*100}%;background:${ELCOL[i]}"></i></span><span class="n">${v}</span></div>`).join("");
+  const good=ch.goodG.map(g=>`${ELNAME[(SE[d]+g)%5]}(${EL[(SE[d]+g)%5]})`),goodM=ch.goodG.map(g=>TGG[g]);
+  const balance=miss.length?`사주에 ${miss.join("·")} 기운이 없어요. ${miss.map(m=>MISSW[ELK.indexOf(m)]).join(", ")} 약한 편이라, 이 기운을 주는 사람이나 환경을 가까이 두면 균형이 맞춰져요.`:`다섯 기운이 하나도 빠짐없이 모두 있는 사주예요. 어느 한쪽으로 크게 무너지지 않는 안정감이 있어요.`;
+  const cells=[];cols.forEach(([s,b],i)=>{if(s==null)return;if(i!==2)cells.push([POS[i],ST[s],tenGod(d,s)]);cells.push([POS[i],BR[b],tenGod(d,BMAIN[b])])});
+  const kv=cells.map(([p,g,tg])=>`<div><small>${p[0]} · ${g} ${tg}</small><b>${TGT[tg][0]}</b><span>${p[1]} ${TGT[tg][1]}</span></div>`).join("");
+  const sal=[];const bs=cols.map(c=>c[1]);const at=b=>{const i=bs.indexOf(b);return i<0?"":`(${POS[i][0]}의 ${BR[b]})`};
+  if(ch.has.gui){const gb=ch.gui.find(b=>bs.includes(b));sal.push(`<p><strong>천을귀인${gb!=null?at(gb):""}</strong>은 사주에서 가장 귀하게 치는 길성이에요. 어려운 순간마다 손을 내미는 사람이 나타나고, 위기를 기회로 넘기는 힘이 있어요.</p>`)}
+  if(ch.has.munc)sal.push(`<p><strong>문창귀인${at(ch.munc)}</strong>은 배움과 글의 별이에요. 공부, 시험, 글과 말로 이름을 얻는 재능이 있어요.</p>`);
+  if(ch.has.dohwa)sal.push(`<p><strong>도화${at(ch.dohwa)}</strong>는 사람을 끌어당기는 매력의 별이에요. 사람을 상대하는 일, 보여 주는 일에서 빛나요.</p>`);
+  if(ch.has.yeokma)sal.push(`<p><strong>역마${at(ch.yeokma)}</strong>는 움직임의 별이에요. 이사, 출장, 해외, 새로운 분야처럼 자리를 옮길 때 운이 열려요.</p>`);
+  const hc=[];for(let i=0;i<4;i++)for(let j=i+1;j<4;j++){const a=bs[i],b2=bs[j];if(a==null||b2==null)continue;
+    const h=HAPEL.find(([x,y])=>(x===a&&y===b2)||(x===b2&&y===a));if(h)hc.push(`${POS[i][0]}의 ${BR[a]}와 ${POS[j][0]}의 ${BR[b2]}가 <strong>합</strong>을 이뤄 ${h[2]} 기운을 만들어요. 서로 끌어당겨 사람과 기회를 불러오는 구조예요.`);
+    if(Math.abs(a-b2)===6)hc.push(`${POS[i][0]}의 ${BR[a]}와 ${POS[j][0]}의 ${BR[b2]}는 <strong>충</strong>이에요. 부딪히는 자리라 삶에 변동이 잦지만, 그만큼 변화를 통해 성장하는 사람이에요.`)}
+  const na=nowAge();let rows="",fut=[];
+  for(let k=1;k<=7;k++){const a=ch.dwStart+10*(k-1),dw=ch.mIdx+(ch.fwd?k:-k),s=mod(dw,60)%10,tg=tenGod(d,s),fav=ch.goodG.includes(Math.floor(TG.indexOf(tg)/2));const now=na>=a&&na<a+10;
+    if(a>na)fut.push([Math.floor(a),pillar(dw),tg,fav]);
+    rows+=`<tr${now?' class="now"':""}><td class="num">${Math.floor(a)}–${Math.floor(a)+9}세${now?" · 지금":""}</td><td>${pillar(dw)}</td><td>${tg}. ${DWM[tg]} 10년${fav?" · 나에게 필요한 기운":""}</td></tr>`}
+  const fv=fut.filter(f=>f[3]).slice(0,2);
+  const dwP=fv.length?`앞으로 오는 대운 가운데 ${fv.map(f=>`${f[0]}세의 ${f[1]}`).join("와 ")} 대운이 이 사주에 필요한 기운이에요. 그 시기에 ${fv.map(f=>DWM[f[2]].replace(/는$/,"는 흐름")).join(", ")}이 열려요.`:`앞으로의 대운은 내 사주와 결이 다른 기운이 많아요. 속도를 조절하며 꾸준히 쌓으면 그 시기를 내 것으로 만들 수 있어요.`;
+  return `<div class="r-pils">${pil}</div><p class="r-note">글자 아래 정관·편재 같은 말은 '나(${ST[d]})'와 그 글자의 관계를 뜻하는 십신이에요. ${ch.inp.notime?"시각을 몰라 태어난 시 칸은 비워 두었어요.":""}</p>
+  <h3>나를 나타내는 글자, ${ST[d]}${EL[SE[d]]}</h3><div class="r-prose"><p>'나 자신' 칸 위 글자 <strong>${ST[d]}(${STK[d]})</strong>가 당신이에요. ${DAYTXT[ST[d]][0]}</p><p>${DAYTXT[ST[d]][1]}</p></div>
+  <h3>오행의 균형</h3><div class="r-bars">${bars}</div>
+  <div class="r-prose"><p>${balance} 그중 <strong>${ELNAME[dom]}(${EL[dom]}) 기운이 ${ch.cnt[dom]}개로 가장 강해서</strong> ${ELS[dom]}이 당신을 이끄는 힘이에요.</p>
+  <p>이 사주에는 <strong>${good.join("·")}</strong> 기운이 도움이 돼요. 각각 ${goodM.join(", ")}을 뜻해요. 이 기운이 들어오는 해와 대운에 운이 크게 열려요.</p></div>
+  <h3>${ch.strong?"신강 사주: 내 기준으로 움직이는 사람":"신약 사주: 사람과 환경으로 크는 사람"}</h3><div class="r-prose"><p>${ch.strong?"나를 지키는 힘이 강한 <strong>신강</strong> 사주예요. 남이 정해 준 길보다 스스로 판단한 길에서 힘을 발휘하고, 압박이 와도 쉽게 꺾이지 않아요. 다만 이 힘이 지나치면 독단으로 보일 수 있으니, 결정 전에 한 사람의 의견을 꼭 들어보는 습관이 좋아요.":"주변의 기운을 받아 크는 <strong>신약</strong> 사주예요. 좋은 사람, 좋은 환경을 곁에 둘 때 실력 이상의 결과가 나와요. 혼자 모든 걸 짊어지기보다 믿을 만한 사람과 나눌수록 운이 커져요."}</p></div>
+  <h3>여덟 글자가 말하는 삶의 장면</h3><div class="r-kv">${kv}</div>
+  ${sal.length?`<h3>신살: 타고난 별</h3><div class="r-prose">${sal.join("")}</div>`:""}
+  ${hc.length?`<h3>합과 충</h3><div class="r-prose">${hc.map(t=>`<p>${t}</p>`).join("")}</div>`:""}
+  <h3>대운: 10년마다 바뀌는 큰 계절</h3><div class="r-tbl"><table><thead><tr><th>나이(만)</th><th>대운</th><th>나에게 뜻</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <div class="r-prose"><p>${dwP}</p></div>`}
+
+function reportPreview(ch){const vm=norm(ch.moon-ch.ayan),cur=ch.dashas.find(x=>x.start<=ch.birthYear+nowAge()&&x.end>ch.birthYear+nowAge());
+  return [["west","서양 점성술",`태양 ${ZOD[sign(ch.sun)]}자리, 달 ${ZOD[sign(ch.moon)]}자리${ch.asc!=null?`, 상승궁 ${ZOD[sign(ch.asc)]}자리`:""}. ${SUNG[sign(ch.sun)]}을 지녔어요.`],
+   ["vedic","인도 점성술",`달 ${NAK[ch.nk]} 낙샤트라${ch.lagna!=null?`, 라그나 ${ZOD[ch.lagna]}자리`:""}${cur?`, 지금은 ${PK[cur.lord]} 다샤`:""}. ${NAKG[DL[ch.nk%9]]}을 타고났어요.`],
+   ["num","수비학",`인생 수 ${ch.lp}${ch.expr?`, 표현 수 ${ch.expr}`:""}${ch.soul?`, 영혼 수 ${ch.soul}`:""}. ${LPM[ch.lp]||""}예요.`],
+   ["maya","마야력",`${ch.tone} ${MS[ch.msign][0]}(${MS[ch.msign][1]}). ${MS[ch.msign][2]}의 날에 태어났어요.`]]}
+
+function renderReport(){const ch=CH,name=ch.inp.name||"운명을 걷는 사람";const pv=reportPreview(ch);
+  const chap=[["r-sum","1","종합"],["r-saju","2","사주"],...pv.map((p,i)=>["r-"+p[0],String(i+3),p[1]])];
+  $("reportBody").innerHTML=`<header class="r-cover"><div class="eyebrow">The Oracle Network · Destiny Report</div><h2>${name}님의<br><em>운명 리포트</em></h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 종합 분석</p></header>
+  <nav class="r-rail" aria-label="장 이동">${chap.map(c=>`<a href="#${c[0]}"><b>${c[1]}</b>${c[2]}</a>`).join("")}</nav>
+  <section class="r-page" id="r-sum"><div class="r-ph"><span class="eyebrow">Chapter 1 · Synthesis</span></div><h2>종합 리포트<small>다섯 점술의 결론을 먼저 한 장에 모았어요</small></h2>${reportSummary(ch)}</section>
+  <section class="r-page" id="r-saju"><div class="r-ph"><span class="eyebrow">Chapter 2 · Saju</span></div><h2>사주 분석<small>태어난 해·달·날·시의 여덟 글자로 보는 타고난 그릇</small></h2>${reportSaju(ch)}</section>
+  ${pv.map((p,i)=>`<section class="r-page r-soon" id="r-${p[0]}"><div class="r-ph"><span class="eyebrow">Chapter ${i+3}</span><span class="r-badge">상세 분석 준비 중</span></div><h2>${p[1]} 분석</h2><p class="r-sp">${p[2]}</p></section>`).join("")}
+  <p class="r-foot">각 점술의 계산 규칙을 따라 만든 재미용 해석이에요. 미래를 맞힌다는 과학적 근거는 없어요.</p>`;
+  $("reportBody").querySelectorAll(".r-rail a").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const t=document.getElementById(a.getAttribute("href").slice(1));if(t)t.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})}))}
+function openReport(){if(!CH)return;renderReport();$("report").hidden=false;document.documentElement.classList.add("rep-lock");$("report").scrollTop=0;$("reportClose").focus({preventScroll:true})}
+function closeReport(){$("report").hidden=true;document.documentElement.classList.remove("rep-lock");$("reportOpen").focus({preventScroll:true})}
+$("reportOpen").addEventListener("click",openReport);$("reportClose").addEventListener("click",closeReport);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("report").hidden)closeReport()});
+function renderHook(){const h=$("hook");if(h&&CH)h.innerHTML=reportHook(CH)}
+
 /* Share a fixed introduction and site URL only; never include birth input or personal results. */
 const SHARE_URL="https://stvzn123-ctrl.github.io/oracle-network/";
 function resultShareText(){
@@ -1452,7 +1683,7 @@ function applyGraphLock(){
 function unlockGraphs(){
   graphUnlocked=true;try{sessionStorage.setItem("fate-graphs-unlocked","1")}catch(_){}
   applyGraphLock();$("share-dialog").close();
-  $("unlock-status").textContent="분야별 흐름 그래프가 열렸어요.";
+  $("unlock-status").textContent="10년 흐름과 운명 리포트가 열렸어요.";
 }
 function openShare(){
   $("share-preview").value=resultShareText();$("share-status").textContent="";
@@ -1468,7 +1699,7 @@ $("share-copy").addEventListener("click",async()=>{
   try{
     if(!navigator.clipboard?.writeText)throw new Error("Clipboard unavailable");
     await navigator.clipboard.writeText(text);unlockGraphs();
-    $("unlock-status").textContent="결과를 복사했어요. 친구에게 붙여넣어 주세요. 그래프가 열렸어요.";
+    $("unlock-status").textContent="결과를 복사했어요. 친구에게 붙여넣어 주세요. 전체 결과가 열렸어요.";
   }catch(_){
     area.focus();area.select();$("share-manual").hidden=false;
     $("share-status").textContent="자동 복사를 사용할 수 없어요. 글을 길게 누르거나 Ctrl+C / ⌘C로 복사한 뒤 ‘직접 복사 후 결과 보기’를 눌러 주세요.";
