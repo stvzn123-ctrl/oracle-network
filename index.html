@@ -699,7 +699,7 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 
 /* Personal birth charts: all colors come from the existing theme. */
 :root{--birth-aspect-soft:var(--emerald);--birth-aspect-hard:var(--rose);--birth-aspect-conj:var(--gold)}
-.birth-atlas{margin-top:30px;display:grid;gap:34px;min-width:0}
+.birth-atlas{margin-top:30px;display:grid;gap:34px;min-width:0;container-type:inline-size}
 .birth-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .birth-nav a{padding:9px 3px;text-align:center;font-size:12px;color:var(--fg);border:1px solid var(--line);border-radius:8px;text-decoration:none}
 .birth-nav a:hover,.birth-nav a:focus-visible{color:var(--emerald);border-color:var(--emerald)}
@@ -769,6 +769,7 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 .maya-selected .maya-tone{color:var(--bg);opacity:1}
 .birth-empty{border:1px dashed var(--line2);border-radius:9px;padding:20px;color:var(--muted);font-size:13px}
 @media(max-width:760px){.birth-layout{grid-template-columns:minmax(0,1fr)}.birth-wheel{max-width:470px;margin:auto}.vedic-board{max-width:470px;width:100%;margin:auto}.birth-system h4{font-size:20px}}
+@container(max-width:650px){.birth-layout{grid-template-columns:minmax(0,1fr)}.birth-wheel{max-width:470px;margin:auto}.vedic-board{max-width:470px;width:100%;margin:auto}}
 @media(max-width:420px){.birth-nav a{font-size:10px}.birth-num-card{padding:11px 4px}.birth-num-card span{font-size:10px}.birth-num-card b{font-size:29px}.birth-table th,.birth-table td{padding:8px 3px}.maya-grid{border-spacing:1px}.maya-grid .maya-row{width:54px;font-size:9px}.maya-grid .maya-row small{font-size:8px}.maya-grid td{font-size:8px;padding:5px 0}.maya-grid .maya-tone{height:8px}.vedic-cell{padding:6px 4px}}
 
 </style>
@@ -1438,7 +1439,7 @@ function chartSummary(ch){const d=ch.stems.d,na=nowAge(),y0=new Date().getFullYe
 /* Birth chart views read CH; the existing scoring engine stays independent.
  * Additional planets: JPL SSD, Approximate Positions, Table 1 (1800–2050).
  * Mean lunar node: Meeus / NREL SPA equation 19, not the true lunar node. */
-const BIRTH_SIGNS=["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
+const BIRTH_SIGNS=["♈︎","♉︎","♊︎","♋︎","♌︎","♍︎","♎︎","♏︎","♐︎","♑︎","♒︎","♓︎"];
 const BIRTH_ORBITS={
  Mercury:[.38709927,.00000037,.20563593,.00001906,7.00497902,-.00594749,252.25032350,149472.67411175,77.45779628,.16047689,48.33076593,-.12534081],
  Venus:[.72333566,.00000390,.00677672,-.00004107,3.39467605,-.00078890,181.97909950,58517.81538729,131.60246718,.00268329,76.67984255,-.27769418],
