@@ -677,6 +677,12 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 
 .feng-map .feng-pin circle{stroke:none!important;stroke-width:0!important}.feng-halo,.feng-dot{pointer-events:none}.feng-criteria{margin:8px 0 14px;color:var(--fg)}.feng-criteria>summary{display:inline-flex;align-items:center;cursor:pointer;list-style:none;min-height:36px;color:var(--emerald);font-size:var(--fs-s);gap:6px}.feng-criteria>summary::-webkit-details-marker{display:none}.feng-criteria>p{font-size:var(--fs-s);line-height:1.9;margin:8px 0 0;padding:14px;border:1px solid var(--line2);border-radius:10px;background:var(--field)}
 .feng-place-heading{display:flex;align-items:baseline;gap:12px;margin:22px 0 10px}.feng-place-heading h3{flex:1;min-width:0;margin:0!important}.feng-place-heading .feng-criteria{flex:none;position:relative;margin:0}.feng-place-heading .feng-criteria>summary{font-size:11px;min-height:32px;white-space:nowrap;font-weight:400}.feng-place-heading .feng-criteria>p{position:absolute;right:0;top:100%;z-index:10;width:min(420px,calc(100vw - 64px));margin:4px 0 0;box-shadow:0 8px 24px var(--bg)}.action-rationale{margin:10px 0 18px}
+.natal-toggle>summary{display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;list-style:none;color:var(--fg);font-weight:600;font-size:var(--fs-b)}
+.natal-toggle>summary::-webkit-details-marker{display:none}
+.natal-toggle>summary .chev{color:var(--emerald);transition:transform .25s}
+.natal-toggle[open]>summary .chev{transform:rotate(180deg)}
+.natal-toggle>#typeText{margin-top:16px}
+.free-reading{margin-top:0}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -720,8 +726,11 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
       <p class="type" id="typeName"></p>
       <div id="fate-traits"></div>
       <div class="bigchart" id="bigchart"></div>
-      <div class="natal-more"><div id="typeText"></div><div class="pillars" id="pillars"></div></div>
+      <details class="natal-more natal-toggle"><summary>내 출생 정보 자세히 보기 <span class="chev" aria-hidden="true">⌄</span></summary><div id="typeText"></div><div class="pillars" id="pillars"></div></details>
     </div>
+    <section class="reading free-reading" aria-labelledby="readTitle">
+      <div class="sumbox"><h3 class="r-title" id="readTitle">운명 풀이 요약</h3><div class="sum-prose" id="readBody"></div></div>
+    </section>
   </div>
 </header>
 
@@ -746,8 +755,7 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
   <div class="modetabs" id="modeTabs" role="group" aria-label="보기 범위"><button type="button" data-m="near" aria-pressed="true">가까운 미래<small>1~10년</small></button><button type="button" data-m="life" aria-pressed="false">평생 지도<small>10년 단위</small></button></div>
       <div id="viz"></div><p class="tnote" id="trendNote"></p>
       <div class="cats" id="cats"><svg class="flash" id="flash" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
-      <section class="reading" aria-labelledby="readTitle">
-  <div class="sumbox"><h3 class="r-title" id="readTitle">운명 풀이 요약</h3><div class="sum-prose" id="readBody"></div></div>
+      <section class="reading">
 <details class="sumbox action-guide action-toggle"><summary>나의 운명을 개선해나가는 법 <span class="chev" aria-hidden="true">⌄</span></summary><div id="actionBody"></div></details>
 </section>
       <div class="report-cta"><div class="rc-book" aria-hidden="true"><span class="eyebrow">Destiny Report</span><b id="rcName">당신의</b><em>운명 리포트</em><small>사주 · 서양 · 인도 · 수비학 · 마야</small></div>
