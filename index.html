@@ -662,6 +662,7 @@ html.rep-lock,html.rep-lock body{overflow:hidden}
 .r-detail{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}.r-detail summary{cursor:pointer;color:var(--gold);font-size:var(--fs-b)}.r-page td{overflow-wrap:anywhere}.r-page .r-tbl{max-width:100%}
 .action-guide{margin:18px 0 24px}.action-guide h3{font-family:var(--display);color:var(--gold);margin:22px 0 8px}.action-guide .r-lead{margin-top:14px}.action-guide .r-note{line-height:1.8}.action-guide a{color:var(--emerald)}
 .action-toggle>summary{display:flex;justify-content:space-between;align-items:center;gap:16px;cursor:pointer;list-style:none;color:var(--fg);font-family:var(--display);font-size:clamp(19px,2.6vw,23px);font-weight:700}.action-toggle>summary::-webkit-details-marker{display:none}.action-toggle>summary .chev{font-family:var(--body);color:var(--emerald)}
+.feng-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:14px 0}.feng-place{min-width:0;border:1px solid var(--line2);border-radius:12px;padding:18px;background:var(--field)}.feng-place h4{font-family:var(--display);font-size:21px;margin:4px 0 12px;color:var(--gold)}.feng-place p{line-height:1.8;font-size:var(--fs-b);margin:8px 0}.feng-place small{color:var(--muted)}.feng-place a{color:var(--emerald);font-size:var(--fs-s)}@media(max-width:620px){.feng-grid{grid-template-columns:minmax(0,1fr)}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1717,6 +1718,25 @@ const ACTION_ELEMENTS=[
  {theme:"정리와 기준",gift:"선명한 기준을 완성으로 연결하기",boost:"오늘 할 일의 완료 기준을 한 문장으로 적고 그만큼 끝내 보세요.",shadow:"날카로운 판단에 부드러운 말 더하기",calm:"고칠 점을 말하기 전에 상대가 잘한 점 하나를 구체적으로 말해 보세요.",balance:"중요한 것 하나를 남기기",task:"일과를 마칠 때 내일 가장 중요한 일 하나만 적기",space:"공공도서관의 조용한 자료실에서 통로와 떨어진 한 사람 자리, 또는 집의 물건을 치운 책상 한쪽",ritual:"책상 위에 지금 쓸 책과 필기구만 남겨 보세요. 15분 동안 끝낼 한 가지를 정하고, 마칠 때 다음에 할 일을 한 줄 적어 보세요."},
  {theme:"성찰과 유연함",gift:"깊이 생각하는 힘을 기록으로 남기기",boost:"떠오른 생각을 세 줄로 적고, 그중 실행할 수 있는 것 하나를 골라 보세요.",shadow:"길어진 생각을 작은 행동으로 바꾸기",calm:"고민 중인 일을 2분 안에 할 수 있는 첫 동작으로 나눠 지금 해보세요.",balance:"생각과 할 일을 잠깐 내려놓기",task:"저녁에 화면을 잠시 내려두고 오늘 느낀 점을 세 줄 쓰기",space:"난간과 보행로가 갖춰진 하천변 산책길이나 호수공원의 물이 보이는 벤치",ritual:"밝은 낮 시간에 평탄한 보행로를 골라 물가와 거리를 두고 천천히 걸어 보세요. 벤치에서 주변 소리 세 가지를 듣고, 내려놓을 생각 하나와 오늘 할 행동 하나를 적어 보세요."}
 ];
+
+/* 공식 관광·지형 자료를 확인한 실명 장소 목록. 오행 배정은 자체 상징 해석. */
+const FENG_PLACES=[
+ {e:0,name:"담양 죽녹원",region:"담양",feature:"대나무숲과 숲길",why:"위로 자라는 대나무와 숲의 모습을 목의 성장·시작이라는 주제에 연결했어요.",action:"대숲길을 천천히 걸은 뒤, 새로 시작할 일과 오늘 할 첫 동작을 한 줄씩 적어 보세요.",url:"https://www.juknokwon.go.kr/index.juknok?menuCd=DOM_000000102002006000"},
+ {e:0,name:"서울숲",region:"서울 성동구",feature:"나무와 잔디가 어우러진 도심 공원",why:"나무와 열린 녹지를 목의 성장·유연함이라는 주제에 연결했어요.",action:"가족마당 주변에서 나무가 보이는 길을 골라 걸으며, 미뤄 둔 배움 하나를 정해 보세요.",url:"https://korean.visitkorea.or.kr/detail/rem_detail.do?cotid=14431657-226c-425a-9a28-04e2615836ef"},
+ {e:1,name:"정동진해변·모래시계공원",region:"강릉",feature:"동해의 해돋이와 열린 해변",why:"해가 떠오르는 밝은 경관을 화의 표현·활력이라는 주제에 연결했어요.",action:"해변을 바라볼 수 있는 공원에서 이번에 표현하고 싶은 마음을 적어 보세요. 일출을 보려면 방문일의 해 뜨는 시각을 확인하세요.",url:"https://gtdc.or.kr/opentour/dzdocument.php?xch=guide&xid=opentour_guide"},
+ {e:1,name:"호미곶 해맞이광장",region:"포항",feature:"해맞이광장과 상생의 손",why:"해맞이의 시작 이미지와 열린 광장을 화의 표현·온기라는 주제에 연결했어요.",action:"광장에서 바다를 바라보며 고마움을 전할 사람 한 명을 떠올리고 짧은 메시지를 적어 보세요.",url:"https://access.visitkorea.or.kr/cos/detail.do?cotId=4a19a8d7-7b35-4ba4-a063-f5b8659a5794"},
+ {e:2,name:"올림픽공원 몽촌토성",region:"서울 송파구",feature:"토성의 둔덕과 주변 산책로",why:"흙으로 이어진 토성의 모습을 토의 기반·지속이라는 주제에 연결했어요.",action:"토성 주변 산책로에서 체력에 맞는 구간을 골라 걷고, 앞으로 꾸준히 지킬 약속 하나를 정해 보세요.",url:"https://www.ksponco.or.kr/olympicpark/index.do"},
+ {e:2,name:"수원화성",region:"수원",feature:"도시를 둘러싼 성곽과 성곽길",why:"공간을 감싸고 지키는 성곽을 토의 안정·기반이라는 주제에 연결했어요.",action:"공식 관람안내에서 걸을 구간을 고른 뒤, 산책하며 지금 지키고 싶은 일상의 기준 세 가지를 정리해 보세요.",url:"https://www.visitsuwon.or.kr/base/contents/view?contentsNo=11&menuLevel=3&menuNo=19"},
+ {e:3,name:"북한산",region:"서울·경기",feature:"화강암 암봉이 드러나는 산세",why:"암반의 단단한 인상을 금의 결단·정리라는 주제에 연결했어요. 북한산 전체를 금의 명당으로 판정한 것은 아니에요.",action:"정상에 오르기보다 공식 탐방안내에서 체력에 맞는 구간을 골라 보세요. 산을 바라보며 끝낼 일과 내려놓을 일을 하나씩 정해 보세요.",url:"https://encykorea.aks.ac.kr/Article/E0024788"},
+ {e:3,name:"인왕산 자락길",region:"서울 종로구",feature:"화강암 산세와 자락의 전망 공간",why:"바위산의 선명한 형태를 금의 기준·집중이라는 주제에 연결했어요. 자락길에서 경관을 바라보는 방문을 제안해요.",action:"공식 안내의 자락길 코스 중 맞는 구간을 고르고, 전망 공간에서 지금 집중할 일 하나를 정해 보세요.",url:"https://korean.visitkorea.or.kr/detail/rem_detail.do?cotid=969a9b32-7db0-4d1b-ba36-a12d1f1a0a68"},
+ {e:4,name:"양평 두물머리",region:"양평",feature:"남한강과 북한강이 만나는 물길",why:"두 물길이 합쳐지는 경관을 수의 흐름·유연함이라는 주제에 연결했어요.",action:"강이 보이는 보행 공간에서 잠시 멈춰 보고, 계속 가져갈 생각과 흘려보낼 생각을 한 줄씩 적어 보세요.",url:"https://access.visitkorea.or.kr/cos/detail.do?cotId=6f1ee550-062b-485f-b0ca-c410a70179e9"},
+ {e:4,name:"순천만국가정원 호수정원",region:"순천",feature:"정원 안의 호수와 주변 경관",why:"호수의 물과 정원의 여백을 수의 성찰·여유라는 주제에 연결했어요.",action:"호수정원을 둘러본 뒤 앉을 수 있는 공간에서 떠오른 생각을 세 줄로 적고, 오늘 실행할 한 가지를 골라 보세요.",url:"https://www.suncheon.go.kr/tour/tourist/0003/"}
+];
+function fengPlaceCard(place){return '<article class="feng-place"><small>'+place.region+' · '+ELK[place.e]+'('+EL[place.e]+')</small><h4>'+place.name+'</h4><p><strong>'+place.feature+'</strong></p><p>'+place.why+'</p><p class="r-note">이곳에서 해볼 일 · '+place.action+'</p><a href="'+place.url+'" target="_blank" rel="noopener noreferrer">장소 안내 보기 ↗</a></article>'}
+function fengPlacesHTML(ch){const p=actionProfile(ch),matches=FENG_PLACES.filter(place=>place.e===p.support);
+ return '<h3>나의 운명을 개선할수있는 장소</h3><p>지금의 보완 주제인 <strong>'+ELK[p.support]+'('+EL[p.support]+') · '+p.fill.theme+'</strong>에 맞춰 고른 곳이에요.</p><div class="feng-grid">'+matches.map(fengPlaceCard).join('')+'</div><p class="r-note">풍수의 오행 상징을 응용해 지형·경관과 실천 주제를 연결한 자체 추천이에요. 현장 풍수 감정이나 운명 개선 효과가 확인된 장소라는 뜻은 아니에요. 전국 목록이며 현재 위치나 출생지로 거리순을 매기지 않아요. 방문 전 안내 링크에서 탐방·관람 정보를 확인해 주세요.</p><details class="r-detail"><summary>추천 장소 목록 10곳 둘러보기</summary>'+ELK.map((n,e)=>'<h4>'+n+'('+EL[e]+') · '+ACTION_ELEMENTS[e].theme+'</h4><div class="feng-grid">'+FENG_PLACES.filter(place=>place.e===e).map(fengPlaceCard).join('')+'</div>').join('')+'</details>';
+}
+
 function actionProfile(ch){
  const dominant=ch.cnt.indexOf(Math.max(...ch.cnt));
  const candidates=[...new Set(ch.goodG.map(g=>(SE[ch.stems.d]+g)%5))];
@@ -1728,7 +1748,7 @@ function actionGuideHTML(ch){const p=actionProfile(ch),a=p.strong,b=p.fill;
  return '<p class="r-lead">타고난 결을 알고, 오늘의 작은 선택을 바꿔 보세요.</p>'+reportCards([
  ["01 · 강점 살리기",a.gift,a.boost],
  ["02 · 과한 성향 가라앉히기",a.shadow,a.calm],
- ["03 · 균형 채우기",b.balance,b.task+"."]])+ '<h3>나의 운명을 개선할수있는 장소</h3><div class="r-prose"><p><strong>'+b.space+'</strong>에서 '+b.ritual+' 장소는 오행의 상징을 떠올리는 배경이에요. 특정 장소가 운명을 바꾼다는 뜻은 아니에요.</p></div>'+
+ ["03 · 균형 채우기",b.balance,b.task+"."]])+ fengPlacesHTML(ch)+
  '<details class="r-detail"><summary>왜 나에게 이 실천을 추천하나요?</summary><p class="r-note">내 차트에서 가장 많은 '+ELK[p.dominant]+'('+EL[p.dominant]+') '+ch.cnt[p.dominant]+'개의 주제인 '+a.theme+'을 강점과 주의점으로 풀었어요. '+(ch.strong?'신강':'신약')+'에 따른 기존 보완 그룹 중 '+ELK[p.support]+'('+EL[p.support]+') '+ch.cnt[p.support]+'개를 균형 주제로 골랐어요. 개수가 같으면 목·화·토·금·수 순서로 선택해요. 정밀한 용신 판정은 아니며, 행동·공간 추천은 이 사이트가 만든 상징적 해석이에요.'+(ch.inp.notime?' 출생 시각이 없어 시주를 뺀 차트 기준이에요.':'')+'</p></details>'+
  '';
 }
@@ -1862,6 +1882,7 @@ fillDays();showPlace();syncSel();
 try{localStorage.removeItem("fate-input")}catch(_){}
 $("askbox").open=true;document.body.classList.add("fresh");$("whoSum").innerHTML="<span>태어난 순간을 입력해 주세요</span>";
 </script>
+
 
 
 
