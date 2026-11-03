@@ -1,6 +1,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>운명 네트워크</title>
+<meta name="description" content="사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 한 번에 계산해 읽는 나의 운명">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="오라클 네트워크">
+<meta property="og:title" content="오라클 네트워크 - 가장 정확한 운명 해설서">
+<meta property="og:description" content="사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 한 번에 계산해 읽는 나의 운명">
+<meta property="og:url" content="https://stvzn123-ctrl.github.io/oracle-network/">
+<meta property="og:image" content="https://stvzn123-ctrl.github.io/oracle-network/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="오라클 네트워크 - 가장 정확한 운명 해설서">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="오라클 네트워크 - 가장 정확한 운명 해설서">
+<meta name="twitter:description" content="사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 한 번에 계산해 읽는 나의 운명">
+<meta name="twitter:image" content="https://stvzn123-ctrl.github.io/oracle-network/og.jpg">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Nanum+Myeongjo:wght@400;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -355,6 +369,13 @@ details.panel>summary .chev{margin-left:auto;color:var(--emerald)}
 .share-dialog .share-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .share-dialog button:focus-visible,.share-actions button:focus-visible{outline:2px solid var(--emerald);outline-offset:3px}
 #share-status{min-height:1.7em;margin-bottom:0}
+.share-sns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:16px 0 12px}
+.share-dialog .share-sns button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;font-size:13px;color:var(--fg);border-radius:12px}
+.share-sns i{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;font-style:normal;font-weight:800;font-size:17px}
+.sns-kakao i{background:var(--kakao-bg);color:var(--kakao-fg)}
+.sns-insta i{background:linear-gradient(45deg,#f9a03f,#e1306c 55%,#833ab4);color:#fff}
+.sns-threads i,.sns-x i{background:#f5f5f5;color:#111}
+.share-dialog textarea{min-height:96px}
 
 /* Network identity and graph sharing gate */
 .hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -889,6 +910,24 @@ body:not(.fresh) h1{font-size:clamp(24px,4.4vw,32px);margin:10px 0 4px}
 .share-actions button,.share-dialog button{min-height:44px}
 @media(max-width:620px){.f input,.f select,.psel select,.psearch input,.tz input{font-size:16px}}
 :root{--kakao-bg:#fee500;--kakao-fg:#191919}
+.hero-top .share-actions{gap:8px}
+.hero-top .acct-login{background:var(--kakao-bg);color:var(--kakao-fg);border-color:var(--kakao-bg);font-size:13px;font-weight:600;padding:7px 12px;min-height:36px}
+.acct{position:relative}
+.acct summary{list-style:none;cursor:pointer;font-size:13px;border:1px solid var(--line2);border-radius:10px;padding:8px 12px;min-height:36px;color:var(--fg);background:var(--field)}
+.acct summary::-webkit-details-marker{display:none}.acct summary::after{content:" ⌄";color:var(--muted)}
+.acct-pop{position:absolute;right:0;top:calc(100% + 6px);z-index:40;width:200px;display:grid;gap:6px;padding:10px;border:1px solid var(--line2);border-radius:12px;background:var(--bg);box-shadow:0 12px 30px rgba(0,0,0,.45)}
+.acct-pop button{width:100%;text-align:left;font-size:14px;padding:9px 12px;min-height:40px;color:var(--fg)}
+.acct-pop button:disabled{opacity:.45;cursor:default}
+.save-opt{flex:1 1 260px;min-width:0;font-size:13px;color:var(--muted);line-height:1.6}
+.save-guest{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.kakao-mini{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--kakao-bg);border-radius:8px;padding:7px 12px;min-height:36px;background:var(--kakao-bg);color:var(--kakao-fg)}
+.go .save-opt button.kakao-mini{font-size:13px;font-weight:600;padding:7px 12px;min-height:36px;background:var(--kakao-bg);color:var(--kakao-fg);box-shadow:none;border-radius:8px}
+.go .save-opt .account-privacy summary{font-size:12px}
+.hero-top .share-actions{margin-left:auto}
+.save-chk{display:flex;align-items:flex-start;gap:8px;cursor:pointer}.save-chk input{flex:none;margin-top:4px;width:18px;height:18px;accent-color:var(--emerald)}
+.save-chk b{display:block;color:var(--fg);font-size:14px}
+.save-opt .account-note{margin:6px 0 0}.save-opt .account-privacy{margin:4px 0 0;font-size:12px}
+.save-opt .account-privacy summary{min-height:32px;padding-block:6px}
 .account-box{margin:26px 0 18px;padding:18px;border:1px solid var(--line2);border-radius:14px;background:var(--panel);max-width:760px}
 .account-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .account-box button,#profileDeleteDialog button{min-height:44px;padding:10px 14px;font:inherit;border:1px solid var(--line2);border-radius:8px;background:var(--field);color:var(--fg);cursor:pointer}
@@ -909,21 +948,11 @@ body:not(.fresh) h1{font-size:clamp(24px,4.4vw,32px);margin:10px 0 4px}
 <header class="hero">
   <div class="sigil" aria-hidden="true"><svg id="sigil" viewBox="0 0 500 500"></svg></div>
   <div class="hero-in">
-    <div class="hero-top"><div class="eyebrow">The Oracle Network</div><div class="share-actions"><button type="button" id="share-open" aria-label="내 운명 결과 공유하기">공유하기 ↗</button></div></div>
+    <div class="hero-top"><div class="eyebrow">The Oracle Network</div><div class="share-actions"><button type="button" id="accountLogin" class="kakao-login acct-login">카카오 로그인</button><details class="acct" id="accountMember" hidden><summary id="accountName">내 정보</summary><div class="acct-pop"><button type="button" id="profileLoad">내 정보 불러오기</button><button type="button" id="profileSave">지금 입력 저장</button><button type="button" id="profileDelete">저장 정보 삭제</button><button type="button" id="accountLogout">로그아웃</button></div></details><button type="button" id="share-open" aria-label="내 운명 결과 공유하기">공유하기 ↗</button></div></div>
     <h1><span id="whoName">당신의</span><br><em>운명 네트워크</em></h1>
     <p class="lede">사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 계산하여,<br>모든 점술이 가리키는 당신의 운명을 알려드립니다.</p>
 
-    <section class="account-box" aria-label="로그인과 내 정보">
-      <div class="account-heading"><strong>내 정보로 간편하게</strong><button type="button" id="accountLogin" class="kakao-login">카카오로 로그인</button></div>
-      <p class="account-note">한 번 저장하면 다음 방문부터 출생 정보를 다시 입력하지 않아도 돼요. 로그인 없이도 운명 확인은 가능해요.</p>
-      <div id="accountMember" hidden>
-        <p id="accountName"></p>
-        <div class="account-buttons"><button type="button" id="profileLoad">내 정보 불러오기</button><button type="button" id="profileSave">내 정보 저장</button><button type="button" id="profileDelete">저장 정보 삭제</button><button type="button" id="accountLogout">로그아웃</button></div>
-        <label class="account-consent"><input type="checkbox" id="profileConsent"> 이름·영문 이름·성별·생년월일(양력/음력·윤달)·출생 시각·출생지를 내 정보 자동 입력에 사용하도록 저장하는 데 동의합니다. 저장 정보는 삭제할 때까지 보관하며, 동의하지 않아도 저장 없이 이용할 수 있어요.</label>
-      </div>
-      <p id="accountStatus" class="account-note" role="status" aria-live="polite"></p>
-      <details class="account-privacy"><summary>로그인·정보 저장 안내</summary><p>운영: 트리웨이브 · 서비스: 오라클 네트워크. 카카오에서는 회원 구분용 식별값과 동의한 닉네임만 받아요. 이메일·전화번호·프로필 사진·현재 거주지는 요청하지 않아요. 입력한 출생 정보는 ‘내 정보 저장’을 누를 때 Cloudflare 서버에 저장하고, 다음 로그인 시 입력창에 불러와요. 수정만으로 저장값이 바뀌지 않아요. ‘저장 정보 삭제’를 누르면 저장한 출생 정보를 삭제할 수 있어요. 로그인은 이 브라우저에서 최대 7일 유지되며 공용 기기에서는 로그아웃해 주세요.</p></details>
-    </section>
+
     <dialog id="profileDeleteDialog" aria-labelledby="profileDeleteTitle"><h2 id="profileDeleteTitle">저장한 출생 정보를 삭제할까요?</h2><p>서버에 저장된 내 출생 정보가 삭제됩니다. 다시 저장하기 전까지 자동으로 불러올 수 없어요.</p><div class="account-buttons"><button type="button" id="profileDeleteCancel">취소</button><button type="button" id="profileDeleteConfirm">삭제하기</button></div></dialog>
 
     <details class="askbox" id="askbox">
@@ -946,7 +975,14 @@ body:not(.fresh) h1{font-size:clamp(24px,4.4vw,32px);margin:10px 0 4px}
           <div class="mapwrap"><svg id="map" role="img" aria-label="출생지 선택 지도"></svg><div class="maptip" id="mapTip" hidden></div></div>
           <div class="mapfoot"><div class="quick" id="quick"></div><label class="tz" for="in-tz">UTC<input id="in-tz" type="number" step="0.25" min="-12" max="14" value="9"></label><button type="button" class="done" id="mapDone">완료</button></div>
         </div></div></div>
-      <div class="go"><button type="submit">나의 운명 확인하기</button><small>운명 계산은 이 기기에서 진행해요. 로그인 후 ‘내 정보 저장’을 눌렀을 때만 출생 정보를 서버에 저장해요.</small><span id="err" role="alert"></span></div>
+      <div class="go"><button type="submit">나의 운명 확인하기</button>
+        <div class="save-opt">
+          <div class="save-guest" id="saveGuest"><span>로그인하지 않으면 입력한 정보는 저장되지 않아요.</span><button type="button" id="saveLogin" class="kakao-login kakao-mini">카카오로 로그인하고 저장하기</button></div>
+          <label class="save-chk" id="saveMember" hidden><input type="checkbox" id="profileConsent"><span><b>카카오 계정에 자동 저장</b>운명을 확인할 때 이름·영문 이름·성별·생년월일·시각·출생지를 저장하고, 다음 방문 때 자동으로 채워요. 저장 정보는 언제든 삭제할 수 있어요.</span></label>
+          <p id="accountStatus" class="account-note" role="status" aria-live="polite"></p>
+          <details class="account-privacy"><summary>로그인·정보 저장 안내</summary><p>운영: 트리웨이브 · 서비스: 오라클 네트워크. 카카오에서는 회원 구분용 식별값과 동의한 닉네임만 받아요. 이메일·전화번호·프로필 사진·현재 거주지는 요청하지 않아요. 입력한 출생 정보는 ‘카카오 계정에 자동 저장’을 켜고 운명을 확인할 때 Cloudflare 서버에 저장하고, 다음 로그인 시 입력창에 불러와요. ‘저장 정보 삭제’를 누르면 저장한 출생 정보를 삭제할 수 있어요. 로그인은 이 브라우저에서 최대 7일 유지되며 공용 기기에서는 로그아웃해 주세요.</p></details>
+        </div>
+        <small>운명 계산은 이 기기에서 진행해요.</small><span id="err" role="alert"></span></div>
     </form>
     </details>
 
@@ -956,6 +992,12 @@ body:not(.fresh) h1{font-size:clamp(24px,4.4vw,32px);margin:10px 0 4px}
 <dialog class="share-dialog" id="share-dialog" aria-labelledby="share-title">
   <h2 id="share-title">내 운명 결과 공유</h2>
   <p id="share-lead">짧은 사이트 소개와 링크를 공유해요. 개인 정보나 개인 결과는 포함되지 않아요.</p>
+  <div class="share-sns" id="share-sns" role="group" aria-label="공유할 곳">
+    <button type="button" data-sns="kakao" class="sns-kakao"><i aria-hidden="true">K</i>카카오톡</button>
+    <button type="button" data-sns="insta" class="sns-insta"><i aria-hidden="true">◎</i>인스타그램</button>
+    <button type="button" data-sns="threads" class="sns-threads"><i aria-hidden="true">@</i>스레드</button>
+    <button type="button" data-sns="x" class="sns-x"><i aria-hidden="true">𝕏</i>X</button>
+  </div>
   <textarea id="share-preview" aria-label="공유할 결과" readonly></textarea>
   <div class="share-buttons">
     <button type="button" id="share-native" hidden>공유하기</button>
@@ -2365,9 +2407,8 @@ function renderHook(){const h=$("hook");if(h&&CH)h.innerHTML=reportHook(CH)}
 
 /* Share a fixed introduction and site URL only; never include birth input or personal results. */
 const SHARE_URL="https://stvzn123-ctrl.github.io/oracle-network/";
-function resultShareText(){
-  return "태어난 순간에 새겨진 당신의 운명.\n사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 종합해 알려드립니다.\n"+SHARE_URL;
-}
+const SHARE_TITLE="오라클 네트워크 - 가장 정확한 운명 해설서";
+function resultShareText(){return SHARE_TITLE+"\n"+SHARE_URL}
 
 /* 초대 링크 잠금: INVITE_API가 있으면 친구가 내 링크(?r=코드)로 들어와야 열린다. 비어 있으면 예전 방식(공유 완료·복사 후 열림). */
 const INVITE_API="https://oracle-api.stvzn123.workers.dev";
@@ -2404,9 +2445,9 @@ async function openShare(){
   $("share-native").hidden=typeof navigator.share!=="function";
   if(INVITE_API&&!graphUnlocked){
     $("share-lead").textContent="나만의 초대 링크예요. 카카오톡 등으로 친구에게 보내고, 친구가 이 링크로 들어오면 개선법과 운명 리포트가 열려요. 개인 정보나 결과는 들어가지 않아요.";
-    $("share-preview").value="링크를 만드는 중…";$("share-copy").textContent="링크 복사";$("share-dialog").showModal();
+    $("share-preview").value="링크를 만드는 중…";$("share-sns").inert=true;$("share-copy").textContent="링크 복사";$("share-dialog").showModal();
     try{await ensureInvite();$("share-preview").value=resultShareText().replace(SHARE_URL,inviteUrl());startPoll();checkInvite()}
-    catch(_){$("share-preview").value=resultShareText();$("share-status").textContent="초대 링크를 만들지 못했어요. 잠시 뒤 다시 시도해 주세요."}
+    catch(_){$("share-preview").value=resultShareText();$("share-status").textContent="초대 링크를 만들지 못했어요. 잠시 뒤 다시 시도해 주세요."}finally{$("share-sns").inert=false}
     return}
   $("share-lead").textContent="짧은 사이트 소개와 링크를 공유해요. 개인 정보나 개인 결과는 포함되지 않아요.";
   $("share-copy").textContent="결과 복사";
@@ -2414,6 +2455,22 @@ async function openShare(){
 }
 const inviteMode=()=>INVITE_API&&!graphUnlocked&&invite&&$("share-preview").value.includes("?r=");
 const SENT_MSG="보냈다면 이제 친구가 링크를 열기를 기다려 주세요. 열리면 이 화면이 자동으로 바뀌어요.";
+/* SNS 공유: 카카오톡(JS 키가 있으면 카카오 SDK, 없으면 시스템 공유·복사), 인스타그램(웹 공유 주소가 없어 시스템 공유·복사), 스레드·X(웹 작성 창) */
+const KAKAO_JS_KEY="";
+const shareLink=()=>{const m=$("share-preview").value.match(/https?:\/\/\S+/);return m?m[0]:SHARE_URL};
+function afterShare(msg){if(inviteMode()){$("share-status").textContent=(msg?msg+" ":"")+SENT_MSG;return}if(INVITE_API&&!graphUnlocked){if(msg)$("share-status").textContent=msg;return}unlockGraphs()}
+async function copyFor(app){const area=$("share-preview");
+  try{if(!navigator.clipboard?.writeText)throw 0;await navigator.clipboard.writeText(area.value);afterShare(`링크를 복사했어요. ${app}에 붙여 넣어 보내 주세요.`)}
+  catch(_){area.focus();area.select();$("share-status").textContent=`글을 길게 눌러 복사한 뒤 ${app}에 붙여 넣어 주세요.`}}
+async function systemShare(app){if(typeof navigator.share==="function"){try{await navigator.share({title:SHARE_TITLE,text:SHARE_TITLE,url:shareLink()});afterShare();return}catch(e){if(e.name==="AbortError"){$("share-status").textContent="공유를 취소했어요.";return}}}copyFor(app)}
+let kakaoReady=null;
+function loadKakao(){if(kakaoReady)return kakaoReady;kakaoReady=new Promise((ok,no)=>{const sc=document.createElement("script");sc.src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js";sc.crossOrigin="anonymous";sc.onload=()=>{try{if(!Kakao.isInitialized())Kakao.init(KAKAO_JS_KEY);ok()}catch(e){no(e)}};sc.onerror=no;document.head.appendChild(sc)}).catch(e=>{kakaoReady=null;throw e});return kakaoReady}
+async function shareTo(k){const url=shareLink(),text=SHARE_TITLE;
+  if(k==="kakao"){if(KAKAO_JS_KEY){try{await loadKakao();Kakao.Share.sendDefault({objectType:"feed",content:{title:"오라클 네트워크",description:"가장 정확한 운명 해설서",imageUrl:SHARE_URL+"og.jpg",imageWidth:1200,imageHeight:630,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:"나의 운명 확인하기",link:{mobileWebUrl:url,webUrl:url}}]});afterShare();return}catch(_){}}return systemShare("카카오톡")}
+  if(k==="insta")return systemShare("인스타그램 DM이나 스토리");
+  const href=k==="threads"?"https://www.threads.net/intent/post?text="+encodeURIComponent(text+"\n"+url):"https://x.com/intent/tweet?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(url);
+  window.open(href,"_blank","noopener,noreferrer");afterShare()}
+document.querySelectorAll("#share-sns [data-sns]").forEach(b=>b.addEventListener("click",()=>shareTo(b.dataset.sns)));
 $("share-open").addEventListener("click",openShare);
 $("gate-share").addEventListener("click",openShare);
 $("share-close").addEventListener("click",()=>$("share-dialog").close());
@@ -2463,7 +2520,8 @@ let accountToken=lsGet('oracle-session')||'',accountUser=null,accountBusy=false,
 const accountStatus=text=>{$('accountStatus').textContent=text};
 function accountPaint(){
   $('accountLogin').hidden=!!accountUser;$('accountMember').hidden=!accountUser;
-  $('accountName').textContent=accountUser?accountUser.nickname+'님으로 로그인했어요':'';
+  $('accountName').textContent=accountUser?(accountUser.nickname||'내 정보')+'님':'내 정보';
+  $('saveGuest').hidden=!!accountUser;$('saveMember').hidden=!accountUser;
   $('profileLoad').disabled=!accountUser?.profile||accountBusy;$('profileDelete').disabled=!accountUser?.profile||accountBusy;
   $('profileSave').disabled=accountBusy;$('accountLogout').disabled=accountBusy;
 }
@@ -2512,9 +2570,21 @@ async function accountInit(){
     if(code){const verifier=sessionStorage.getItem('oracle-verifier');sessionStorage.removeItem('oracle-verifier');if(!verifier)throw new Error('로그인을 시작한 탭에서 다시 로그인해 주세요.');const data=await accountAPI('/auth/exchange',{code,verifier});accountToken=data.token;lsSet('oracle-session',accountToken)}
     if(!accountToken){const config=await accountAPI('/auth/config');if(!config.enabled){$('accountLogin').disabled=true;accountStatus('카카오 로그인 연결을 준비하고 있어요.');}return}
     const user=await accountAPI('/me');accountUser=user;
-    if(user.profile&&formVersion===startVersion){profileFill(user.profile);accountStatus('저장된 내 정보를 자동으로 채웠어요. 수정 후 저장할 수도 있어요.')}else accountStatus(user.profile?'저장한 정보가 있어요. ‘내 정보 불러오기’로 불러올 수 있어요.':'출생 정보를 입력하고 ‘내 정보 저장’을 눌러 주세요.');
-  }catch(e){accountStatus(e.message||'내 정보를 불러오지 못했어요.')}finally{accountPaint()}
+    let pending=null,intent=false;try{pending=JSON.parse(sessionStorage.getItem('oracle-pending')||'null');intent=sessionStorage.getItem('oracle-save-intent')==='1';sessionStorage.removeItem('oracle-pending');sessionStorage.removeItem('oracle-save-intent')}catch(_){}
+    $('profileConsent').checked=intent||!!user.profile;
+    if(pending&&formVersion===startVersion){profileFill(pending);accountStatus('로그인했어요. ‘나의 운명 확인하기’를 누르면 입력한 정보가 카카오 계정에 저장돼요.')}
+    else if(user.profile&&formVersion===startVersion){profileFill(user.profile);accountStatus('저장된 내 정보를 자동으로 채웠어요.')}
+    else accountStatus(intent?'로그인했어요. 정보를 입력하고 ‘나의 운명 확인하기’를 누르면 저장돼요.':user.profile?'저장한 정보가 있어요. 오른쪽 위 내 정보에서 불러올 수 있어요.':'');
+  }catch(e){accountStatus(e instanceof TypeError?'로그인 서버에 연결하지 못했어요. 로그인 없이도 이용할 수 있어요.':(e.message||'내 정보를 불러오지 못했어요.'))}finally{accountPaint()}
 }
+/* 카카오로 로그인하고 저장하기: 로그인으로 이동하는 동안 입력값을 이 탭에만 잠시 보관했다가 돌아오면 다시 채운다. */
+$('saveLogin').addEventListener('click',()=>{try{const v=readForm();if(!v.err&&!checkForm())sessionStorage.setItem('oracle-pending',JSON.stringify(v));sessionStorage.setItem('oracle-save-intent','1')}catch(_){}$('accountLogin').click()});
+$('ask').addEventListener('submit',async()=>{
+  if(!accountUser||!$('profileConsent').checked||accountBusy||checkForm())return;const v=readForm();if(v.err)return;
+  accountBusy=true;accountPaint();
+  try{await accountAPI('/profile',{profile:v,consent:true});accountUser.profile=v;accountStatus('카카오 계정에 내 정보를 저장했어요. 다음 방문 때 자동으로 채워져요.')}catch(e){accountStatus(e.message)}finally{accountBusy=false;accountPaint()}
+});
+document.addEventListener('click',e=>{const m=$('accountMember');if(m.open&&!m.contains(e.target))m.open=false});
 accountPaint();accountInit();
 
 </script>
