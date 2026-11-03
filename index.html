@@ -2254,7 +2254,7 @@ function resultShareText(){
 }
 
 /* 초대 링크 잠금: INVITE_API가 있으면 친구가 내 링크(?r=코드)로 들어와야 열린다. 비어 있으면 예전 방식(공유 완료·복사 후 열림). */
-const INVITE_API="";
+const INVITE_API="https://oracle-invite.stvzn123.workers.dev";
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
 function deviceId(){let d=lsGet("fate-dev");if(!d||!/^[a-z0-9-]{4,64}$/i.test(d)){d=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));lsSet("fate-dev",d)}return d}
 let invite=null;try{invite=JSON.parse(lsGet("fate-invite")||"null")}catch(_){}
