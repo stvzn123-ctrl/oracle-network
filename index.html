@@ -940,7 +940,7 @@ body:not(.fresh) h1{font-size:clamp(24px,4.4vw,32px);margin:10px 0 4px}
           <div class="mapwrap"><svg id="map" role="img" aria-label="출생지 선택 지도"></svg><div class="maptip" id="mapTip" hidden></div></div>
           <div class="mapfoot"><div class="quick" id="quick"></div><label class="tz" for="in-tz">UTC<input id="in-tz" type="number" step="0.25" min="-12" max="14" value="9"></label><button type="button" class="done" id="mapDone">완료</button></div>
         </div></div></div>
-      <div class="go"><button type="submit">나의 운명 확인하기</button><small>입력값은 저장하지 않고, 어디로도 보내지 않습니다.</small><span id="err" role="alert"></span></div>
+      <div class="go"><button type="submit">나의 운명 확인하기</button><small>운명 계산은 이 기기에서 진행해요. 로그인 후 ‘내 정보 저장’을 눌렀을 때만 출생 정보를 서버에 저장해요.</small><span id="err" role="alert"></span></div>
     </form>
     </details>
 
@@ -2384,6 +2384,7 @@ function profileFill(v){
   const p=structuredClone(v);if(p.place?.ki!=null&&p.place.ki>=MAPS.kor.length)delete p.place.ki;if(p.place?.wi!=null&&p.place.wi>=MAPS.world.length)delete p.place.wi;if(p.place?.ci!=null&&p.place.ci>=PLACES.length)delete p.place.ci;
   fillForm(p);formVersion++;$('askbox').open=true;$('err').textContent='';
 }
+$('ask').addEventListener('pointerdown',()=>{formVersion++});
 $('ask').addEventListener('input',()=>{formVersion++});$('ask').addEventListener('change',()=>{formVersion++});
 $('accountLogin').addEventListener('click',async()=>{
   if(accountBusy)return;accountBusy=true;$('accountLogin').disabled=true;accountStatus('카카오 로그인으로 이동하고 있어요…');
