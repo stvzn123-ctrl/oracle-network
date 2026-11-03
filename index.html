@@ -2456,7 +2456,7 @@ async function openShare(){
 const inviteMode=()=>INVITE_API&&!graphUnlocked&&invite&&$("share-preview").value.includes("?r=");
 const SENT_MSG="보냈다면 이제 친구가 링크를 열기를 기다려 주세요. 열리면 이 화면이 자동으로 바뀌어요.";
 /* SNS 공유: 카카오톡(JS 키가 있으면 카카오 SDK, 없으면 시스템 공유·복사), 인스타그램(웹 공유 주소가 없어 시스템 공유·복사), 스레드·X(웹 작성 창) */
-const KAKAO_JS_KEY="";
+const KAKAO_JS_KEY="c453f5e58337280c43c42a35481c5337";
 const shareLink=()=>{const m=$("share-preview").value.match(/https?:\/\/\S+/);return m?m[0]:SHARE_URL};
 function afterShare(msg){if(inviteMode()){$("share-status").textContent=(msg?msg+" ":"")+SENT_MSG;return}if(INVITE_API&&!graphUnlocked){if(msg)$("share-status").textContent=msg;return}unlockGraphs()}
 async function copyFor(app){const area=$("share-preview");
@@ -2464,7 +2464,7 @@ async function copyFor(app){const area=$("share-preview");
   catch(_){area.focus();area.select();$("share-status").textContent=`글을 길게 눌러 복사한 뒤 ${app}에 붙여 넣어 주세요.`}}
 async function systemShare(app){if(typeof navigator.share==="function"){try{await navigator.share({title:SHARE_TITLE,text:SHARE_TITLE,url:shareLink()});afterShare();return}catch(e){if(e.name==="AbortError"){$("share-status").textContent="공유를 취소했어요.";return}}}copyFor(app)}
 let kakaoReady=null;
-function loadKakao(){if(kakaoReady)return kakaoReady;kakaoReady=new Promise((ok,no)=>{const sc=document.createElement("script");sc.src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js";sc.crossOrigin="anonymous";sc.onload=()=>{try{if(!Kakao.isInitialized())Kakao.init(KAKAO_JS_KEY);ok()}catch(e){no(e)}};sc.onerror=no;document.head.appendChild(sc)}).catch(e=>{kakaoReady=null;throw e});return kakaoReady}
+function loadKakao(){if(kakaoReady)return kakaoReady;kakaoReady=new Promise((ok,no)=>{const sc=document.createElement("script");sc.src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.4/kakao.min.js";sc.crossOrigin="anonymous";sc.onload=()=>{try{if(!Kakao.isInitialized())Kakao.init(KAKAO_JS_KEY);ok()}catch(e){no(e)}};sc.onerror=no;document.head.appendChild(sc)}).catch(e=>{kakaoReady=null;throw e});return kakaoReady}
 async function shareTo(k){const url=shareLink(),text=SHARE_TITLE;
   if(k==="kakao"){if(KAKAO_JS_KEY){try{await loadKakao();Kakao.Share.sendDefault({objectType:"feed",content:{title:"오라클 네트워크",description:"가장 정확한 운명 해설서",imageUrl:SHARE_URL+"og.jpg",imageWidth:1200,imageHeight:630,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:"나의 운명 확인하기",link:{mobileWebUrl:url,webUrl:url}}]});afterShare();return}catch(_){}}return systemShare("카카오톡")}
   if(k==="insta")return systemShare("인스타그램 DM이나 스토리");

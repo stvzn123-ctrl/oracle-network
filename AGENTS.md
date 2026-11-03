@@ -199,6 +199,7 @@
 
 ## SNS 공유·미리보기 이미지·로그인 배치 (2026-11-03)
 - 공유 문구는 '오라클 네트워크 - 가장 정확한 운명 해설서' + 링크(`SHARE_TITLE`, 사용자 요청으로 기존 두 줄 문구 대체). `og.jpg`(1200×630, 배경 그림 + 제목, 레포 루트)와 og/twitter 메타 태그. 단일 HTML 원칙의 예외(크롤러가 data URI를 못 읽음).
-- 공유 창 `#share-sns` 4개: 카카오톡(`KAKAO_JS_KEY`가 있으면 카카오 JS SDK 2.7.2를 눌렀을 때만 불러 `Kakao.Share.sendDefault` 피드, 없으면 시스템 공유→복사), 인스타그램(웹 공유 주소가 없어 시스템 공유→복사), 스레드(`threads.net/intent/post`), X(`x.com/intent/tweet`). 초대 링크가 준비되기 전에는 버튼을 inert. 잠금 해제 조건은 그대로(초대 모드는 친구가 열어야 열림).
+- 공유 창 `#share-sns` 4개: 카카오톡(`KAKAO_JS_KEY`가 있으면 카카오 JS SDK 2.8.4를 눌렀을 때만 불러 `Kakao.Share.sendDefault` 피드, 없으면 시스템 공유→복사), 인스타그램(웹 공유 주소가 없어 시스템 공유→복사), 스레드(`threads.net/intent/post`), X(`x.com/intent/tweet`). 초대 링크가 준비되기 전에는 버튼을 inert. 잠금 해제 조건은 그대로(초대 모드는 친구가 열어야 열림).
 - 로그인은 헤더 오른쪽 작은 버튼(`#accountLogin`), 로그인 후 '닉네임님 ⌄' 메뉴(`#accountMember` details: 불러오기·지금 입력 저장·삭제·로그아웃). 예전 `.account-box`는 없앴다.
 - '나의 운명 확인하기' 옆 `.save-opt`: 비로그인 = '로그인하지 않으면 입력한 정보는 저장되지 않아요.' + '카카오로 로그인하고 저장하기'(입력값을 sessionStorage `oracle-pending`에 잠시 두고 로그인 후 다시 채우며 자동 저장을 켬). 로그인 = '카카오 계정에 자동 저장' 체크(동의 문구 포함, 저장 정보가 있으면 기본 체크). 체크 상태로 운명을 확인하면 `/profile` 저장(사용자 요청으로 '확인만으로 저장하지 않음' 규칙을 바꿈, 동의 체크는 유지).
+- 카카오 JavaScript 키는 index.html `KAKAO_JS_KEY`(공개용 키). 카카오 콘솔 [앱] > [플랫폼 키] > [JavaScript 키] > [JavaScript SDK 도메인]에 `https://stvzn123-ctrl.github.io`가 있어야 동작하며, 실패하면 시스템 공유·복사로 넘어간다.
