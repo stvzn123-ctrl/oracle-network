@@ -1,8 +1,8 @@
-name = "oracle-invite"
+name = "oracle-api"
 main = "worker.js"
 compatibility_date = "2026-10-01"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "oracle-invite"
-database_id = "26d1fb6b-b7c9-478c-a6b4-bc52a5138575"
+database_name = "oracle-db"
+database_id = "e6922581-dea5-4242-9987-53d1e9a65cbc"
