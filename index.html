@@ -1907,7 +1907,10 @@ function fillForm(v){$("in-name").value=v.name||"";$("in-roman").value=v.roman||
 function renderWho(v){const [y,m,d]=v.date.split("-");const dt=v.cal==="l"?`음 ${v.ly}.${String(v.lm).padStart(2,"0")}.${String(v.ld).padStart(2,"0")}${v.leap?"(윤)":""}`:`${y}.${m}.${d}`;
   $("whoSum").innerHTML=[v.name||"이름 미입력",`${dt} ${v.notime?"시각 모름":v.time}`,v.place.name,v.sex==="f"?"여":"남"].map(t=>`<span>${t}</span>`).join("")}
 function run(v,animate){renderWho(v);CH=buildChart(v);compute();selDec=clamp(Math.floor(nowAge()/10),0,DECS-1);if(animate)cast();renderAll()}
-function renderAll(){renderResult();renderActionGuide();drawGraph=true;renderBig();setTimeout(()=>{drawGraph=false},0);renderSigil()}
+/* 관리자 검토용: 이 출생 정보로 확인하면 공유 없이 잠금 영역을 연다. 저장소에 기록하지 않아 이 화면에서만 유지된다. */
+function adminReview(){if(!CH||graphUnlocked)return;const n=String(CH.inp.name||"").replace(/\s/g,"");
+  if(n==="오은석"&&CH.Y===1998&&CH.Mo===11&&CH.D===22){graphUnlocked=true;applyGraphLock();$("unlock-status").textContent="관리자 검토 모드: 공유 없이 전체 결과를 열었어요."}}
+function renderAll(){renderResult();renderActionGuide();drawGraph=true;renderBig();setTimeout(()=>{drawGraph=false},0);renderSigil();adminReview()}
 document.querySelectorAll("#modeTabs button").forEach(b=>b.addEventListener("click",()=>{if(mode===b.dataset.m)return;mode=b.dataset.m;drawGraph=true;cast();renderTrend();renderCats();drawGraph=false}));
 function askName(){const wn=$("whoName");if(!wn.classList.contains("noname"))return;$("askbox").open=true;$("askbox").scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"});setTimeout(()=>$("in-name").focus({preventScroll:true}),reduceM?0:350)}
 $("whoName").addEventListener("click",askName);$("whoName").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();askName()}});
