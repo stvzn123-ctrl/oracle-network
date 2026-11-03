@@ -173,3 +173,5 @@
 - 메인에서 뺀 것: 타고난 운명 상자(4축 표·선물·vline), `#hook`, 운명 풀이 요약, 보기 전환·평생 지도·분야 카드, 분석 구조·계산 방식 패널. 예전 렌더 함수(renderVerdict, renderTrend, renderCats, renderReading 등)는 코드에 남아 있으나 호출되지 않는다.
 - 리포트 8장(`renderReport`): 1 종합(+운명 성향 표 `fateTraitsHTML`, 타고난 기질 `natalProse[0]`, 개선법 근거) 2 분야별 흐름(`reportFields`: `lifeSummary`, 10년 단위 표, 분야별 `catReading` 접기) 3 사주 4 서양(+출생 원형도) 5 인도(+라시 차트) 6 수비학(+숫자 표) 7 마야력(+촐킨표) 8 점수 계산서(`renderNet`)와 읽는 법(`#rulesTpl`).
 - 가독성: 본문은 고딕(IBM Plex Sans KR), 명조는 결론 문장·짧은 제목에만. 배경 그림 불투명도 PC .18 / 모바일 .09, 연결망 .16. 입력·버튼 44px 이상, 모바일 입력 16px. 400px에서 가로 스크롤 없음.
+
+- 2026-11-03 추가: 결론 한 문장(`#resLead`)과 칩(`#resMeta`) 자리를 `#resIntro`(`resultIntroHTML`)로 바꿨다. 'OO님의 운명' 아래에 `traitDescription` 소개 → 키워드 3개(`reportTags`·`RTAG`) → 운명 성향 표(`fateTraitsHTML`)와 안내 → 다섯 점술이 함께 짚은 것 → 타고난 기질과 선물(`natalProse` 0~2) → `reportHook` 순서. 아래 핵심 세 가지와 일부 내용이 겹친다. `lifeTraj()`는 더 이상 쓰지 않는다.

@@ -793,6 +793,10 @@ body:not(.fresh) h1{font-size:clamp(24px,4.4vw,32px);margin:10px 0 4px}
 .res-eyebrow{font-family:var(--body);font-size:15px;font-weight:600;color:var(--emerald);margin:0 0 12px;letter-spacing:.01em}
 .res-lead{font-family:var(--display);font-weight:800;font-size:var(--fs-lead);line-height:1.42;margin:0;color:var(--fg);text-wrap:balance;max-width:20em}
 .res-lead em{font-style:normal;color:var(--gold)}
+.res-intro .res-lead{font-size:clamp(20px,4.4vw,27px);line-height:1.6;max-width:none}
+.res-h{font-family:var(--body);font-size:18px;font-weight:700;color:var(--fg);margin:36px 0 12px}
+.res-intro .r-kw{margin-top:24px}
+.res-intro .trait-table{max-width:520px}
 .res-meta{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0;padding:0;list-style:none}
 .res-meta li{font-size:13px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;background:var(--field)}
 .hl{list-style:none;margin:0;padding:0;border-top:1px solid var(--line2)}
@@ -920,8 +924,7 @@ body:not(.fresh) h1{font-size:clamp(24px,4.4vw,32px);margin:10px 0 4px}
 <section id="result" class="result" aria-labelledby="resTitle">
   <div class="res-top">
     <h2 class="res-eyebrow" id="resTitle">당신의 운명</h2>
-    <p class="res-lead" id="resLead"></p>
-    <ul class="res-meta" id="resMeta" aria-label="나를 나타내는 기호"></ul>
+    <div class="res-intro" id="resIntro"></div>
   </div>
   <ol class="hl" id="highlights" aria-label="나의 운명 핵심 세 가지"></ol>
   <section class="blk" aria-labelledby="flowTitle">
@@ -1658,12 +1661,21 @@ function lifeTraj(){const dm=LD.map(r=>r.reduce((a,b)=>a+b.mean,0)/4),cD=clamp(M
 function tpShort(e){if(e.src==="사주")return "10년 단위의 큰 흐름이 새로 시작돼요";if(e.src==="인도 점성술")return "인도 점성술로 보는 긴 주기가 바뀌어요";
   if(e.src==="수비학")return "수비학의 9년 주기가 새로 시작돼요";if(e.src==="서양 점성술")return e.t.startsWith("토성")?"토성이 제자리로 돌아와 삶의 기반을 다시 세우는 때예요":"목성이 제자리로 돌아와 새 기회의 주기가 열려요";
   return /올라가요/.test(e.t)?"네 가지 운이 함께 올라가는 구간이 시작돼요":"흐름이 차분해져 다지기 좋은 구간이 시작돼요"}
+function resultIntroHTML(ch){const tags=reportTags(ch);
+  const kw=tags.slice(0,3).map(t=>`<div><b>${RTAG[t.k].kw}</b><span>${RTAG[t.k].s}</span></div>`).join("");
+  const ag=tags.filter(t=>t.n>=2).slice(0,4);
+  const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><span>${J(t.ev.join(", "),"이","가")} ${t.ev.length>1?"모두 같은 이야기를 해요":"이렇게 말해요"}.</span><small>${t.sys.join(" · ")}</small></div></li>`).join("");
+  return `<p class="res-lead">${plain(traitDescription(ch))}</p>
+  <div class="r-kw">${kw}</div>
+  <h3 class="res-h">운명 성향</h3>${fateTraitsHTML(ch)}<p class="r-note">출생 차트의 오행 개수와 태양 별자리로 나눈 재미용 분류예요. 심리검사가 아니며, 점은 강도가 아닌 방향을 나타내요.</p>
+  <h3 class="res-h">다섯 점술이 함께 짚은 것</h3><ul class="r-agree">${agl}</ul>
+  <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${natalProse(ch).slice(0,3).map(p=>`<p>${p}</p>`).join("")}</div>
+  <p class="r-hook">${reportHook(ch)}</p>`}
 function renderResult(){const ch=CH,name=ch.inp.name;
   const wn=$("whoName");wn.textContent=name||"당신의";wn.classList.toggle("noname",!name);
   if(name){wn.removeAttribute("role");wn.removeAttribute("tabindex");wn.removeAttribute("title")}else{wn.setAttribute("role","button");wn.setAttribute("tabindex","0");wn.title="눌러서 이름 입력"}
   $("resTitle").textContent=name?`${name}님의 운명`:"당신의 운명";$("rcName").textContent=(name||"당신")+"님의";
-  $("resLead").innerHTML=`${J(DMA[ST[ch.stems.d]],"을","를")} 닮은 당신은 <em>${lifeTraj()} 운명</em>이에요.`;
-  $("resMeta").innerHTML=[`성향 · ${fateTraits(ch).name}`,`태양 · ${ZOD[sign(ch.sun)]}자리`,`인생 수 · ${ch.lp}`,`마야 · ${MS[ch.msign][1]}의 날`].map(t=>`<li>${t}</li>`).join("");
+  $("resIntro").innerHTML=resultIntroHTML(ch);
   const t=reportTags(ch)[0],b=bestCell(),tp=turningPoints(ch)[0];
   const hl=[["가장 큰 강점",RTAG[t.k].kw,RTAG[t.k].t+".",`다섯 점술 중 ${t.n}개가 같은 이야기를 해요`],
     ["주목할 해",`${b.y}년 ${SHORT[b.ci]}운`,`앞으로 10년 중 가장 높은 ${b.v}점이에요.`,`다섯 점술 중 ${b.n}개가 그해를 밝게 봐요`],
