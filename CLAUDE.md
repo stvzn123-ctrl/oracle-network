@@ -180,3 +180,13 @@
 ## 초대 링크 잠금 (2026-11-03)
 - `INVITE_API`(index.html)가 비어 있으면 예전 방식(공유 완료·복사·수동 확인 후 sessionStorage로 열림). 값이 있으면 초대 링크 방식: 공유 창에서 `/invite`로 내 링크(`SHARE_URL?r=코드`)를 만들고, 다른 사람이 그 링크로 들어와 `/open`이 기록되면 `/status` 5초 폴링(화면 보일 때만)으로 열린다. 열림·초대 정보는 localStorage `fate-unlocked`, `fate-invite`, 기기값 `fate-dev`. 출생 정보는 보내지 않는다. 링크로 들어온 사람의 주소창에서 `r`은 지운다.
 - 서버 코드는 `server/`(worker.js, schema.sql, wrangler.toml, README.md 배포 방법). Cloudflare Worker + D1. 같은 기기값 또는 같은 IP+UA 해시면 본인으로 보고 세지 않는다.
+
+
+## 카카오 로그인과 내 정보 (2026-11-03)
+- 카카오 앱: 오라클 네트워크 / 트리웨이브, ID 1636031. 회원 식별값과 선택 동의 닉네임만 사용한다. 이메일·사진·전화번호·현재 거주지는 수집하지 않는다.
+- 비로그인은 빈 입력창으로 시작한다. 로그인 회원은 `/me`의 저장 출생 정보가 있으면 자동으로 fillForm 한다. 입력 도중 응답이 와도 수정 중인 값을 덮어쓰지 않는다. 결과는 자동 계산하지 않는다.
+- 저장은 동의 체크 + `내 정보 저장` 버튼으로만 수행한다. 운명 확인 및 입력 변경만으로 DB를 덮어쓰지 않는다. 이름·영문 이름·성별·달력/윤달·생년월일·시각/모름·출생지(place 좌표/시간대/선택 인덱스)를 저장한다. `내 정보 불러오기`, `저장 정보 삭제`, `로그아웃` 제공.
+- server/worker.js: `/auth/start` → 카카오 인가 → `/auth/kakao/callback` → 일회용 코드와 브라우저 검증값으로 `/auth/exchange` → 7일 자체 세션. 세션 원문은 localStorage oracle-session, DB에는 SHA-256 해시만 저장. 카카오 토큰은 저장하지 않는다. 로그인 검증값은 sessionStorage oracle-verifier, 사용 뒤 삭제. 일회용 코드는 URL fragment로 돌아오고 즉시 주소창에서 제거한다. GET /me, POST /profile 및 /auth/logout은 세션 필수. 프로필 소유자는 서버의 세션으로만 결정한다.
+- D1 users/sessions/auth_flows/auth_grants 테이블 추가. 기존 invites 유지. 만료 세션·로그인 요청은 로그인 시작 때 정리한다. 프로필 내용은 서버에서 길이/형식/좌표 범위를 검증한다.
+- Cloudflare Secrets: KAKAO_CLIENT_ID, KAKAO_CLIENT_SECRET, KAKAO_ADMIN_KEY. 절대 소스에 키를 넣지 않는다. 연결 해제 웹훅 POST /auth/kakao/unlink는 대표 어드민 키와 app_id를 검증 후 회원·출생 정보·세션을 삭제한다.
+- 기존 생년월일 계산식/점수/공유 잠금 기능은 변경하지 않는다. 현재 거주지는 입력 필드도 저장 항목도 추가하지 않는다.
