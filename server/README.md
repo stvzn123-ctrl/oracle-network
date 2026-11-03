@@ -24,3 +24,10 @@ CLI를 쓴다면 `wrangler d1 create oracle-invite` 후 `wrangler.toml`의 `data
 - 시크릿 창은 같은 IP+브라우저라 세지 않지만, 내 다른 기기(폰↔PC)로 열면 열린다.
 - 같은 와이파이에서 같은 기종·브라우저를 쓰는 친구는 드물게 세지 않을 수 있다.
 - 서버가 응답하지 않으면 잠금이 풀리지 않는다.
+
+## 현재 연결 (2026-11-03)
+- Worker: `https://oracle-invite.stvzn123.workers.dev`
+- D1: `oracle-invite`, 바인딩 이름 `DB`.
+- `index.html`의 `INVITE_API`를 위 주소로 설정했다. 공유 창 완료나 복사만으로 열지 않고, 다른 접속에서 초대 링크가 열렸는지 서버에 확인한다.
+- `/health`는 서버 실행 확인용이다. DB 연결은 `/invite`의 저장과 `/status` 조회 또는 D1 콘솔에서 별도로 확인한다.
+- 이 서버는 초대 기록만 다룬다. 로그인·출생정보 저장·유료 결제·보고서 권한은 아직 포함하지 않는다.
