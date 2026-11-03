@@ -925,7 +925,7 @@ body:not(.fresh) h1{font-size:clamp(24px,4.4vw,32px);margin:10px 0 4px}
 
 <dialog class="share-dialog" id="share-dialog" aria-labelledby="share-title">
   <h2 id="share-title">내 운명 결과 공유</h2>
-  <p>짧은 사이트 소개와 링크를 공유해요. 개인 정보나 개인 결과는 포함되지 않아요.</p>
+  <p id="share-lead">짧은 사이트 소개와 링크를 공유해요. 개인 정보나 개인 결과는 포함되지 않아요.</p>
   <textarea id="share-preview" aria-label="공유할 결과" readonly></textarea>
   <div class="share-buttons">
     <button type="button" id="share-native" hidden>공유하기</button>
@@ -958,7 +958,7 @@ body:not(.fresh) h1{font-size:clamp(24px,4.4vw,32px);margin:10px 0 4px}
         <ul class="rc-toc"><li><b>분야별 해마다 풀이</b><span>금전·애정·직업·건강의 10년과 평생 흐름</span></li><li><b>타고난 성향과 전환점 전체</b><span>운명 성향, 다섯 점술이 함께 짚은 것, 조심할 점</span></li><li><b>추천 장소 지도</b><span>상황별 장소와 전국 장소, 길찾기</span></li><li><b>점술별 분석과 출생 차트</b><span>사주, 별자리 원형도, 라시 차트, 수비학, 마야력</span></li><li><b>계산 근거</b><span>점수를 올리고 내린 이유와 계산 방식</span></li></ul>
         <button type="button" id="reportOpen">운명 리포트 펼치기</button></div></div>
     </div>
-    <div class="graph-gate" id="graph-gate"><div class="gate-card"><span class="eyebrow">Unlock your destiny</span><h3>개선법과 운명 리포트가 궁금하다면</h3><p>친구에게 운명 네트워크를 소개하고<br>나에게 맞는 개선법, 추천 장소, 운명 리포트를 열어 보세요.</p><button type="button" id="gate-share">친구에게 공유하고 전체 결과 보기 ↗</button><small>공유 창 완료 또는 결과 복사 후 열립니다.<br>실제 전송 여부는 확인하지 않아요.</small></div></div>
+    <div class="graph-gate" id="graph-gate"><div class="gate-card"><span class="eyebrow">Unlock your destiny</span><h3>개선법과 운명 리포트가 궁금하다면</h3><p>친구에게 운명 네트워크를 소개하고<br>나에게 맞는 개선법, 추천 장소, 운명 리포트를 열어 보세요.</p><button type="button" id="gate-share">친구에게 공유하고 전체 결과 보기 ↗</button><small id="gate-note">공유 창 완료 또는 결과 복사 후 열립니다.<br>실제 전송 여부는 확인하지 않아요.</small></div></div>
   </div><p id="unlock-status" role="status" aria-live="polite"></p>
   <p class="disclaimer">다섯 점술의 규칙대로 계산했으며, 계산 방식은 운명 리포트 마지막 장에 있어요.</p>
 </section>
@@ -2253,8 +2253,13 @@ function resultShareText(){
   return "태어난 순간에 새겨진 당신의 운명.\n사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 종합해 알려드립니다.\n"+SHARE_URL;
 }
 
+/* 초대 링크 잠금: INVITE_API가 있으면 친구가 내 링크(?r=코드)로 들어와야 열린다. 비어 있으면 예전 방식(공유 완료·복사 후 열림). */
+const INVITE_API="";
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
+function deviceId(){let d=lsGet("fate-dev");if(!d||!/^[a-z0-9-]{4,64}$/i.test(d)){d=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));lsSet("fate-dev",d)}return d}
+let invite=null;try{invite=JSON.parse(lsGet("fate-invite")||"null")}catch(_){}
 let graphUnlocked=false;
-try{graphUnlocked=sessionStorage.getItem("fate-graphs-unlocked")==="1"}catch(_){}
+try{graphUnlocked=INVITE_API?lsGet("fate-unlocked")==="1":sessionStorage.getItem("fate-graphs-unlocked")==="1"}catch(_){}
 function applyGraphLock(){
   $("result-gate").classList.toggle("is-locked",!graphUnlocked);
   $("graph-content").inert=!graphUnlocked;
@@ -2262,15 +2267,37 @@ function applyGraphLock(){
   $("graph-gate").hidden=graphUnlocked;
 }
 function unlockGraphs(){
-  graphUnlocked=true;try{sessionStorage.setItem("fate-graphs-unlocked","1")}catch(_){}
-  applyGraphLock();$("share-dialog").close();
-  $("unlock-status").textContent="개선법과 운명 리포트가 열렸어요.";
+  graphUnlocked=true;try{INVITE_API?lsSet("fate-unlocked","1"):sessionStorage.setItem("fate-graphs-unlocked","1")}catch(_){}
+  applyGraphLock();if($("share-dialog").open)$("share-dialog").close();stopPoll();
+  $("unlock-status").textContent=INVITE_API?"친구가 링크를 열었어요. 개선법과 운명 리포트가 열렸어요.":"개선법과 운명 리포트가 열렸어요.";
 }
-function openShare(){
-  $("share-preview").value=resultShareText();$("share-status").textContent="";
+async function ensureInvite(){if(invite&&invite.ref&&invite.key)return invite;
+  const r=await fetch(INVITE_API+"/invite",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({d:deviceId()})});
+  if(!r.ok)throw new Error("invite "+r.status);invite=await r.json();lsSet("fate-invite",JSON.stringify(invite));return invite}
+const inviteUrl=()=>SHARE_URL+"?r="+invite.ref;
+let pollT=null;
+function stopPoll(){if(pollT){clearInterval(pollT);pollT=null}}
+async function checkInvite(){if(!INVITE_API||graphUnlocked||!invite)return;
+  try{const r=await fetch(INVITE_API+"/status?r="+encodeURIComponent(invite.ref)+"&k="+encodeURIComponent(invite.key),{cache:"no-store"});
+    if(r.status===404){invite=null;try{localStorage.removeItem("fate-invite")}catch(_){}stopPoll();return}
+    const j=await r.json();if(j.opened)unlockGraphs()}catch(_){}}
+function startPoll(){if(!INVITE_API||graphUnlocked||!invite||pollT)return;pollT=setInterval(()=>{if(document.visibilityState==="visible")checkInvite()},5000)}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")checkInvite()});
+async function openShare(){
+  $("share-status").textContent="";$("share-manual").hidden=true;
   $("share-native").hidden=typeof navigator.share!=="function";
-  $("share-manual").hidden=true;$("share-dialog").showModal();
+  if(INVITE_API&&!graphUnlocked){
+    $("share-lead").textContent="나만의 초대 링크예요. 카카오톡 등으로 친구에게 보내고, 친구가 이 링크로 들어오면 개선법과 운명 리포트가 열려요. 개인 정보나 결과는 들어가지 않아요.";
+    $("share-preview").value="링크를 만드는 중…";$("share-copy").textContent="링크 복사";$("share-dialog").showModal();
+    try{await ensureInvite();$("share-preview").value=resultShareText().replace(SHARE_URL,inviteUrl());startPoll();checkInvite()}
+    catch(_){$("share-preview").value=resultShareText();$("share-status").textContent="초대 링크를 만들지 못했어요. 잠시 뒤 다시 시도해 주세요."}
+    return}
+  $("share-lead").textContent="짧은 사이트 소개와 링크를 공유해요. 개인 정보나 개인 결과는 포함되지 않아요.";
+  $("share-copy").textContent="결과 복사";
+  $("share-preview").value=resultShareText();$("share-dialog").showModal();
 }
+const inviteMode=()=>INVITE_API&&!graphUnlocked&&invite&&$("share-preview").value.includes("?r=");
+const SENT_MSG="보냈다면 이제 친구가 링크를 열기를 기다려 주세요. 열리면 이 화면이 자동으로 바뀌어요.";
 $("share-open").addEventListener("click",openShare);
 $("gate-share").addEventListener("click",openShare);
 $("share-close").addEventListener("click",()=>$("share-dialog").close());
@@ -2279,20 +2306,37 @@ $("share-copy").addEventListener("click",async()=>{
   const area=$("share-preview"),text=area.value;
   try{
     if(!navigator.clipboard?.writeText)throw new Error("Clipboard unavailable");
-    await navigator.clipboard.writeText(text);unlockGraphs();
-    $("unlock-status").textContent="결과를 복사했어요. 친구에게 붙여넣어 주세요. 전체 결과가 열렸어요.";
+    await navigator.clipboard.writeText(text);
+    if(inviteMode()){$("share-status").textContent="링크를 복사했어요. 카카오톡 등에 붙여 넣어 친구에게 보내 주세요. "+SENT_MSG;return}
+    if(INVITE_API&&!graphUnlocked)return;
+    unlockGraphs();$("unlock-status").textContent="결과를 복사했어요. 친구에게 붙여넣어 주세요. 전체 결과가 열렸어요.";
   }catch(_){
-    area.focus();area.select();$("share-manual").hidden=false;
+    area.focus();area.select();
+    if(INVITE_API){$("share-status").textContent="자동 복사를 사용할 수 없어요. 글을 길게 누르거나 Ctrl+C / ⌘C로 복사해 친구에게 보내 주세요.";return}
+    $("share-manual").hidden=false;
     $("share-status").textContent="자동 복사를 사용할 수 없어요. 글을 길게 누르거나 Ctrl+C / ⌘C로 복사한 뒤 ‘직접 복사 후 결과 보기’를 눌러 주세요.";
   }
 });
 $("share-native").addEventListener("click",async()=>{
   try{
-    await navigator.share({title:"운명 네트워크",text:$("share-preview").value});unlockGraphs();
+    await navigator.share({title:"운명 네트워크",text:$("share-preview").value});
+    if(inviteMode()){$("share-status").textContent=SENT_MSG;return}
+    if(INVITE_API&&!graphUnlocked)return;
+    unlockGraphs();
   }catch(e){
-    $("share-status").textContent=e.name==="AbortError"?"공유를 취소했어요. 그래프를 열려면 공유 또는 결과 복사를 완료해 주세요.":"공유 창을 열지 못했어요. 결과 복사를 이용해 주세요.";
+    $("share-status").textContent=e.name==="AbortError"?"공유를 취소했어요.":"공유 창을 열지 못했어요. 링크 복사를 이용해 주세요.";
   }
 });
+if(INVITE_API){
+  $("gate-share").textContent="친구에게 초대 링크 보내기 ↗";
+  $("gate-note").innerHTML="친구가 내 초대 링크로 들어오면 열려요.<br>내 기기에서 직접 연 것은 세지 않아요.";
+  const q=new URLSearchParams(location.search),ref=q.get("r");
+  if(ref&&/^[a-z0-9]{4,16}$/i.test(ref)&&!(invite&&invite.ref===ref)){
+    fetch(INVITE_API+"/open",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({r:ref,d:deviceId()}),keepalive:true}).catch(()=>{});
+  }
+  if(ref){q.delete("r");history.replaceState(null,"",location.pathname+(q.toString()?"?"+q:"")+location.hash)}
+  checkInvite();startPoll();
+}
 applyGraphLock();
 
 fillDays();showPlace();syncSel();

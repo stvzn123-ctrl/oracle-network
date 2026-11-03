@@ -176,3 +176,7 @@
 
 - 2026-11-03 추가: 결론 한 문장(`#resLead`)과 칩(`#resMeta`) 자리를 `#resIntro`(`resultIntroHTML`)로 바꿨다. 'OO님의 운명' 아래에 `traitDescription` 소개 → 키워드 3개(`reportTags`·`RTAG`) → 운명 성향 표(`fateTraitsHTML`)와 안내 → 다섯 점술이 함께 짚은 것 → 타고난 기질과 선물(`natalProse` 0~2) → `reportHook` 순서. 아래 핵심 세 가지와 일부 내용이 겹친다. `lifeTraj()`는 더 이상 쓰지 않는다.
 - 2026-11-03 추가 2: 메인 개선법은 짧은 행동 3줄(`ACTION_SHORT`[지배 오행][0,1] + [보완 오행][2], `.act-list`)과 '상황별로 기운을 좋게 만드는 장소'(`situationPlacesHTML`: `FENG_SITUATION_PICKS` 3개, 이름·지역만) + '더 많은 장소와 지도는 운명 리포트에서 확인해 주세요.'만 둔다. 지도·카테고리·장소 둘러보기(`fengPlacesHTML`)와 선정 근거는 리포트 3장 '추천 장소'(`r-place`)로 옮겼다(리포트 9장). 리포트 1장에 분야별 10년 그래프 4개(`rFieldChart`, `.rf-grid`) 추가. 점술별 출생 차트(`birthWest/Vedic/Numerology/Maya`)는 4개 점술 장에서 빼고 9장 계산 근거에 한 번에 모았다. 메인 하단 안내는 '다섯 점술의 규칙대로 계산했으며, 계산 방식은 운명 리포트 마지막 장에 있어요.'(사용자 요청). 예측력 없음 안내는 리포트 끝(`.r-foot`)과 계산 근거에 남아 있다.
+
+## 초대 링크 잠금 (2026-11-03)
+- `INVITE_API`(index.html)가 비어 있으면 예전 방식(공유 완료·복사·수동 확인 후 sessionStorage로 열림). 값이 있으면 초대 링크 방식: 공유 창에서 `/invite`로 내 링크(`SHARE_URL?r=코드`)를 만들고, 다른 사람이 그 링크로 들어와 `/open`이 기록되면 `/status` 5초 폴링(화면 보일 때만)으로 열린다. 열림·초대 정보는 localStorage `fate-unlocked`, `fate-invite`, 기기값 `fate-dev`. 출생 정보는 보내지 않는다. 링크로 들어온 사람의 주소창에서 `r`은 지운다.
+- 서버 코드는 `server/`(worker.js, schema.sql, wrangler.toml, README.md 배포 방법). Cloudflare Worker + D1. 같은 기기값 또는 같은 IP+UA 해시면 본인으로 보고 세지 않는다.
