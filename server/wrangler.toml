@@ -5,4 +5,4 @@ compatibility_date = "2026-10-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "oracle-invite"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "26d1fb6b-b7c9-478c-a6b4-bc52a5138575"
