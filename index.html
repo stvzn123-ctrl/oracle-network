@@ -1115,16 +1115,16 @@ body:not(.fresh) .hero-in:has(#accountMember:not([hidden])) details.askbox>summa
 .hero-top{justify-content:flex-end;min-height:40px;margin-bottom:6px}
 .res-top{padding:0 0 20px!important}.res-nav{margin-top:0!important;top:calc(var(--brandbar-h) + 6px)!important}.hero{margin-bottom:-24px}.hero h1{margin-bottom:16px!important}
 /* 2026-11 운명 리포트: 따뜻한 컨설팅 보고서 스타일(밝은 종이 바탕) */
-#report{--el0:#4B8759;--el1:#C2553F;--el2:#B07F22;--el3:#7C8291;--el4:#2D73A3;--bg:#F4EEE4;--panel:#FBF8F2;--field:#FFFFFF;--line:rgba(31,42,68,.13);--line2:rgba(31,42,68,.26);--fg:#1F2A44;--ink:#27324D;--ink2:#3B4560;--muted:#59627A;--dim:#737B8E;--gold:#C8754B;--emerald:#5E7D5B;--teal:#3F7E8C;--rose:#B5566F;--violet:#6E5E9C;--ember:#C8754B;--money:#B07F22;--love:#BC5577;--work:#2D73A3;--health:#4B8759;--kakao-bg:#FEE500;color-scheme:light;background:var(--bg);color:var(--fg)}
-#report .report-bar{background:#F4EEE4;border-bottom:1px solid var(--line);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-#report .report-bar button{color:var(--fg);background:var(--field);border:1px solid var(--line2)}
+#report{--bg:#070d18;--panel:#0d1627;--field:#0a1221;--line:rgba(233,196,106,.16);--line2:rgba(233,196,106,.34);--fg:#f1ebe0;--ink:#e6dfd3;--ink2:#d6cdbf;--muted:#bdb2a0;--dim:#9a8f80;color-scheme:dark;background:var(--bg);color:var(--fg)}
+#report .report-bar{background:#070d18;border-bottom:1px solid var(--line);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#report .report-bar button{color:var(--fg);background:var(--field);border:1px solid var(--line2)}#report .report-bar #reportPDF{background:var(--gold);color:#1a1204;border:0;font-weight:600}
 #report .report-in{max-width:860px;margin:0 auto}
-#report .r-page,#report .r-cover{background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 2px rgba(31,42,68,.05),0 12px 32px -18px rgba(31,42,68,.18);padding:clamp(22px,5vw,48px);margin:0 0 22px}
+#report .r-page,#report .r-cover{background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:0 18px 40px -24px rgba(0,0,0,.7);padding:clamp(22px,5vw,48px);margin:0 0 22px}
 #report h2,#report h3,#report h4{color:var(--fg)}
 #report .r-page h3{font-family:var(--body);font-weight:700;font-size:18px;color:var(--fg);margin:30px 0 10px;padding-top:14px;border-top:1px solid var(--line)}
 #report .r-page p,#report .r-page li,#report .r-page td{color:var(--ink)}
 #report .eyebrow{color:var(--gold);letter-spacing:.14em;font-size:12px;text-transform:uppercase}
-#report table{border-collapse:collapse}#report th{color:var(--muted);font-weight:600;border-bottom:2px solid var(--fg)}#report td{border-bottom:1px solid var(--line)}
+#report table{border-collapse:collapse}#report th{color:var(--gold);font-weight:600;border-bottom:1px solid var(--line2)}#report td{border-bottom:1px solid var(--line)}
 #report .r-cover{display:grid;gap:22px;text-align:left;padding:0;overflow:hidden}
 #report .r-cover-tx{padding:0 clamp(22px,5vw,48px) clamp(26px,5vw,44px)}
 #report .r-cover h2{font-family:var(--display);font-size:clamp(30px,6vw,44px);line-height:1.3;margin:10px 0 12px;color:var(--fg)}
@@ -1135,16 +1135,16 @@ body:not(.fresh) .hero-in:has(#accountMember:not([hidden])) details.askbox>summa
 .r-open-hd{margin-bottom:18px}
 .r-open-hd .r-ph{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
 .r-num{font-family:var(--body);font-weight:700;font-size:15px;color:var(--gold);font-variant-numeric:tabular-nums}
-#report .r-open-hd h2{font-family:var(--body);font-weight:800;font-size:clamp(24px,4.6vw,32px);line-height:1.3;letter-spacing:-.02em;margin:0;display:flex;flex-direction:column;gap:6px}
+#report .r-open-hd h2{font-family:var(--display);font-weight:800;font-size:clamp(24px,4.6vw,32px);line-height:1.3;letter-spacing:-.02em;margin:0;display:flex;flex-direction:column;gap:6px}
 #report .r-open-hd h2 small{font-size:15px;font-weight:400;color:var(--muted);letter-spacing:0}
-.r-take{display:flex;gap:12px;align-items:flex-start;margin:18px 0 0;padding:14px 16px;background:#F1E4D6;border-left:3px solid var(--gold);border-radius:2px;font-size:16px;line-height:1.6;color:var(--fg)}
-.r-take b{flex:none;font-size:12px;letter-spacing:.08em;color:#fff;background:var(--gold);border-radius:2px;padding:2px 7px;margin-top:3px}
-.r-art{position:relative;margin:0 0 24px;border-radius:4px;overflow:hidden;background:linear-gradient(135deg,#EFE5D6,#E6D9C6);display:none}
+.r-take{display:flex;gap:12px;align-items:flex-start;margin:18px 0 0;padding:14px 16px;background:rgba(233,196,106,.08);border-left:3px solid var(--gold);border-radius:2px;font-size:16px;line-height:1.6;color:var(--fg)}
+.r-take b{flex:none;font-size:12px;letter-spacing:.08em;color:#1a1204;background:var(--gold);border-radius:2px;padding:2px 7px;margin-top:3px}
+.r-art{position:relative;margin:0 0 24px;border-radius:4px;overflow:hidden;background:linear-gradient(135deg,#101b2e,#0b1322);display:none}
 .r-art.has,.show-slots .r-art{display:block}
 .r-art-wide{aspect-ratio:3/2}.r-art-cover{aspect-ratio:3/2;margin:0;border-radius:0}
 .r-art img{display:block;width:100%;height:100%;object-fit:cover}
 .r-art figcaption{display:none}
-.show-slots .r-art:not(.has){border:1.5px dashed rgba(31,42,68,.3);display:grid;place-items:center}
+.show-slots .r-art:not(.has){border:1.5px dashed rgba(233,196,106,.35);display:grid;place-items:center}
 .show-slots .r-art:not(.has) figcaption{display:block;font-family:var(--mono);font-size:13px;color:var(--muted)}
 #report .r-rail{background:var(--panel);border:1px solid var(--line);border-radius:6px}
 #report .r-rail a{color:var(--ink2)}#report .r-rail a b{color:var(--gold)}
@@ -1152,6 +1152,37 @@ body:not(.fresh) .hero-in:has(#accountMember:not([hidden])) details.askbox>summa
 #report .r-cover::before{margin:0;border-radius:0}#report .r-cover:has(.r-art.has)::before{display:none}.r-art.has+.report-editorial{display:none}
 @media(min-width:700px){.r-art-wide{aspect-ratio:21/9}.r-art-cover{aspect-ratio:21/9}}
 @media print{.brandbar,.report-bar{display:none!important}#report{position:static}#report .r-page,#report .r-cover{box-shadow:none;break-before:page;border:0}}
+
+/* 리포트 v2: 메인과 같은 남색·금색, 목차, 대시보드, 사주 카드 */
+#report .r-page,#report .r-cover{background:linear-gradient(180deg,rgba(18,30,52,.92),rgba(11,19,34,.96));border:1px solid var(--line)}
+#report .r-cover{min-height:min(88svh,760px);display:flex;flex-direction:column;justify-content:flex-end}
+#report .r-cover::before{flex:1;height:auto;min-height:220px;margin:0}
+#report .r-cover h2{color:var(--fg)}#report .r-cover h2 em{color:var(--gold)}
+#r-brief>.r-cover,#r-brief h3:has(+.report-chapters),#r-brief .report-chapters{display:none}
+.r-toc-h{font-family:var(--display);font-size:30px;margin:6px 0 18px}
+.r-toc-list{list-style:none;margin:0;padding:0;counter-reset:none}
+.r-toc-list a{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;padding:13px 0;border-bottom:1px dashed var(--line);color:var(--fg);text-decoration:none}
+.r-toc-list a:hover span{color:var(--gold)}
+.r-toc-list b{font-family:var(--display);color:var(--gold);font-size:16px}
+.r-toc-list span{font-weight:600;font-size:16px;display:flex;flex-direction:column;gap:2px}
+.r-toc-list small{font-weight:400;font-size:13.5px;color:var(--muted)}
+.r-kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:8px 0 6px}
+.r-kpi div{border:1px solid var(--line2);border-radius:12px;padding:14px;background:rgba(233,196,106,.05);display:flex;flex-direction:column;gap:4px;min-width:0}
+.r-kpi small{font-size:12.5px;color:var(--gold)}.r-kpi b{font-size:17px;line-height:1.35;color:var(--fg);word-break:keep-all}.r-kpi span{font-size:13px;color:var(--muted);line-height:1.5}
+@media(max-width:560px){.r-kpi{grid-template-columns:1fr}}
+.r-bars{display:grid;gap:12px;margin:12px 0 4px}
+.r-bar{display:grid;grid-template-columns:72px minmax(0,1fr) 34px;gap:4px 10px;align-items:center}
+.r-bar-n{font-size:14px;color:var(--ink2)}.r-bar b{font-variant-numeric:tabular-nums;text-align:right}
+.r-bar small{grid-column:2/4;font-size:12.5px;color:var(--muted)}
+.r-bar-t{height:12px;border-radius:6px;background:rgba(255,255,255,.06);overflow:hidden}.r-bar-t i{display:block;height:100%;border-radius:6px;background:var(--bc)}
+.r-bar-money{--bc:var(--money)}.r-bar-love{--bc:var(--love)}.r-bar-work{--bc:var(--work)}.r-bar-health{--bc:var(--health)}
+.r-qa-tbl th{width:42%;text-align:left;font-weight:600;color:var(--ink2)!important;border-bottom:1px solid var(--line)!important;padding:10px 10px 10px 0;vertical-align:top;font-size:14px}
+.r-qa-tbl td{padding:10px 0;font-size:14.5px;color:var(--fg)}
+.r-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 24px}
+.r-card{position:relative;border-radius:18px;padding:16px 16px 14px;min-height:170px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;border:1px solid color-mix(in srgb,var(--c) 40%,transparent);background:radial-gradient(120% 90% at 70% 10%,color-mix(in srgb,var(--c) 32%,transparent),transparent 70%),#0b1424}
+.r-card small{font-size:13px;color:var(--ink2);font-weight:600}
+.r-card b{font-family:var(--display);font-size:clamp(40px,10vw,56px);line-height:1;text-align:center;color:#fff;text-shadow:0 2px 16px color-mix(in srgb,var(--c) 60%,transparent);margin:8px 0}
+.r-card span{font-size:12.5px;line-height:1.5;color:var(--ink);text-align:center;word-break:keep-all}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -3198,6 +3229,22 @@ function reportArt(ch,id){const dom=ch.cnt.indexOf(Math.max(...ch.cnt));
  if(id==="r-vedic"){const fr=new Date().getFullYear()+new Date().getMonth()/12;const md=ch.dashas.find(x=>fr>=x.start&&fr<x.end)||ch.dashas[ch.dashas.length-1];return {key:"dasha_"+String(md.lord).toLowerCase(),take:`지금은 ${PK[md.lord]} 다샤, ${Math.floor(md.end)}년까지 이어지는 시기예요.`}}
  return {key:CH_KEY[id]||"ch_method"}}
 if(/[?&]slots=1/.test(location.search))document.documentElement.classList.add("show-slots");
+/* 리포트 1장 대시보드: 핵심 세 가지 + 분야별 10년 평균 막대 + 많이 궁금해하는 네 가지 표 */
+function reportDash(ch){try{const t=reportTags(ch)[0],b=bestCell(),tp=turningPoints(ch)[0],y0=new Date().getFullYear();
+ const fav=CATS.map((c,ci)=>{const v=RY.map(r=>D(r[ci].mean)),avg=Math.round(v.reduce((a,x)=>a+x,0)/v.length),mx=Math.max(...v);return {n:SHORT[ci],avg,by:y0+1+v.indexOf(mx),mx,k:c.k}});
+ const top=fav.reduce((a,x)=>x.avg>a.avg?x:a,fav[0]);
+ const tiles=[["가장 큰 강점",RTAG[t.k].kw,`다섯 점술 중 ${t.n}개가 같은 이야기`],["주목할 해",`${b.y}년 ${SHORT[b.ci]}운`,`10년 중 가장 높은 ${b.v}점`],["가까운 전환점",tp?`${tp.y}년 · ${tp.y-ch.Y+1}세`:"흐름 유지",tp?tpShort(tp):"큰 전환 없이 이어져요"]];
+ let qa="";try{qa=lifeQ(ch).map(q=>`<tr><th scope="row">${q.q}</th><td>${plain(q.a)}</td></tr>`).join("")}catch(_){}
+ return `<div class="r-dash"><h3>한눈에 보는 나</h3><div class="r-kpi">${tiles.map(x=>`<div><small>${x[0]}</small><b>${x[1]}</b><span>${x[2]}</span></div>`).join("")}</div>
+ <h3>앞으로 10년, 분야별 평균 점수</h3><p class="r-note">가장 높은 분야는 <b>${top.n}운</b>이에요. 막대는 10년 평균, 오른쪽은 가장 밝은 해예요.</p>
+ <div class="r-bars">${fav.map(f=>`<div class="r-bar r-bar-${f.k}"><span class="r-bar-n">${f.n}</span><span class="r-bar-t"><i style="width:${Math.max(4,(f.avg-60)/40*100)}%"></i></span><b>${f.avg}</b><small>${f.by}년 ${f.mx}점</small></div>`).join("")}</div>
+ ${qa?`<h3>많이 궁금해하는 네 가지</h3><div class="r-tbl"><table class="r-qa-tbl"><tbody>${qa}</tbody></table></div><p class="r-note">시기·사람·장소와 점술별 근거는 2장에서 자세히 볼 수 있어요.</p>`:""}</div>`}catch(e){console.error(e);return ""}}
+/* 사주 장 맨 앞: 핵심 글자 카드 4장(일간·일지·월지 십성·일지 십성) */
+const BRM=["한겨울의 깊고 고요한 물 기운","겨울 끝, 봄을 품은 언 땅의 기운","이른 봄 숲처럼 뻗어 가는 나무 기운","봄꽃 핀 들판처럼 부드러운 나무 기운","봄비를 머금은 촉촉한 흙 기운","초여름 막 피어나는 불씨의 기운","한여름 한낮 태양 같은 불 기운","여름 끝자락의 포근하고 안정된 흙 기운","초가을 단단한 바위와 쇠의 기운","가을 보석처럼 정제된 쇠 기운","늦가을 마른 들판의 단단한 흙 기운","초겨울 큰 강물 같은 물 기운"];
+const TGH={비견:"比肩",겁재:"劫財",식신:"食神",상관:"傷官",편재:"偏財",정재:"正財",편관:"偏官",정관:"正官",편인:"偏印",정인:"正印"};
+function sajuCards(ch){try{const d=ch.stems.d,db=ch.brs.d,mb=ch.brs.m,tm=tenGod(d,BMAIN[mb]),td=tenGod(d,BMAIN[db]);
+ const c=[["일간 · 나 자신",STK[d],ST[d]+" · "+DMA[ST[d]],SE[d]],["일지 · 배우자 자리",BRK[db],BR[db]+" · "+BRM[db],SE[BMAIN[db]]],["월지 십성 · 사회에서의 나",tm,TGH[tm]+" · "+TGT[tm][0],SE[BMAIN[mb]]],["일지 십성 · 배우자와의 관계",td,TGH[td]+" · "+TGT[td][0],SE[BMAIN[db]]]];
+ return `<div class="r-cards">${c.map(x=>`<div class="r-card" style="--c:var(--el${x[3]})"><small>${x[0]}</small><b>${x[1]}</b><span>${x[2]}</span></div>`).join("")}</div>`}catch(e){console.error(e);return ""}}
 function renderReport(){const ch=CH,name=ch.inp.name||"운명을 걷는 사람",bodies=birthBodies(ch);
   const notime=ch.inp.notime?'<p class="birth-note">출생 시각을 몰라 현지 정오의 천체 위치를 참고값으로 표시했어요. 달의 별자리·낙샤트라와 도수는 실제 출생 시각에 따라 달라질 수 있어요.</p>':"";
   const chap=[["r-sum","종합","Synthesis","종합 리포트","다섯 점술의 결론과 타고난 성향을 한 장에 모았어요",()=>reportSummary(ch)],
@@ -3211,11 +3258,12 @@ function renderReport(){const ch=CH,name=ch.inp.name||"운명을 걷는 사람",
    ["r-maya","마야력","Maya","마야력 분석","260일 달력으로 보는 탄생일의 주제",()=>reportMaya(ch)],
    ["r-calc","계산 근거","Method","점수 계산서와 읽는 법","점수를 올리고 내린 근거와 계산 방식",()=>`<p class="r-note">시점과 분야를 고르면 다섯 점술의 근거가 점수를 얼마나 올리고 내렸는지 보여요.</p><div class="netctl"><div class="chips" id="netP" role="group" aria-label="시점"></div><div class="chips" id="netC" role="group" aria-label="분야"></div></div><div id="whyBox"></div><h3>점술별 출생 차트</h3><p class="r-note">점수와 풀이의 바탕이 된 출생 순간의 계산값이에요.</p>${notime}<div class="birth-atlas">${birthWest(ch,bodies)}${birthVedic(ch,bodies)}${birthNumerology(ch)}${birthMaya(ch)}</div><h3>점수 계산 방식과 읽는 법</h3><div class="note r-rules">${$("rulesTpl").innerHTML}</div>`]];
   $("reportBody").innerHTML=`<header class="r-cover">${artSlot(reportArt(ch,"cover").key,"cover","표지 그림")}<div class="r-cover-tx"><div class="eyebrow">Oracle Network · Destiny Report</div><h2>${name}님의<br><em>운명 리포트</em></h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 종합 분석</p><dl class="r-cover-meta"><div><dt>생년월일</dt><dd>${String(ch.inp.date||"").replace(/-/g,".")}${ch.inp.cal==="l"?" (음력)":""}${ch.inp.notime?"":" "+ch.inp.time}</dd></div><div><dt>발행일</dt><dd>${new Date().toLocaleDateString("ko-KR")}</dd></div><div><dt>구성</dt><dd>${chap.length}장</dd></div></dl></div></header>
+  <section class="r-page r-toc" id="r-toc"><div class="r-ph"><span class="eyebrow">Contents</span></div><h2 class="r-toc-h">목차</h2><ol class="r-toc-list"><li><a href="#r-brief"><b>요약</b><span>먼저 읽는 요약<small>한 페이지로 보는 나의 이야기</small></span></a></li>${chap.map((c,i)=>`<li><a href="#${c[0]}"><b>${i+1}장</b><span>${c[3]}<small>${c[4]}</small></span></a></li>`).join("")}</ol></section>
   <nav class="r-rail" aria-label="장 이동">${chap.map((c,i)=>`<a href="#${c[0]}"><b>${i+1}</b>${c[1]}</a>`).join("")}</nav>
-  ${chap.map((c,i)=>{const a=reportArt(ch,c[0]);return `<section class="r-page" id="${c[0]}"><div class="r-open-hd"><div class="r-ph"><span class="r-num">${String(i+1).padStart(2,"0")}</span><span class="eyebrow">${c[2]}</span></div><h2>${c[3]}<small>${c[4]}</small></h2>${a.take?`<p class="r-take"><b>핵심</b><span>${a.take}</span></p>`:""}</div>${artSlot(a.key,"wide",c[3])}${i===0?reportEditorial():""}${c[5]()}</section>`}).join("")}
+  ${chap.map((c,i)=>{const a=reportArt(ch,c[0]);return `<section class="r-page" id="${c[0]}"><div class="r-open-hd"><div class="r-ph"><span class="r-num">${String(i+1).padStart(2,"0")}</span><span class="eyebrow">${c[2]}</span></div><h2>${c[3]}<small>${c[4]}</small></h2>${a.take?`<p class="r-take"><b>핵심</b><span>${a.take}</span></p>`:""}</div>${artSlot(a.key,"wide",c[3])}${i===0?reportEditorial()+reportDash(ch):""}${c[0]==="r-saju"?sajuCards(ch):""}${c[5]()}</section>`}).join("")}
   <p class="r-foot">각 점술의 계산 규칙을 따라 만든 재미용 해석이에요. 미래를 맞힌다는 과학적 근거는 없어요.</p>`;
-  {const cv=$('reportBody').querySelector('.r-cover');(cv||$('reportBody')).insertAdjacentHTML(cv?'afterend':'afterbegin',approvedReportHTML(buildRichReport(CH,'comprehensive'),'comprehensive'))}netP=0;netC=0;renderNet();fengInit($("reportBody"));
-  $("reportBody").querySelectorAll(".r-rail a").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const t=document.getElementById(a.getAttribute("href").slice(1));if(t)t.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})}))}
+  {const tc=$('reportBody').querySelector('.r-toc');(tc||$('reportBody')).insertAdjacentHTML(tc?'afterend':'afterbegin','<div id="r-brief">'+approvedReportHTML(buildRichReport(CH,'comprehensive'),'comprehensive')+'</div>')}netP=0;netC=0;renderNet();fengInit($("reportBody"));
+  $("reportBody").querySelectorAll(".r-rail a,.r-toc a").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const t=document.getElementById(a.getAttribute("href").slice(1));if(t)t.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})}))}
 function openReport(){if(!CH)return;if(!accountUser?.isAdmin){requestReport("comprehensive",$("reportOpen"));return}reportReturnFocus=null;renderReport();$("report").hidden=false;document.documentElement.classList.add("rep-lock");$("report").scrollTop=0;$("reportClose").focus({preventScroll:true})}
 $('reportPurchaseClose').onclick=()=>$('reportPurchase').close();$('reportCheckout').onclick=()=>{$('purchaseStatus').textContent='온라인 결제 연결을 준비 중이에요. 지금은 관리자에게 결제 방법과 열람 승인을 문의해주세요. 결제나 청구는 발생하지 않아요.'};
 /* Local export of the currently opened, authorized report. Korean text is drawn
@@ -3246,9 +3294,15 @@ async function downloadReportPDF(){
    text((tag==='LI'?'• ':'')+el.innerText,size,/^H[234]$/.test(tag));
   }
   const jpgs=[];for(let i=0;i<pages.length;i++){const c=pages[i],g=c.getContext('2d');g.fillStyle='#6b6b65';g.font='18px sans-serif';g.fillText((i+1)+' / '+pages.length,W-pad-90,H-45);const blob=await new Promise(resolve=>c.toBlob(resolve,'image/jpeg',.88));if(!blob)throw Error('이미지 변환 실패');jpgs.push(new Uint8Array(await blob.arrayBuffer()));}
-  const pdf=encodeReportPDF(jpgs,W,H),url=URL.createObjectURL(new Blob([pdf],{type:'application/pdf'})),a=document.createElement('a');a.href=url;a.download=($('reportBody').querySelector('h2')?.innerText||'나의 운명 리포트').replace(/[\\/:*?"<>|\r\n]/g,' ').trim()+'.pdf';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);status.textContent='PDF 저장을 시작했어요.';
+  const pdf=encodeReportPDF(jpgs,W,H);status.textContent=await saveReportPDF(pdf,((CH&&CH.inp.name)||'나')+'님의 운명 리포트.pdf');
  }catch(e){status.textContent='PDF를 만들지 못했어요. 다시 시도해주세요.';console.error('Report PDF export failed',e)}finally{button.disabled=false}
 }
+/* 휴대폰: 파일 공유(저장) 창 → 안 되면 새 탭 미리보기. 카카오톡 등 인앱 브라우저는 외부 브라우저 안내. */
+async function saveReportPDF(bytes,fname){fname=fname.replace(/[\\/:*?"<>|\r\n]/g,' ').trim();const blob=new Blob([bytes],{type:'application/pdf'}),ua=navigator.userAgent,mobile=/Android|iPhone|iPad|iPod/i.test(ua)||(navigator.maxTouchPoints>1&&/Macintosh/.test(ua)),inapp=/KAKAOTALK|NAVER\(|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp/i.test(ua);
+ if(mobile){try{const f=new File([blob],fname,{type:'application/pdf'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:fname});return 'PDF를 저장하거나 보낼 곳을 고르세요.'}}catch(e){if(e&&e.name==='AbortError')return '저장을 취소했어요.'}
+  if(inapp)return '이 앱 안의 브라우저는 파일 저장을 지원하지 않아요. 오른쪽 위 메뉴에서 "다른 브라우저로 열기"(Chrome·Safari)를 누른 뒤 다시 받아 주세요.';
+  const url=URL.createObjectURL(blob),w=window.open(url,'_blank');setTimeout(()=>URL.revokeObjectURL(url),120000);if(w)return 'PDF를 새 탭에서 열었어요. 공유 버튼으로 저장할 수 있어요.'}
+ const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=fname;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);return 'PDF 저장을 시작했어요.'}
 function encodeReportPDF(images,W,H){
  const encoder=new TextEncoder(),chunks=[],offsets=[0];let length=0;const put=x=>{const bytes=typeof x==='string'?encoder.encode(x):x;chunks.push(bytes);length+=bytes.length};const obj=(id,body)=>{offsets[id]=length;put(id+' 0 obj\n');put(body);put('\nendobj\n')};
  put('%PDF-1.4\n%OracleNetwork\n');obj(1,'<< /Type /Catalog /Pages 2 0 R >>');obj(2,'<< /Type /Pages /Count '+images.length+' /Kids ['+images.map((_,i)=>(3+i*3)+' 0 R').join(' ')+'] >>');

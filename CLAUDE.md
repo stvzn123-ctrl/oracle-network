@@ -216,7 +216,11 @@
 - '운을 높이는 법'(예전 '나의 운명을 개선해나가는 법')과 '상황별로 기운을 좋게 만드는 장소', 리포트 안내, 공유 잠금(`#result-gate`)은 '타고난 운명' 탭 안에만 둔다. 10년·이번 주 탭 끝에는 그쪽으로 가는 `.to-report` 버튼. 행동은 `LUCK_DO`[지배 오행][0,1] + [보완 오행][2]의 1~5분 실천, 아래 이유 한 줄('당신은 ~이니, ~', `LUCK_WHO`·`LUCK_WHY1~3`).
 
 ## 리포트 디자인 개편 (2026-11-04)
-- `#report`는 밝은 종이 바탕의 따뜻한 컨설팅 보고서 스타일. 토큰을 `#report` 안에서 다시 정의한다(바탕 #F4EEE4, 글자 #1F2A44, 강조 테라코타 #C8754B, 분야·오행 색은 밝은 바탕용 진한 색).
+- `#report`는 메인과 같은 남색 바탕·금색 강조(사용자 요청으로 밝은 종이 스타일에서 되돌림). 토큰은 `#report` 안에서 다시 정의한다.
 - 장마다 번호(01~10)·제목·부제·'핵심' 한 줄(`reportArt().take`, 종합·사주·서양·인도만) + 이미지 자리 `artSlot(key)`.
 - 이미지 자리는 `img/<key>.webp`(없으면 .png)를 읽고, 둘 다 없으면 숨긴다. `?slots=1`이면 빈 자리와 파일명을 점선으로 보여준다. 이미지가 있으면 같은 장의 기존 `reportEditorial` 그림과 표지 수채화는 숨긴다.
 - 결과별 키(`reportArt`): 표지 `cover_{wood|fire|earth|metal|water}`(가장 많은 오행), 종합 `best_{money|love|work|health}`(storyFor 평균 1위), 사주 `dm_{gap…gye}`(일간), 서양 `sun_{aries…pisces}`(태양 별자리), 인도 `dasha_{sun…ketu}`(지금 다샤), 나머지 장 `ch_questions/ch_flow/ch_places/ch_numbers/ch_maya/ch_method`.
+- 리포트 순서: 표지(`.r-cover`) → 목차(`.r-toc`, 요약 + 10장, 누르면 이동) → 먼저 읽는 요약(`#r-brief` = `approvedReportHTML`, 자체 표지·목차는 숨김) → 장 이동 칩 → 1~10장.
+- 1장 앞 `reportDash`: 핵심 세 가지 타일(강점·주목할 해·가까운 전환점) + 분야별 10년 평균 막대(`RY`, 가장 밝은 해) + 많이 궁금해하는 네 가지 표(`lifeQ` 질문·한 줄 답).
+- 사주 장 앞 `sajuCards`: 일간·일지·월지 십성·일지 십성 4장 카드(오행색 배경, `BRM` 지지 뜻, `TGH` 십성 한자, `TGT` 한 줄).
+- PDF 저장 `saveReportPDF`: 휴대폰은 `navigator.share({files})`(파일 저장·보내기) → 안 되면 새 탭으로 열기. 카카오톡 등 인앱 브라우저는 다른 브라우저로 열라는 안내. PC는 기존 다운로드.
