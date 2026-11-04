@@ -225,4 +225,4 @@
 - 사주 장 앞 `sajuCards`: 일간·일지·월지 십성·일지 십성 4장 카드(금색 액자 + 원 안의 큰 글자, 글자색은 오행색, `BRM` 지지 뜻, `TGH` 십성 한자, `TGT` 한 줄).
 - PDF는 'PDF로 저장' 버튼 → `printReport()` → 브라우저 인쇄(`@media print`, A4, 배경색 그대로, 장마다 새 쪽, 리포트 밖 요소 숨김). 화면 디자인 그대로 나온다. 카카오톡 등 인앱 브라우저는 인쇄를 막아 외부 브라우저 안내. 예전 캔버스 방식(`downloadReportPDF`·`saveReportPDF`)은 코드에 남아 있으나 쓰지 않는다.
 - 안쪽 박스 선 제거(2026-11-04, 사용자 요청): 페이지 금색 액자만 남기고 `.r-answer`·`.r-list li`·`.cs-block`·`.feng-place` 등은 선·배경 없이 여백으로, `.r-fact`·`.chapter-action`·`.r-card`는 선 없이 옅은 베이지 바탕(#f4ebdb)으로 구분.
-- 삼성 인터넷 다크 모드: 브라우저가 밝은 바탕을 강제로 어둡게 바꿔 색이 깨진다. `<meta name="color-scheme" content="dark light">`로 다크 지원을 알리고, 삼성 인터넷 + 다크 모드면 `<html class="sb-dark">`(head 안 짧은 스크립트)로 리포트를 같은 디자인의 남색 판(토큰 재정의)으로 보여 준다. 카카오톡·크롬·사파리 등은 크림 종이 그대로.
+- 삼성 인터넷 다크 모드: 브라우저가 밝은 바탕을 강제로 어둡게 바꿔 색·글자가 깨진다. 삼성 인터넷은 CSS에 `@media (prefers-color-scheme: dark)` 규칙이 있으면 그 사이트를 '다크 지원'으로 보고 강제 변환을 하지 않는다. 그래서 head 스크립트가 삼성 인터넷이면 `<html class="sb">`를 붙이고, `@media (prefers-color-scheme: dark){ html.sb #report{…} }`로 같은 디자인의 남색 판(토큰 재정의, 인쇄 바탕도 남색)을 보여 준다. 삼성 인터넷 라이트 모드와 다른 브라우저(카카오톡·크롬·사파리)는 크림 종이 그대로. `<meta name="color-scheme" content="dark light">` 유지.

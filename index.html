@@ -2,7 +2,7 @@
 <html lang="ko">
 <meta charset="utf-8">
 <meta name="color-scheme" content="dark light">
-<script>try{if(/SamsungBrowser/i.test(navigator.userAgent)&&matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("sb-dark")}catch(e){}</script>
+<script>try{if(/SamsungBrowser/i.test(navigator.userAgent))document.documentElement.classList.add("sb")}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>오라클 네트워크</title>
 <meta name="description" content="사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 한 번에 계산해 읽는 나의 운명">
@@ -1405,15 +1405,20 @@ body:not(.fresh) .hero-in:has(#accountMember:not([hidden])) details.askbox>summa
 #report .r-rail,#report .r-rail a{border-color:transparent}
 #report .report-editorial img{border:0}
 /* 삼성 인터넷 다크 모드: 강제 색 변환 대신 같은 디자인의 남색 판 */
-html.sb-dark #report{--bg:#121a29;--panel:#182134;--field:#1d273b;--line:rgba(201,162,94,.26);--line2:rgba(201,162,94,.5);--fg:#f1eadb;--ink:#e6decf;--ink2:#d4c9b6;--muted:#b3a893;--dim:#958b78;--gold:#d2ad6a;--gold2:#c9a25e;--money:#e0b45a;--love:#e88aa8;--work:#79b6e0;--health:#7cc493;--el0:#7cc493;--el1:#e8846b;--el2:#e0b45a;--el3:#c4c8d2;--el4:#79b6e0;color-scheme:dark}
-html.sb-dark #report h2,html.sb-dark #report h3,html.sb-dark #report h4,html.sb-dark #report strong,html.sb-dark #report .r-page b,html.sb-dark #report .r-toc-list span,html.sb-dark #report .r-cover h2,html.sb-dark #report .r-open-hd h2{color:var(--fg)}
-html.sb-dark #report .report-bar{background:#121a29}html.sb-dark #report .report-bar button{background:#1d273b;color:var(--fg)}
-html.sb-dark #report .report-bar #reportPDF{background:#d2ad6a;color:#121a29}
-html.sb-dark #report .r-take{background:#0c1220}
-html.sb-dark #report .r-fact>div,html.sb-dark #report .chapter-action,html.sb-dark #report .r-card{background:#1f2a40!important}
-html.sb-dark #report .r-card b{background:#121a29}
-html.sb-dark #report .r-rail,html.sb-dark #report .r-rail a{background:#1d273b;color:var(--fg)}
-html.sb-dark #report meter::-webkit-meter-bar{background:#2a3550}
+/* 삼성 인터넷 다크 모드: prefers-color-scheme 규칙이 있으면 삼성 인터넷이 강제 어둡게 변환을 하지 않는다 → 직접 만든 남색 판만 보인다 */
+@media (prefers-color-scheme: dark){
+html.sb #report{--bg:#121a29;--panel:#182134;--field:#1d273b;--line:rgba(201,162,94,.26);--line2:rgba(201,162,94,.5);--fg:#f1eadb;--ink:#e6decf;--ink2:#d4c9b6;--muted:#b3a893;--dim:#958b78;--gold:#d2ad6a;--gold2:#c9a25e;--money:#e0b45a;--love:#e88aa8;--work:#79b6e0;--health:#7cc493;--el0:#7cc493;--el1:#e8846b;--el2:#e0b45a;--el3:#c4c8d2;--el4:#79b6e0;color-scheme:dark}
+html.sb #report h2,html.sb #report h3,html.sb #report h4,html.sb #report strong,html.sb #report .r-page b,html.sb #report .r-toc-list span,html.sb #report .r-cover h2,html.sb #report .r-open-hd h2{color:var(--fg)}
+html.sb #report .report-bar{background:#121a29}html.sb #report .report-bar button{background:#1d273b;color:var(--fg)}
+html.sb #report .report-bar #reportPDF{background:#d2ad6a;color:#121a29}
+html.sb #report .r-take{background:#0c1220}
+html.sb #report .r-fact>div,html.sb #report .chapter-action,html.sb #report .r-card{background:#1f2a40!important}
+html.sb #report .r-card b{background:#121a29}
+html.sb #report .r-rail,html.sb #report .r-rail a{background:#1d273b;color:var(--fg)}
+html.sb #report meter::-webkit-meter-bar{background:#2a3550}
+html.sb body,html.sb{background:#121a29}
+@media print{html.sb,html.sb body{background:#121a29!important}}
+}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
