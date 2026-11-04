@@ -1115,7 +1115,7 @@ body:not(.fresh) .hero-in:has(#accountMember:not([hidden])) details.askbox>summa
 .hero-top{justify-content:flex-end;min-height:40px;margin-bottom:6px}
 .res-top{padding:0 0 20px!important}.res-nav{margin-top:0!important;top:calc(var(--brandbar-h) + 6px)!important}.hero{margin-bottom:-24px}.hero h1{margin-bottom:16px!important}
 /* 2026-11 운명 리포트: 따뜻한 컨설팅 보고서 스타일(밝은 종이 바탕) */
-#report{--bg:#070d18;--panel:#0d1627;--field:#0a1221;--line:rgba(233,196,106,.16);--line2:rgba(233,196,106,.34);--fg:#f1ebe0;--ink:#e6dfd3;--ink2:#d6cdbf;--muted:#bdb2a0;--dim:#9a8f80;color-scheme:dark;background:var(--bg);color:var(--fg)}
+#report{--bg:#f3ecdf;--panel:#fbf6ec;--field:#fffaf1;--line:rgba(168,123,54,.28);--line2:rgba(168,123,54,.55);--fg:#1c2a44;--ink:#25324c;--ink2:#3a4660;--muted:#6b6458;--dim:#8a8174;--gold:#a87b36;--gold2:#c9a25e;--navy:#1c2a44;--emerald:#2f6b57;--teal:#2c6f7e;--rose:#a5485f;--violet:#5d4f8e;--ember:#b4652f;--money:#a8771c;--love:#b04a6c;--work:#2b6c9a;--health:#3f7d50;--el0:#3f7d50;--el1:#b4492f;--el2:#a8771c;--el3:#6f7584;--el4:#2b6c9a;color-scheme:light;background:var(--bg);color:var(--fg)}
 #report .report-bar{background:#070d18;border-bottom:1px solid var(--line);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 #report .report-bar button{color:var(--fg);background:var(--field);border:1px solid var(--line2)}#report .report-bar #reportPDF{background:var(--gold);color:#1a1204;border:0;font-weight:600}
 #report .report-in{max-width:860px;margin:0 auto}
@@ -1256,6 +1256,70 @@ body:not(.fresh) .hero-in:has(#accountMember:not([hidden])) details.askbox>summa
 #report .ks-plan p{margin:0;font-size:13.5px;line-height:1.6;color:var(--kfg)}.ks-plan b{color:var(--ki)}
 .ks-foot{text-align:center;margin-top:10px;font-size:13px;font-weight:700;color:var(--ki)}
 @media(max-width:600px){.ks-grid{grid-template-columns:1fr}.ks-grid::before,.ks-grid::after{display:none}.ks-grid>section{border-bottom:1.5px solid var(--ki3);padding-left:0;padding-right:0}.ks-grid>section:last-child{border-bottom:0}}
+
+/* ===== 리포트 v3: 크림 종이 · 남색 명조 · 금색 액자 (사용자 예시 '주문은 어렵지 않습니다' 스타일) ===== */
+#report,#report .report-in{font-family:var(--display)}
+#report .report-bar{background:#f3ecdf;border-bottom:1px solid var(--line2)}
+#report .report-bar button{background:#fffaf1;color:var(--navy);border:1px solid var(--line2);font-family:var(--display)}
+#report .report-bar #reportPDF{background:var(--navy);color:#f1d9a6;border:0}
+#report .r-rail{background:#f8f1e4;border:1px solid var(--line2);border-radius:4px}
+#report .r-rail a{background:#fffaf1;border:1px solid var(--line);color:var(--navy)}#report .r-rail a b{color:var(--gold)}
+#report .r-page,#report .r-cover{position:relative;background:var(--panel);border:1px solid var(--line2);border-radius:6px;box-shadow:inset 0 0 0 6px var(--panel),inset 0 0 0 7px var(--line);padding:clamp(28px,6vw,56px) clamp(20px,5.5vw,52px)}
+#report .r-page::after,#report .r-cover::after{content:"";position:absolute;left:50%;top:-9px;width:18px;height:18px;transform:translateX(-50%);background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 0l1.4 4.6L12 6 7.4 7.4 6 12 4.6 7.4 0 6l4.6-1.4z' fill='%23a87b36'/%3E%3C/svg%3E") center/11px no-repeat;border-radius:50%}
+#report .r-page p,#report .r-page li,#report .r-page td,#report .r-page dd{font-family:var(--display);color:var(--ink);font-size:16px;line-height:1.9}
+#report .r-note,#report small{font-family:var(--body)}
+#report .r-note{color:var(--muted)!important;font-size:13.5px!important;line-height:1.7!important}
+#report h2,#report h3,#report h4{font-family:var(--display);color:var(--navy)}
+#report .eyebrow{font-family:var(--display);letter-spacing:.12em;color:var(--gold);text-transform:none}
+/* 나침반 머리 */
+.r-compass{display:flex;align-items:center;gap:12px;color:var(--gold);margin:0 auto 18px;max-width:420px}
+.r-compass span{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold2))}.r-compass span:last-child{transform:scaleX(-1)}
+.r-compass svg{width:46px;height:46px;flex:none}
+.r-gem{display:block;font-style:normal;text-align:center;color:var(--gold);font-size:14px;margin:10px 0}
+.r-open-hd{text-align:center;margin-bottom:26px}
+.r-open-hd .r-ph{justify-content:center;margin:0 0 6px}
+#report .r-num{font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.14em;color:var(--gold)}
+#report .r-open-hd h2{display:block;font-family:var(--display);font-weight:800;font-size:clamp(28px,6.4vw,42px);line-height:1.3;letter-spacing:-.02em;color:var(--navy);margin:0}
+#report .r-sub{margin:0;font-size:17px!important;color:var(--ink2)!important;word-break:keep-all}
+/* 핵심 = 남색 배너 + 금색 이중 액자 */
+#report .r-take{display:block;margin:24px auto 0;max-width:640px;padding:22px 24px;background:var(--navy);border:1px solid var(--gold2);border-radius:6px;box-shadow:inset 0 0 0 5px var(--navy),inset 0 0 0 6px rgba(201,162,94,.7);text-align:center}
+#report .r-take span{font-family:var(--display);font-weight:700;font-size:clamp(18px,4.4vw,22px);line-height:1.6;color:#f5efe2;word-break:keep-all}
+/* 소제목 = 금색 줄 + ✦ */
+#report .r-page h3{text-align:center;font-weight:800;font-size:clamp(20px,4.6vw,25px);margin:38px 0 14px;padding:26px 0 0;border:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 0l1.4 4.6L12 6 7.4 7.4 6 12 4.6 7.4 0 6l4.6-1.4z' fill='%23a87b36'/%3E%3C/svg%3E") center top/12px no-repeat,linear-gradient(var(--gold2),var(--gold2)) left 5px/calc(50% - 16px) 1px no-repeat,linear-gradient(var(--gold2),var(--gold2)) right 5px/calc(50% - 16px) 1px no-repeat}
+#report .r-page h4{font-weight:700;color:var(--navy)}
+/* 표 = 점선 금색 */
+#report table{font-family:var(--display)}#report th{color:var(--gold)!important;font-weight:700;border-bottom:1px solid var(--line2)!important;background:transparent}
+#report td{border-bottom:1px dotted var(--line2)!important;color:var(--ink)}
+#report .r-tbl{border:1px solid var(--line2);border-radius:6px;background:var(--field);padding:4px 12px}
+/* 박스류(사실 칸, 목록, 카드 등) = 금색 테두리 크림 카드 */
+#report .r-fact>div,#report .rf-grid>*,#report .r-list li,#report .cs-block,#report .r-answer,#report .chapter-action,#report .feng-place,#report .birth-atlas>*{background:var(--field)!important;border:1px solid var(--line2)!important;border-radius:6px;color:var(--ink)}
+#report .chips button,#report .feng-categories button{background:var(--field);border:1px solid var(--line2);color:var(--navy)}
+#report .chips button[aria-pressed="true"]{background:var(--navy);color:#f1d9a6;border-color:var(--navy)}
+#report svg text{fill:var(--ink2)}
+/* 표지 */
+#report .r-cover{text-align:center;justify-content:flex-start;padding-top:clamp(36px,8vw,64px)}
+#report .r-cover::before{order:2;flex:none;height:clamp(200px,42vw,320px);margin:10px 0 0;border-radius:4px;border:1px solid var(--line2)}
+#report .r-cover .r-art{order:2}
+#report .r-cover-tx{order:1;padding:0 0 12px}
+#report .r-cover .r-compass{order:0}
+#report .r-cover h2{font-size:clamp(34px,7.4vw,52px);color:var(--navy)}#report .r-cover h2 em{color:var(--gold)}
+#report .r-cover-meta{justify-content:center;border-top:1px dotted var(--line2)}
+/* 목차 */
+#report .r-toc{text-align:center}#report .r-toc-h{font-size:clamp(30px,6.4vw,40px);margin:0}
+#report .r-toc-list{text-align:left;max-width:620px;margin:18px auto 0;border-top:1px dotted var(--line2)}
+#report .r-toc-list a{border-bottom:1px dotted var(--line2);padding:14px 4px;grid-template-columns:60px minmax(0,1fr)}
+#report .r-toc-list b{font-size:17px;color:var(--gold)}#report .r-toc-list span{font-family:var(--display);font-size:18px;color:var(--navy)}
+#report .r-toc-list small{font-family:var(--body)}
+/* 사주 글자 카드 = 원형 아이콘 액자 카드 */
+#report .r-card{background:var(--field);border:1px solid var(--line2);box-shadow:inset 0 0 0 4px var(--field),inset 0 0 0 5px var(--line);border-radius:6px;align-items:center;text-align:center}
+#report .r-card small{font-family:var(--display);color:var(--gold);font-size:14px}
+#report .r-card b{width:96px;height:96px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--gold2);color:var(--c);text-shadow:none;font-size:46px;background:#fff}
+#report .r-card span{color:var(--ink);font-family:var(--display);font-size:14px}
+#report .r-foot{font-family:var(--body);color:var(--dim)}
+#report .report-editorial img{border-radius:4px;border:1px solid var(--line2)}
+#report .r-card b.two{font-size:30px;letter-spacing:-.04em}
+#report meter{accent-color:var(--gold)}#report meter::-webkit-meter-optimum-value{background:var(--gold)}#report meter::-webkit-meter-bar{background:#ece2cf;border:0}#report .r-page h3,#report .r-page h3 *{font-family:var(--display)}
+@media print{html,body{background:#f3ecdf!important}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -3334,7 +3398,9 @@ const BRM=["한겨울의 깊고 고요한 물 기운","겨울 끝, 봄을 품은
 const TGH={비견:"比肩",겁재:"劫財",식신:"食神",상관:"傷官",편재:"偏財",정재:"正財",편관:"偏官",정관:"正官",편인:"偏印",정인:"正印"};
 function sajuCards(ch){try{const d=ch.stems.d,db=ch.brs.d,mb=ch.brs.m,tm=tenGod(d,BMAIN[mb]),td=tenGod(d,BMAIN[db]);
  const c=[["일간 · 나 자신",STK[d],ST[d]+" · "+DMA[ST[d]],SE[d]],["일지 · 배우자 자리",BRK[db],BR[db]+" · "+BRM[db],SE[BMAIN[db]]],["월지 십성 · 사회에서의 나",tm,TGH[tm]+" · "+TGT[tm][0],SE[BMAIN[mb]]],["일지 십성 · 배우자와의 관계",td,TGH[td]+" · "+TGT[td][0],SE[BMAIN[db]]]];
- return `<div class="r-cards">${c.map(x=>`<div class="r-card" style="--c:var(--el${x[3]})"><small>${x[0]}</small><b>${x[1]}</b><span>${x[2]}</span></div>`).join("")}</div>`}catch(e){console.error(e);return ""}}
+ return `<div class="r-cards">${c.map(x=>`<div class="r-card" style="--c:var(--el${x[3]})"><small>${x[0]}</small><b${x[1].length>1?' class="two"':""}>${x[1]}</b><span>${x[2]}</span></div>`).join("")}</div>`}catch(e){console.error(e);return ""}}
+/* 금색 나침반 문양(리포트 장 머리·표지·목차) */
+const COMPASS='<div class="r-compass" aria-hidden="true"><span></span><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width=".7"/><path d="M24 4l3.2 16.8L44 24l-16.8 3.2L24 44l-3.2-16.8L4 24l16.8-3.2z" fill="currentColor" opacity=".9"/><path d="M24 11l1.8 11.2L37 24l-11.2 1.8L24 37l-1.8-11.2L11 24l11.2-1.8z" fill="#fbf6ec"/><circle cx="24" cy="24" r="2.2" fill="currentColor"/></svg><span></span></div>';
 function renderReport(){const ch=CH,name=ch.inp.name||"운명을 걷는 사람",bodies=birthBodies(ch);
   const notime=ch.inp.notime?'<p class="birth-note">출생 시각을 몰라 현지 정오의 천체 위치를 참고값으로 표시했어요. 달의 별자리·낙샤트라와 도수는 실제 출생 시각에 따라 달라질 수 있어요.</p>':"";
   const chap=[["r-sum","종합","Synthesis","종합 리포트","다섯 점술의 결론과 타고난 성향을 한 장에 모았어요",()=>reportSummary(ch)],
@@ -3347,10 +3413,10 @@ function renderReport(){const ch=CH,name=ch.inp.name||"운명을 걷는 사람",
    ["r-num","수비학","Numerology","수비학 분석","생일과 이름의 숫자로 보는 방향",()=>reportNum(ch)],
    ["r-maya","마야력","Maya","마야력 분석","260일 달력으로 보는 탄생일의 주제",()=>reportMaya(ch)],
    ["r-calc","계산 근거","Method","점수 계산서와 읽는 법","점수를 올리고 내린 근거와 계산 방식",()=>`<p class="r-note">시점과 분야를 고르면 다섯 점술의 근거가 점수를 얼마나 올리고 내렸는지 보여요.</p><div class="netctl"><div class="chips" id="netP" role="group" aria-label="시점"></div><div class="chips" id="netC" role="group" aria-label="분야"></div></div><div id="whyBox"></div><h3>점술별 출생 차트</h3><p class="r-note">점수와 풀이의 바탕이 된 출생 순간의 계산값이에요.</p>${notime}<div class="birth-atlas">${birthWest(ch,bodies)}${birthVedic(ch,bodies)}${birthNumerology(ch)}${birthMaya(ch)}</div><h3>점수 계산 방식과 읽는 법</h3><div class="note r-rules">${$("rulesTpl").innerHTML}</div>`]];
-  $("reportBody").innerHTML=`<header class="r-cover">${artSlot(reportArt(ch,"cover").key,"cover","표지 그림")}<div class="r-cover-tx"><div class="eyebrow">Oracle Network · Destiny Report</div><h2>${name}님의<br><em>운명 리포트</em></h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 종합 분석</p><dl class="r-cover-meta"><div><dt>생년월일</dt><dd>${String(ch.inp.date||"").replace(/-/g,".")}${ch.inp.cal==="l"?" (음력)":""}${ch.inp.notime?"":" "+ch.inp.time}</dd></div><div><dt>발행일</dt><dd>${new Date().toLocaleDateString("ko-KR")}</dd></div><div><dt>구성</dt><dd>${chap.length}장</dd></div></dl></div></header>
-  <section class="r-page r-toc" id="r-toc"><div class="r-ph"><span class="eyebrow">Contents</span></div><h2 class="r-toc-h">목차</h2><ol class="r-toc-list"><li><a href="#r-brief"><b>요약</b><span>먼저 읽는 요약<small>한 페이지로 보는 나의 이야기</small></span></a></li>${chap.map((c,i)=>`<li><a href="#${c[0]}"><b>${i+1}장</b><span>${c[3]}<small>${c[4]}</small></span></a></li>`).join("")}</ol></section>
+  $("reportBody").innerHTML=`<header class="r-cover">${COMPASS}${artSlot(reportArt(ch,"cover").key,"cover","표지 그림")}<div class="r-cover-tx"><div class="eyebrow">Oracle Network · Destiny Report</div><h2>${name}님의<br><em>운명 리포트</em></h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 종합 분석</p><dl class="r-cover-meta"><div><dt>생년월일</dt><dd>${String(ch.inp.date||"").replace(/-/g,".")}${ch.inp.cal==="l"?" (음력)":""}${ch.inp.notime?"":" "+ch.inp.time}</dd></div><div><dt>발행일</dt><dd>${new Date().toLocaleDateString("ko-KR")}</dd></div><div><dt>구성</dt><dd>${chap.length}장</dd></div></dl></div></header>
+  <section class="r-page r-toc" id="r-toc">${COMPASS}<h2 class="r-toc-h">목차</h2><i class="r-gem" aria-hidden="true">✦</i><ol class="r-toc-list"><li><a href="#r-brief"><b>요약</b><span>먼저 읽는 요약<small>한 페이지로 보는 나의 이야기</small></span></a></li>${chap.map((c,i)=>`<li><a href="#${c[0]}"><b>${i+1}장</b><span>${c[3]}<small>${c[4]}</small></span></a></li>`).join("")}</ol></section>
   <nav class="r-rail" aria-label="장 이동">${chap.map((c,i)=>`<a href="#${c[0]}"><b>${i+1}</b>${c[1]}</a>`).join("")}</nav>
-  ${chap.map((c,i)=>{const a=reportArt(ch,c[0]);return `<section class="r-page" id="${c[0]}"><div class="r-open-hd"><div class="r-ph"><span class="r-num">${String(i+1).padStart(2,"0")}</span><span class="eyebrow">${c[2]}</span></div><h2>${c[3]}<small>${c[4]}</small></h2>${a.take?`<p class="r-take"><b>핵심</b><span>${a.take}</span></p>`:""}</div>${artSlot(a.key,"wide",c[3])}${i===0?reportDash(ch)+reportEditorial():""}${c[0]==="r-saju"?sajuCards(ch):""}${c[5]()}</section>`}).join("")}
+  ${chap.map((c,i)=>{const a=reportArt(ch,c[0]);return `<section class="r-page" id="${c[0]}"><div class="r-open-hd">${COMPASS}<div class="r-ph"><span class="r-num">CHAPTER ${String(i+1).padStart(2,"0")}</span></div><h2>${c[3]}</h2><i class="r-gem" aria-hidden="true">✦</i><p class="r-sub">${c[4]}</p>${a.take?`<p class="r-take"><span>${a.take}</span></p>`:""}</div>${artSlot(a.key,"wide",c[3])}${i===0?reportEditorial():""}${c[0]==="r-saju"?sajuCards(ch):""}${c[5]()}</section>`}).join("")}
   <p class="r-foot">각 점술의 계산 규칙을 따라 만든 재미용 해석이에요. 미래를 맞힌다는 과학적 근거는 없어요.</p>`;
   {const tc=$('reportBody').querySelector('.r-toc');(tc||$('reportBody')).insertAdjacentHTML(tc?'afterend':'afterbegin','<div id="r-brief">'+approvedReportHTML(buildRichReport(CH,'comprehensive'),'comprehensive')+'</div>')}netP=0;netC=0;renderNet();fengInit($("reportBody"));
   $("reportBody").querySelectorAll(".r-rail a,.r-toc a").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const t=document.getElementById(a.getAttribute("href").slice(1));if(t)t.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})}))}
