@@ -1424,7 +1424,7 @@ html.rd #report meter::-webkit-meter-bar{background:#2a3550}
 #report .report-bar{padding-top:6px;padding-bottom:6px}
 #report .report-bar>button{white-space:nowrap}
 @media(max-width:420px){#report .report-bar{flex-wrap:nowrap;gap:6px}#report .report-bar button{font-size:13px!important}}
-.sb-note{display:none}@media (prefers-color-scheme: dark){html.sbx .sb-note{display:block;max-width:780px;margin:10px auto 0;padding:10px 14px;border-radius:8px;background:#fff3cd;color:#3b2f00;font-family:var(--body);font-size:13.5px;line-height:1.6}}@media print{.sb-note{display:none!important}}
+.sb-note{max-width:748px;margin:12px max(16px,calc((100% - 748px)/2)) 0;padding:10px 14px;border-radius:8px;background:rgba(168,123,54,.12);color:var(--ink2,#3a4660);font-family:var(--body);font-size:13px;line-height:1.6}.sb-note b{color:var(--gold,#a87b36);margin-right:6px}@media print{.sb-note{display:none!important}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1497,7 +1497,7 @@ html.rd #report meter::-webkit-meter-bar{background:#2a3550}
   </div>
   <p id="share-status" role="status" aria-live="polite"></p>
 </dialog>
-<section class="report" id="report" hidden aria-label="운명 리포트"><div class="report-bar"><button type="button" id="reportClose">← 결과로 돌아가기</button><button type="button" id="reportPDF">PDF로 저장 ↓</button><span id="reportPDFStatus" role="status" aria-live="polite"></span></div><p class="sb-note" role="note">삼성 인터넷 <b>다크 모드</b>가 켜져 있으면 브라우저가 색을 강제로 바꿔 글자가 흐리게 보일 수 있어요. 아래 메뉴 <b>≡</b> → <b>다크 모드</b>를 끄면 원래 디자인으로 보여요.</p><div class="report-in" id="reportBody"></div></section>
+<section class="report" id="report" hidden aria-label="운명 리포트"><div class="report-bar"><button type="button" id="reportClose">← 결과로 돌아가기</button><button type="button" id="reportPDF">PDF로 저장 ↓</button><span id="reportPDFStatus" role="status" aria-live="polite"></span></div><p class="sb-note" role="note"><b>안내</b> 휴대폰이 다크 모드일 때(특히 삼성 인터넷)는 브라우저가 색을 강제로 바꿔 리포트 화면과 PDF에 출력 오류가 생길 수 있어요. 다크 모드를 끄고 보거나 저장하시길 권해요.</p><div class="report-in" id="reportBody"></div></section>
 <section id="result" class="result" aria-labelledby="resTitle">
   <div class="res-top">
     <h2 class="res-eyebrow" id="resTitle">당신의 운명</h2>
