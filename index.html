@@ -1425,6 +1425,17 @@ html.rd #report meter::-webkit-meter-bar{background:#2a3550}
 #report .report-bar>button{white-space:nowrap}
 @media(max-width:420px){#report .report-bar{flex-wrap:nowrap;gap:6px}#report .report-bar button{font-size:13px!important}}
 .sb-note{max-width:748px;margin:12px max(16px,calc((100% - 748px)/2)) 0;padding:10px 14px;border-radius:8px;background:rgba(168,123,54,.12);color:var(--ink2,#3a4660);font-family:var(--body);font-size:13px;line-height:1.6}.sb-note b{color:var(--gold,#a87b36);margin-right:6px}@media print{.sb-note{display:none!important}}
+
+/* 2026-11-04: 상단 한 줄 제목, 처음으로 버튼 제거, 메뉴 위로 */
+.hero-top{flex-wrap:nowrap!important;justify-content:space-between!important;margin-bottom:0!important}
+.hero-top .hero-title{margin:0!important;font-size:clamp(14px,4vw,20px)!important;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.hero-top .hero-title em{font-style:normal}
+.hero-top .share-actions{margin-left:auto!important}
+.hero{min-height:0!important;margin-bottom:0!important}
+body:not(.fresh) .hero{min-height:0}
+.res-top{display:none!important}
+.result{margin-top:0!important}
+.wrap{padding-top:0!important}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1437,8 +1448,7 @@ html.rd #report meter::-webkit-meter-bar{background:#2a3550}
 <header class="hero">
   <div class="sigil" aria-hidden="true"><svg id="sigil" viewBox="0 0 500 500"></svg></div>
   <div class="hero-in">
-    <button type="button" id="landingBack" class="landing-back">← 처음으로</button><div class="hero-top"><div class="eyebrow"></div><div class="share-actions"><button type="button" id="accountLogin" class="kakao-login acct-login">카카오 로그인</button><details class="acct" id="accountMember" hidden><summary id="accountName">내 정보</summary><div class="acct-pop"><p id="accountIdLabel" class="fine"></p><button type="button" id="profileEdit">내 정보 수정</button><a id="adminPageLink" href="admin.html" hidden>관리자 페이지</a><button type="button" id="profileLoad">내 정보 불러오기</button><button type="button" id="profileSave">지금 입력 저장</button><button type="button" id="profileDelete">저장 정보 삭제</button><button type="button" id="accountLogout">로그아웃</button></div></details><button type="button" id="share-open" class="share-icon" aria-label="공유하기" title="공유하기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button></div></div>
-    <h1><span id="whoName">당신의</span><span id="whoSfx"></span><br><em>오라클 네트워크</em></h1>
+    <div class="hero-top"><h1 class="hero-title"><span id="whoName">당신의</span><span id="whoSfx"></span> <em>오라클 네트워크</em></h1><div class="share-actions"><button type="button" id="accountLogin" class="kakao-login acct-login">카카오 로그인</button><details class="acct" id="accountMember" hidden><summary id="accountName">내 정보</summary><div class="acct-pop"><p id="accountIdLabel" class="fine"></p><button type="button" id="profileEdit">내 정보 수정</button><a id="adminPageLink" href="admin.html" hidden>관리자 페이지</a><button type="button" id="profileLoad">내 정보 불러오기</button><button type="button" id="profileSave">지금 입력 저장</button><button type="button" id="profileDelete">저장 정보 삭제</button><button type="button" id="accountLogout">로그아웃</button></div></details><button type="button" id="share-open" class="share-icon" aria-label="공유하기" title="공유하기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button></div></div>
     <p class="lede">사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 계산하여,<br>모든 점술이 가리키는 당신의 운명을 알려드립니다.</p>
 
 
@@ -3789,7 +3799,7 @@ accountPaint();accountInit();
 
 
 document.getElementById('landingStart').addEventListener('click',()=>{document.body.classList.add('app-entered');if(document.body.classList.contains('fresh')){document.getElementById('askbox').open=true;document.getElementById('in-name').focus({preventScroll:true})}window.scrollTo({top:0,behavior:'instant'})});
-document.getElementById('landingBack').addEventListener('click',()=>{document.body.classList.remove('app-entered');document.getElementById('landingStart').innerHTML=(CH?'내 결과 이어보기':'나의 운명 알아보기')+' <span aria-hidden="true">→</span>';window.scrollTo({top:0,behavior:'instant'});document.getElementById('landingStart').focus({preventScroll:true})});
+
 </script>
 
 <script>
@@ -3797,7 +3807,7 @@ document.getElementById('landingBack').addEventListener('click',()=>{document.bo
 function goTop(){const rp=$("report");if(rp&&!rp.hidden&&rp.scrollTop>4){rp.scrollTo({top:0,behavior:"smooth"});return}
  if(rp&&!rp.hidden){$("reportClose").click()}
  if(window.scrollY>4){window.scrollTo({top:0,behavior:"smooth"});return}
- if(document.body.classList.contains("app-entered"))$("landingBack").click()}
+ if(document.body.classList.contains("app-entered")){document.body.classList.remove("app-entered");window.scrollTo({top:0,behavior:"instant"})}}
 $("brandbar").addEventListener("click",goTop);
 $("brandbar").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();goTop()}});
 $("profileEdit").addEventListener("click",()=>{const m=$("accountMember");if(m)m.open=false;const a=$("askbox");a.open=true;a.scrollIntoView({behavior:"smooth",block:"start"})});
