@@ -1436,6 +1436,20 @@ body:not(.fresh) .hero{min-height:0}
 .res-top{display:none!important}
 .result{margin-top:0!important}
 .wrap{padding-top:0!important}
+
+/* 2026-11-04b: 상단 아이콘 바 */
+.hero-top{justify-content:flex-end!important;margin:20px 0 28px!important;min-height:44px}
+.hero-top .share-actions{display:flex;align-items:center;gap:10px}
+.top-icon{width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;display:inline-grid!important;place-items:center;border-radius:50%!important;border:1px solid var(--line2)!important;background:var(--field)!important;color:var(--gold)!important;cursor:pointer;list-style:none}
+.top-icon::after{content:none!important}.top-icon::-webkit-details-marker{display:none}
+.top-icon:hover,.top-icon:focus-visible,.acct[open] .top-icon{border-color:var(--gold)!important}
+a.top-icon[hidden]{display:none!important}
+.hero-top .acct-login{min-height:44px!important;font-size:15px!important;padding:8px 16px!important}
+.acct{position:relative}
+.acct-pop{width:220px;padding:12px}
+.acct-hello{margin:2px 4px 0;font-size:16px;font-weight:700;color:var(--fg)}
+.acct-pop .fine{margin:0 4px 6px;font-size:12px}
+.acct-pop button{font-size:15px!important;min-height:44px}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1448,7 +1462,7 @@ body:not(.fresh) .hero{min-height:0}
 <header class="hero">
   <div class="sigil" aria-hidden="true"><svg id="sigil" viewBox="0 0 500 500"></svg></div>
   <div class="hero-in">
-    <div class="hero-top"><h1 class="hero-title"><span id="whoName">당신의</span><span id="whoSfx"></span> <em>오라클 네트워크</em></h1><div class="share-actions"><button type="button" id="accountLogin" class="kakao-login acct-login">카카오 로그인</button><details class="acct" id="accountMember" hidden><summary id="accountName">내 정보</summary><div class="acct-pop"><p id="accountIdLabel" class="fine"></p><button type="button" id="profileEdit">내 정보 수정</button><a id="adminPageLink" href="admin.html" hidden>관리자 페이지</a><button type="button" id="profileLoad">내 정보 불러오기</button><button type="button" id="profileSave">지금 입력 저장</button><button type="button" id="profileDelete">저장 정보 삭제</button><button type="button" id="accountLogout">로그아웃</button></div></details><button type="button" id="share-open" class="share-icon" aria-label="공유하기" title="공유하기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button></div></div>
+    <div class="hero-top"><span class="sr-who" hidden><span id="whoName">당신의</span><span id="whoSfx"></span></span><div class="share-actions"><button type="button" id="share-open" class="top-icon share-icon" aria-label="공유하기" title="공유하기"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button><a id="adminPageLink" class="top-icon" href="admin.html" hidden aria-label="관리자 페이지" title="관리자 페이지"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></a><button type="button" id="accountLogin" class="kakao-login acct-login">카카오 로그인</button><details class="acct" id="accountMember" hidden><summary id="accountName" class="top-icon" aria-label="개인 설정" title="개인 설정"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></summary><div class="acct-pop"><p class="acct-hello" id="accountHello"></p><p id="accountIdLabel" class="fine"></p><button type="button" id="profileEdit">내 정보</button><button type="button" id="accountLogout">로그아웃</button><span hidden><button type="button" id="profileLoad"></button><button type="button" id="profileSave"></button><button type="button" id="profileDelete"></button></span></div></details></div></div>
     <p class="lede">사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 계산하여,<br>모든 점술이 가리키는 당신의 운명을 알려드립니다.</p>
 
 
@@ -3722,7 +3736,7 @@ let accountToken=lsGet('oracle-session')||'',accountUser=null,accountBusy=false,
 const accountStatus=text=>{$('accountStatus').textContent=text};
 function accountPaint(){
   $('accountLogin').hidden=!!accountUser;$('accountMember').hidden=!accountUser;
-  paintAccessAccount();$('accountName').textContent=accountUser?(accountUser.nickname||'내 정보')+'님':'내 정보';
+  paintAccessAccount();$('accountHello').textContent=accountUser?(accountUser.nickname||'회원')+'님':'';
   $('saveGuest').hidden=!!accountUser;$('saveMember').hidden=!accountUser;
   $('profileLoad').disabled=!accountUser?.profile||accountBusy;$('profileDelete').disabled=!accountUser?.profile||accountBusy;
   $('profileSave').disabled=accountBusy;$('accountLogout').disabled=accountBusy;
