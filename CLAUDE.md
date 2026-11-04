@@ -226,3 +226,4 @@
 - PDF는 'PDF로 저장' 버튼 → `printReport()` → 브라우저 인쇄(`@media print`, A4, 배경색 그대로, 장마다 새 쪽, 리포트 밖 요소 숨김). 화면 디자인 그대로 나온다. 카카오톡 등 인앱 브라우저는 인쇄를 막아 외부 브라우저 안내. 예전 캔버스 방식(`downloadReportPDF`·`saveReportPDF`)은 코드에 남아 있으나 쓰지 않는다.
 - 안쪽 박스 선 제거(2026-11-04, 사용자 요청): 페이지 금색 액자만 남기고 `.r-answer`·`.r-list li`·`.cs-block`·`.feng-place` 등은 선·배경 없이 여백으로, `.r-fact`·`.chapter-action`·`.r-card`는 선 없이 옅은 베이지 바탕(#f4ebdb)으로 구분.
 - 리포트 테마: 상단바(`.brandbar`) 오른쪽 아이콘 버튼 `#themeToggle`(☀/☾, 모든 화면·모든 브라우저)이 `html.rd`를 켜고 꺼서 리포트 남색 판 ↔ 크림 판 전환, localStorage `oracle-theme`(light/dark)에 기억. 기본은 크림, 단 삼성 인터넷(`html.sbx`) + 다크 모드는 남색(브라우저 강제 다크 변환으로 크림 판이 깨지기 때문). 삼성 인터넷은 `@media (prefers-color-scheme: dark)` 규칙이 있으면 강제 변환을 하지 않으므로 그 규칙을 하나 둔다. 메인 화면은 원래 어두운 디자인이라 버튼이 바꾸는 것은 리포트(화면·PDF)뿐이다.
+- 삼성 인터넷 + 다크 모드면 리포트 맨 위에 `.sb-note` 안내(메뉴 ≡ → 다크 모드 끄기)를 보인다(인쇄 제외). 삼성 인터넷의 강제 다크는 페이지에서 확실히 끌 방법이 없다(삼성 개발자 포럼·Stack Overflow 확인).
