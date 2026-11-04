@@ -1320,6 +1320,78 @@ body:not(.fresh) .hero-in:has(#accountMember:not([hidden])) details.askbox>summa
 #report .r-card b.two{font-size:30px;letter-spacing:-.04em}
 #report meter{accent-color:var(--gold)}#report meter::-webkit-meter-optimum-value{background:var(--gold)}#report meter::-webkit-meter-bar{background:#ece2cf;border:0}#report .r-page h3,#report .r-page h3 *{font-family:var(--display)}
 @media print{html,body{background:#f3ecdf!important}}
+/* ===== 리포트 v3.1 타이포·여백 정리 =====
+   글자: 제목·숫자 강조는 명조, 본문·표·라벨은 고딕(긴 글 가독성).
+   크기: 본문 16 / 보조 14 / 라벨 12.5, 제목 34·24·18. 간격: 8px 단위(8·12·16·24·32·48). */
+#report{--rs-1:8px;--rs-2:12px;--rs-3:16px;--rs-4:24px;--rs-5:32px;--rs-6:48px}
+#report .report-in{max-width:780px;padding:0 16px 48px}
+#report .r-page p,#report .r-page li,#report .r-page td,#report .r-page dd,#report .r-page dt,#report .r-page th,#report table{font-family:var(--body)}
+#report .r-page p,#report .r-page li{font-size:16px;line-height:1.75;letter-spacing:-.005em;color:var(--ink);word-break:keep-all;overflow-wrap:anywhere;text-wrap:pretty}
+#report .r-page p{margin:0 0 var(--rs-3)}
+#report .r-page ul:not(.r-list):not(.r-toc-list),#report .r-page ol:not(.r-toc-list){margin:0 0 var(--rs-3);padding-left:1.15em}
+#report .r-page ul:not(.r-list) li,#report .r-page ol li{margin:0 0 var(--rs-1);padding-left:2px}
+#report .r-page li::marker{color:var(--gold)}
+#report strong,#report .r-page b{font-weight:600;color:var(--navy)}
+#report h2,#report h3,#report h4,#report .r-sub,#report .r-take span{text-wrap:balance;word-break:keep-all}
+/* 페이지 틀 */
+#report .r-page,#report .r-cover{padding:var(--rs-6) clamp(20px,6vw,56px);margin:0 0 var(--rs-5)}
+@media(max-width:600px){#report .r-page,#report .r-cover{padding:40px 20px 32px;box-shadow:inset 0 0 0 4px var(--panel),inset 0 0 0 5px var(--line)}}
+/* 장 머리 */
+.r-compass{margin-bottom:var(--rs-3)}.r-compass svg{width:40px;height:40px}
+#report .r-open-hd{margin-bottom:var(--rs-5)}
+#report .r-open-hd .r-ph{border:0;padding:0;margin-bottom:var(--rs-1)}
+#report .r-num{font-size:13px;letter-spacing:.18em}
+#report .r-open-hd h2{font-size:clamp(28px,6vw,38px);line-height:1.25}
+#report .r-gem{margin:var(--rs-2) 0;font-size:12px}
+#report .r-sub{font-family:var(--body);font-size:15px!important;line-height:1.6!important;color:var(--muted)!important;max-width:30em;margin:0 auto}
+#report .r-take{margin-top:var(--rs-4);padding:20px 22px}
+#report .r-take span{font-size:clamp(17px,4.2vw,20px);line-height:1.55}
+/* 소제목 */
+#report .r-page h3{font-size:clamp(20px,4.4vw,24px);line-height:1.35;margin:var(--rs-6) 0 var(--rs-3);padding-top:28px}
+#report .r-page h3+p,#report .r-page h3+.r-note{margin-top:0}
+#report .r-page h4{font-family:var(--display);font-size:18px;line-height:1.4;margin:var(--rs-5) 0 var(--rs-1)}
+#report .r-page h4 span,#report .r-page h4 small{font-family:var(--body);font-weight:400}
+#report .r-note{font-size:13.5px!important;line-height:1.65!important;margin:var(--rs-1) 0 var(--rs-3)!important}
+/* 카드·목록 */
+#report .r-list{display:grid;gap:var(--rs-2);margin:var(--rs-3) 0}
+#report .r-list li{padding:var(--rs-3) 18px;border-bottom:1px solid var(--line2)!important;font-size:15px;line-height:1.7}
+#report .r-list li b{display:block;font-family:var(--display);font-size:16px;color:var(--gold);margin-bottom:4px}
+#report .r-fact{display:grid;gap:var(--rs-2);margin:var(--rs-3) 0}
+#report .r-fact>div{padding:var(--rs-3) 18px;display:flex;flex-direction:column;gap:4px}
+#report .r-fact small{font-size:12.5px;letter-spacing:.04em;color:var(--muted)}
+#report .r-fact b{font-family:var(--display);font-size:18px;line-height:1.4;color:var(--gold)}
+#report .r-fact span{font-family:var(--body);font-size:14px;line-height:1.6;color:var(--ink2)}
+/* 표 */
+#report .r-tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0;margin:var(--rs-3) 0}
+#report .r-tbl table,#report .r-page table{width:100%;border-collapse:collapse;font-size:14.5px}
+#report th,#report td{padding:11px 12px;text-align:left;vertical-align:top;line-height:1.5}
+#report th{font-family:var(--body);font-size:12.5px;letter-spacing:.04em;white-space:nowrap}
+#report td.num,#report td:has(>.num){font-variant-numeric:tabular-nums;white-space:nowrap}
+#report tr:last-child td{border-bottom:0!important}
+/* 목차·표지 */
+#report .r-toc-list a{padding:var(--rs-3) 4px;align-items:baseline}
+#report .r-toc-list span{font-size:17px;gap:4px}#report .r-toc-list small{font-size:13.5px;line-height:1.5}
+#report .r-cover-meta{gap:var(--rs-2) var(--rs-5);margin-top:var(--rs-4);padding-top:var(--rs-3)}
+#report .r-cover-meta dt{font-family:var(--body);font-size:12.5px;color:var(--muted)}#report .r-cover-meta dd{font-family:var(--display);font-size:16px}
+#report .r-cover p{font-family:var(--body);font-size:15px;line-height:1.6}
+/* 사주 카드 */
+#report .r-cards{gap:var(--rs-2);margin-bottom:var(--rs-5)}
+#report .r-card{padding:var(--rs-4) var(--rs-2) 20px;gap:var(--rs-2);min-height:0}
+#report .r-card small{font-size:13px;line-height:1.4}
+#report .r-card b{width:84px;height:84px;font-size:40px;margin:0}
+#report .r-card b.two{font-size:26px}
+#report .r-card span{font-family:var(--body);font-size:13px;line-height:1.5;color:var(--ink2)}
+/* 상단 막대(버튼·장 이동) 높이 줄이기 */
+#report .report-bar{padding:8px 16px;gap:8px}
+#report .report-bar button{min-height:38px;padding:6px 14px;font-size:14px}
+#report .r-rail{top:calc(54px + env(safe-area-inset-top,0px));margin:12px 0 var(--rs-4);padding:6px;gap:6px}
+#report .r-rail a{min-height:32px;padding:4px 12px;font-family:var(--body);font-size:13px}
+#report #reportPDFStatus{font-family:var(--body)}
+#report .report-editorial{margin:0 0 var(--rs-4)}
+#r-brief .r-page>h2{text-align:center;font-family:var(--display);font-weight:800;font-size:clamp(24px,5vw,30px);margin:0 0 var(--rs-4)}
+#report .r-page div+p,#report .r-page svg+p{margin-top:var(--rs-3)}
+@media(max-width:600px){#report th,#report td{padding:9px 8px;font-size:13.5px}#report th{font-size:12px}}
+@media print{#report .r-page p,#report .r-page li{font-size:11pt;line-height:1.7}#report .r-page,#report .r-cover{padding:14mm 14mm}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
