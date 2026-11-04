@@ -221,6 +221,6 @@
 - 이미지 자리는 `img/<key>.webp`(없으면 .png)를 읽고, 둘 다 없으면 숨긴다. `?slots=1`이면 빈 자리와 파일명을 점선으로 보여준다. 이미지가 있으면 같은 장의 기존 `reportEditorial` 그림과 표지 수채화는 숨긴다.
 - 결과별 키(`reportArt`): 표지 `cover_{wood|fire|earth|metal|water}`(가장 많은 오행), 종합 `best_{money|love|work|health}`(storyFor 평균 1위), 사주 `dm_{gap…gye}`(일간), 서양 `sun_{aries…pisces}`(태양 별자리), 인도 `dasha_{sun…ketu}`(지금 다샤), 나머지 장 `ch_questions/ch_flow/ch_places/ch_numbers/ch_maya/ch_method`.
 - 리포트 순서: 표지(`.r-cover`) → 목차(`.r-toc`, 요약 + 10장, 누르면 이동) → 먼저 읽는 요약(`#r-brief` = `approvedReportHTML`, 자체 표지·목차는 숨김) → 장 이동 칩 → 1~10장.
-- 1장 앞 `reportDash` = 인포그래픽 요약(`.ig`): 큰 숫자 KPI 3개(10년 종합 평균·가장 밝은 해·강점에 동의한 점술 수) + 오행 도넛(`ch.cnt`) + 분야별 10년 평균 막대 + 10년 종합 선 그래프(`RY` 네 분야 평균) + 핵심 결론 3줄 + 많이 궁금해하는 네 가지 표(`lifeQ`).
+- 1장 앞 `reportDash` = KPI 리포트 시트(`.ks`, 사용자가 준 'KPI 성과 보고서' 예시를 따른 밝은 라벤더 바탕·인디고 한 장): 제목 'OO님의 YYYY 운명 KPI 리포트' + 손그림 화살표, 손그림 타원 KPI 3개(가장 밝은 해·최고 점수·강점에 동의한 점술 수), 2×2 칸(운명 달성률 도넛 = 10년 종합 평균 / 10년 흐름 선 그래프 + 상승폭 / 분야별 평균 가로 막대 + 아이콘 / 분석 및 향후 계획 ✓ 3줄), @oracle-network. 폰(600px 이하)은 1열. 아래 많이 궁금해하는 네 가지 표(`lifeQ`). 예전 `.ig` CSS는 남아 있으나 쓰지 않는다.
 - 사주 장 앞 `sajuCards`: 일간·일지·월지 십성·일지 십성 4장 카드(오행색 배경, `BRM` 지지 뜻, `TGH` 십성 한자, `TGT` 한 줄).
 - PDF는 'PDF로 저장' 버튼 → `printReport()` → 브라우저 인쇄(`@media print`, A4, 배경색 그대로, 장마다 새 쪽, 리포트 밖 요소 숨김). 화면 디자인 그대로 나온다. 카카오톡 등 인앱 브라우저는 인쇄를 막아 외부 브라우저 안내. 예전 캔버스 방식(`downloadReportPDF`·`saveReportPDF`)은 코드에 남아 있으나 쓰지 않는다.

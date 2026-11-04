@@ -1224,6 +1224,38 @@ body:not(.fresh) .hero-in:has(#accountMember:not([hidden])) details.askbox>summa
  #r-brief .r-page{break-before:auto}
  .r-toc-list a{padding:7px 0}.r-toc-h{margin-bottom:8px}
 }
+
+/* KPI 리포트 시트 (밝은 라벤더 종이 + 인디고, 손그림 강조) */
+.ks{--ki:#3036a8;--ki2:#5b60d6;--ki3:#a9acef;--kbg:#f4f4f9;--kfg:#1d2050;background:var(--kbg);color:var(--kfg);border-radius:18px;padding:clamp(20px,5vw,40px) clamp(16px,4.5vw,36px) 22px;margin:0 0 20px;break-inside:avoid}
+.ks-title{text-align:center;margin-bottom:18px}
+#report .ks-title h3{margin:0;padding:0;border:0;font-family:var(--body);font-weight:800;font-size:clamp(22px,5.6vw,34px);letter-spacing:-.03em;color:var(--ki);line-height:1.25;word-break:keep-all}
+.ks-arrow{display:block;width:92%;height:22px;margin:4px auto 0}.ks-arrow path{fill:none;stroke:var(--ki2);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+#report .ks-sub{margin:0 0 10px;font-size:17px;font-weight:800;color:var(--kfg)}
+.ks-kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:18px;padding-bottom:18px;border-bottom:1.5px solid var(--ki3)}
+.ks-kpi>div{text-align:center;min-width:0}
+.ks-num{position:relative;display:block;padding:14px 4px}
+.ks-oval{position:absolute;inset:0;width:100%;height:100%}.ks-oval path{fill:none;stroke:var(--ki);stroke-width:2.2;stroke-linecap:round}
+.ks-num b{position:relative;font-family:var(--body);font-weight:800;font-size:clamp(20px,5.4vw,30px);color:var(--ki);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ks-kpi small{display:block;margin-top:4px;font-size:12.5px;color:#4b4f7a;word-break:keep-all}
+.ks-grid{display:grid;grid-template-columns:1fr 1fr;position:relative}
+.ks-grid::before{content:"";position:absolute;left:50%;top:6px;bottom:6px;border-left:1.5px solid var(--ki3)}
+.ks-grid::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:1.5px solid var(--ki3)}
+.ks-grid>section{padding:14px clamp(8px,2.4vw,18px) 18px;min-width:0}
+#report .ks-grid h4{display:flex;align-items:center;gap:6px;margin:0 0 10px;font-size:16px;font-weight:800;color:var(--kfg)}
+.ks-grid h4 i{font-style:normal;color:var(--ki2);font-size:18px}
+.ks-donut,.ks-line,.ks-bars{display:block;width:100%;height:auto}
+.ks-donut .tr{fill:none;stroke:#d9dbf6;stroke-width:22}.ks-donut .vl{fill:none;stroke:var(--ki2);stroke-width:22}.ks-donut .in{fill:var(--ki)}
+.ks-donut .big{font-family:var(--body);font-weight:800;font-size:28px;fill:#fff}.ks-donut .sm{font-size:11px;fill:#dfe0ff;font-weight:600}
+.ks-donut .an{fill:none;stroke:#565a86;stroke-width:1.3;stroke-linecap:round}.ks-donut .lb{font-size:11px;fill:#4b4f7a}
+.ks-line .ax{stroke:#9b9ec8;stroke-width:1}.ks-line .tk,.ks-bars .tk{font-size:10px;fill:#6b6f98}
+.ks-line .ln{fill:none;stroke:var(--ki2);stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round}.ks-line .pk{fill:var(--ki)}.ks-line .nt{font-size:11px;font-weight:700;fill:var(--ki)}
+.ks-bars .br{fill:var(--ki2)}.ks-bars .br.top{fill:var(--ki)}.ks-bars .bn{font-size:9.5px;fill:#4b4f7a}.ks-bars .bv{font-size:11px;font-weight:700;fill:var(--ki)}
+.ks-bars .ic svg *{fill:none;stroke:#565a86;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ks-bars .bn{transform:translateY(22px)}
+.ks-plan{border:1.5px solid var(--ki2);border-radius:14px;padding:12px 14px;display:grid;gap:10px}
+#report .ks-plan p{margin:0;font-size:13.5px;line-height:1.6;color:var(--kfg)}.ks-plan b{color:var(--ki)}
+.ks-foot{text-align:center;margin-top:10px;font-size:13px;font-weight:700;color:var(--ki)}
+@media(max-width:600px){.ks-grid{grid-template-columns:1fr}.ks-grid::before,.ks-grid::after{display:none}.ks-grid>section{border-bottom:1.5px solid var(--ki3);padding-left:0;padding-right:0}.ks-grid>section:last-child{border-bottom:0}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -3273,23 +3305,30 @@ if(/[?&]slots=1/.test(location.search))document.documentElement.classList.add("s
 /* 리포트 1장 대시보드: 핵심 세 가지 + 분야별 10년 평균 막대 + 많이 궁금해하는 네 가지 표 */
 function reportDash(ch){try{const t=reportTags(ch)[0],b=bestCell(),tp=turningPoints(ch)[0],y0=new Date().getFullYear(),yrs=RY.map((_,i)=>y0+1+i);
  const fav=CATS.map((c,ci)=>{const v=RY.map(r=>D(r[ci].mean)),avg=Math.round(v.reduce((a,x)=>a+x,0)/v.length),mx=Math.max(...v);return {n:SHORT[ci],avg,by:yrs[v.indexOf(mx)],mx,k:c.k}});
- const tot=RY.map(r=>Math.round(r.reduce((a,c)=>a+D(c.mean),0)/r.length)),totAvg=Math.round(tot.reduce((a,x)=>a+x,0)/tot.length);
- const top=fav.reduce((a,x)=>x.avg>a.avg?x:a,fav[0]);
- /* 오행 도넛 */
- const cnt=ch.cnt,sum=cnt.reduce((a,x)=>a+x,0)||1,dom=cnt.indexOf(Math.max(...cnt));let acc=0;const C=2*Math.PI*42;
- const donut=`<svg viewBox="0 0 120 120" class="ig-donut" role="img" aria-label="오행 분포"><circle cx="60" cy="60" r="42" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="16"/>${cnt.map((v,i)=>{if(!v)return"";const len=v/sum*C,seg=`<circle cx="60" cy="60" r="42" fill="none" stroke="var(--el${i})" stroke-width="16" stroke-dasharray="${len-1.5} ${C-len+1.5}" stroke-dashoffset="${-acc}" transform="rotate(-90 60 60)"/>`;acc+=len;return seg}).join("")}<text x="60" y="56" text-anchor="middle" class="ig-dn-b">${ELK[dom]}</text><text x="60" y="74" text-anchor="middle" class="ig-dn-s">가장 강한 기운</text></svg>`;
- const legend=cnt.map((v,i)=>`<li><i style="background:var(--el${i})"></i>${ELK[i]}<b>${v}</b></li>`).join("");
- /* 10년 종합 선 그래프 */
- const W=320,H=150,px=28,py=16,X=i=>px+i*(W-px-10)/(tot.length-1),Yv=v=>H-py-(v-60)/40*(H-py*2),mi=tot.indexOf(Math.max(...tot));
- const line=`<svg viewBox="0 0 ${W} ${H}" class="ig-line" role="img" aria-label="앞으로 10년 종합 점수">${[60,70,80,90,100].map(v=>`<line x1="${px}" x2="${W-10}" y1="${Yv(v)}" y2="${Yv(v)}" class="g"/><text x="${px-6}" y="${Yv(v)+4}" text-anchor="end" class="ax">${v}</text>`).join("")}<polyline points="${tot.map((v,i)=>X(i)+","+Yv(v)).join(" ")}" class="l"/>${tot.map((v,i)=>`<circle cx="${X(i)}" cy="${Yv(v)}" r="${i===mi?5:3}" class="${i===mi?"pk":"p"}"/>`).join("")}<text x="${X(mi)}" y="${Yv(tot[mi])-10}" text-anchor="${mi>tot.length-3?"end":mi<2?"start":"middle"}" class="pkt">${yrs[mi]} · ${tot[mi]}</text>${yrs.map((y,i)=>i%3===0||i===yrs.length-1?`<text x="${X(i)}" y="${H-1}" text-anchor="middle" class="ax">’${String(y).slice(2)}</text>`:"").join("")}</svg>`;
+ const tot=RY.map(r=>Math.round(r.reduce((a,c)=>a+D(c.mean),0)/r.length)),totAvg=Math.round(tot.reduce((a,x)=>a+x,0)/tot.length),mi=tot.indexOf(Math.max(...tot)),lo=Math.min(...tot.slice(0,mi+1)),rise=tot[mi]-lo;
+ const top=fav.reduce((a,x)=>x.avg>a.avg?x:a,fav[0]),nm=ch.inp.name||"나";
+ /* 손으로 그린 듯한 타원 */
+ const oval=`<svg class="ks-oval" viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><path d="M18 44C10 22 58 8 104 9c48 1 88 12 84 34-4 24-58 30-104 28C40 69 8 60 14 38c6-18 44-26 82-27"/></svg>`;
+ const kpis=[[`${b.y}년`,"가장 밝은 해"],[`${b.v}점`,`최고 점수 · ${SHORT[b.ci]}운`],[`${t.n}/5`,"강점에 동의한 점술"]];
+ /* 도넛 = 10년 종합 평균 */
+ const C=2*Math.PI*62,len=totAvg/100*C;
+ const donut=`<svg viewBox="0 0 260 200" class="ks-donut" role="img" aria-label="10년 종합 평균 ${totAvg}점"><circle cx="130" cy="104" r="62" class="tr"/><circle cx="130" cy="104" r="62" class="vl" stroke-dasharray="${len} ${C-len}" transform="rotate(-90 130 104)"/><circle cx="130" cy="104" r="44" class="in"/><text x="130" y="104" text-anchor="middle" class="big">${totAvg}점</text><text x="130" y="124" text-anchor="middle" class="sm">10년 종합 평균</text><path d="M196 52c14-14 26-20 40-18" class="an"/><path d="M231 30l6 4-6 4" class="an"/><text x="214" y="22" class="lb">만점(100)</text><path d="M70 168c-16 10-30 12-44 8" class="an"/><path d="M31 171l-6 5 8 2" class="an"/><text x="10" y="194" class="lb">나의 점수</text></svg>`;
+ /* 선 그래프 */
+ const W=300,H=190,px=34,pb=26,pt=26,X=i=>px+8+i*(W-px-24)/(tot.length-1),Yv=v=>H-pb-(v-60)/40*(H-pb-pt);
+ const line=`<svg viewBox="0 0 ${W} ${H}" class="ks-line" role="img" aria-label="앞으로 10년 종합 점수"><line x1="${px}" y1="${pt-8}" x2="${px}" y2="${H-pb}" class="ax"/><line x1="${px}" y1="${H-pb}" x2="${W-6}" y2="${H-pb}" class="ax"/>${[60,70,80,90,100].map(v=>`<text x="${px-8}" y="${Yv(v)+4}" text-anchor="end" class="tk">${v}</text>`).join("")}<polyline points="${tot.map((v,i)=>X(i)+","+Yv(v)).join(" ")}" class="ln"/><circle cx="${X(mi)}" cy="${Yv(tot[mi])}" r="4.5" class="pk"/><text x="${X(mi)+(mi>6?-8:8)}" y="${Yv(tot[mi])-10}" text-anchor="${mi>6?"end":"start"}" class="nt">${rise>0?`+${rise}점 상승`:`${tot[mi]}점`}</text>${[0,Math.floor((tot.length-1)/2),tot.length-1].map(i=>`<text x="${X(i)}" y="${H-6}" text-anchor="middle" class="tk">${yrs[i]}</text>`).join("")}</svg>`;
+ /* 분야별 막대 + 아이콘 */
+ const IC={money:'<circle cx="12" cy="12" r="8"/><path d="M12 7v10M9.5 9.5h4a1.8 1.8 0 010 3.5h-3a1.8 1.8 0 000 3.5h4"/>',love:'<path d="M12 19s-7-4.4-7-9.2A3.8 3.8 0 0112 7.6a3.8 3.8 0 017 2.2C19 14.6 12 19 12 19z"/>',work:'<rect x="4" y="8" width="16" height="11" rx="2"/><path d="M9 8V6h6v2M4 13h16"/>',health:'<path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14zM5 19l7-7"/>'};
+ const BW=300,bx=56,bh=22,Bx=v=>bx+(v-60)/40*(BW-bx-12);
+ const bars=`<svg viewBox="0 0 ${BW} ${fav.length*40+26}" class="ks-bars" role="img" aria-label="분야별 10년 평균">${fav.map((f,i)=>`<g transform="translate(0 ${i*40+6})"><g transform="translate(6 0)" class="ic"><svg width="24" height="24" viewBox="0 0 24 24">${IC[f.k]}</svg></g><text x="34" y="10" class="bn">${f.n.replace("·학업","")}</text><rect x="${bx}" y="0" width="${Math.max(6,Bx(f.avg)-bx)}" height="${bh}" class="br${f===top?" top":""}"/><text x="${Bx(f.avg)+5}" y="15" class="bv">${f.avg}</text></g>`).join("")}${[60,70,80,90,100].map(v=>`<text x="${Bx(v)}" y="${fav.length*40+20}" text-anchor="middle" class="tk">${v}</text>`).join("")}</svg>`;
+ const plan=[["주요 강점",`${RTAG[t.k].kw} — 다섯 점술 중 ${t.n}개가 같은 이야기를 해요.`],["기회",`${b.y}년 ${SHORT[b.ci]}운이 10년 중 가장 높은 ${b.v}점이에요.`],["전환점",tp?`${tp.y}년(${tp.y-ch.Y+1}세), ${tpShort(tp)}.`:"한동안 큰 전환 없이 지금 흐름이 이어져요."]];
  let qa="";try{qa=lifeQ(ch).map(q=>`<tr><th scope="row">${q.q}</th><td>${plain(q.a)}</td></tr>`).join("")}catch(_){}
- return `<div class="ig"><div class="ig-head"><span>Key Summary</span><b>${(ch.inp.name||"나")}님의 운명 한눈에 보기</b></div>
- <div class="ig-kpi"><div><b>${totAvg}<small>점</small></b><span>앞으로 10년 종합 평균</span></div><div><b>${b.y}</b><span>가장 밝은 해 · ${SHORT[b.ci]}운 ${b.v}점</span></div><div><b>${t.n}<small>/5</small></b><span>‘${RTAG[t.k].kw}’에 동의한 점술</span></div></div>
- <div class="ig-grid"><section class="ig-box"><h4>타고난 오행 분포</h4><div class="ig-dn">${donut}<ul class="ig-lg">${legend}</ul></div><p>여덟 글자 중 ${ELK[dom]} 기운이 ${cnt[dom]}개로 가장 많아요.</p></section>
- <section class="ig-box"><h4>분야별 10년 평균</h4><div class="r-bars">${fav.map(f=>`<div class="r-bar r-bar-${f.k}"><span class="r-bar-n">${f.n}</span><span class="r-bar-t"><i style="width:${Math.max(4,(f.avg-60)/40*100)}%"></i></span><b>${f.avg}</b></div>`).join("")}</div><p>가장 높은 분야는 ${top.n}운이에요.</p></section>
- <section class="ig-box ig-wide"><h4>앞으로 10년 종합 흐름</h4>${line}<p>네 분야 점수의 해마다 평균이에요. 점수는 확률이 아닌 자체 지표예요.</p></section>
- <section class="ig-box ig-wide ig-concl"><h4>핵심 결론</h4><ol><li><b>강점</b>${RTAG[t.k].kw} — ${RTAG[t.k].t}.</li><li><b>기회</b>${b.y}년, ${SHORT[b.ci]}운이 10년 중 가장 크게 열려요.</li><li><b>전환</b>${tp?`${tp.y}년(${tp.y-ch.Y+1}세), ${tpShort(tp)}.`:"한동안 큰 전환 없이 지금 흐름이 이어져요."}</li></ol></section></div>
- ${qa?`<h3>많이 궁금해하는 네 가지</h3><div class="r-tbl"><table class="r-qa-tbl"><tbody>${qa}</tbody></table></div><p class="r-note">시기·사람·장소와 점술별 근거는 2장에서 자세히 볼 수 있어요.</p>`:""}</div>`}catch(e){console.error(e);return ""}}
+ return `<div class="ks"><header class="ks-title"><h3>${nm}님의 ${y0} 운명 KPI 리포트</h3><svg viewBox="0 0 400 30" class="ks-arrow" preserveAspectRatio="none" aria-hidden="true"><path d="M6 16C120 26 260 24 386 12"/><path d="M372 4l16 8-14 10"/></svg></header>
+ <h4 class="ks-sub">앞으로 10년의 주요 지표</h4>
+ <div class="ks-kpi">${kpis.map(k=>`<div><span class="ks-num">${oval}<b>${k[0]}</b></span><small>${k[1]}</small></div>`).join("")}</div>
+ <div class="ks-grid"><section><h4><i>✱</i>운명 달성률</h4>${donut}</section><section><h4><i>✱</i>10년 흐름 분석</h4>${line}</section>
+ <section><h4><i>✱</i>분야별 성과</h4>${bars}</section><section><h4><i>✱</i>분석 및 향후 계획</h4><div class="ks-plan">${plan.map(p=>`<p><b>✓ ${p[0]}:</b> ${p[1]}</p>`).join("")}</div></section></div>
+ <footer class="ks-foot">@oracle-network</footer></div>
+ ${qa?`<h3>많이 궁금해하는 네 가지</h3><div class="r-tbl"><table class="r-qa-tbl"><tbody>${qa}</tbody></table></div><p class="r-note">시기·사람·장소와 점술별 근거는 2장에서 자세히 볼 수 있어요. 점수는 확률이 아닌 자체 지표예요.</p>`:""}`}catch(e){console.error(e);return ""}}
 /* 사주 장 맨 앞: 핵심 글자 카드 4장(일간·일지·월지 십성·일지 십성) */
 const BRM=["한겨울의 깊고 고요한 물 기운","겨울 끝, 봄을 품은 언 땅의 기운","이른 봄 숲처럼 뻗어 가는 나무 기운","봄꽃 핀 들판처럼 부드러운 나무 기운","봄비를 머금은 촉촉한 흙 기운","초여름 막 피어나는 불씨의 기운","한여름 한낮 태양 같은 불 기운","여름 끝자락의 포근하고 안정된 흙 기운","초가을 단단한 바위와 쇠의 기운","가을 보석처럼 정제된 쇠 기운","늦가을 마른 들판의 단단한 흙 기운","초겨울 큰 강물 같은 물 기운"];
 const TGH={비견:"比肩",겁재:"劫財",식신:"食神",상관:"傷官",편재:"偏財",정재:"正財",편관:"偏官",정관:"正官",편인:"偏印",정인:"正印"};
