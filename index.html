@@ -2,7 +2,7 @@
 <html lang="ko">
 <meta charset="utf-8">
 <meta name="color-scheme" content="dark light">
-<script>try{if(/SamsungBrowser/i.test(navigator.userAgent))document.documentElement.classList.add("sb")}catch(e){}</script>
+<script>try{if(/SamsungBrowser/i.test(navigator.userAgent)){var H=document.documentElement;H.classList.add("sbx");var t=null;try{t=localStorage.getItem("oracle-theme")}catch(e){}if(t!=="light")H.classList.add("sb")}}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>오라클 네트워크</title>
 <meta name="description" content="사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 한 번에 계산해 읽는 나의 운명">
@@ -1419,6 +1419,7 @@ html.sb #report meter::-webkit-meter-bar{background:#2a3550}
 html.sb body,html.sb{background:#121a29}
 @media print{html.sb,html.sb body{background:#121a29!important}}
 }
+#themeToggle{margin-left:auto;border-radius:999px!important;padding:6px 12px!important;white-space:nowrap}#themeToggle+#reportPDF{margin-left:0}#report .report-bar>button{white-space:nowrap}@media(max-width:420px){#report .report-bar{flex-wrap:nowrap;gap:6px}#report .report-bar button{padding:6px 10px!important;font-size:13px!important;font-family:var(--body)!important}#reportClose{min-width:0;overflow:hidden;text-overflow:ellipsis}}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1491,7 +1492,7 @@ html.sb body,html.sb{background:#121a29}
   </div>
   <p id="share-status" role="status" aria-live="polite"></p>
 </dialog>
-<section class="report" id="report" hidden aria-label="운명 리포트"><div class="report-bar"><button type="button" id="reportClose">← 결과로 돌아가기</button><button type="button" id="reportPDF">PDF로 저장 ↓</button><span id="reportPDFStatus" role="status" aria-live="polite"></span></div><div class="report-in" id="reportBody"></div></section>
+<section class="report" id="report" hidden aria-label="운명 리포트"><div class="report-bar"><button type="button" id="reportClose">← 결과로 돌아가기</button><button type="button" id="themeToggle" aria-pressed="false" hidden>☀ 밝게 보기</button><button type="button" id="reportPDF">PDF로 저장 ↓</button><span id="reportPDFStatus" role="status" aria-live="polite"></span></div><div class="report-in" id="reportBody"></div></section>
 <section id="result" class="result" aria-labelledby="resTitle">
   <div class="res-top">
     <h2 class="res-eyebrow" id="resTitle">당신의 운명</h2>
@@ -3796,4 +3797,12 @@ $("brandbar").addEventListener("click",goTop);
 $("brandbar").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();goTop()}});
 $("profileEdit").addEventListener("click",()=>{const m=$("accountMember");if(m)m.open=false;const a=$("askbox");a.open=true;a.scrollIntoView({behavior:"smooth",block:"start"})});
 })();
+</script>
+<script>
+/* 삼성 인터넷 다크 모드에서만: 리포트 밝게/어둡게 전환(이 기기에 기억) */
+(function(){const H=document.documentElement,b=document.getElementById("themeToggle");if(!b||!H.classList.contains("sbx"))return;
+ const mq=matchMedia("(prefers-color-scheme: dark)");
+ const paint=()=>{const dark=H.classList.contains("sb");b.hidden=!mq.matches;b.textContent=dark?"☀ 밝게":"☾ 어둡게";b.setAttribute("aria-label",dark?"리포트를 밝게 보기":"리포트를 어둡게 보기");b.setAttribute("aria-pressed",String(!dark))};
+ b.addEventListener("click",()=>{const dark=H.classList.toggle("sb");try{localStorage.setItem("oracle-theme",dark?"dark":"light")}catch(e){}paint()});
+ try{mq.addEventListener("change",paint)}catch(e){}paint()})();
 </script>
