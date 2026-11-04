@@ -1183,6 +1183,47 @@ body:not(.fresh) .hero-in:has(#accountMember:not([hidden])) details.askbox>summa
 .r-card small{font-size:13px;color:var(--ink2);font-weight:600}
 .r-card b{font-family:var(--display);font-size:clamp(40px,10vw,56px);line-height:1;text-align:center;color:#fff;text-shadow:0 2px 16px color-mix(in srgb,var(--c) 60%,transparent);margin:8px 0}
 .r-card span{font-size:12.5px;line-height:1.5;color:var(--ink);text-align:center;word-break:keep-all}
+
+/* 인포그래픽 요약 */
+.ig{margin:0 0 8px}
+.ig-head{display:flex;flex-direction:column;gap:4px;padding:18px 20px;border-radius:14px;background:linear-gradient(120deg,rgba(233,196,106,.18),rgba(233,196,106,.04));border:1px solid var(--line2);margin-bottom:12px}
+.ig-head span{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}.ig-head b{font-family:var(--display);font-size:clamp(20px,4.6vw,26px);color:var(--fg)}
+.ig-kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.ig-kpi div{border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;background:rgba(255,255,255,.02)}
+.ig-kpi b{display:block;font-family:var(--display);font-size:clamp(26px,7vw,36px);color:var(--gold);line-height:1.1;font-variant-numeric:tabular-nums}.ig-kpi b small{font-size:.5em;margin-left:2px;color:var(--ink2)}
+.ig-kpi span{display:block;margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--ink2);word-break:keep-all}
+.ig-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ig-box{border:1px solid var(--line);border-radius:14px;padding:16px;background:rgba(255,255,255,.02);min-width:0;break-inside:avoid}
+.ig-wide{grid-column:1/-1}
+#report .ig-box h4{margin:0 0 12px;font-size:15px;color:var(--fg);text-align:center}
+.ig-box>p{margin:12px 0 0;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.5}
+.ig-dn{display:flex;align-items:center;gap:14px;justify-content:center}
+.ig-donut{width:min(130px,42%);flex:none}.ig-dn-b{font-family:var(--display);font-size:22px;font-weight:800;fill:var(--fg)}.ig-dn-s{font-size:9px;fill:var(--muted)}
+.ig-lg{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:13px;color:var(--ink2)}.ig-lg li{display:flex;align-items:center;gap:6px}.ig-lg i{width:10px;height:10px;border-radius:3px}.ig-lg b{margin-left:auto;padding-left:10px;font-variant-numeric:tabular-nums}
+.ig-line{width:100%;height:auto;display:block}.ig-line .g{stroke:rgba(255,255,255,.08)}.ig-line .ax{font-size:9px;fill:var(--muted)}.ig-line .l{fill:none;stroke:var(--gold);stroke-width:2.5;stroke-linejoin:round}
+.ig-line .p{fill:var(--bg);stroke:var(--gold);stroke-width:2}.ig-line .pk{fill:var(--gold)}.ig-line .pkt{font-size:10px;font-weight:700;fill:var(--gold)}
+.ig-concl ol{margin:0;padding:0;list-style:none;display:grid;gap:8px}.ig-concl li{display:flex;gap:10px;font-size:14.5px;line-height:1.6;color:var(--ink)}
+.ig-concl li b{flex:none;font-size:12px;color:#1a1204;background:var(--gold);border-radius:4px;padding:1px 7px;height:fit-content;margin-top:3px}
+@media(max-width:560px){.ig-grid{grid-template-columns:1fr}.ig-kpi{gap:6px}.ig-kpi div{padding:12px 4px}}
+/* 인쇄 = PDF: 화면 디자인 그대로 */
+@page{size:A4;margin:10mm}
+@media print{
+ html,body{background:#070d18!important;padding:0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+ html.rep-lock body>*:not(.wrap),html.rep-lock .wrap>*:not(#report){display:none!important}
+ html.rep-lock .wrap{display:block!important;padding:0!important;max-width:none!important;margin:0!important}
+ #report{position:static!important;inset:auto;overflow:visible!important;height:auto!important;top:0!important}
+ #report .report-bar,#report .r-rail,.brandbar{display:none!important}
+ #report .report-in{max-width:none;padding:0}
+ #report .r-page,#report .r-cover{break-before:page;box-shadow:none;margin:0 0 8mm}
+ #report .r-cover{break-before:auto;min-height:270mm}
+ .r-card,.ig-box,.ig-kpi div,tr,figure,.r-take,.r-bar{break-inside:avoid}
+ #report h2,#report h3,#report h4{break-after:avoid}
+ #report details{display:block}#report details>*{display:block!important}
+ .r-art:not(.has){display:none!important}
+ #r-brief .r-page{break-before:auto}
+ .r-toc-list a{padding:7px 0}.r-toc-h{margin-bottom:8px}
+}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1255,7 +1296,7 @@ body:not(.fresh) .hero-in:has(#accountMember:not([hidden])) details.askbox>summa
   </div>
   <p id="share-status" role="status" aria-live="polite"></p>
 </dialog>
-<section class="report" id="report" hidden aria-label="운명 리포트"><div class="report-bar"><button type="button" id="reportClose">← 결과로 돌아가기</button><button type="button" id="reportPDF">PDF 다운로드 ↓</button><span id="reportPDFStatus" role="status" aria-live="polite"></span></div><div class="report-in" id="reportBody"></div></section>
+<section class="report" id="report" hidden aria-label="운명 리포트"><div class="report-bar"><button type="button" id="reportClose">← 결과로 돌아가기</button><button type="button" id="reportPDF">PDF로 저장 ↓</button><span id="reportPDFStatus" role="status" aria-live="polite"></span></div><div class="report-in" id="reportBody"></div></section>
 <section id="result" class="result" aria-labelledby="resTitle">
   <div class="res-top">
     <h2 class="res-eyebrow" id="resTitle">당신의 운명</h2>
@@ -3230,14 +3271,24 @@ function reportArt(ch,id){const dom=ch.cnt.indexOf(Math.max(...ch.cnt));
  return {key:CH_KEY[id]||"ch_method"}}
 if(/[?&]slots=1/.test(location.search))document.documentElement.classList.add("show-slots");
 /* 리포트 1장 대시보드: 핵심 세 가지 + 분야별 10년 평균 막대 + 많이 궁금해하는 네 가지 표 */
-function reportDash(ch){try{const t=reportTags(ch)[0],b=bestCell(),tp=turningPoints(ch)[0],y0=new Date().getFullYear();
- const fav=CATS.map((c,ci)=>{const v=RY.map(r=>D(r[ci].mean)),avg=Math.round(v.reduce((a,x)=>a+x,0)/v.length),mx=Math.max(...v);return {n:SHORT[ci],avg,by:y0+1+v.indexOf(mx),mx,k:c.k}});
+function reportDash(ch){try{const t=reportTags(ch)[0],b=bestCell(),tp=turningPoints(ch)[0],y0=new Date().getFullYear(),yrs=RY.map((_,i)=>y0+1+i);
+ const fav=CATS.map((c,ci)=>{const v=RY.map(r=>D(r[ci].mean)),avg=Math.round(v.reduce((a,x)=>a+x,0)/v.length),mx=Math.max(...v);return {n:SHORT[ci],avg,by:yrs[v.indexOf(mx)],mx,k:c.k}});
+ const tot=RY.map(r=>Math.round(r.reduce((a,c)=>a+D(c.mean),0)/r.length)),totAvg=Math.round(tot.reduce((a,x)=>a+x,0)/tot.length);
  const top=fav.reduce((a,x)=>x.avg>a.avg?x:a,fav[0]);
- const tiles=[["가장 큰 강점",RTAG[t.k].kw,`다섯 점술 중 ${t.n}개가 같은 이야기`],["주목할 해",`${b.y}년 ${SHORT[b.ci]}운`,`10년 중 가장 높은 ${b.v}점`],["가까운 전환점",tp?`${tp.y}년 · ${tp.y-ch.Y+1}세`:"흐름 유지",tp?tpShort(tp):"큰 전환 없이 이어져요"]];
+ /* 오행 도넛 */
+ const cnt=ch.cnt,sum=cnt.reduce((a,x)=>a+x,0)||1,dom=cnt.indexOf(Math.max(...cnt));let acc=0;const C=2*Math.PI*42;
+ const donut=`<svg viewBox="0 0 120 120" class="ig-donut" role="img" aria-label="오행 분포"><circle cx="60" cy="60" r="42" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="16"/>${cnt.map((v,i)=>{if(!v)return"";const len=v/sum*C,seg=`<circle cx="60" cy="60" r="42" fill="none" stroke="var(--el${i})" stroke-width="16" stroke-dasharray="${len-1.5} ${C-len+1.5}" stroke-dashoffset="${-acc}" transform="rotate(-90 60 60)"/>`;acc+=len;return seg}).join("")}<text x="60" y="56" text-anchor="middle" class="ig-dn-b">${ELK[dom]}</text><text x="60" y="74" text-anchor="middle" class="ig-dn-s">가장 강한 기운</text></svg>`;
+ const legend=cnt.map((v,i)=>`<li><i style="background:var(--el${i})"></i>${ELK[i]}<b>${v}</b></li>`).join("");
+ /* 10년 종합 선 그래프 */
+ const W=320,H=150,px=28,py=16,X=i=>px+i*(W-px-10)/(tot.length-1),Yv=v=>H-py-(v-60)/40*(H-py*2),mi=tot.indexOf(Math.max(...tot));
+ const line=`<svg viewBox="0 0 ${W} ${H}" class="ig-line" role="img" aria-label="앞으로 10년 종합 점수">${[60,70,80,90,100].map(v=>`<line x1="${px}" x2="${W-10}" y1="${Yv(v)}" y2="${Yv(v)}" class="g"/><text x="${px-6}" y="${Yv(v)+4}" text-anchor="end" class="ax">${v}</text>`).join("")}<polyline points="${tot.map((v,i)=>X(i)+","+Yv(v)).join(" ")}" class="l"/>${tot.map((v,i)=>`<circle cx="${X(i)}" cy="${Yv(v)}" r="${i===mi?5:3}" class="${i===mi?"pk":"p"}"/>`).join("")}<text x="${X(mi)}" y="${Yv(tot[mi])-10}" text-anchor="${mi>tot.length-3?"end":mi<2?"start":"middle"}" class="pkt">${yrs[mi]} · ${tot[mi]}</text>${yrs.map((y,i)=>i%3===0||i===yrs.length-1?`<text x="${X(i)}" y="${H-1}" text-anchor="middle" class="ax">’${String(y).slice(2)}</text>`:"").join("")}</svg>`;
  let qa="";try{qa=lifeQ(ch).map(q=>`<tr><th scope="row">${q.q}</th><td>${plain(q.a)}</td></tr>`).join("")}catch(_){}
- return `<div class="r-dash"><h3>한눈에 보는 나</h3><div class="r-kpi">${tiles.map(x=>`<div><small>${x[0]}</small><b>${x[1]}</b><span>${x[2]}</span></div>`).join("")}</div>
- <h3>앞으로 10년, 분야별 평균 점수</h3><p class="r-note">가장 높은 분야는 <b>${top.n}운</b>이에요. 막대는 10년 평균, 오른쪽은 가장 밝은 해예요.</p>
- <div class="r-bars">${fav.map(f=>`<div class="r-bar r-bar-${f.k}"><span class="r-bar-n">${f.n}</span><span class="r-bar-t"><i style="width:${Math.max(4,(f.avg-60)/40*100)}%"></i></span><b>${f.avg}</b><small>${f.by}년 ${f.mx}점</small></div>`).join("")}</div>
+ return `<div class="ig"><div class="ig-head"><span>Key Summary</span><b>${(ch.inp.name||"나")}님의 운명 한눈에 보기</b></div>
+ <div class="ig-kpi"><div><b>${totAvg}<small>점</small></b><span>앞으로 10년 종합 평균</span></div><div><b>${b.y}</b><span>가장 밝은 해 · ${SHORT[b.ci]}운 ${b.v}점</span></div><div><b>${t.n}<small>/5</small></b><span>‘${RTAG[t.k].kw}’에 동의한 점술</span></div></div>
+ <div class="ig-grid"><section class="ig-box"><h4>타고난 오행 분포</h4><div class="ig-dn">${donut}<ul class="ig-lg">${legend}</ul></div><p>여덟 글자 중 ${ELK[dom]} 기운이 ${cnt[dom]}개로 가장 많아요.</p></section>
+ <section class="ig-box"><h4>분야별 10년 평균</h4><div class="r-bars">${fav.map(f=>`<div class="r-bar r-bar-${f.k}"><span class="r-bar-n">${f.n}</span><span class="r-bar-t"><i style="width:${Math.max(4,(f.avg-60)/40*100)}%"></i></span><b>${f.avg}</b></div>`).join("")}</div><p>가장 높은 분야는 ${top.n}운이에요.</p></section>
+ <section class="ig-box ig-wide"><h4>앞으로 10년 종합 흐름</h4>${line}<p>네 분야 점수의 해마다 평균이에요. 점수는 확률이 아닌 자체 지표예요.</p></section>
+ <section class="ig-box ig-wide ig-concl"><h4>핵심 결론</h4><ol><li><b>강점</b>${RTAG[t.k].kw} — ${RTAG[t.k].t}.</li><li><b>기회</b>${b.y}년, ${SHORT[b.ci]}운이 10년 중 가장 크게 열려요.</li><li><b>전환</b>${tp?`${tp.y}년(${tp.y-ch.Y+1}세), ${tpShort(tp)}.`:"한동안 큰 전환 없이 지금 흐름이 이어져요."}</li></ol></section></div>
  ${qa?`<h3>많이 궁금해하는 네 가지</h3><div class="r-tbl"><table class="r-qa-tbl"><tbody>${qa}</tbody></table></div><p class="r-note">시기·사람·장소와 점술별 근거는 2장에서 자세히 볼 수 있어요.</p>`:""}</div>`}catch(e){console.error(e);return ""}}
 /* 사주 장 맨 앞: 핵심 글자 카드 4장(일간·일지·월지 십성·일지 십성) */
 const BRM=["한겨울의 깊고 고요한 물 기운","겨울 끝, 봄을 품은 언 땅의 기운","이른 봄 숲처럼 뻗어 가는 나무 기운","봄꽃 핀 들판처럼 부드러운 나무 기운","봄비를 머금은 촉촉한 흙 기운","초여름 막 피어나는 불씨의 기운","한여름 한낮 태양 같은 불 기운","여름 끝자락의 포근하고 안정된 흙 기운","초가을 단단한 바위와 쇠의 기운","가을 보석처럼 정제된 쇠 기운","늦가을 마른 들판의 단단한 흙 기운","초겨울 큰 강물 같은 물 기운"];
@@ -3260,7 +3311,7 @@ function renderReport(){const ch=CH,name=ch.inp.name||"운명을 걷는 사람",
   $("reportBody").innerHTML=`<header class="r-cover">${artSlot(reportArt(ch,"cover").key,"cover","표지 그림")}<div class="r-cover-tx"><div class="eyebrow">Oracle Network · Destiny Report</div><h2>${name}님의<br><em>운명 리포트</em></h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 종합 분석</p><dl class="r-cover-meta"><div><dt>생년월일</dt><dd>${String(ch.inp.date||"").replace(/-/g,".")}${ch.inp.cal==="l"?" (음력)":""}${ch.inp.notime?"":" "+ch.inp.time}</dd></div><div><dt>발행일</dt><dd>${new Date().toLocaleDateString("ko-KR")}</dd></div><div><dt>구성</dt><dd>${chap.length}장</dd></div></dl></div></header>
   <section class="r-page r-toc" id="r-toc"><div class="r-ph"><span class="eyebrow">Contents</span></div><h2 class="r-toc-h">목차</h2><ol class="r-toc-list"><li><a href="#r-brief"><b>요약</b><span>먼저 읽는 요약<small>한 페이지로 보는 나의 이야기</small></span></a></li>${chap.map((c,i)=>`<li><a href="#${c[0]}"><b>${i+1}장</b><span>${c[3]}<small>${c[4]}</small></span></a></li>`).join("")}</ol></section>
   <nav class="r-rail" aria-label="장 이동">${chap.map((c,i)=>`<a href="#${c[0]}"><b>${i+1}</b>${c[1]}</a>`).join("")}</nav>
-  ${chap.map((c,i)=>{const a=reportArt(ch,c[0]);return `<section class="r-page" id="${c[0]}"><div class="r-open-hd"><div class="r-ph"><span class="r-num">${String(i+1).padStart(2,"0")}</span><span class="eyebrow">${c[2]}</span></div><h2>${c[3]}<small>${c[4]}</small></h2>${a.take?`<p class="r-take"><b>핵심</b><span>${a.take}</span></p>`:""}</div>${artSlot(a.key,"wide",c[3])}${i===0?reportEditorial()+reportDash(ch):""}${c[0]==="r-saju"?sajuCards(ch):""}${c[5]()}</section>`}).join("")}
+  ${chap.map((c,i)=>{const a=reportArt(ch,c[0]);return `<section class="r-page" id="${c[0]}"><div class="r-open-hd"><div class="r-ph"><span class="r-num">${String(i+1).padStart(2,"0")}</span><span class="eyebrow">${c[2]}</span></div><h2>${c[3]}<small>${c[4]}</small></h2>${a.take?`<p class="r-take"><b>핵심</b><span>${a.take}</span></p>`:""}</div>${artSlot(a.key,"wide",c[3])}${i===0?reportDash(ch)+reportEditorial():""}${c[0]==="r-saju"?sajuCards(ch):""}${c[5]()}</section>`}).join("")}
   <p class="r-foot">각 점술의 계산 규칙을 따라 만든 재미용 해석이에요. 미래를 맞힌다는 과학적 근거는 없어요.</p>`;
   {const tc=$('reportBody').querySelector('.r-toc');(tc||$('reportBody')).insertAdjacentHTML(tc?'afterend':'afterbegin','<div id="r-brief">'+approvedReportHTML(buildRichReport(CH,'comprehensive'),'comprehensive')+'</div>')}netP=0;netC=0;renderNet();fengInit($("reportBody"));
   $("reportBody").querySelectorAll(".r-rail a,.r-toc a").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const t=document.getElementById(a.getAttribute("href").slice(1));if(t)t.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})}))}
@@ -3303,13 +3354,20 @@ async function saveReportPDF(bytes,fname){fname=fname.replace(/[\\/:*?"<>|\r\n]/
   if(inapp)return '이 앱 안의 브라우저는 파일 저장을 지원하지 않아요. 오른쪽 위 메뉴에서 "다른 브라우저로 열기"(Chrome·Safari)를 누른 뒤 다시 받아 주세요.';
   const url=URL.createObjectURL(blob),w=window.open(url,'_blank');setTimeout(()=>URL.revokeObjectURL(url),120000);if(w)return 'PDF를 새 탭에서 열었어요. 공유 버튼으로 저장할 수 있어요.'}
  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=fname;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);return 'PDF 저장을 시작했어요.'}
+/* 화면 디자인 그대로 PDF: 브라우저 인쇄(‘PDF로 저장’). 인앱 브라우저는 인쇄를 막으니 외부 브라우저 안내. */
+function printReport(){if($('report').hidden)return;const st=$('reportPDFStatus'),ua=navigator.userAgent;
+ if(/KAKAOTALK|NAVER\(|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp/i.test(ua)){st.textContent='이 앱 안의 브라우저는 PDF 저장을 지원하지 않아요. 오른쪽 위 메뉴에서 “다른 브라우저로 열기”(Chrome·Safari)를 누른 뒤 다시 시도해 주세요.';return}
+ const old=document.title;document.title=((CH&&CH.inp.name)||'나')+'님의 운명 리포트';
+ $('reportBody').querySelectorAll('img[loading="lazy"]').forEach(im=>im.loading='eager');
+ st.textContent=/Android|iPhone|iPad|iPod/i.test(ua)?'인쇄 창에서 ‘PDF로 저장’을 고르세요.':'인쇄 창의 대상에서 ‘PDF로 저장’을 고르세요.';
+ const done=()=>{document.title=old;window.removeEventListener('afterprint',done)};window.addEventListener('afterprint',done);setTimeout(()=>window.print(),150)}
 function encodeReportPDF(images,W,H){
  const encoder=new TextEncoder(),chunks=[],offsets=[0];let length=0;const put=x=>{const bytes=typeof x==='string'?encoder.encode(x):x;chunks.push(bytes);length+=bytes.length};const obj=(id,body)=>{offsets[id]=length;put(id+' 0 obj\n');put(body);put('\nendobj\n')};
  put('%PDF-1.4\n%OracleNetwork\n');obj(1,'<< /Type /Catalog /Pages 2 0 R >>');obj(2,'<< /Type /Pages /Count '+images.length+' /Kids ['+images.map((_,i)=>(3+i*3)+' 0 R').join(' ')+'] >>');
  images.forEach((jpg,i)=>{const page=3+i*3,image=page+1,content=page+2;obj(page,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Photo '+image+' 0 R >> >> /Contents '+content+' 0 R >>');offsets[image]=length;put(image+' 0 obj\n<< /Type /XObject /Subtype /Image /Width '+W+' /Height '+H+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+jpg.length+' >>\nstream\n');put(jpg);put('\nendstream\nendobj\n');const stream='q\n595.28 0 0 841.89 0 0 cm\n/Photo Do\nQ\n';obj(content,'<< /Length '+encoder.encode(stream).length+' >>\nstream\n'+stream+'endstream');});
  const xref=length;put('xref\n0 '+offsets.length+'\n0000000000 65535 f \n');for(let i=1;i<offsets.length;i++)put(String(offsets[i]).padStart(10,'0')+' 00000 n \n');put('trailer\n<< /Size '+offsets.length+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF');const result=new Uint8Array(length);let position=0;for(const chunk of chunks){result.set(chunk,position);position+=chunk.length}return result;
 }
-$('reportPDF').addEventListener('click',downloadReportPDF);
+$('reportPDF').addEventListener('click',printReport);
 
 function closeReport(){$("report").hidden=true;document.documentElement.classList.remove("rep-lock");(reportReturnFocus?.isConnected?reportReturnFocus:$("reportOpen")).focus({preventScroll:true});reportReturnFocus=null}
 $("reportOpen").addEventListener("click",openReport);$("reportClose").addEventListener("click",closeReport);
