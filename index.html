@@ -3087,7 +3087,7 @@ function restoreSavedResult(profile){
  const error=checkForm(),v=readForm(),year=Number((v.date||'').slice(0,4));
  if(error||v.err||!Number.isFinite(year)||year<1920||year>2026){$('err').textContent=error||v.err||'저장된 생년월일을 확인해주세요.';return false}
  const fresh=document.body.classList.contains('fresh');
- try{$('askbox').open=false;document.body.classList.remove('fresh');run(v,false);$('landingStart').innerHTML='내 결과 바로보기 <span aria-hidden="true">→</span>';return true}
+ try{document.body.classList.add('app-entered');$('askbox').open=false;document.body.classList.remove('fresh');run(v,false);$('landingStart').innerHTML='내 결과 바로보기 <span aria-hidden="true">→</span>';return true}
  catch(_){if(fresh)document.body.classList.add('fresh');$('askbox').open=true;$('err').textContent='저장된 정보를 확인한 뒤 다시 시도해주세요.';return false}
 }
 $('profileLoad').addEventListener('click',()=>{if(accountUser?.profile){const ready=restoreSavedResult(accountUser.profile);accountStatus(ready?'저장한 정보로 운명 결과를 불러왔어요.':'저장된 정보를 확인해주세요.')}});
