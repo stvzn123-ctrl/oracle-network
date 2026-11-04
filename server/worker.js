@@ -45,7 +45,7 @@ function validProfile(v){
   }
   return {name:v.name.trim(),roman:v.roman.trim(),sex:v.sex,cal:v.cal,ly:v.ly,lm:v.lm,ld:v.ld,leap:v.cal==='l'&&v.leap,date:v.date,time:v.time,notime:v.notime,place};
 }
-async function member(req,env){const token=req.headers.get("Authorization")?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];if(!token)return null;return env.DB.prepare("SELECT users.id,users.nickname,users.profile,users.profile_updated FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token_hash=? AND sessions.expires>?").bind(await authHash(token),Date.now()).first()}
+async function member(req,env){const token=req.headers.get("Authorization")?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];if(!token)return null;return env.DB.prepare("SELECT users.id,users.kakao_id,users.nickname,users.profile,users.profile_updated FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token_hash=? AND sessions.expires>?").bind(await authHash(token),Date.now()).first()}
 async function authRoute(req,env,url,ctx){
   const path=url.pathname.replace(/\/+$/,"");
   if(!path.startsWith('/auth/')&&path!=="/me"&&path!=="/profile")return null;
@@ -85,7 +85,7 @@ async function authRoute(req,env,url,ctx){
     const session=authRandom();await env.DB.prepare('INSERT INTO sessions(token_hash,user_id,expires) VALUES(?,?,?)').bind(await authHash(session),row.user_id,now+7*86400000).run();return json(req,env,{token:session,expires:now+7*86400000});
   }
   const user=await member(req,env);if(!user)return json(req,env,{error:'unauthorized'},401);
-  if(req.method==='GET'&&path==='/me')return json(req,env,{nickname:user.nickname,profile:user.profile?JSON.parse(user.profile):null,updated:user.profile_updated});
+  if(req.method==='GET'&&path==='/me')return json(req,env,{nickname:user.nickname,profile:user.profile?JSON.parse(user.profile):null,updated:user.profile_updated,id:user.id,isAdmin:isAdmin(user,env)});
   if(req.method==='POST'&&path==='/profile'){
     const b=await authBody(req);if(b.action==='delete'){await env.DB.prepare('UPDATE users SET profile=NULL,profile_updated=NULL,consent_at=NULL WHERE id=?').bind(user.id).run();return json(req,env,{ok:true})}
     const profile=validProfile(b.profile);if(!profile||b.consent!==true)return json(req,env,{error:'invalid_profile'},400);
@@ -95,11 +95,55 @@ async function authRoute(req,env,url,ctx){
   return json(req,env,{error:'not_found'},404);
 }
 
+
+const REPORT_KEYS=["comprehensive","money","marry","love","reunion","work","match","study","employment","move","invest","property","business","exam","cert"];
+function isAdmin(user,env){return !!user&&(env.ADMIN_USER_IDS||'').split(',').map(x=>x.trim()).filter(Boolean).includes(user.id)}
+async function accessRoute(req,env,url){
+ const path=url.pathname.replace(/\/+$/,'');if(!path.startsWith('/admin/')&&path!='/access'&&path!='/reports')return null;
+ const user=await member(req,env);if(!user)return json(req,env,{error:'unauthorized'},401);
+ if(req.method!=='GET'&&req.method!=='POST')return json(req,env,{error:'method'},405);
+ if(req.method==='POST'&&req.headers.get('Origin')!==ORIGINS[0])return json(req,env,{error:'origin'},403);
+ const admin=isAdmin(user,env);
+ if(path==='/access'&&req.method==='GET'){const rows=await env.DB.prepare('SELECT report_key FROM report_entitlements WHERE user_id=? AND revoked_at IS NULL').bind(user.id).all();return json(req,env,{id:user.id,isAdmin:admin,reports:rows.results.map(x=>x.report_key),checkoutEnabled:false});}
+ if(path==='/reports'&&req.method==='GET'){
+  const key=url.searchParams.get('key');if(!REPORT_KEYS.includes(key))return json(req,env,{error:'input'},400);
+  if(!admin){const grant=await env.DB.prepare('SELECT report_key FROM report_entitlements WHERE user_id=? AND revoked_at IS NULL AND report_key IN (?,?) LIMIT 1').bind(user.id,key,'all').first();if(!grant)return json(req,env,{error:'payment_required'},403);}
+  const report=await env.DB.prepare('SELECT title,body,updated FROM private_reports WHERE user_id=? AND report_key=?').bind(user.id,key).first();if(!report)return json(req,env,{error:'report_pending'},404);return json(req,env,report);
+ }
+ if(!path.startsWith('/admin/'))return json(req,env,{error:'not_found'},404);
+ if(!admin)return json(req,env,{error:'forbidden'},403);
+ if(path==='/admin/users'&&req.method==='GET'){
+  const offset=Math.max(0,Math.min(100000,Number(url.searchParams.get('offset'))||0));const rows=await env.DB.prepare('SELECT id,nickname,profile_updated,created FROM users ORDER BY created DESC LIMIT 25 OFFSET ?').bind(offset).all();return json(req,env,{users:rows.results,nextOffset:rows.results.length===25?offset+25:null});
+ }
+ if(path==='/admin/user'&&req.method==='GET'){
+  const id=url.searchParams.get('id');if(typeof id!=='string'||! /^[a-f0-9]{64}$/.test(id))return json(req,env,{error:'input'},400);
+  const target=await env.DB.prepare('SELECT id,nickname,profile,profile_updated,created FROM users WHERE id=?').bind(id).first();if(!target)return json(req,env,{error:'not_found'},404);
+  const grants=await env.DB.prepare('SELECT report_key,granted_at,revoked_at FROM report_entitlements WHERE user_id=?').bind(id).all();await env.DB.prepare('INSERT INTO admin_audit(actor_id,target_id,action,report_key,created) VALUES(?,?,?,?,?)').bind(user.id,id,'view_profile',null,Date.now()).run();return json(req,env,{...target,profile:target.profile?JSON.parse(target.profile):null,grants:grants.results});
+ }
+ if(req.method==='POST'&&(path==='/admin/permission'||path==='/admin/report')){
+  const raw=await req.text();if(raw.length>150000)return json(req,env,{error:'input'},400);let b;try{b=JSON.parse(raw)}catch{return json(req,env,{error:'input'},400)}
+  if(typeof b.userId!=='string'||! /^[a-f0-9]{64}$/.test(b.userId)||!REPORT_KEYS.concat('all').includes(b.key))return json(req,env,{error:'input'},400);
+  if(!await env.DB.prepare('SELECT id FROM users WHERE id=?').bind(b.userId).first())return json(req,env,{error:'not_found'},404);
+  const now=Date.now();let op;
+  if(path==='/admin/permission'){
+   if(!['grant','revoke'].includes(b.action))return json(req,env,{error:'input'},400);
+   if(b.action==='revoke'&&b.key!=='all'){const all=await env.DB.prepare("SELECT report_key FROM report_entitlements WHERE user_id=? AND report_key='all' AND revoked_at IS NULL").bind(b.userId).first();if(all)return json(req,env,{error:'revoke_all_first'},409);}
+   op=b.action==='grant'?env.DB.prepare('INSERT INTO report_entitlements(user_id,report_key,granted_at,granted_by,revoked_at) VALUES(?,?,?,?,NULL) ON CONFLICT(user_id,report_key) DO UPDATE SET granted_at=excluded.granted_at,granted_by=excluded.granted_by,revoked_at=NULL').bind(b.userId,b.key,now,user.id):env.DB.prepare('UPDATE report_entitlements SET revoked_at=? WHERE user_id=? AND report_key=?').bind(now,b.userId,b.key);
+  }else{
+   if(b.key==='all'||typeof b.title!=='string'||!b.title.trim()||b.title.length>150||typeof b.body!=='string'||b.body.trim().length<20||b.body.length>100000)return json(req,env,{error:'input'},400);
+   op=env.DB.prepare('INSERT INTO private_reports(user_id,report_key,title,body,updated) VALUES(?,?,?,?,?) ON CONFLICT(user_id,report_key) DO UPDATE SET title=excluded.title,body=excluded.body,updated=excluded.updated').bind(b.userId,b.key,b.title.trim(),b.body,now);
+  }
+  await env.DB.batch([op,env.DB.prepare('INSERT INTO admin_audit(actor_id,target_id,action,report_key,created) VALUES(?,?,?,?,?)').bind(user.id,b.userId,path==='/admin/report'?'publish_report':b.action,b.key,now)]);return json(req,env,{ok:true});
+ }
+ return json(req,env,{error:'not_found'},404);
+}
+
 export default {
   async fetch(req, env, ctx) {
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors(req, env) });
     const url = new URL(req.url), path = url.pathname.replace(/\/+$/, "");
     try {
+      const access=await accessRoute(req,env,url);if(access)return access;
       const auth=await authRoute(req,env,url,ctx);if(auth)return auth;
       if (req.method === "POST" && path === "/invite") {
         const { d } = await req.json().catch(() => ({}));

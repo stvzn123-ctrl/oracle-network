@@ -18,3 +18,7 @@ CREATE INDEX IF NOT EXISTS auth_flows_rate ON auth_flows(sig,created);
 CREATE INDEX IF NOT EXISTS auth_flows_expiry ON auth_flows(expires);
 CREATE TABLE IF NOT EXISTS auth_grants (code_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, challenge TEXT NOT NULL, expires INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS auth_grants_expiry ON auth_grants(expires);
+
+CREATE TABLE IF NOT EXISTS report_entitlements(user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,report_key TEXT NOT NULL,granted_at INTEGER NOT NULL,granted_by TEXT NOT NULL,revoked_at INTEGER,PRIMARY KEY(user_id,report_key));
+CREATE TABLE IF NOT EXISTS private_reports(user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,report_key TEXT NOT NULL,title TEXT NOT NULL,body TEXT NOT NULL,updated INTEGER NOT NULL,PRIMARY KEY(user_id,report_key));
+CREATE TABLE IF NOT EXISTS admin_audit(id INTEGER PRIMARY KEY AUTOINCREMENT,actor_id TEXT NOT NULL,target_id TEXT NOT NULL,action TEXT NOT NULL,report_key TEXT,created INTEGER NOT NULL);
