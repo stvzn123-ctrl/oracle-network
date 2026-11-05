@@ -1725,6 +1725,16 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
 .compact-place-footer a{color:var(--gold);text-decoration:none;white-space:nowrap;min-height:36px;display:inline-flex;align-items:center}
 @media(max-width:380px){.compact-place-layout{grid-template-columns:minmax(0,1fr) 88px;gap:10px}.compact-place-map svg{height:130px}}
 
+
+/* Browse the complete personally relevant list without expanding the page. */
+.compact-place-count{font-size:12px;color:var(--muted);margin:0 0 10px;line-height:1.6}
+.compact-place-count b{color:var(--gold);font-weight:600}
+.compact-place-layout{align-items:start}
+.compact-place-list{max-height:260px;overflow-y:auto;overscroll-behavior-y:contain;scrollbar-width:thin;scrollbar-color:var(--line2) transparent;padding-right:5px;outline-offset:2px}
+.compact-place-list button{min-height:61px}
+.compact-place-list:focus-visible{outline:1px solid var(--gold);border-radius:4px}
+.compact-place-map{padding-top:6px}
+
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -3506,11 +3516,11 @@ function fengExplorerBody(st){if(st.compact==='1')return fengCompactBody(st);con
 
 function actionRationale(ch){const p=actionProfile(ch),a=p.strong;return '<p class="action-rationale">내 차트에서 가장 많은 '+ELK[p.dominant]+'('+EL[p.dominant]+') '+ch.cnt[p.dominant]+'개의 주제인 '+a.theme+'을 강점과 주의점으로 풀었어요. '+(ch.strong?'신강':'신약')+'에 따른 기존 보완 그룹 중 '+ELK[p.support]+'('+EL[p.support]+') '+ch.cnt[p.support]+'개를 균형 주제로 골랐어요. 개수가 같으면 목·화·토·금·수 순서로 선택해요.'+(ch.inp.notime?' 출생 시각이 없어 시주를 뺀 차트 기준이에요.':'')+'</p>'}
 function fengCompactBody(st){
- const E=fengEscape,rows=FENG_SITUATION_PICKS.map(it=>({label:it.label,place:FENG_PLACES.find(p=>p.name===it.names[+st.support])})).filter(r=>r.place),chosen=rows.find(r=>r.place.id===st.selected)?.place||rows[0]?.place;if(!chosen)return '';
+ const E=fengEscape,picks=FENG_SITUATION_PICKS.map(it=>({label:it.label,place:FENG_PLACES.find(p=>p.name===it.names[+st.support])})).filter(r=>r.place),related=(st.related||st.support).split(',').map(Number),seen=new Set(picks.map(r=>r.place.id)),more=related.flatMap(e=>FENG_PLACES.filter(p=>p.e===e&&!seen.has(p.id)).map(p=>({label:p.region+' · '+ACTION_ELEMENTS[p.e].theme,place:p}))),rows=picks.concat(more),chosen=rows.find(r=>r.place.id===st.selected)?.place||rows[0]?.place;if(!chosen)return '';
  const [x,y]=fengXY(chosen),v=[0,0,MAPS.kv[0],MAPS.kv[1]],q=encodeURIComponent(chosen.name+' '+chosen.region);
- return '<div class="compact-place-layout"><div class="compact-place-list">'+rows.map(({label,place:p})=>'<button type="button" data-feng-pick="'+p.id+'" aria-pressed="'+(p.id===chosen.id)+'"><small>'+E(label)+'</small><b>'+E(p.name)+'</b></button>').join('')+'</div><figure class="compact-place-map"><svg viewBox="'+v.join(' ')+'" role="img" aria-label="'+E(chosen.name)+'의 전국 위치"><g class="feng-land">'+MAPS.kor.map(r=>'<path d="'+r[2]+'"/>').join('')+'</g><circle cx="'+x+'" cy="'+y+'" r="17" fill="var(--gold)" opacity=".22"/><circle cx="'+x+'" cy="'+y+'" r="7" fill="var(--gold)"/></svg><figcaption>선택한 장소의 위치</figcaption></figure></div><div class="compact-place-footer"><span>'+E(chosen.region)+'</span><a href="https://map.naver.com/p/search/'+q+'" target="_blank" rel="noopener noreferrer">지도·길찾기 ↗</a></div>';
+ return '<p class="compact-place-count">나의 보완 기운에 맞는 장소 <b>'+rows.length+'곳</b></p><div class="compact-place-layout"><div class="compact-place-list" tabindex="0" role="group" aria-label="나와 관련된 추천 장소 전체 목록">'+rows.map(({label,place:p})=>'<button type="button" data-feng-pick="'+p.id+'" aria-pressed="'+(p.id===chosen.id)+'"><small>'+E(label)+'</small><b>'+E(p.name)+'</b></button>').join('')+'</div><figure class="compact-place-map"><svg viewBox="'+v.join(' ')+'" role="img" aria-label="'+E(chosen.name)+'의 전국 위치"><g class="feng-land">'+MAPS.kor.map(r=>'<path d="'+r[2]+'"/>').join('')+'</g><circle cx="'+x+'" cy="'+y+'" r="17" fill="var(--gold)" opacity=".22"/><circle cx="'+x+'" cy="'+y+'" r="7" fill="var(--gold)"/></svg><figcaption>선택한 장소의 위치</figcaption></figure></div><div class="compact-place-footer"><span>'+E(chosen.region)+'</span><a href="https://map.naver.com/p/search/'+q+'" target="_blank" rel="noopener noreferrer">지도·길찾기 ↗</a></div>';
 }
-function fengCompactPlacesHTML(ch){const st={compact:'1',support:String(actionProfile(ch).support),selected:''};return '<div class="feng-explorer compact-places" '+Object.entries(st).map(([k,v])=>'data-'+k+'="'+v+'"').join(' ')+'>'+fengCompactBody(st)+'</div>'}
+function fengCompactPlacesHTML(ch){const support=actionProfile(ch).support,related=[...new Set([support,...ch.goodG.map(g=>(SE[ch.stems.d]+g)%5)])];const st={compact:'1',support:String(support),related:related.join(','),selected:''};return '<div class="feng-explorer compact-places" '+Object.entries(st).map(([k,v])=>'data-'+k+'="'+v+'"').join(' ')+'>'+fengCompactBody(st)+'</div>'}
 
 function fengPlacesHTML(ch){const p=actionProfile(ch),st={support:String(p.support),category:String(p.support),region:'',limit:'6',order:fengOrder(ch).join(','),selected:'',vx:'0',vy:'0',vw:String(MAPS.kv[0]),vh:String(MAPS.kv[1])};return '<div class="feng-place-heading"><h3>나에게 맞는 장소 지도</h3><details class="feng-criteria"><summary title="장소 선정 기준" aria-label="장소 선정 기준">ⓘ</summary><p>숲과 배움은 목, 밝은 전망과 표현·교류는 화, 안정된 공간은 토, 정돈된 공간과 선택은 금, 물가와 성찰은 수라는 주제로 분류했어요. 내 차트의 보완 오행과 같은 분류를 먼저 추천하며, 같은 분류 안에서는 효과의 순위를 매기지 않아요. 자연의 지형과 실내 공간의 분위기·이용 목적을 연결한 자체 선정 기준이에요. 상황별 문장은 풍수의 상징을 일상의 선택·정리·휴식에 옮긴 실천 제안이에요.</p></details></div><div class="feng-explorer" '+Object.entries(st).map(([k,v])=>'data-'+k+'="'+v+'"').join(' ')+'>'+fengExplorerBody(st)+'</div><p class="r-note">풍수의 오행 상징을 지형·경관에 연결한 자체 추천입니다. 현재 위치는 수집하지 않으며, 출생지로 거리를 추정하지 않아요. 방문 전 각 장소의 운영·예약·외부인 출입 안내를 확인해 주세요.</p>'}
 const fengObserver=typeof ResizeObserver==='function'?new ResizeObserver(entries=>entries.forEach(({target})=>{const el=target.closest('.feng-explorer');if(el)fengPaint(el)})):null;
@@ -3529,7 +3539,7 @@ function fengPaint(el){const svg=el.querySelector('.feng-map');if(!svg)return;co
 function fengSetView(el,v){const c=fengClampView(v);Object.assign(el.dataset,{vx:String(c[0]),vy:String(c[1]),vw:String(c[2]),vh:String(c[3])});fengPaint(el)}
 function fengInit(root){root.querySelectorAll('.feng-map').forEach(svg=>{fengObserver?.observe(svg);fengPaint(svg.closest('.feng-explorer'))})}
 function fengRefresh(el,changes){const old=el.querySelector('.feng-map');if(old)fengObserver?.unobserve(old);Object.assign(el.dataset,changes);el.innerHTML=fengExplorerBody(el.dataset);fengInit(el)}
-function fengSelect(el,id,center){if(el.dataset.compact==='1'){fengRefresh(el,{selected:id});return}const p=FENG_PLACES.find(p=>p.id===id);if(!p)return;let changes={selected:id,category:String(p.e)};if(center){const v=fengFocusedView(el.dataset,p);Object.assign(changes,{vx:String(v[0]),vy:String(v[1]),vw:String(v[2]),vh:String(v[3])})}fengRefresh(el,changes)}
+function fengSelect(el,id,center){if(el.dataset.compact==='1'){const top=el.querySelector('.compact-place-list')?.scrollTop||0;fengRefresh(el,{selected:id});const list=el.querySelector('.compact-place-list');if(list)list.scrollTop=top;return}const p=FENG_PLACES.find(p=>p.id===id);if(!p)return;let changes={selected:id,category:String(p.e)};if(center){const v=fengFocusedView(el.dataset,p);Object.assign(changes,{vx:String(v[0]),vy:String(v[1]),vw:String(v[2]),vh:String(v[3])})}fengRefresh(el,changes)}
 let fengSuppressClickUntil=0;
 function fengClick(e){const ctl=e.target.closest('[data-feng-pick],[data-feng-map],[data-feng-category],[data-feng-more],[data-feng-overview]'),el=ctl&&ctl.closest('.feng-explorer');if(!el)return;if(e.type==='keydown'){if(e.key!=='Enter'&&e.key!==' ')return;e.preventDefault()}if(e.type==='click'&&ctl.closest('.feng-map')&&Date.now()<fengSuppressClickUntil)return;
  if(ctl.hasAttribute('data-feng-overview')){fengSetView(el,[0,0,MAPS.kv[0],MAPS.kv[1]]);return}
