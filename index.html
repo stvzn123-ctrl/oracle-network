@@ -3365,7 +3365,57 @@ function topicAnswerRowsBase(ch,k){
 }
 
 // Short readings use the existing chart; topics below add no new prediction scores.
-function topicAnswerRows(ch,k){const rows=topicAnswerRowsBase(ch,k),dom=ch.cnt.indexOf(Math.max(...ch.cnt)),ven=sign(birthExtraLon('Venus',ch.jd)),base=sign(ch.asc??ch.sun),mateEl=SE[BMAIN[ch.brs.d]];
+/* 2026-11-05 주제별 질문 v2: 애매한 일반론 대신 차트에서 도출한 해·달·나이·분야를 구체적으로 답한다(자체 해석, 계산식 불변) */
+const AGEGAP={정관:'3~5살 연상',편관:'5~9살 연상',정인:'2~4살 연상',편인:'4~7살 연상',식신:'1~3살 연하',상관:'3~6살 연하',정재:'동갑이거나 1~2살 연하',편재:'4~8살 차이(연하 쪽)',비견:'동갑이거나 1살 안팎',겁재:'1~3살 차이'};
+const AGEWHY={정관:'배우자 자리가 나를 이끄는 정관이라 전통적으로 연상과 인연이 깊어요',편관:'배우자 자리가 강한 편관이라 나이 차가 있는 연상과 잘 맞아요',정인:'배우자 자리가 나를 돌보는 정인이라 챙겨 주는 연상이 편해요',편인:'배우자 자리가 편인이라 나이 차가 있는 성숙한 사람에게 끌려요',식신:'배우자 자리가 내가 챙기는 식신이라 살짝 연하가 편해요',상관:'배우자 자리가 상관이라 감각이 통하는 연하에게 끌려요',정재:'배우자 자리가 정재라 또래처럼 현실을 함께 꾸리는 사람이 맞아요',편재:'배우자 자리가 편재라 나이 차가 있어도 재미가 통하는 사람과 이어져요',비견:'배우자 자리가 비견이라 친구 같은 동갑과 편해요',겁재:'배우자 자리가 겁재라 비슷한 나이의 경쟁심 있는 사람과 자극을 주고받아요'};
+const JOBEX=[['교사·강사','UX 기획','출판 편집'],['마케터','방송·영상 제작','호텔·항공 서비스'],['공무원·공기업','부동산·건설','병원 행정'],['은행·증권','변호사·법무팀','개발자'],['연구원','의료·간호','무역·해외영업']];
+const CERTEX=[['한국사능력검정','사회복지사','청소년상담사'],['GTQ(그래픽)','마케팅·SNS 관리','컬러리스트'],['공인중개사','행정사','전산회계'],['정보처리기사','재경관리사','SQLD'],['토익·오픽','심리상담','의료 관련 자격']];
+function topicRowsV2(ch,k){
+ const y0=new Date().getFullYear(),kage=y=>y-ch.Y+1,dom=ch.cnt.indexOf(Math.max(...ch.cnt)),pp=partnerProfile(ch),tg=tenGod(ch.stems.d,BMAIN[ch.brs.d]),ven=sign(birthExtraLon('Venus',ch.jd)),vE=ven%4,base=sign(ch.asc??ch.sun),h4=(base+3)%12,h7=(base+6)%12,lord7=RULER[(ch.lagna+6)%12];
+ let face=null;try{face=spouseFaceProfile(ch)}catch(_){}
+ const mate=sysScan(ch,'mate').filter(r=>r.S.length&&r.age>=20).sort((a,b)=>b.v-a.v).slice(0,2).sort((a,b)=>a.y-b.y);
+ const yTxt=r=>`${r.y}년(${kage(r.y)}살)${r.months&&r.months.length?' '+r.months.slice(0,2).map(m=>m[0]+'월').join('·'):''}`,why=r=>r.S.slice(0,3).map(x=>x[1]).join(', ');
+ const S=R.map((r,i)=>({y:y0+1+i,v:D(r[2].mean)})),best=S.slice().sort((a,b)=>b.v-a.v),love=R.map((r,i)=>({y:y0+1+i,v:D(r[1].mean)})).sort((a,b)=>b.v-a.v);
+ const lq=lifeQ(ch),job=lq.find(x=>x.k==='job'),mv=lq.find(x=>x.k==='move'),gui=sysScan(ch,'gui').filter(r=>r.S.length).sort((a,b)=>b.v-a.v)[0];
+ const ng=natalGroups(ch),mateE=pp.mE,rich=ng[2]+(ch.cnt[2]>=2?1:0)+(ch.cnt[3]>=2?1:0);
+ const age=`${AGEGAP[tg]||pp.age}이 가장 잘 맞아요. ${AGEWHY[tg]||''}.`;
+ const look=face&&face.features?face.features.join(' · '):'';
+ const contact=['하루에도 여러 번 짧게 연락하는','하루 1~2번 안부를 꼭 챙기는','자기 전 통화로 하루를 나누는','서로 바쁠 땐 몰아서 길게 이야기하는'][vE];
+ const step=['만난 지 2~3주 안에, 세 번째 만남 전후','네 번째 만남, 함께 여행을 다녀온 뒤','한 달쯤 꾸준히 연락한 뒤, 둘만의 저녁 자리','두 달 가까이 대화가 깊어진 뒤'][vE];
+ if(k==='marry')return [
+  ['결혼 인연은 언제 들어올까?',mate.length?`${mate.map(yTxt).join(', ')}이 결혼 인연이 가장 뚜렷한 때예요. ${mate[0].y}년에는 ${why(mate[0])} 신호가 겹쳐요.`:`앞으로 10년 중 결혼 신호가 겹치는 해가 뚜렷하지 않아요. 애정운이 가장 밝은 ${love[0].y}년(${kage(love[0].y)}살)을 기준으로 잡아 보세요.`],
+  ['배우자와 나이 차이는 몇 살쯤일까?',age],
+  ['배우자는 어떤 성격일까?',`${pp.vibe} 사람이에요. 인도 점성술의 7하우스 주인이 ${PK[lord7]}이라 ${PL_PERSON[lord7]} 면이 있고, MBTI로 비유하면 ${pp.mbti}에 가까워요.`],
+  ['배우자의 외모 분위기는?',look?`${look}의 인상이에요. 리포트에서 이 특징에 맞는 일러스트 예시를 볼 수 있어요.`:'리포트에서 일러스트 예시와 함께 볼 수 있어요.'],
+  ['배우자의 직업은?',`${pp.job[0]} 쪽이 가장 유력해요. 예를 들면 ${JOBEX[mateE].join(', ')} 같은 일이에요.`],
+  ['배우자의 재력은 어느 정도일까?',`${['알뜰하게 모아 가는 살림꾼형','차곡차곡 쌓는 안정 자산형','눈에 잘 안 띄는 숨은 자산가형','사업 수완이 있는 큰손형'][Math.min(3,rich)]}이에요. 내 원국의 재성이 ${ng[2]}개라 ${ng[2]>=2?'결혼 후 두 사람의 자산이 빠르게 불어나는':ng[2]===1?'결혼 후 5년 안에 공동 자산의 기반이 잡히는':'처음엔 작게 시작해 꾸준히 키우는'} 흐름이에요.`],
+  ['어디서 만나게 될까?',`${pp.meet}에서 만날 가능성이 가장 커요.${mate[0]&&mate[0].months.length?` 특히 ${mate[0].y}년 ${mate[0].months[0][0]}월 무렵의 모임·소개 자리를 놓치지 마세요.`:''}`],
+  ['결혼 후 집과 생활은?',`${['식물과 책이 많은 밝은 집','사람을 자주 초대하는 활기찬 집','넓은 거실이 있는 편안한 집','군더더기 없는 깔끔한 집','창밖 풍경이 좋은 조용한 집'][SE[[0,0,1,1,2,2,3,3,4,4][h4%10]]]||'편안한 집'}이 잘 맞아요. 집안일은 ${['계획 짜기는 내가, 실행은 함께','분위기 담당은 내가, 살림은 배우자가','생활 루틴은 내가, 큰 결정은 함께','돈 관리는 내가, 집안 행사는 배우자가','정리는 배우자가, 계획은 내가'][dom]} 나누면 편해요.`]];
+ if(k==='love')return [
+  ['다음 인연은 언제 올까?',mate.length?`${mate.map(yTxt).join(', ')}에 새 인연이 들어오기 쉬워요. ${mate[0].y}년에는 ${why(mate[0])} 신호가 겹쳐요.`:`애정운이 가장 밝은 ${love[0].y}년(${kage(love[0].y)}살)과 ${love[1].y}년(${kage(love[1].y)}살)에 인연이 열려요.`],
+  ['나와 잘 맞는 사람의 나이 차이는?',age],
+  ['어떤 사람에게 끌릴까?',`${pp.vibe} 사람이에요.${look?` 외모는 ${look}의 분위기,`:''} MBTI로 비유하면 ${pp.mbti}에 가까워요.`],
+  ['어디서 만나게 될까?',`${pp.meet}에서 만날 가능성이 가장 커요. 그 사람은 ${pp.job[0]} 쪽 일을 하거나 ${pp.hobby}을 즐길 가능성이 높아요.`],
+  ['나의 연애 스타일은?',`${pp.style} 연애예요. 연락은 ${contact} 타입이라, 상대와 연락 빈도를 처음에 맞춰 두면 오해가 줄어요.`],
+  ['썸에서 연애로 넘어가는 타이밍은?',`${J(step,'이','가')} 고백하기 가장 자연스러운 때예요.`],
+  ['연애에서 조심할 점은?',['관심이 여러 곳으로 퍼지면 상대가 뒷전이라고 느끼기 쉬워요. 데이트 날엔 휴대폰을 덜 보세요.','감정이 뜨거울 때 한 말이 오래 남아요. 다툰 날엔 중요한 결정을 하루 미루세요.','서운함을 참다가 한 번에 터뜨리기 쉬워요. 그날 일은 그날 가볍게 말하세요.','맞고 틀림을 따지면 상대가 멀어져요. 지적보다 기분을 먼저 물어보세요.','생각이 많아 연락이 늦어지면 상대는 거리감을 느껴요. 짧게라도 먼저 답하세요.'][dom]]];
+ const fields=job?job.a.split(' · '):[];
+ if(k==='work'||k==='employment'||k==='move'){const top=best.slice(0,2).sort((a,b)=>a.y-b.y);
+  const rows=[['나에게 맞는 일은?',`${fields.join(', ')} 분야가 잘 맞아요. 구체적으로는 ${JOBEX[dom].join(', ')} 같은 직무에서 강점이 드러나요.`],
+   ['일이 가장 잘 풀리는 해는?',`${top.map(x=>`${x.y}년(${kage(x.y)}살, ${x.v}점)`).join('과 ')}이에요. 반대로 ${best[best.length-1].y}년(${best[best.length-1].v}점)은 무리한 확장보다 실력을 다지는 해예요.`],
+   ['일터의 귀인은 언제, 누구일까?',gui?`${gui.y}년${gui.months.length?' '+gui.months.slice(0,2).map(m=>m[0]+'월').join('·'):''}에 ${J((lq.find(x=>x.k==='gui')||{}).a?.split(', ').slice(1).join(', ')||'도움을 줄 사람','이','가')} 나타나기 쉬워요.`:'꾸준한 교류에서 귀인이 생겨요.']];
+  if(k==='employment')rows.push(['서류·면접에서 강조할 점은?',`${['새 일을 기획하고 시작한 경험','사람을 설득하고 분위기를 이끈 경험','맡은 일을 끝까지 꾸준히 해낸 경험','기준을 세워 정확하게 처리한 경험','자료를 깊게 분석해 답을 찾은 경험'][dom]}을 숫자와 함께 보여 주세요. 면접에서는 ${['먼저 결론을 말하는','밝게 웃으며 이야기를 이끄는','차분하고 믿음직한','논리적으로 근거를 대는','질문의 의도를 짚어 답하는'][dom]} 모습이 강점이에요.`],['지원하기 좋은 시기는?',`${top[0].y}년, 특히 ${[3,5,9,11,1][dom]}월 채용 시즌이 흐름과 잘 맞아요.`]);
+  if(k==='move')rows.push(['이직은 언제가 좋을까?',mv?`${mv.a.split(' · ').filter(x=>!/자격증/.test(x)).join(' · ')||mv.a}. ${mv.s}`:`${top[0].y}년이 가장 좋아요.`],['옮긴다면 어떤 곳으로?',`지금보다 ${['새 프로젝트가 많은 성장 조직','사람을 많이 만나는 대외 업무','안정된 큰 조직','역할과 기준이 분명한 전문 조직','혼자 깊게 파고들 수 있는 연구·분석 조직'][dom]}이 잘 맞아요.`]);
+  return rows}
+ if(k==='study'||k==='exam'||k==='cert'){const gi=ng[4],ss=ng[1],top=best.slice(0,2).sort((a,b)=>a.y-b.y),py=[0,1,2].map(i=>y0+i).filter(y=>[1,4,7].includes(pyOf(ch,y)));
+  const rows=[['나에게 맞는 공부법은?',gi>ss?`개념을 먼저 깊게 이해하는 공부가 맞아요(인성 ${gi}개). 교재 한 권을 세 번 반복하고, 단원마다 핵심을 한 줄로 요약하세요.`:gi<ss?`직접 풀고 설명하며 익히는 공부가 맞아요(식상 ${ss}개). 강의보다 문제 풀이 비중을 6:4로 두고, 친구에게 설명해 보세요.`:'이해와 문제 풀이를 반반 섞는 공부가 맞아요. 개념 30분 뒤 바로 문제 30분을 붙이세요.'],
+   ['공부가 가장 잘 되는 시간은?',`${['이른 아침 6~8시','오전 9~12시','오후 2~5시','저녁 7~10시','밤 10시 이후'][dom]}에 집중력이 가장 높아요.`],
+   ['성과가 나는 해는?',`${top.map(x=>`${x.y}년(${kage(x.y)}살, ${x.v}점)`).join('과 ')}에 공부한 만큼 결과가 잘 나와요.`]];
+  if(k==='exam')rows.push(['시험 운이 좋은 시기는?',py.length?`${py.join('·')}년이 시작·기반·학습의 개인년이라 시험 운이 좋아요.${ch.has.munc?' 원국에 문창귀인이 있어 글쓰기·서술형에 강해요.':''}`:`${top[0].y}년을 목표로 준비하면 흐름과 잘 맞아요.`]);
+  if(k==='cert'||k==='study')rows.push(['어떤 자격증이 잘 맞을까?',`${J(CERTEX[dom].join(', '),'이','가')} 내 강점과 잘 맞아요.${mv&&/자격증/.test(mv.a)?' '+mv.a.split(' · ').find(x=>/자격증/.test(x))+'.':''}`]);
+  return rows}
+ return null}
+function topicAnswerRows(ch,k){const v2=topicRowsV2(ch,k);if(v2)return v2;const rows=topicAnswerRowsBase(ch,k),dom=ch.cnt.indexOf(Math.max(...ch.cnt)),ven=sign(birthExtraLon('Venus',ch.jd)),base=sign(ch.asc??ch.sun),mateEl=SE[BMAIN[ch.brs.d]];
 const pace=['함께 새로운 경험을 쌓으며 가까워지는','좋아하는 마음을 말과 행동으로 자주 표현하는','일상을 꾸준히 나누며 신뢰를 쌓는','약속과 서로의 시간을 존중하는','충분히 대화하고 마음을 이해하며 가까워지는'][mateEl];
 const conflict=['앞서 결론을 내리기보다 상대가 원하는 속도를 물어보세요.','감정이 커질 때는 잠시 쉬고 원하는 것을 한 가지씩 말해보세요.','괜찮다고 넘긴 서운함을 작은 일부터 이야기해보세요.','옳고 그름을 따지기 전에 서로의 기분을 확인해보세요.','혼자 짐작하기보다 내가 이해한 뜻이 맞는지 물어보세요.'][dom];
 if(k==='marry')return [...rows,['결혼 후 어떤 생활이 잘 맞을까?',pace+' 생활이 잘 어울려요. 집안일·돈·혼자만의 시간에 대한 기준을 미리 맞추면 편안해져요.'],['결혼을 결정하기 전 꼭 맞춰볼 점은?',conflict],['나와 나이 차이가 있는 사람도 잘 맞을까?','연상·동갑·연하보다 '+pace+' 사람이 내 관계 성향과 더 잘 맞는 모습이에요.']];
@@ -3412,7 +3462,7 @@ function spousePreviewHTML(ch,topic='marry'){const face=spouseFaceProfile(ch),pe
 document.addEventListener('click',e=>{const b=e.target.closest('[data-spouse-report]');if(!b)return;const section=b.closest('.spouse-preview');section?.parentElement.querySelector('.topic-offer')?.scrollIntoView({behavior:reduceM?'auto':'smooth',block:'center'})});
 const SUBTOPIC_COPY={"employment":{"title":"나에게 맞는 첫 일자리는?","intro":"취업의 방향과 준비 시기, 기회를 여는 강점을 살펴보세요.","rows":["어떤 직무에 지원하면 좋을까?","취업을 준비하기 좋은 흐름은?","면접에서 보여줄 나의 강점은?"],"outline":["나에게 맞는 직무와 조직 분위기","취업 준비 시기와 지원 전략","면접에서 드러낼 강점과 귀인"]},"move":{"title":"다음 직장에서는 더 잘 맞을까요?","intro":"이직의 흐름과 다음 일터를 고르는 기준을 살펴보세요.","rows":["이직을 검토할 시기는?","다음 직장은 어떤 기준으로 고를까?","옮기기 전에 준비할 것은?"],"outline":["이직·전환을 검토할 시기","잘 맞는 업무와 조직 환경","경력 정리와 도움을 줄 인연"]},"invest":{"title":"나에게 맞는 투자 습관은?","intro":"재물의 흐름과 돈을 다루는 성향을 함께 살펴보세요.","rows":["투자를 돌아볼 시기는?","내 돈 관리 방식은?","투자 전에 점검할 습관은?"],"outline":["재물 흐름과 투자 성향","결정 전 돌아볼 소비·위험 감수 습관","목표와 자금 계획을 정리하는 실천"]},"property":{"title":"나에게 맞는 공간과 자산 계획은?","intro":"주거의 우선순위와 큰 지출을 준비하는 흐름을 살펴보세요.","rows":["주거·자산 계획을 점검할 시기는?","공간을 고를 때 무엇을 중시할까?","큰 결정을 앞두고 준비할 것은?"],"outline":["주거와 자산 계획을 돌아볼 흐름","생활 성향에 맞는 공간의 기준","예산과 장기 계획을 정리하는 실천"]},"business":{"title":"나의 강점으로 어떤 사업을 시작할까?","intro":"사업에서 살릴 강점과 시작 전 준비할 일을 살펴보세요.","rows":["어떤 사업 방식이 나에게 맞을까?","사업 준비를 검토할 흐름은?","시작하기 전에 해볼 일은?"],"outline":["사업에 활용할 강점과 역할","사업·확장을 준비할 흐름","협업 상대와 작은 검증 과제"]},"exam":{"title":"대입·수능, 나에게 맞게 준비하기","intro":"공부 성향과 진학 준비의 흐름을 살펴보세요.","rows":["나에게 맞는 수능 공부 방식은?","진학 준비에서 눈여겨볼 흐름은?","시험 전 바꿔볼 습관은?"],"outline":["공부 성향과 과목별 접근 방식","진학 준비와 학습 흐름","오답·복습·실전 연습 계획"]},"cert":{"title":"다음 자격증, 어떻게 준비할까요?","intro":"경력과 연결할 배움, 꾸준히 완주하는 공부 방식을 살펴보세요.","rows":["어떤 분야의 자격증을 살펴볼까?","자격증 공부에 맞는 방식은?","언제부터 어떻게 준비할까?"],"outline":["강점과 연결되는 배움의 분야","자격증 준비 시기와 학습 방식","실기·필기 준비와 완주 습관"]}};
 Object.entries(SUBTOPIC_COPY).forEach(([k,v])=>{TOPIC_REPORT_CONTENTS[k]=v.outline});
-function subtopicHTML(ch,k){const c=SUBTOPIC_COPY[k],w=topicAnswerRows(ch,'work'),m=topicAnswerRows(ch,'money'),dom=ch.cnt.indexOf(Math.max(...ch.cnt));const styles=['개념을 연결한 뒤 문제로 확인해보세요.','배운 내용을 말로 설명하며 익혀보세요.','매일 같은 시간에 짧게 복습해보세요.','유형별 오답과 핵심 규칙을 정리해보세요.','한 주제에 집중한 뒤 한 문장으로 요약해보세요.'];let a;
+function subtopicHTML(ch,k){{const v2=topicRowsV2(ch,k),c=SUBTOPIC_COPY[k];if(v2)return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+TOPICS.find(x=>x[0]===k)[1]+'</span><h3>'+c.title+'</h3><p>'+c.intro+'</p></header>'+answerCards(v2)+topicReportHTML(k)+'</section>'}const c=SUBTOPIC_COPY[k],w=topicAnswerRows(ch,'work'),m=topicAnswerRows(ch,'money'),dom=ch.cnt.indexOf(Math.max(...ch.cnt));const styles=['개념을 연결한 뒤 문제로 확인해보세요.','배운 내용을 말로 설명하며 익혀보세요.','매일 같은 시간에 짧게 복습해보세요.','유형별 오답과 핵심 규칙을 정리해보세요.','한 주제에 집중한 뒤 한 문장으로 요약해보세요.'];let a;
 if(k==='employment')a=[w[0][1],w[1][1],w[4][1]];
 if(k==='move')a=[w[1][1],w[0][1]+' · 업무 범위와 조직 문화를 함께 확인해보세요.',w[4][1]];
 if(k==='invest')a=[m[0][1],m[1][1],m[2][1]+' 목표와 감당할 수 있는 손실 범위를 먼저 적어보세요.'];
@@ -3421,7 +3471,7 @@ if(k==='business')a=[w[0][1]+'에서 내가 맡을 역할을 찾아보세요.',m
 if(k==='exam')a=[styles[dom],w[1][1]+' 직업·학업의 흐름을 준비 일정과 함께 살펴보세요.','최근 오답을 개념·시간·실수로 나누고 가장 많은 원인부터 보완해보세요.'];
 if(k==='cert')a=[w[0][1]+'와 연결되는 자격 요건부터 확인해보세요.',styles[dom],'시험일에서 거꾸로 복습과 모의시험 일정을 세우고 첫 주 목표를 작게 정해보세요.'];
 return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+TOPICS.find(x=>x[0]===k)[1]+'</span><h3>'+c.title+'</h3><p>'+c.intro+'</p></header>'+answerCards([...c.rows.map((q,i)=>[q,a[i]]),...extraSubtopicRows(ch,k)])+topicReportHTML(k)+'</section>';}
-function studyTopicHTML(ch){
+function studyTopicHTML(ch){{const v2=topicRowsV2(ch,'study');if(v2)return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">학업·성취</span><h3>나에게 맞는 공부로, 다음 목표에 가까이</h3><p>공부 방식부터 시험·자격증·진학의 준비 흐름까지 살펴보세요.</p></header>'+answerCards(v2)+topicReportHTML('study')+'</section>'}
  const dom=ch.cnt.indexOf(Math.max(...ch.cnt)),t=topicData(ch,'work');
  const styles=['질문을 만들고 개념을 연결하며 배우는 탐구형이에요. 목차를 먼저 훑고 오늘 풀 질문 하나를 정해보세요.','말로 설명하고 직접 해보며 익히는 표현형이에요. 배운 내용을 짧게 녹음하거나 문제 풀이를 설명해보세요.','정해진 시간에 차근차근 쌓는 반복형이에요. 매일 같은 시간에 복습하고 주간 목표를 작게 나눠보세요.','기준과 구조를 세우며 익히는 분석형이에요. 유형별 오답과 핵심 규칙을 한 장으로 정리해보세요.','깊이 생각하고 맥락을 이해하며 배우는 몰입형이에요. 조용한 자리에서 한 주제에 집중한 뒤 요약해보세요.'];
  const habits=['새 교재를 늘리기보다 한 권의 핵심 단원을 끝내보세요.','의욕이 큰 날에도 공부 시간을 짧게 나눠 꾸준히 이어가세요.','익숙한 문제만 반복하지 말고 새 유형을 하루 한 개 풀어보세요.','완벽한 정리보다 제한 시간 안에 푸는 연습을 먼저 해보세요.','자료를 더 찾기 전에 지금 아는 내용을 문제로 확인해보세요.'];
@@ -4073,7 +4123,7 @@ function reportEditorialCopy(value){return String(value||'')
 /* 2026-11-05 인연 프로필·재미 요소: 기존 차트 값만 읽는 재미용 분류(계산식 불변) */
 function partnerProfile(ch){const mE=SE[BMAIN[ch.brs.d]],tg=tenGod(ch.stems.d,BMAIN[ch.brs.d]),g=Math.floor(TG.indexOf(tg)/2),base=ch.asc!=null?sign(ch.asc):sign(ch.sun),h7=(base+6)%12,ven=sign(birthExtraLon('Venus',ch.jd)),vE=ven%4;
  const mbti=([1,3].includes(h7%4)?'I':'E')+([2,3].includes(mE)?'S':'N')+([1,2].includes(vE)?'T':'F')+(h7%3===2?'P':'J');
- const age=g===3||g===4?'나보다 2~6살 연상':g===1||g===2?'나보다 1~5살 연하':'동갑이거나 1~2살 차이';
+ const age='나보다 '+(AGEGAP[tg]||'1~3살 차이');
  const job=[['교육·기획·디자인','성장하는 일을 하는'],['마케팅·방송·서비스','사람 앞에 서는 일을 하는'],['공공기관·부동산·운영','안정된 조직에서 일하는'],['금융·법률·IT','전문 기준이 분명한 일을 하는'],['연구·의료·해외 업무','깊이 파고드는 일을 하는']][mE];
  const vibe=['다정하고 성장 욕구가 큰','밝고 표현이 풍부한','듬직하고 현실적인','원칙이 분명하고 깔끔한','차분하고 생각이 깊은'][mE];
  const hobby=['산책·식물 가꾸기·독서','공연·여행·사진','맛집 탐방·요리·캠핑','운동·정리·전시 관람','음악·영화·물가 산책'][mE];
