@@ -1675,6 +1675,22 @@ html.rd .reading-evidence,html.rd #report .reading-evidence,html.rd #report .rv3
 #report .destiny-highlight{color:var(--destiny-emphasis-light);font:inherit;font-style:normal}
 html.rd #report .destiny-highlight{color:var(--destiny-emphasis-dark)}
 
+
+/* Year-by-year line plots: common axes, visible observations and no smoothing. */
+#report .annual-line-chart svg{display:block;width:100%;height:auto;overflow:visible}
+#report .annual-line-chart .year-grid{stroke:var(--line);stroke-width:1;stroke-dasharray:3 4}
+#report .annual-line-chart .year-border{stroke:var(--line2);stroke-width:1}
+#report .annual-line-chart text{font-family:var(--body);font-size:14px;fill:var(--ink2)}
+#report .annual-line-chart .year-value{font-size:15px;fill:var(--fg);font-variant-numeric:tabular-nums}
+#report .annual-line-chart .year-line{fill:none;stroke:var(--navy,var(--fg));stroke-width:2.2;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+#report .annual-line-chart circle{fill:var(--navy,var(--fg));stroke:var(--panel);stroke-width:1}
+#report .annual-line-chart .best circle{fill:var(--gold)}
+#report .annual-line-chart .best .year-value{fill:var(--gold);font-weight:700}
+html.rd #report .annual-line-chart .year-line{stroke:var(--fg)}
+html.rd #report .annual-line-chart circle{fill:var(--fg)}
+#report .annual-score-grid:has(.annual-line-chart){grid-template-columns:minmax(0,1fr);gap:32px}
+@media print{#report .annual-line-chart{break-inside:avoid}}
+
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -2090,7 +2106,7 @@ const ORC=[oSaju,oWest,oVedic,oNum,oMaya];
 /* 화면 표시 점수: 내부 점수(약 30~98)를 75~99점으로 옮긴다. 판정·문구 기준은 내부 점수로 한다. */
 const D=v=>Math.round(60+clamp((v-40)/57,0,1)*40);
 /* 부드러운 곡선: 'x,y x,y' 점 문자열을 단조 3차 베지어 경로로 */
-function smoothPath(pts){const p=pts.trim().split(/\s+/).map(q=>q.split(',').map(Number));if(p.length<2)return '';let d=`M${p[0][0]},${p[0][1]}`;for(let i=1;i<p.length;i++){const a=p[i-1],b=p[i],mx=(b[0]-a[0])*.42;d+=` C${(a[0]+mx).toFixed(1)},${a[1]} ${(b[0]-mx).toFixed(1)},${b[1]} ${b[0]},${b[1]}`}return d}
+function smoothPath(pts){const p=pts.trim().split(/\s+/).filter(Boolean);return p.length<2?'':'M'+p.join(' L')}
 let drawGraph=true;const drawCls=()=>drawGraph&&!reduceM?' draw':'';
 const Y=dv=>30+(100-dv)/45*170;
 const amp=(avg,k)=>Math.round(clamp(soft(60+(avg-56)*k,.6),32,98));
@@ -2521,13 +2537,11 @@ function natalReadingHTML(ch){
  return '<p><span class="reading-meaning">'+topicEsc(meaning)+'</span><span class="reading-evidence"> (일간 '+topicEsc(ST[d])+' · '+(ch.strong?'신강':'신약')+')</span></p><p><span class="reading-meaning">'+topicEsc(strengths)+'</span><span class="reading-evidence"> (태양 '+topicEsc(ZOD[sign(ch.sun)])+'자리'+(asc!=null?' · 상승궁 '+topicEsc(ZOD[asc])+'자리':'')+' · 낙샤트라 '+topicEsc(NAK[ch.nk])+')</span></p>'+readingParagraph(natalProse(ch)[2]);
 }
 function resultIntroHTML(ch){const tags=reportTags(ch);
-  const kw=tags.slice(0,3).map(t=>`<div><b>${RTAG[t.k].kw}</b><span>${RTAG[t.k].s}</span></div>`).join("");
   const ag=tags.filter(t=>t.n>=2).slice(0,4);
   const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><span class="reading-evidence"> (${t.ev.join(", ")})</span><small>${t.sys.join(" · ")}</small></div></li>`).join("");
   return `<p class="res-lead">${destinyMeaningHTML(traitDescription(ch))}</p>
-  <div class="r-kw">${kw}</div>
-  <h3 class="res-h">운명 성향</h3>${fateTraitsHTML(ch)}<p class="r-note">출생 차트의 오행 개수와 태양 별자리로 나눈 재미용 분류예요. 심리검사가 아니며, 점은 강도가 아닌 방향을 나타내요.</p>
   <h3 class="res-h">다섯 점술이 함께 짚은 것</h3><ul class="r-agree">${agl}</ul>
+  <h3 class="res-h">운명 성향</h3>${fateTraitsHTML(ch)}<p class="r-note">출생 차트의 오행 개수와 태양 별자리로 나눈 재미용 분류예요. 심리검사가 아니며, 점은 강도가 아닌 방향을 나타내요.</p>
   <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${natalReadingHTML(ch)}</div>
   <p class="r-hook">${reportHook(ch)}</p>`}
 function renderResult(){const ch=CH,name=ch.inp.name;
@@ -3630,10 +3644,13 @@ function annualScoreChart(t){
  if(!cols.length||!t.rows.every(r=>/^\d{4}년/.test(String(r[0]))))return '';
  const charts=cols.map(col=>{
  const values=t.rows.map(r=>Number(String(r[col]).replace('점','')));if(values.some(v=>!Number.isFinite(v)||v<60||v>100))return '';
- const best=Math.max(...values),name=head[col]==='점수'?(t.cap||'').split(' 연도별')[0]:head[col];
- return '<figure class="annual-score-chart"><figcaption>'+E(name)+' · 연도별 흐름</figcaption><div class="annual-axis" aria-hidden="true"><span>60</span><span>80</span><span>100점</span></div><ol>'+t.rows.map((r,i)=>'<li'+(values[i]===best?' class="annual-best"':'')+'><span class="annual-year">'+E(String(r[0]).match(/^\d{4}년/)[0])+'</span><div class="annual-track" role="meter" aria-label="'+E(name)+' '+E(r[0])+'" aria-valuemin="60" aria-valuemax="100" aria-valuenow="'+values[i]+'"><span style="width:'+((values[i]-60)/40*100)+'%"></span></div><b>'+values[i]+'<small>점</small></b></li>').join('')+'</ol><p class="annual-caption">강조된 막대는 최고점인 해입니다.</p></figure>';
- }).filter(Boolean).join('');
- return charts?'<div class="annual-score-grid">'+charts+'</div>':'';
+ const best=Math.max(...values),name=head[col]==='점수'?(t.cap||'').split(' 연도별')[0]:head[col],W=520,H=310,L=42,R=22,T=28,B=48;
+ const x=i=>L+i*(W-L-R)/(values.length-1),y=v=>T+(100-v)/40*(H-T-B);
+ const ticks=[60,70,80,90,100].map(v=>'<line class="year-grid" x1="'+L+'" x2="'+(W-R)+'" y1="'+y(v)+'" y2="'+y(v)+'"/><text class="year-axis" x="'+(L-9)+'" y="'+(y(v)+5)+'" text-anchor="end">'+v+'</text>').join('');
+ const points=values.map((v,i)=>'<g class="year-point'+(v===best?' best':'')+'"><title>'+E(t.rows[i][0])+' · '+E(name)+' '+v+'점</title><circle cx="'+x(i)+'" cy="'+y(v)+'" r="'+(v===best?4.5:3.5)+'"/><text class="year-value" x="'+x(i)+'" y="'+(y(v)-12)+'" text-anchor="middle">'+v+'</text><text class="year-axis" x="'+x(i)+'" y="'+(H-22)+'" text-anchor="middle">'+E(String(t.rows[i][0]).match(/^\d{4}/)[0])+'</text></g>').join('');
+ const label=name+' 연도별 점수: '+t.rows.map((r,i)=>String(r[0]).match(/^\d{4}/)[0]+'년 '+values[i]+'점').join(', ');
+ return '<figure class="annual-score-chart annual-line-chart"><figcaption>'+E(name)+' · 연도별 흐름</figcaption><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+E(label)+'"><title>'+E(name)+' · 연도별 흐름</title>'+ticks+'<line class="year-border" x1="'+L+'" x2="'+L+'" y1="'+T+'" y2="'+y(60)+'"/><polyline class="year-line" points="'+values.map((v,i)=>x(i)+','+y(v)).join(' ')+'"/>'+points+'</svg></figure>';
+ }).filter(Boolean).join('');return charts?'<div class="annual-score-grid">'+charts+'</div>':'';
 }
 
 function encounterData(ch){
