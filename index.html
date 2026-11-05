@@ -1653,6 +1653,21 @@ html.rd .reading-evidence,html.rd #report .reading-evidence,html.rd #report .rv3
 @media(max-width:420px){#report .r-page,#report .r-page.rv3-ch{padding:32px 20px}#report .r-page .rv3-hd h2{font-size:22px}#report .r-page .method-table th,#report .r-page .method-table td{padding:10px 6px;font-size:12px}#report .r-page .method-table th:first-child{width:58px}}
 @media print{#report .r-page,#report .r-page.rv3-ch{padding:14mm;margin:0 0 8mm}#report .r-page p,#report .r-page.rv3-ch p{font-size:11pt;line-height:1.8;margin-bottom:4mm}#report .r-page .rv3-table{break-inside:auto}#report .r-page .rv3-table tr{break-inside:avoid}#report .r-page .rv3-table thead{display:table-header-group}#report .r-page h3,#report .r-page .score-heading{break-after:avoid}}
 
+
+/* Compact Tzolkin matrix: a narrow label column and 13 equal numeric columns. */
+#report .r-page .maya-grid{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:1px;font-variant-numeric:tabular-nums;margin:24px 0}
+#report .r-page .maya-grid .maya-label-col{width:48px}
+#report .r-page .maya-grid th,#report .r-page .maya-grid td{box-sizing:border-box;padding:4px 0;text-align:center;font-size:10px;line-height:1.2;vertical-align:middle}
+#report .r-page .maya-grid th{font-weight:500;border:0;background:transparent;color:var(--muted)}
+#report .r-page .maya-grid .maya-row{width:auto;padding:3px 4px 3px 0;text-align:left;font-family:var(--body);font-size:10px;overflow-wrap:anywhere;white-space:normal}
+#report .r-page .maya-grid .maya-row small{font-size:8px;line-height:1.25;margin-top:2px}
+#report .r-page .maya-grid td{height:29px;border:1px solid var(--line);border-radius:2px}
+#report .r-page .maya-grid .maya-tone{display:block;width:100%;height:8px;margin:0 0 3px}
+#report .r-page .maya-grid .maya-selected{box-shadow:inset 0 0 0 1px var(--gold)}
+#report .r-page .maya-grid caption{padding-bottom:10px;text-align:left;font-size:12px;line-height:1.65}
+@media(max-width:420px){#report .r-page .maya-grid .maya-label-col{width:38px}#report .r-page .maya-grid th,#report .r-page .maya-grid td{font-size:8px}#report .r-page .maya-grid .maya-row{font-size:9px;padding-right:2px}#report .r-page .maya-grid .maya-row small{font-size:7px}#report .r-page .maya-grid td{height:27px}}
+@media print{#report .r-page .maya-grid{break-inside:avoid}#report .r-page .maya-grid .maya-label-col{width:13mm}}
+
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -2409,7 +2424,7 @@ function birthKin(tone,msign){for(let k=1;k<=260;k++)if(mod(k-1,13)+1===tone&&mo
 function birthToneSvg(n){const dots=n%5,bars=Math.floor(n/5);let svg="";for(let i=0;i<dots;i++)svg+=`<circle cx="${15+(i-(dots-1)/2)*5}" cy="3" r="1.7"/>`;for(let i=0;i<bars;i++)svg+=`<rect x="5" y="${7+i*3.2}" width="20" height="2" rx="1"/>`;return `<svg class="maya-tone" viewBox="0 0 30 17" aria-hidden="true" fill="currentColor">${svg}</svg>`}
 function birthMaya(ch){const kin=birthKin(ch.tone,ch.msign),ms=MS[ch.msign];let rows="";
  for(let s=0;s<20;s++){rows+=`<tr><th scope="row" class="maya-row">${MS[s][1]}<small>${MS[s][0]}</small></th>`;for(let c=0;c<13;c++){const k=c*20+s+1,tone=mod(k-1,13)+1,selected=k===kin;rows+=`<td class="${selected?"maya-selected":s===ch.msign?"maya-match":""}"${selected?' aria-current="date"':""} aria-label="${k}번, ${tone} ${MS[s][0]}${selected?", 나의 탄생일":""}">${birthToneSvg(tone)}${k}</td>`}rows+="</tr>";}
- return `<section class="birth-system" id="birth-maya"><h4><small>04</small>마야력 · 나의 촐킨표</h4><p class="birth-note">20개 기호와 13개 숫자가 만나 만드는 260칸 달력이에요. 금색 칸이 내 출생일의 조합이며, 가로줄에서 같은 탄생 기호가 다른 숫자와 만나는 자리도 볼 수 있어요.</p><div class="birth-maya-summary">${birthToneSvg(ch.tone)}<div><b>${ch.tone} ${ms[0]} · ${ms[1]}</b><span>${ms[2]} · 탄생 숫자 ${ch.tone} · 표의 ${kin}번 칸</span></div></div><table class="maya-grid"><caption>나의 탄생일: ${ch.Y}.${ch.Mo}.${ch.D} → ${ch.tone} ${ms[0]} · 점 하나는 1, 막대 하나는 5</caption><thead><tr><th scope="col" class="maya-row">기호 / 순번</th>${Array.from({length:13},(_,i)=>`<th scope="col">${i+1}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table><p class="birth-note">각 칸의 큰 숫자는 1 Imix를 첫 칸으로 둔 조합 순번이고, 점·막대는 그날의 탄생 숫자(1~13)예요. 전통 촐킨과 GMT 상관상수 584283을 사용하며 현대 드림스펠의 은하 서명·색상 해석과는 구분해요. 같은 조합은 260일마다 돌아와요.</p>${birthTable("출생일과 촐킨 계산 기준",["항목","값"],[["양력 출생일",`${ch.Y}년 ${ch.Mo}월 ${ch.D}일`],["율리우스 적일수(JDN)",String(jdn(ch.Y,ch.Mo,ch.D))],["탄생 조합",`${ch.tone} ${ms[0]} · 표의 ${kin}번 칸`],["숫자의 의미",MT[ch.tone][0]]])}</section>`;
+ return `<section class="birth-system" id="birth-maya"><h4><small>04</small>마야력 · 나의 촐킨표</h4><p class="birth-note">20개 기호와 13개 숫자가 만나 만드는 260칸 달력이에요. 금색 칸이 내 출생일의 조합이며, 가로줄에서 같은 탄생 기호가 다른 숫자와 만나는 자리도 볼 수 있어요.</p><div class="birth-maya-summary">${birthToneSvg(ch.tone)}<div><b>${ch.tone} ${ms[0]} · ${ms[1]}</b><span>${ms[2]} · 탄생 숫자 ${ch.tone} · 표의 ${kin}번 칸</span></div></div><table class="maya-grid"><caption>나의 탄생일: ${ch.Y}.${ch.Mo}.${ch.D} → ${ch.tone} ${ms[0]} · 점 하나는 1, 막대 하나는 5</caption><colgroup><col class="maya-label-col"><col span="13"></colgroup><thead><tr><th scope="col" class="maya-row">기호<small>순번</small></th>${Array.from({length:13},(_,i)=>`<th scope="col">${i+1}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table><p class="birth-note">각 칸의 큰 숫자는 1 Imix를 첫 칸으로 둔 조합 순번이고, 점·막대는 그날의 탄생 숫자(1~13)예요. 전통 촐킨과 GMT 상관상수 584283을 사용하며 현대 드림스펠의 은하 서명·색상 해석과는 구분해요. 같은 조합은 260일마다 돌아와요.</p>${birthTable("출생일과 촐킨 계산 기준",["항목","값"],[["양력 출생일",`${ch.Y}년 ${ch.Mo}월 ${ch.D}일`],["율리우스 적일수(JDN)",String(jdn(ch.Y,ch.Mo,ch.D))],["탄생 조합",`${ch.tone} ${ms[0]} · 표의 ${kin}번 칸`],["숫자의 의미",MT[ch.tone][0]]])}</section>`;
 }
 function birthAtlas(ch){const bodies=birthBodies(ch);return `<div class="birth-atlas"><nav class="birth-nav" aria-label="내 출생 차트로 이동"><a href="#birth-west">서양 점성술</a><a href="#birth-vedic">인도 점성술</a><a href="#birth-num">수비학</a><a href="#birth-maya">마야력</a></nav>${ch.inp.notime?'<p class="birth-note">출생 시각을 몰라 현지 정오의 천체 위치를 참고값으로 표시했어요. 달의 별자리·낙샤트라와 도수는 실제 출생 시각에 따라 달라질 수 있어요.</p>':""}${birthWest(ch,bodies)}${birthVedic(ch,bodies)}${birthNumerology(ch)}${birthMaya(ch)}</div>`}
 
