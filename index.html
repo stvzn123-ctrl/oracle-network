@@ -1691,6 +1691,23 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
 #report .annual-score-grid:has(.annual-line-chart){grid-template-columns:minmax(0,1fr);gap:32px}
 @media print{#report .annual-line-chart{break-inside:avoid}}
 
+
+/* Independent main-page disclosures. The map is mounted on first expansion. */
+#actionBody{display:grid;gap:12px}
+.main-guidance-toggle{min-width:0;border:1px solid var(--line2);border-radius:10px;background:var(--panel);overflow:hidden}
+.main-guidance-toggle>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none;cursor:pointer;padding:18px 16px;min-height:56px;box-sizing:border-box;font-size:17px;font-weight:700;line-height:1.5;color:var(--fg)}
+.main-guidance-toggle>summary::-webkit-details-marker{display:none}
+.main-guidance-toggle>summary::after{content:'+';font-size:22px;font-weight:400;line-height:1;color:var(--gold);flex:none}
+.main-guidance-toggle[open]>summary::after{content:'−'}
+.main-guidance-toggle>summary:focus-visible{outline:2px solid var(--gold);outline-offset:-3px}
+.main-guidance-body{padding:0 16px 20px;min-width:0}
+.main-guidance-body .act-list{margin-bottom:0}
+.main-guidance-body .feng-place-heading h3{font-size:16px;margin:8px 0 12px}
+.main-guidance-body .feng-map-wrap{box-sizing:border-box;max-width:100%}
+.main-guidance-body .feng-map-layout{grid-template-columns:minmax(0,1fr)}
+.main-guidance-body .feng-categories{min-width:0}
+@media(max-width:420px){.main-guidance-toggle>summary{font-size:16px;padding:16px 12px}.main-guidance-body{padding:0 12px 16px}}
+
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1768,7 +1785,7 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
     <section class="blk blk-first" aria-labelledby="todayTitle"><h3 class="blk-h sr-only" id="todayTitle">오늘의 운세</h3><div id="todayBox"></div></section>
     <section class="blk" aria-labelledby="weekTitle"><h3 class="blk-h" id="weekTitle">이번 주 운세</h3><div id="weekBox"></div>
     <p class="fine">오늘·이번 주 점수는 그날의 일진, 달의 위치, 타라, 개인일, 촐킨을 합친 자체 지표예요.</p></section>
-    <button type="button" class="to-report" data-goto="natal">운을 높이는 법과 운명 리포트 보기 ›</button>
+    <button type="button" class="to-report" data-goto="natal">운명 개선법·추천 장소·리포트 보기 ›</button>
   </div>
   <div class="tabp" id="tab-flow" role="tabpanel" aria-labelledby="tb-flow" hidden>
     <ol class="hl" id="highlights" aria-label="나의 운명 핵심 세 가지"></ol>
@@ -1780,13 +1797,13 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
     <ul class="fields" id="fields" aria-label="분야별 10년 요약"></ul>
     <p class="fine">점수는 다섯 점술의 규칙을 숫자로 옮긴 자체 지표예요. 성공 확률이나 예측 정확도가 아니에요.</p>
   </section>
-    <button type="button" class="to-report" data-goto="natal">운을 높이는 법과 운명 리포트 보기 ›</button>
+    <button type="button" class="to-report" data-goto="natal">운명 개선법·추천 장소·리포트 보기 ›</button>
   </div>
   <div class="tabp" id="tab-natal" role="tabpanel" aria-labelledby="tb-natal" hidden>
     <div class="res-intro" id="resIntro"></div>
   <div class="trend is-locked" id="result-gate">
     <div id="graph-content" inert aria-hidden="true">
-      <section class="blk act" aria-labelledby="actTitle"><h3 class="blk-h" id="actTitle">운을 높이는 법</h3><div id="actionBody"></div></section>
+      <section class="blk act" aria-label="맞춤 실천과 추천 장소"><div id="actionBody"></div></section>
       <div class="report-cta"><div class="rc-book" aria-hidden="true"><span class="eyebrow">Destiny Report</span><b id="rcName">당신의</b><em>운명 리포트</em><small>10장 · 다섯 점술 종합</small></div>
         <div class="rc-info"><span class="eyebrow">더 자세한 나의 운명</span><h3>왜 그런 결과인지, 리포트에서 확인하세요</h3><p>이 화면에는 결론만 담았어요. 리포트에서 이런 내용을 더 볼 수 있어요.</p>
         <ul class="rc-toc"><li><b>궁금한 질문 네 가지</b><span>귀인·결혼 상대·맞는 직업·이직과 자격증의 시기와 근거</span></li><li><b>분야별 해마다 풀이</b><span>금전·애정·직업·건강의 10년과 평생 흐름</span></li><li><b>타고난 성향과 전환점 전체</b><span>운명 성향, 다섯 점술이 함께 짚은 것, 조심할 점</span></li><li><b>추천 장소 지도</b><span>상황별 장소와 전국 장소, 길찾기</span></li><li><b>점술별 분석과 출생 차트</b><span>사주, 별자리 원형도, 라시 차트, 수비학, 마야력</span></li><li><b>계산 근거</b><span>점수를 올리고 내린 이유와 계산 방식</span></li></ul>
@@ -3534,9 +3551,10 @@ const LUCK_WHY2=["일을 벌여 놓고 마무리가 약해지기 쉬우니","감
 const LUCK_WHY3=["새로운 것을 조금씩 들이는 습관","마음을 표현하는 작은 습관","규칙적으로 돌아오는 생활","정리하고 끝맺는 습관","쉬며 돌아보는 시간"];
 function actionGuideHTML(ch){const p=actionProfile(ch),A=LUCK_DO[p.dominant],B=LUCK_DO[p.support],n=ch.cnt[p.support];
  const it=[["강점 살리기",A[0],`당신은 ${LUCK_WHO[p.dominant]}이니, ${LUCK_WHY1[p.dominant]}.`],["과한 성향 줄이기",A[1],`당신은 ${LUCK_WHY2[p.dominant]}, 이 한 가지를 추천해요.`],["균형 채우기",B[2],`당신에게는 ${ELK[p.support]}(${EL[p.support]}) 기운이 ${n===0?"없으니":n===1?"적으니":"더 필요하니"}, ${LUCK_WHY3[p.support]}이 균형을 잡아 줘요.`]];
- return `<p class="act-lead">하루 1~5분이면 되는 작은 실천이에요.</p><ol class="act-list">${it.map(([l,t,w],i)=>`<li><small>0${i+1} · ${l}</small><b>${t}</b><span class="act-why">${w}</span></li>`).join("")}</ol>`+situationPlacesHTML(ch);
+ return `<details class="main-guidance-toggle"><summary id="actTitle">당신의 운명을 개선하는 법</summary><div class="main-guidance-body"><p class="act-lead">하루 1~5분이면 되는 작은 실천이에요.</p><ol class="act-list">${it.map(([l,t,w],i)=>`<li><small>0${i+1} · ${l}</small><b>${t}</b><span class="act-why">${w}</span></li>`).join("")}</ol></div></details><details class="main-guidance-toggle" data-main-places><summary>당신에게 추천하는 장소</summary><div class="main-guidance-body" data-main-place-map></div></details>`;
 }
-function renderActionGuide(){const el=document.getElementById('actionBody');if(el&&CH)el.innerHTML=actionGuideHTML(CH)}
+function renderActionGuide(){const el=document.getElementById('actionBody');if(el&&CH){el.querySelectorAll('.feng-map').forEach(svg=>fengObserver?.unobserve(svg));el.innerHTML=actionGuideHTML(CH)}}
+document.addEventListener('toggle',e=>{const panel=e.target;if(!panel.matches?.('details[data-main-places]')||!panel.open||!CH)return;const mount=panel.querySelector('[data-main-place-map]');if(!mount.children.length)mount.innerHTML=fengPlacesHTML(CH);requestAnimationFrame(()=>fengInit(panel))},true);
 
 function reportTable(head,rows){return `<div class="r-tbl"><table><thead><tr>${head.map(h=>`<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
 function reportCards(rows){return `<div class="r-kv">${rows.map(([label,value,text])=>`<div><small>${label}</small><b>${value}</b><span>${text}</span></div>`).join("")}</div>`}
