@@ -1837,6 +1837,15 @@ html.rd #report .report-bar #reportPDF{background:var(--gold);color:var(--bg)}
 #report .report-info-dialog .rv3-hd h2{font-size:21px}
 @media print{#report .report-info-dialog{display:none!important}}
 
+
+/* Transparent floating report controls: no full-width toolbar surface. */
+#report .report-bar{background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;grid-template-columns:minmax(0,1fr) 36px 36px 36px}
+#report .report-bar::before,#report .report-bar::after{display:none!important}
+#report .report-bar #reportAppendix{display:inline-flex;align-items:center;justify-content:center;justify-self:start;width:36px;height:36px;min-width:36px;min-height:36px;padding:0;border-radius:50%;font-size:14px}
+#report .report-bar>button{box-shadow:0 2px 8px rgba(0,0,0,.12)}
+#report .report-bar #reportPDFStatus:not(:empty){justify-self:end;width:auto;max-width:100%;padding:6px 10px;border-radius:8px;background:var(--panel)}
+@media print{#report .report-bar{display:none!important}}
+
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1909,7 +1918,7 @@ html.rd #report .report-bar #reportPDF{background:var(--gold);color:var(--bg)}
 </header>
 
 
-<section class="report" id="report" hidden aria-label="운명 리포트"><div class="report-bar"><button type="button" id="reportAppendix" aria-label="내 출생 정보와 전문 지표 열기" aria-haspopup="dialog">내 출생 정보와 전문 지표</button><button type="button" id="themeToggle" class="theme-toggle" aria-label="리포트 어둡게 보기">☾</button><button type="button" id="reportPDF" class="report-icon" aria-label="PDF로 저장" title="PDF로 저장"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/></svg></button><button type="button" class="report-icon" data-policy="usage" aria-label="이용 안내" title="이용 안내"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7" r=".8" fill="currentColor" stroke="none"/></svg></button><span id="reportPDFStatus" role="status" aria-live="polite"></span></div><p class="sb-note" role="note"><b>안내</b> 휴대폰이 다크 모드일 때(특히 삼성 인터넷)는 브라우저가 색을 강제로 바꿔 리포트 화면과 PDF에 출력 오류가 생길 수 있어요. 다크 모드를 끄고 보거나 저장하시길 권해요.</p><div class="report-in" id="reportBody"></div><dialog id="reportInfoDialog" class="report-info-dialog" aria-label="내 출생 정보와 전문 지표"><button type="button" id="reportInfoClose" class="report-info-close" aria-label="전문 지표 닫기">닫기 ×</button><div id="reportInfoContent"></div></dialog></section>
+<section class="report" id="report" hidden aria-label="운명 리포트"><div class="report-bar"><button type="button" id="reportAppendix" class="report-icon" aria-label="내 출생 정보와 전문 지표 열기" aria-haspopup="dialog" title="내 출생 정보와 전문 지표"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H5v18h14V8l-5-5Z"/><path d="M14 3v5h5M8 12h8M8 16h5"/></svg></button><button type="button" id="themeToggle" class="theme-toggle" aria-label="리포트 어둡게 보기">☾</button><button type="button" id="reportPDF" class="report-icon" aria-label="PDF로 저장" title="PDF로 저장"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/></svg></button><button type="button" class="report-icon" data-policy="usage" aria-label="이용 안내" title="이용 안내"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7" r=".8" fill="currentColor" stroke="none"/></svg></button><span id="reportPDFStatus" role="status" aria-live="polite"></span></div><p class="sb-note" role="note"><b>안내</b> 휴대폰이 다크 모드일 때(특히 삼성 인터넷)는 브라우저가 색을 강제로 바꿔 리포트 화면과 PDF에 출력 오류가 생길 수 있어요. 다크 모드를 끄고 보거나 저장하시길 권해요.</p><div class="report-in" id="reportBody"></div><dialog id="reportInfoDialog" class="report-info-dialog" aria-label="내 출생 정보와 전문 지표"><button type="button" id="reportInfoClose" class="report-info-close" aria-label="전문 지표 닫기">닫기 ×</button><div id="reportInfoContent"></div></dialog></section>
 <section id="result" class="result" aria-labelledby="resTitle">
   <div class="res-top">
     <h2 class="res-eyebrow" id="resTitle">당신의 운명</h2>
