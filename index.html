@@ -2417,6 +2417,12 @@ function lifeTraj(){const dm=LD.map(r=>r.reduce((a,b)=>a+b.mean,0)/4),cD=clamp(M
 function tpShort(e){if(e.src==="사주")return "10년 단위의 큰 흐름이 새로 시작돼요";if(e.src==="인도 점성술")return "인도 점성술로 보는 긴 주기가 바뀌어요";
   if(e.src==="수비학")return "수비학의 9년 주기가 새로 시작돼요";if(e.src==="서양 점성술")return e.t.startsWith("토성")?"토성이 제자리로 돌아와 삶의 기반을 다시 세우는 때예요":"목성이 제자리로 돌아와 새 기회의 주기가 열려요";
   return /올라가요/.test(e.t)?"네 가지 운이 함께 올라가는 구간이 시작돼요":"흐름이 차분해져 다지기 좋은 구간이 시작돼요"}
+function natalReadingHTML(ch){
+ const d=ch.stems.d,asc=ch.asc!=null?sign(ch.asc):null;
+ const meaning=DM[ST[d]]+' 사람입니다. '+(ch.strong?'남의 기준을 따르기보다 스스로 방향을 정하고 움직일 때 강점을 살리기 좋아요.':'좋은 사람과 편안한 환경을 곁에 두고 도움을 주고받을 때 강점을 살리기 좋아요.');
+ const strengths=SUNG[sign(ch.sun)]+'을 지녔어요. '+(asc!=null?'처음 만나는 사람에게는 '+SUNP[asc]+'의 인상으로 기억되기 쉬워요. ':'')+NAKG[DL[ch.nk%9]]+'도 강점으로 읽어요.';
+ return '<p><span class="reading-meaning">'+topicEsc(meaning)+'</span><small class="reading-evidence">근거: 일간 '+topicEsc(ST[d])+' · '+(ch.strong?'신강':'신약')+'</small></p><p><span class="reading-meaning">'+topicEsc(strengths)+'</span><small class="reading-evidence">근거: 태양 '+topicEsc(ZOD[sign(ch.sun)])+'자리'+(asc!=null?' · 상승궁 '+topicEsc(ZOD[asc])+'자리':'')+' · 낙샤트라 '+topicEsc(NAK[ch.nk])+'</small></p>'+readingParagraph(natalProse(ch)[2]);
+}
 function resultIntroHTML(ch){const tags=reportTags(ch);
   const kw=tags.slice(0,3).map(t=>`<div><b>${RTAG[t.k].kw}</b><span>${RTAG[t.k].s}</span></div>`).join("");
   const ag=tags.filter(t=>t.n>=2).slice(0,4);
@@ -2425,13 +2431,13 @@ function resultIntroHTML(ch){const tags=reportTags(ch);
   <div class="r-kw">${kw}</div>
   <h3 class="res-h">운명 성향</h3>${fateTraitsHTML(ch)}<p class="r-note">출생 차트의 오행 개수와 태양 별자리로 나눈 재미용 분류예요. 심리검사가 아니며, 점은 강도가 아닌 방향을 나타내요.</p>
   <h3 class="res-h">다섯 점술이 함께 짚은 것</h3><ul class="r-agree">${agl}</ul>
-  <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${natalProse(ch).slice(0,3).map(p=>`<p>${p}</p>`).join("")}</div>
+  <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${natalReadingHTML(ch)}</div>
   <p class="r-hook">${reportHook(ch)}</p>`}
 function renderResult(){const ch=CH,name=ch.inp.name;
   const wn=$("whoName");wn.textContent=name||"당신의";$("whoSfx").textContent=name?"님의":"";wn.classList.toggle("noname",!name);
   wn.setAttribute("role","button");wn.setAttribute("tabindex","0");wn.title=name?"눌러서 내 정보 수정":"눌러서 이름 입력"
   $("resTitle").textContent=name?`${name}님의 운명`:"당신의 운명";$("rcName").textContent=(name||"당신")+"님의";
-  $("resIntro").innerHTML=resultIntroHTML(ch);clarifyReading($("resIntro"));
+  $("resIntro").innerHTML=resultIntroHTML(ch);
   $("todayBox").innerHTML=todayHTML(ch);$("weekBox").innerHTML=weekHTML(ch);
   const t=reportTags(ch)[0],b=bestCell(),tp=turningPoints(ch)[0];
   const hl=[["가장 큰 강점",RTAG[t.k].kw,RTAG[t.k].t+".",`다섯 점술 중 ${t.n}개가 같은 이야기를 해요`],
@@ -3491,7 +3497,7 @@ function readingParts(value){
  const tag=source.match(/^\[([^\]]+)\]\s*/);const content=source.replace(/^\[[^\]]+\]\s*/,'');
  const technical=/(?:일간|일지|월지|년지|시지|천간|지지|십성|십신|편인|정인|편재|정재|비견|겁재|식신|상관|편관|정관|신강|신약|원국|오행|하우스|상승궁|라그나|낙샤트라|다샤|개인년|개인일|인생 수|표현 수|영혼 수|촐킨|[木火土金水]\)|[甲乙丙丁戊己庚辛壬癸酉寅卯申戌亥]|태양.{0,12}자리|달.{0,12}자리|금성.{0,12}자리|수성.{0,12}자리|토성.{0,12}자리|목성.{0,12}자리)/;
  const main=[],basis=[];
- const sentences=content.split(/(?<=[.!?。])\s+(?!\d)/).filter(Boolean);
+ const sentences=content.split(/(?<=[.!?。])\s+|,\s+(?=(?:\d+하우스|달은|표현 수|영혼 수))/).filter(Boolean);
  for(const sentence of sentences){
   if(!technical.test(sentence)){main.push(sentence);continue}
   // Only remove a known chart clause when the remainder is independently readable.
@@ -3509,7 +3515,7 @@ function readingParts(value){
    /^감정:\s*달이\s+[^.!?]{0,30}?에 있어\s+(.+)$/
   ];
   const match=splitters.map(re=>sentence.match(re)).find(m=>m&&!technical.test(m[1]));
-  if(match){main.push(match[1]);basis.push(sentence.slice(0,sentence.length-match[1].length).trim())}else basis.push(sentence);
+  if(match){main.push(match[1]);basis.push(sentence)}else basis.push(sentence);
  }
  return {main:main.join(' '),basis:basis.join(' '),label:tag?tag[1]:''};
 }
