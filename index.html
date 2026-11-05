@@ -2275,7 +2275,8 @@ function fateTraits(ch){
 }
 /* Intro pairs a mild version of the existing dominant-element weakness with its strength. */
 function destinyMeaningHTML(value){const text=String(value||''),m=text.match(/^(당신은[\s\S]*?이지만,\s*)([\s\S]+?운명)(을 타고난 사람입니다[.!]?)$/);return m?topicEsc(m[1])+'<em class="destiny-highlight">'+topicEsc(m[2])+'</em>'+topicEsc(m[3]):topicEsc(text)}
-\nfunction traitDescription(ch){
+
+function traitDescription(ch){
  const dom=ch.cnt.indexOf(Math.max(...ch.cnt));
  const weak=[
   "관심이 넓어 마무리가 늦어지는 편",
