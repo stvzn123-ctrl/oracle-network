@@ -1537,6 +1537,27 @@ html{background:var(--bg)}
 @media(max-width:380px){#report .rv3-profile{grid-template-columns:96px 1fr;gap:12px}}
 html.rd #report .rv3-act{background:#1d273b}html.rd #report .rv3-basis li{background:rgba(210,173,106,.14)}
 @media print{#report .r-page.rv3-ch{break-before:auto!important;margin-bottom:6mm!important}#report .rv3-intro{break-before:page!important}#report .rv3-hd,#report .rv3-lead{break-after:avoid}#report .rv3-profile{grid-template-columns:150px 1fr}#report .rv3-face{max-width:150px}#report .rv3-table,#report .rv3-bars,#report .rv3-profile,#report .rv3-act{break-inside:avoid}#report .rv3-tw{overflow:visible}}
+
+/* Shared report layout: compact notice, balanced controls and editorial cover. */
+#report .sb-note{box-sizing:border-box;font-size:11px;line-height:1.55;padding:8px 12px;margin-top:12px;margin-bottom:26px}
+#report .report-bar{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;width:100%;box-sizing:border-box}
+#report #reportClose{justify-self:start;margin:0;min-width:0}
+#report #themeToggle,#report #reportPDF{justify-self:end;margin:0}
+#report #reportPDFStatus{grid-column:1/-1;text-align:center}
+#report #reportPDFStatus:empty{display:none}
+#report .rv3-cover{box-sizing:border-box;min-height:560px!important;min-height:min(720px,85svh)!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:64px clamp(24px,6vw,64px)!important;position:relative}
+#report .rv3-cover::after{display:block!important;content:'';position:absolute;inset:12px;width:auto;height:auto;transform:none;border:1px solid var(--line2);border-radius:0;background:none;pointer-events:none}
+#report .rv3-cover .eyebrow{font-size:10px;letter-spacing:.18em;color:var(--gold);order:0;text-align:center}
+#report .rv3-cover .r-compass{order:1;width:100%;margin:0}
+#report .rv3-cover h2{order:2;max-width:16ch;font-size:clamp(30px,6vw,46px);line-height:1.45;word-break:keep-all;overflow-wrap:anywhere;margin:0;text-wrap:balance}
+#report .rv3-cover>p{order:3;max-width:32em;font-size:12px;line-height:1.8;margin:0}
+#report .rv3-cover .r-cover-meta{order:4;width:100%;justify-content:center;margin:24px 0 0;padding-top:22px;gap:32px}
+#report .r-page ul.rv3-basis{padding:0;list-style:none;justify-content:flex-start}
+#report .rv3-table{table-layout:fixed;width:100%;overflow-wrap:anywhere}
+#report .rv3-facts th:first-child{width:25%}
+@media(max-width:480px){#report .report-bar{padding:8px 10px;gap:6px}#report .report-bar button{font-size:12px;padding:6px 10px}#report .rv3-cover{min-height:520px!important;padding:48px 26px!important}}
+@media print{#report .rv3-cover{min-height:250mm!important;break-after:page}#report .rv3-appendix{break-before:page!important}}
+
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -3446,7 +3467,8 @@ function approvedReportHTML(data,key){
  const E=topicEsc;
  if(!Array.isArray(data.sections))return '<section class="r-page"><h2>'+E(data.title)+'</h2><div class="private-report-text">'+E(data.body)+'</div></section>';
  const v3=data.sections.some(s=>s.lead!=null),ch=reportChart(),comp=key==='comprehensive';
- const secs=data.sections,n2=i=>String(i+1).padStart(2,'0');
+ const secs=data.sections.slice(),n2=i=>String(i+1).padStart(2,'0');
+ if(['love','marry'].includes(key)){const at=secs.findIndex(s=>s.kind==='partner');if(at>=0){const partner={...secs.splice(at,1)[0],question:'나와 잘 맞는 사람'};secs.unshift(partner)}}
  let bodies=null;const charts={west:()=>{bodies=bodies||birthBodies(ch);return birthWest(ch,bodies)},vedic:()=>{bodies=bodies||birthBodies(ch);return birthVedic(ch,bodies)},numbers:()=>birthNumerology(ch)+birthMaya(ch)};
  const chartHTML=k=>{if(!ch||!charts[k])return '';try{return '<div class="birth-atlas rv3-chart">'+charts[k]()+'</div>'}catch(e){return ''}};
  const tableHTML=t=>t&&Array.isArray(t.rows)&&t.rows.length?'<div class="rv3-tw"><table class="rv3-table"><caption>'+E(t.cap||'')+'</caption><thead><tr>'+t.head.map(h=>'<th scope="col">'+E(h)+'</th>').join('')+'</tr></thead><tbody>'+t.rows.map(r=>'<tr>'+r.map((c,i)=>i?'<td>'+E(c)+'</td>':'<th scope="row">'+E(c)+'</th>').join('')+'</tr>').join('')+'</tbody></table></div>':'';
@@ -3454,21 +3476,23 @@ function approvedReportHTML(data,key){
  const faceHTML=()=>{if(!ch||!['love','marry','comprehensive'].includes(key))return null;try{const f=spouseFaceProfile(ch);return '<figure class="rv3-face"><img src="'+f.full+'" width="240" height="300" alt="차트의 상징으로 그린 참고용 인물 일러스트" loading="lazy" decoding="async"><figcaption>상징 일러스트 · 실제 인물 예측 아님</figcaption></figure>'}catch(e){return null}};
  const paraHTML=s=>(s.paragraphs||[s.answer]).filter(Boolean).map(p=>{const m=String(p).match(/^\[([^\]]{1,14})\]\s*([\s\S]*)$/);return m?'<p><b class="rv3-tag">'+E(m[1])+'</b>'+E(m[2])+'</p>':'<p>'+E(p)+'</p>'}).join('');
  const chapter=(s,i)=>{
-  const basis=(s.basis||[]).filter(Boolean),face=s.kind==='partner'?faceHTML():null;
+  const face=s.kind==='partner'?faceHTML():null;
   const body=paraHTML(s)+tableHTML(s.table)+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
   return '<section class="r-page rv3-ch" id="chapter-'+i+'"><header class="rv3-hd"><span class="rv3-no">'+(v3?'CHAPTER '+n2(i):(i+1)+'장')+'</span><h2>'+E(s.question)+'</h2></header>'+
    (s.lead?'<p class="rv3-lead">'+E(s.lead)+'</p>':'')+
-   (basis.length?'<ul class="rv3-basis" aria-label="근거 지표">'+basis.map(b=>'<li>'+E(b)+'</li>').join('')+'</ul>':'')+
+
    (face?'<div class="rv3-profile">'+face+'<div class="rv3-profile-tx">'+body+'</div></div>':body)+
    (s.chart?chartHTML(s.chart):'')+'</section>'};
  const facts=Array.isArray(data.facts)&&data.facts.length?'<div class="rv3-tw"><table class="rv3-table rv3-facts"><caption>계산된 출생 지표</caption><thead><tr><th scope="col">지표</th><th scope="col">값</th><th scope="col">전통적 의미</th></tr></thead><tbody>'+data.facts.map(f=>'<tr><th scope="row">'+E(f[0])+'</th><td>'+E(f[1])+'</td><td>'+E(f[2])+'</td></tr>').join('')+'</tbody></table></div>':'';
- const toc='<nav class="rv3-toc" aria-label="리포트 목차"><h3>목차</h3><ol>'+secs.map((s,i)=>'<li><a href="#chapter-'+i+'"><b>'+(v3?n2(i):i+1)+'</b>'+E(s.question)+'</a></li>').join('')+'</ol></nav>';
+ const toc='<nav class="rv3-toc" aria-label="리포트 목차"><h3>목차</h3><ol>'+secs.map((s,i)=>'<li><a href="#chapter-'+i+'"><b>'+(v3?n2(i):i+1)+'</b>'+E(s.question)+'</a></li>').join('')+'<li><a href="#report-appendix"><b>부록</b>내 출생 정보와 전문 지표</a></li></ol></nav>';
  const ymd=new Date().toLocaleDateString('ko-KR');
  const hasTiming=secs.some(s=>s.kind==='timing'||s.kind==='flow');
  const flowOld=!hasTiming&&Array.isArray(data.years)?'<section class="r-page rv3-ch"><header class="rv3-hd"><h2>앞으로 10년의 '+E(data.category)+' 흐름</h2></header><div class="r-yearflow">'+data.years.map(r=>'<div><b>'+E(r.year)+'년</b><meter min="60" max="100" value="'+Number(r.score)+'">'+Number(r.score)+'</meter><span>'+Number(r.score)+'점</span></div>').join('')+'</div><p class="r-note">점수는 확률이 아닌 자체 흐름 지표입니다.</p></section>':'';
- return '<header class="r-cover rv3-cover"><span class="eyebrow">Oracle Network · Destiny Report</span><h2>'+E(data.title)+'</h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><dl class="r-cover-meta"><div><dt>발행일</dt><dd>'+ymd+'</dd></div><div><dt>구성</dt><dd>'+secs.length+'장</dd></div></dl></header>'+
-  '<section class="r-page rv3-ch rv3-intro"><header class="rv3-hd"><span class="rv3-no">SUMMARY</span><h2>핵심 요약</h2></header><ol class="rv3-sum">'+(data.summary||[]).map(x=>'<li>'+E(x)+'</li>').join('')+'</ol>'+facts+toc+'</section>'+
-  secs.map(chapter).join('')+flowOld+reportScoreGuideHTML(data,key)+'<p class="r-foot">'+E(data.note)+'</p>';
+ return '<header class="r-cover rv3-cover"><span class="eyebrow">ORACLE NETWORK / PERSONAL REPORT</span>'+COMPASS+'<h2>'+E(data.title)+'</h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><dl class="r-cover-meta"><div><dt>발행일</dt><dd>'+ymd+'</dd></div><div><dt>구성</dt><dd>'+secs.length+'장</dd></div></dl></header>'+
+  '<section class="r-page rv3-ch rv3-intro"><header class="rv3-hd"><span class="rv3-no">SUMMARY</span><h2>핵심 요약</h2></header><ol class="rv3-sum">'+(data.summary||[]).map(x=>'<li>'+E(x)+'</li>').join('')+'</ol>'+toc+'</section>'+
+  secs.map(chapter).join('')+flowOld+reportScoreGuideHTML(data,key)+
+ '<section class="r-page rv3-ch rv3-appendix" id="report-appendix"><header class="rv3-hd"><span class="rv3-no">APPENDIX</span><h2>내 출생 정보와 전문 지표</h2></header>'+facts+
+ secs.filter(s=>(s.basis||[]).some(Boolean)).map(s=>'<div class="rv3-tw"><table class="rv3-table"><caption>'+E(s.question)+' · 근거 지표</caption><thead><tr><th scope="col">구분</th><th scope="col">계산값 및 지표</th></tr></thead><tbody>'+s.basis.filter(Boolean).map(b=>'<tr><th scope="row">'+E(s.question)+'</th><td>'+E(b)+'</td></tr>').join('')+'</tbody></table></div>').join('')+'</section>'+'<p class="r-foot">'+E(data.note)+'</p>';
 }
 
 function paintAccessAccount(){const el=$('accountIdLabel');if(el)el.textContent=accountUser?(accountUser.id?'내 계정 ID: '+accountUser.id:'계정 ID 표시를 위한 서버 업데이트가 필요해요.') :'';const a=$('adminPageLink');if(a)a.hidden=!accountUser?.isAdmin;}
