@@ -1742,6 +1742,7 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
 .td-head .td-adv{margin:6px 0 4px;padding:0;border:0;background:none}.td-head .td-adv b{font-size:20px}.td-head .td-adv p{font-size:14px}
 .td-tbl{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}.td-tbl th,.td-tbl td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;word-break:keep-all}.td-tbl thead th{font-size:12.5px;color:var(--muted);font-weight:600}.td-tbl tbody th{color:var(--gold);font-weight:600;white-space:nowrap}.td-tbl td:nth-child(2){color:var(--muted);font-size:13px}
 #todayHead{margin-bottom:8px}.td-prose{font-size:15px;line-height:1.8;color:var(--ink2);margin:18px 0 6px;word-break:keep-all}
+.flow-prose p{font-size:15px;line-height:1.85;color:var(--ink2);margin:0 0 14px;word-break:keep-all}.flow-prose b{display:block;color:var(--fg);margin-bottom:2px}.bc-pick span{display:block;line-height:1.75;margin-top:4px}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1823,13 +1824,14 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
     <button type="button" class="to-report" data-goto="natal">운명 개선법·추천 장소·리포트 보기 ›</button>
   </div>
   <div class="tabp" id="tab-flow" role="tabpanel" aria-labelledby="tb-flow" hidden>
-    <ol class="hl" id="highlights" aria-label="나의 운명 핵심 세 가지"></ol>
+    <ol class="hl" id="highlights" aria-label="나의 운명 핵심 세 가지" hidden></ol>
   <section class="blk" aria-labelledby="flowTitle">
     <h3 class="blk-h" id="flowTitle">앞으로 10년의 흐름</h3>
-    <p class="blk-p">분야마다 가장 밝은 해를 큰 점으로 표시했어요.</p>
+    <p class="blk-p">점을 누르면 그해의 풀이가 아래에 나와요.</p>
     <div class="bigchart" id="bigchart"></div>
     <p class="bc-pick" id="bcPick" aria-live="polite"></p>
     <ul class="fields" id="fields" aria-label="분야별 10년 요약"></ul>
+    <h3 class="blk-h" style="margin-top:28px">10년의 흐름 한눈에 읽기</h3><div class="flow-prose" id="flowProse"></div>
     <p class="fine">점수는 다섯 점술의 규칙을 숫자로 옮긴 자체 지표예요. 성공 확률이나 예측 정확도가 아니에요.</p>
   </section>
     <button type="button" class="to-report" data-goto="natal">운명 개선법·추천 장소·리포트 보기 ›</button>
@@ -2610,7 +2612,7 @@ function renderResult(){const ch=CH,name=ch.inp.name;
   const y0=new Date().getFullYear();
   $("fields").innerHTML=CATS.map((c,ci)=>{let bi=0;R.forEach((r,hi)=>{if(D(r[ci].mean)>D(R[bi][ci].mean))bi=hi});const avg=R.reduce((a,r)=>a+r[ci].mean,0)/R.length;
     return `<li style="--c:var(--${c.k})"><i aria-hidden="true"></i><div><b>${c.n}</b><span>${HEAD[c.k][tier(avg)].split(" · ")[0]}</span></div><em>가장 밝은 해<strong>${y0+HZ[bi].off} · ${D(R[bi][ci].mean)}점</strong></em></li>`}).join("");
-  $("bcPick").innerHTML="그래프의 점을 누르면 그해의 한 줄 풀이가 여기에 나타나요."}
+  $("bcPick").innerHTML="그래프의 점을 누르면 그해의 풀이가 여기에 나타나요.";$("flowProse").innerHTML=flowProseHTML(ch)}
 
 /* ---------- 분석 구조: 점수 계산서 (가까운 미래 4시점만) ---------- */
 function renderNetCtl(){const p=document.getElementById("netP"),c=document.getElementById("netC");
@@ -4239,6 +4241,22 @@ $('reportPDF').addEventListener('click',printReport);
 function closeReport(){$("report").hidden=true;document.documentElement.classList.remove("rep-lock");(reportReturnFocus?.isConnected?reportReturnFocus:$("reportOpen")).focus({preventScroll:true});reportReturnFocus=null}
 $("reportOpen").addEventListener("click",openReport);$("reportClose").addEventListener("click",closeReport);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("report").hidden)closeReport()});
+function yearWhy(y,ci){const f=[];ORC.forEach((fn,i)=>{const r=fn(CH,{y,frac:y+.5},ci);(r[3]||[]).forEach(x=>{if(Number.isFinite(x[1])&&x[1])f.push([M[i].n,String(x[0]).replace(/<[^>]*>/g,""),x[1]])})});f.sort((a,b)=>b[2]-a[2]);return {up:f.filter(x=>x[2]>0).slice(0,2),dn:f.filter(x=>x[2]<0).slice(-1)}}
+function yearPickHTML(ci,hi,yy,S){const w=yearWhy(yy,ci),age=yy-CH.Y+1,prev=hi?S[hi-1][ci]:null,d=prev==null?"":S[hi][ci]-prev;
+ const others=CATS.map((c,k)=>k===ci?"":`${SHORT[k]} ${S[hi][k]}점`).filter(Boolean).join(", ");
+ const t=[`${yy}년(${age}살)의 ${SHORT[ci]}운은 ${S[hi][ci]}점${prev==null?"입니다.":d>0?`으로 전년보다 ${d}점 오릅니다.`:d<0?`으로 전년보다 ${-d}점 내려갑니다.`:"으로 전년과 비슷합니다."}`,
+  w.up.length?`이 해에는 ${J(w.up.map(x=>x[0]+"의 "+x[1]).join(", "),"이","가")} 점수를 올렸${w.dn.length?`고, ${J(w.dn[0][0]+"의 "+w.dn[0][1],"이","가")} 일부를 낮췄습니다.`:"습니다."}`:"",`같은 해 다른 분야는 ${others}입니다.`];
+ return `<b style="color:var(--${CATS[ci].k})">${yy}년 ${SHORT[ci]}운 ${S[hi][ci]}점</b><span>${t.filter(Boolean).join(" ")}</span>`}
+function flowProseHTML(ch){const y0=new Date().getFullYear(),S=R.map(r=>r.map(c=>D(c.mean))),seg=[[0,3,"가까운 1~3년"],[3,6,"중반 4~6년"],[6,10,"후반 7~10년"]];
+ const av=(a,b,k)=>Math.round(S.slice(a,b).reduce((s,r)=>s+r[k],0)/(b-a));const out=[];
+ seg.forEach(([a,b,n])=>{const m=CATS.map((_,k)=>av(a,b,k)),bk=m.indexOf(Math.max(...m)),lk=m.indexOf(Math.min(...m)),tot=Math.round(m.reduce((x,v)=>x+v,0)/4);
+  out.push(`<p><b>${n} (${y0+1+a}~${y0+b}년)</b> 네 분야 평균은 ${tot}점입니다. 이 시기에는 ${SHORT[bk]}운(${m[bk]}점)이 가장 밝아 ${["수입과 재정을 넓히기","관계를 넓히고 깊게 만들기","일과 공부에서 성과를 내기","몸과 생활 리듬을 다지기"][bk]}에 유리하고, ${SHORT[lk]}운(${m[lk]}점)은 상대적으로 낮아 ${["지출과 계약을 꼼꼼히 살피는","관계에서 서두르지 않는","무리한 확장보다 실력을 다지는","휴식과 건강 관리에 신경 쓰는"][lk]} 편이 좋습니다.</p>`)});
+ const tot=S.map(r=>Math.round(r.reduce((a,b)=>a+b,0)/4)),pk=tot.indexOf(Math.max(...tot)),lo=tot.indexOf(Math.min(...tot));
+ const first=Math.round((tot[0]+tot[1]+tot[2])/3),last=Math.round((tot[7]+tot[8]+tot[9])/3);
+ out.unshift(`<p>앞으로 10년은 ${last>first+2?"뒤로 갈수록 점점 밝아지는 상승 흐름":last<first-2?"앞쪽이 밝고 뒤로 갈수록 차분해지는 흐름":"큰 굴곡 없이 고르게 이어지는 흐름"}입니다. 네 분야를 합친 점수는 ${y0+1+pk}년이 ${tot[pk]}점으로 가장 높고, ${y0+1+lo}년이 ${tot[lo]}점으로 가장 차분합니다.</p>`);
+ const tp=turningPoints(ch).filter(t=>t.y<=y0+10).slice(0,3);
+ if(tp.length)out.push(`<p><b>전환점</b>${tp.map(t=>`${t.y}년(${t.y-ch.Y+1}살) · ${tpShort(t)} (${t.src} 기준).`).join(" ")}</p>`);
+ return out.join("")}
 function renderBig(){const el=$("bigchart");if(!el||!CH)return;bigW=el.clientWidth;const S=R.map(r=>r.map(c=>D(c.mean))),y0=new Date().getFullYear()+1;
   const nr=el.clientWidth<560,W=nr?400:760,H=nr?280:300,L=nr?30:40,Rr=nr?12:20,T=nr?16:20,B=nr?30:36,x=k=>L+(W-L-Rr)*k/9,y=v=>T+(100-v)/40*(H-T-B);let g="",pts="";
   [60,70,80,90,100].forEach(v=>{g+=`<line x1="${L}" x2="${W-Rr}" y1="${y(v)}" y2="${y(v)}" class="bc-grid"/><text x="${L-10}" y="${y(v)+4}" text-anchor="end" class="bc-t">${v}</text>`});
@@ -4249,7 +4267,7 @@ function renderBig(){const el=$("bigchart");if(!el||!CH)return;bigW=el.clientWid
   el.innerHTML=`<div class="bc-legend" aria-hidden="true">${CATS.map((c,ci)=>`<span><i style="background:var(--${c.k})"></i>${SHORT[ci]}</span>`).join("")}</div>
    <div class="bc-plot"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${y0}년부터 10년 동안 금전·애정·직업·건강 점수">${g}${pts}</svg></div>`;
   const go=t=>{const ci=+t.dataset.c,hi=+t.dataset.h,yy=y0+hi;el.querySelectorAll(".bc-pg.on").forEach(p=>p.classList.remove("on"));t.classList.add("on");
-    $("bcPick").innerHTML=`<b style="color:var(--${CATS[ci].k})">${yy}년 ${SHORT[ci]}운 ${S[hi][ci]}점</b><span>${catHorizon(ci,hi).sum}</span>`};
+    $("bcPick").innerHTML=yearPickHTML(ci,hi,yy,S)};
   el.querySelectorAll(".bc-pg").forEach(t=>{t.addEventListener("click",()=>go(t));t.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go(t)}})})}
 let bigW=0;addEventListener("resize",()=>{const w=$("bigchart")?.clientWidth||0;if(CH&&Math.abs(w-bigW)>80&&(w<560)!==(bigW<560)){bigW=w;renderBig()}});
 function renderHook(){const h=$("hook");if(h&&CH)h.innerHTML=reportHook(CH)}
