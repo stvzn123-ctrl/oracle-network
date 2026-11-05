@@ -1749,6 +1749,7 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
 .cmp-form label.chk input{width:20px;height:20px;min-height:0;flex:none;margin:0}.cmp-form .tp-head,.topic .tp-head:not(:has(.tp-art)){display:block}
 #report .rv3-line{margin:var(--rs-3) 0}#report .rv3-line figcaption{font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:4px}#report .rv3-line svg{width:100%;height:auto;display:block}
 .cmp-saved ul{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:6px}.cmp-saved li{display:flex;gap:6px}.cmp-saved-h{font-size:13px;color:var(--muted);margin:0 0 6px}.cmp-load{flex:1;text-align:left;min-height:48px;padding:6px 12px;display:flex;flex-direction:column;gap:2px}.cmp-load small{font-size:12px;color:var(--muted)}.cmp-del{min-height:48px;padding:0 12px;font-size:13px}
+#landing .landing-art{aspect-ratio:3/2!important;background-size:cover!important;background-position:center!important;height:auto!important}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -4600,7 +4601,7 @@ function restoreSavedResult(profile){
  const error=checkForm(),v=readForm(),year=Number((v.date||'').slice(0,4));
  if(error||v.err||!Number.isFinite(year)||year<1920||year>2026){$('err').textContent=error||v.err||'저장된 생년월일을 확인해주세요.';return false}
  const fresh=document.body.classList.contains('fresh');
- try{$('askbox').open=false;document.body.classList.remove('fresh');run(v,false);$('landingStart').innerHTML='내 결과 바로보기 <span aria-hidden="true">→</span>';return true}
+ try{$('askbox').open=false;document.body.classList.remove('fresh');run(v,false);$('landingStart').innerHTML='내 결과 바로보기 <span aria-hidden="true">→</span>';document.body.classList.add('app-entered');window.scrollTo({top:0,behavior:'instant'});return true}
  catch(_){if(fresh)document.body.classList.add('fresh');$('askbox').open=true;$('err').textContent='저장된 정보를 확인한 뒤 다시 시도해주세요.';return false}
 }
 $('profileLoad').addEventListener('click',()=>{if(accountUser?.profile){const ready=restoreSavedResult(accountUser.profile);accountStatus(ready?'저장한 정보로 운명 결과를 불러왔어요.':'저장된 정보를 확인해주세요.')}});
