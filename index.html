@@ -1744,6 +1744,9 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
 #todayHead{margin-bottom:8px}.td-prose{font-size:15px;line-height:1.8;color:var(--ink2);margin:18px 0 6px;word-break:keep-all}
 .flow-prose p{font-size:15px;line-height:1.85;color:var(--ink2);margin:0 0 14px;word-break:keep-all}.flow-prose b{display:block;color:var(--fg);margin-bottom:2px}.bc-pick span{display:block;line-height:1.75;margin-top:4px}
 .bc-grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}.bc-cell{margin:0;padding:10px 8px 4px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.18)}.bc-cell figcaption{display:flex;flex-direction:column;gap:1px;padding:0 4px 4px}.bc-cell figcaption b{font-size:15px}.bc-cell figcaption span{font-size:11.5px;color:var(--muted)}.bc-cell svg{width:100%;height:auto;display:block;overflow:visible}.bc-cell .bc-t{font-size:10px}
+
+.cmp-form .chart-fields{display:grid;gap:10px}.cmp-form label{display:flex;flex-direction:column;gap:4px;font-size:14px}.cmp-form label.chk{flex-direction:row;align-items:center;gap:8px;font-size:13px;color:var(--muted)}.cmp-form input,.cmp-form select{min-height:44px;font-size:16px}.cmp-seg{display:flex;gap:14px;align-items:center;font-size:14px}.cmp-seg label{flex-direction:row;align-items:center;gap:6px}.cmp-form button[type=submit]{margin-top:12px;min-height:48px;width:100%}.cmp-score{text-align:center;padding:18px 0 6px}.cmp-score span{display:block;font-size:14px;color:var(--muted)}.cmp-score b{display:block;font-size:52px;line-height:1.1;color:var(--gold);font-family:var(--display)}.cmp-score b small{font-size:18px}.cmp-score em{font-style:normal;font-size:16px;font-weight:700}.cmp-note{font-size:14px;line-height:1.7;color:var(--ink2);text-align:center}.cmp-open{width:100%;min-height:48px;margin-top:6px}
+.cmp-form label.chk input{width:20px;height:20px;min-height:0;flex:none;margin:0}.cmp-form .tp-head,.topic .tp-head:not(:has(.tp-art)){display:block}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1816,7 +1819,7 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
   <div class="res-top">
     <h2 class="res-eyebrow" id="resTitle">당신의 운명</h2>
   </div>
-<div class="res-nav"><div class="res-tabs" role="tablist" aria-label="결과 보기"><button type="button" role="tab" id="tb-natal" aria-controls="tab-natal" aria-selected="false" data-tab="natal"  tabindex="-1">나의 운명</button><button type="button" role="tab" id="tb-flow" aria-controls="tab-flow" aria-selected="false" data-tab="flow"  tabindex="-1">앞으로 10년</button><button type="button" role="tab" id="tb-today" aria-controls="tab-today" aria-selected="false" data-tab="today"  tabindex="-1">이번 주</button></div><details class="topic-fold" id="topicFold"><summary class="topic-nav-title">무엇이 궁금하세요?</summary><div class="topic-fold-in"><div class="res-topics" role="tablist" aria-label="관심 주제"><button type="button" role="tab" id="tb-romance" aria-controls="tab-love" aria-selected="false" data-tab="love" data-romance="true" tabindex="-1"><strong>연애·결혼</strong><small>언제, 어떤 사람을 만날까요?</small></button><button type="button" role="tab" id="tb-money-group" aria-controls="tab-invest" aria-selected="false" data-tab="invest" data-topic-group="money"  tabindex="-1"><strong>재물·돈</strong><small>돈의 흐름이 좋아지는 때는?</small></button><button type="button" role="tab" id="tb-work-group" aria-controls="tab-employment" aria-selected="false" data-tab="employment" data-topic-group="work"  tabindex="-1"><strong>직업</strong><small>나에게 맞는 일과 귀인은?</small></button><button type="button" role="tab" id="tb-study-group" aria-controls="tab-exam" aria-selected="false" data-tab="exam" data-topic-group="study"  tabindex="-1"><strong>학업·성취</strong><small>나에게 맞는 공부와 도전 시기는?</small></button></div><div class="romance-tabs" role="tablist" aria-label="연애·결혼 상세" hidden><button type="button" role="tab" id="tb-love" aria-controls="tab-love" aria-selected="false" data-tab="love"  tabindex="-1">연애·인연</button><button type="button" role="tab" id="tb-marry" aria-controls="tab-marry" aria-selected="false" data-tab="marry"  tabindex="-1">결혼·배우자</button><button type="button" role="tab" id="tb-reunion" aria-controls="tab-reunion" aria-selected="false" data-tab="reunion"  tabindex="-1">재회</button><button type="button" role="tab" id="tb-match" aria-controls="tab-match" aria-selected="false" data-tab="match"  tabindex="-1">궁합</button></div><div class="romance-tabs topic-subtabs" data-subgroup="work" role="tablist" aria-label="직업 상세" hidden><button type="button" role="tab" id="tb-employment" aria-controls="tab-employment" aria-selected="false" data-tab="employment" tabindex="-1">취업</button><button type="button" role="tab" id="tb-move" aria-controls="tab-move" aria-selected="false" data-tab="move" tabindex="-1">이직</button></div><div class="romance-tabs topic-subtabs" data-subgroup="money" role="tablist" aria-label="재물·돈 상세" hidden><button type="button" role="tab" id="tb-invest" aria-controls="tab-invest" aria-selected="false" data-tab="invest" tabindex="-1">투자</button><button type="button" role="tab" id="tb-property" aria-controls="tab-property" aria-selected="false" data-tab="property" tabindex="-1">부동산</button><button type="button" role="tab" id="tb-business" aria-controls="tab-business" aria-selected="false" data-tab="business" tabindex="-1">사업</button></div><div class="romance-tabs topic-subtabs" data-subgroup="study" role="tablist" aria-label="학업·성취 상세" hidden><button type="button" role="tab" id="tb-exam" aria-controls="tab-exam" aria-selected="false" data-tab="exam" tabindex="-1">대입·수능</button><button type="button" role="tab" id="tb-cert" aria-controls="tab-cert" aria-selected="false" data-tab="cert" tabindex="-1">자격증</button></div><div class="ask-nav" role="tablist" aria-label="자유질문"><button type="button" role="tab" id="tb-ask" aria-controls="tab-ask" aria-selected="false" data-tab="ask"  tabindex="-1">다른 고민이 있나요? <strong>자유질문 →</strong></button></div></div></details></div>
+<div class="res-nav"><div class="res-tabs" role="tablist" aria-label="결과 보기"><button type="button" role="tab" id="tb-natal" aria-controls="tab-natal" aria-selected="false" data-tab="natal"  tabindex="-1">나의 운명</button><button type="button" role="tab" id="tb-flow" aria-controls="tab-flow" aria-selected="false" data-tab="flow"  tabindex="-1">앞으로 10년</button><button type="button" role="tab" id="tb-today" aria-controls="tab-today" aria-selected="false" data-tab="today"  tabindex="-1">이번 주</button></div><details class="topic-fold" id="topicFold"><summary class="topic-nav-title">무엇이 궁금하세요?</summary><div class="topic-fold-in"><div class="res-topics" role="tablist" aria-label="관심 주제"><button type="button" role="tab" id="tb-romance" aria-controls="tab-marry" aria-selected="false" data-tab="marry" data-romance="true" tabindex="-1"><strong>연애·결혼</strong><small>언제, 어떤 사람을 만날까요?</small></button><button type="button" role="tab" id="tb-money-group" aria-controls="tab-money" aria-selected="false" data-tab="money"  tabindex="-1"><strong>재물·돈</strong><small>돈의 흐름이 좋아지는 때는?</small></button><button type="button" role="tab" id="tb-work-group" aria-controls="tab-employment" aria-selected="false" data-tab="employment" data-topic-group="work"  tabindex="-1"><strong>직업</strong><small>나에게 맞는 일과 귀인은?</small></button><button type="button" role="tab" id="tb-study-group" aria-controls="tab-exam" aria-selected="false" data-tab="exam" data-topic-group="study"  tabindex="-1"><strong>학업·성취</strong><small>나에게 맞는 공부와 도전 시기는?</small></button></div><div class="romance-tabs" role="tablist" aria-label="연애·결혼 상세" hidden><button type="button" role="tab" id="tb-marry" aria-controls="tab-marry" aria-selected="false" data-tab="marry"  tabindex="-1">결혼</button><button type="button" role="tab" id="tb-love" aria-controls="tab-love" aria-selected="false" data-tab="love"  tabindex="-1">연애</button><button type="button" role="tab" id="tb-match" aria-controls="tab-match" aria-selected="false" data-tab="match"  tabindex="-1">궁합</button><button type="button" role="tab" id="tb-reunion" aria-controls="tab-reunion" aria-selected="false" data-tab="reunion"  tabindex="-1">재회</button></div><div class="romance-tabs topic-subtabs" data-subgroup="work" role="tablist" aria-label="직업 상세" hidden><button type="button" role="tab" id="tb-employment" aria-controls="tab-employment" aria-selected="false" data-tab="employment" tabindex="-1">취업</button><button type="button" role="tab" id="tb-move" aria-controls="tab-move" aria-selected="false" data-tab="move" tabindex="-1">이직</button></div><div class="romance-tabs topic-subtabs" data-subgroup="study" role="tablist" aria-label="학업·성취 상세" hidden><button type="button" role="tab" id="tb-exam" aria-controls="tab-exam" aria-selected="false" data-tab="exam" tabindex="-1">대입·수능</button><button type="button" role="tab" id="tb-cert" aria-controls="tab-cert" aria-selected="false" data-tab="cert" tabindex="-1">자격증</button></div><div class="ask-nav" role="tablist" aria-label="자유질문"><button type="button" role="tab" id="tb-ask" aria-controls="tab-ask" aria-selected="false" data-tab="ask"  tabindex="-1">다른 고민이 있나요? <strong>자유질문 →</strong></button></div></div></details></div>
   <div class="tabp" id="tab-today" role="tabpanel" aria-labelledby="tb-today">
     <div id="todayHead" class="today"></div>
     <section class="blk" aria-labelledby="weekTitle"><h3 class="blk-h" id="weekTitle">이번 주 운세</h3><div id="weekBox"></div>
@@ -2787,12 +2790,12 @@ function renderWho(v){const [y,m,d]=v.date.split("-");const dt=v.cal==="l"?`음 
 function run(v,animate){renderWho(v);CH=buildChart(v);compute();selDec=clamp(Math.floor(nowAge()/10),0,DECS-1);if(animate)cast();renderAll()}
 /* 관리자 검토용: 이 출생 정보로 확인하면 공유 없이 잠금 영역을 연다. 저장소에 기록하지 않아 이 화면에서만 유지된다. */
 function adminReview(){if(typeof accountUser!=='undefined'&&accountUser?.isAdmin){graphUnlocked=true;applyGraphLock();$('unlock-status').textContent='관리자 계정: 전체 결과를 확인할 수 있어요.'}}
-const TOPIC_GROUPS={"work":["employment","move"],"money":["invest","property","business"],"study":["exam","cert"]};
+const TOPIC_GROUPS={"work":["employment","move"],"study":["exam","cert"]};
 const TABS=["natal","flow","today","money","marry","love","reunion","work","match","study","employment","move","invest","property","business","exam","cert","ask"];
 function setTab(t,focus){t=TOPIC_GROUPS[t]?.[0]||t;{const fb=document.querySelector(`#topicFold [data-tab="${t}"]`);if(fb&&focus)document.getElementById("topicFold").open=true;}document.querySelectorAll("[data-subgroup]").forEach(el=>{el.hidden=!TOPIC_GROUPS[el.dataset.subgroup].includes(t)});document.querySelectorAll(".res-nav [role=tab]").forEach(b=>{const on=b.dataset.topicGroup?TOPIC_GROUPS[b.dataset.topicGroup].includes(t):b.hasAttribute("data-romance")?["love","marry","reunion","match"].includes(t):b.dataset.tab===t;b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1;if(on){if(focus)b.focus();}});
   document.querySelector(".romance-tabs").hidden=!["love","marry","reunion","match"].includes(t);
   TABS.forEach(k=>{$("tab-"+k).hidden=k!==t});
-  if(CH&&TOPICS.some(x=>x[0]===t)&&!$("tab-"+t).innerHTML)$("tab-"+t).innerHTML=topicHTML(CH,t);if(t==="flow"&&CH){drawGraph=true;renderBig();setTimeout(()=>{drawGraph=false},0)}}
+  if(CH&&TOPICS.some(x=>x[0]===t)&&!$("tab-"+t).innerHTML)$("tab-"+t).innerHTML=t==="money"?moneyAllHTML(CH):topicHTML(CH,t);if(t==="flow"&&CH){drawGraph=true;renderBig();setTimeout(()=>{drawGraph=false},0)}}
 document.addEventListener("click",e=>{const g=e.target.closest("[data-goto]");if(g){setTab(g.dataset.goto);requestAnimationFrame(()=>document.querySelector("#tab-natal .act")?.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"}));return}
   const b=e.target.closest("[data-buy]");if(b&&b.dataset.buy!=="ask"){openTopicReport(b.dataset.buy,b);return}if(b){const msg=b.closest(".topic-offer")?.querySelector(".buy-msg")||b.nextElementSibling;if(msg)msg.textContent="결제 기능을 준비하고 있어요. 아직 결제되지는 않았어요."}});
 document.querySelectorAll(".res-nav [role=tab]").forEach((b,i,all)=>{b.addEventListener("click",()=>setTab(b.dataset.tab));b.addEventListener("keydown",e=>{all=Array.from(b.closest("[role=tablist]").querySelectorAll("[role=tab]"));i=all.indexOf(b);const k=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(!k)return;e.preventDefault();setTab(all[(i+k+all.length)%all.length].dataset.tab,true)})});
@@ -3397,10 +3400,115 @@ function studyTopicHTML(ch){
  const rows=[['나에게 맞는 공부 방식은?',styles[dom]],['시험·자격증·진학은 언제 준비할까?',t.pts[1][1]+' 무렵이 직업·학업 흐름에서 눈여겨볼 때예요. 목표 시험일에서 거꾸로 복습 일정을 세워보세요.'],['어떤 배움에 강점을 보일까?',t.pts[0][1]+'와 연결되는 공부부터 작은 과제로 시작해보세요.'],['배움을 도와줄 귀인은?',t.pts[2][1]+'의 도움을 떠올려보세요. 선생님이나 경험자에게 막히는 질문 하나를 구체적으로 물어보세요.'],['성취를 위해 바꿔볼 습관은?',habits[dom]]];
  return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">학업·성취</span><h3>나에게 맞는 공부로, 다음 목표에 가까이</h3><p>공부 방식부터 시험·자격증·진학의 준비 흐름까지 살펴보세요.</p></header>'+answerCards(rows)+topicReportHTML('study')+'</section>';
 }
-function topicHTML(ch,k){if(SUBTOPIC_COPY[k])return subtopicHTML(ch,k);if(k==='study')return studyTopicHTML(ch);if(k==='ask')return freeQuestionHTML();const t=topicData(ch,k),name=TOPICS.find(x=>x[0]===k)[1],g=TOPIC_GUIDES[k];if(k==='marry'||k==='love')return '<section class="blk blk-first topic">'+spousePreviewHTML(ch,k)+'<header class="topic-intro spouse-answer-heading"><h3>'+(k==='love'?'나의 연애·인연, 한눈에 보기':'나의 배우자, 한눈에 보기')+'</h3></header>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';if(k==='match')return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">궁합</span><h3>우리 둘은 어떤 점에서 잘 맞을까?</h3><p>상대방 정보를 입력하면 두 사람의 출생 차트를 나란히 비교할 수 있어요. 아래는 먼저 내 차트로 읽은 관계 성향이에요.</p></header><div class="tp-head"><div class="qa-art tp-art">'+artOf(t.art)+'</div><div><b class="tp-a">'+t.a+'</b><span class="qa-s">'+t.s+'</span></div></div>'+answerCards(topicAnswerRows(ch,k))+matchFormHTML()+topicReportHTML(k)+'</section>';return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+name+'</span><h3>'+g.title+'</h3><p>'+g.intro+'</p></header>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';}
+/* ---------- 궁합(2026-11-05): 두 사람의 차트를 다섯 점술 전통 규칙으로 비교하는 자체 점수 ---------- */
+let COMPAT=null;
+function moneyAllHTML(ch){const strip=h=>h.replace(/<section class="topic-offer"[\s\S]*?<\/section>/g,'').replace(/^<section class="blk blk-first topic">/,'<section class="blk topic">');
+ return topicHTML(ch,'money')+['invest','property','business'].map(k=>strip(topicHTML(ch,k))).join('')}
+function compatScore(a,b){
+ const SAN=x=>x%4,LIU=x=>(13-x)%12,el=s=>SE[s],gen=(x,y)=>(x+1)%5===y,ctl=(x,y)=>(x+2)%5===y,EN=['목','화','토','금','수'],SEL=['불','흙','공기','물'],COMP=[2,3,0,1];
+ const sys=[];const S=(n,w)=>{const o={n,w,base:60,items:[]};sys.push(o);return (label,v,t)=>o.items.push([label,v,t])};
+ // 사주
+ let add=S('사주',.3);const ad=a.stems.d,bd=b.stems.d,ae=el(ad),be=el(bd);
+ if((ad+5)%10===bd)add('일간 천간합',15,`두 사람의 일간 ${ST[ad]}·${ST[bd]}는 천간합을 이뤄 서로 끌리는 결합의 상징입니다.`);
+ if(ae===be)add('같은 오행 일간',6,`둘 다 ${EN[ae]} 기운의 일간이라 생각과 속도가 비슷합니다.`);
+ else if(gen(ae,be)||gen(be,ae)){const x=gen(ae,be)?ae:be,y=gen(ae,be)?be:ae;add('일간 상생',10,`${J(EN[x],'이','가')} ${J(EN[y],'을','를')} 살리는 상생 관계라 한쪽이 다른 쪽을 북돋는 구조입니다.`)}
+ else add('일간 상극',-6,`${J(EN[ae],'과','와')} ${J(EN[be],'은','는')} 서로 제어하는 상극 관계라 기준이 부딪히기 쉽습니다.`);
+ const ab=a.brs.d,bb=b.brs.d;
+ if(LIU(ab)===bb)add('일지 육합',12,`배우자 자리(일지) ${BR[ab]}·${BR[bb]}가 육합을 이뤄 생활 속 결속력이 큽니다.`);
+ else if(mod(ab-bb,12)===6)add('일지 충',-10,`일지 ${BR[ab]}·${BR[bb]}가 충을 이뤄 생활 방식에서 마찰이 생기기 쉽습니다.`);
+ else if(SAN(ab)===SAN(bb)&&ab!==bb)add('일지 삼합',8,`일지가 같은 삼합 무리라 함께할 때 목표를 모으기 쉽습니다.`);
+ else if(ab===bb)add('같은 일지',4,`일지가 같아 익숙한 생활 방식에 공감합니다.`);
+ const ay=a.brs.y,by=b.brs.y;
+ if(SAN(ay)===SAN(by)&&ay!==by)add('띠 삼합',6,`띠가 삼합 관계라 전통적으로 협력이 잘 되는 조합입니다.`);
+ else if(LIU(ay)===by)add('띠 육합',6,`띠가 육합 관계라 서로를 편하게 받아들입니다.`);
+ else if(mod(ay-by,12)===6)add('띠 충',-6,`띠가 충 관계라 가치관 차이를 대화로 좁혀야 합니다.`);
+ const fillA=[0,1,2,3,4].filter(i=>!a.cnt[i]&&b.cnt[i]>=2),fillB=[0,1,2,3,4].filter(i=>!b.cnt[i]&&a.cnt[i]>=2);
+ if(fillA.length)add('오행 보완(상대→나)',4*fillA.length,`내게 없는 ${fillA.map(i=>EN[i]).join('·')} 기운을 상대가 채워 줍니다.`);
+ if(fillB.length)add('오행 보완(나→상대)',4*fillB.length,`상대에게 없는 ${fillB.map(i=>EN[i]).join('·')} 기운을 내가 채워 줍니다.`);
+ // 서양
+ add=S('서양 점성술',.2);const as=sign(a.sun),bs=sign(b.sun),am=sign(a.moon),bm=sign(b.moon);
+ if(as%4===bs%4)add('태양 같은 원소',10,`태양이 둘 다 ${SEL[as%4]} 원소라 삶의 방향과 표현 방식이 닮았습니다.`);
+ else if(COMP[as%4]===bs%4)add('태양 보완 원소',12,`태양이 ${SEL[as%4]}·${SEL[bs%4]} 원소로 서로를 살리는 조합입니다.`);
+ else add('태양 원소 차이',-4,`태양 원소가 ${SEL[as%4]}·${SEL[bs%4]}로 달라 관계의 속도를 맞춰야 합니다.`);
+ if(mod(as-bs,12)===6)add('태양 맞은편',4,`태양이 서로 맞은편 별자리라 끌림과 긴장이 함께 있습니다.`);
+ if(am%4===bm%4||COMP[am%4]===bm%4)add('달의 조화',8,`달(감정)이 ${SEL[am%4]}·${SEL[bm%4]} 원소로 감정을 처리하는 방식이 잘 맞습니다.`);
+ else add('달의 차이',-3,`달(감정)의 원소가 달라 서운함을 푸는 방식이 다릅니다.`);
+ const av=sign(birthExtraLon('Venus',a.jd)),bv=sign(birthExtraLon('Venus',b.jd)),amr=sign(birthExtraLon('Mars',a.jd)),bmr=sign(birthExtraLon('Mars',b.jd));
+ if(av%4===bmr%4||COMP[av%4]===bmr%4)add('내 금성–상대 화성',6,`내 금성(${ZOD[av]})과 상대 화성(${ZOD[bmr]})이 조화를 이뤄 끌림이 자연스럽습니다.`);
+ if(bv%4===amr%4||COMP[bv%4]===amr%4)add('상대 금성–내 화성',6,`상대 금성(${ZOD[bv]})과 내 화성(${ZOD[amr]})이 조화를 이룹니다.`);
+ // 인도
+ add=S('인도 점성술',.2);const tara=(x,y)=>(mod(y-x,27)+1)%9;const T1=tara(a.nk,b.nk),T2=tara(b.nk,a.nk);
+ [[T1,'나→상대'],[T2,'상대→나']].forEach(([t,n])=>{if([2,4,6,8,0].includes(t))add('타라 '+n,8,`낙샤트라 거리로 본 타라(${n})가 길한 자리입니다.`);else if([3,5,7].includes(t))add('타라 '+n,-6,`낙샤트라 거리로 본 타라(${n})가 조심할 자리입니다.`)});
+ const sa=sign(norm(a.moon-a.ayan)),sb=sign(norm(b.moon-b.ayan)),dist=mod(sb-sa,12)+1;
+ if([1,7].includes(dist))add('달 별자리 1·7',10,`두 사람의 달(항성황도)이 ${dist===1?'같은 별자리':'마주 보는 별자리'}라 정서적 균형이 좋습니다.`);
+ else if([3,11,4,10].includes(dist))add('달 별자리 조화',6,`달 별자리 거리가 ${dist}로 무난한 조합입니다.`);
+ else add('달 별자리 긴장',-6,`달 별자리 거리가 ${dist}로 전통적으로 조율이 필요한 조합입니다.`);
+ if(a.nk===b.nk)add('같은 낙샤트라',4,`같은 낙샤트라(${NAK[a.nk]})라 감정의 주제가 닮았습니다.`);
+ // 수비학
+ add=S('수비학',.15);const red=n=>reduceNum(n,false),G=n=>[1,5,7].includes(n)?0:[2,4,8].includes(n)?1:2;const la=red(a.lp),lb=red(b.lp);
+ if(la===lb)add('같은 인생 수',10,`축약 인생 수가 둘 다 ${la}라 삶의 과제가 같습니다.`);
+ else if(G(la)===G(lb))add('인생 수 조화',14,`인생 수 ${la}·${lb}는 같은 성향 무리라 방향이 잘 맞습니다.`);
+ else add('인생 수 차이',-2,`인생 수 ${la}·${lb}는 우선순위가 달라 장기 계획을 함께 세워야 합니다.`);
+ if(a.soul&&b.soul&&G(red(a.soul))===G(red(b.soul)))add('영혼 수 조화',6,`영혼 수가 같은 성향 무리라 속마음의 동기가 닮았습니다.`);
+ // 마야
+ add=S('마야력',.15);
+ if(mod(a.msign-b.msign,20)===10)add('맞은편 기호',10,`탄생 기호 ${MS[a.msign][1]}·${MS[b.msign][1]}가 맞은편에 놓여 서로를 보완합니다.`);
+ else if(a.msign%4===b.msign%4)add('같은 색 무리',8,`탄생 기호가 같은 색 무리라 리듬이 비슷합니다.`);
+ if(a.tone+b.tone===14)add('숫자 보완',6,`탄생 숫자 ${a.tone}·${b.tone}의 합이 14라 서로 비어 있는 부분을 채웁니다.`);
+ else if(a.tone===b.tone)add('같은 숫자',4,`탄생 숫자가 같아 일을 진행하는 박자가 비슷합니다.`);
+ sys.forEach(o=>{o.score=Math.round(clamp(o.base+o.items.reduce((s,x)=>s+x[1],0),40,98))});
+ const total=Math.round(clamp(sys.reduce((s,o)=>s+o.score*o.w,0),45,98));
+ return {total,sys}}
+function compatFormHTML(){const opts=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
+ return `<section class="chart-form cmp-form"><h4>상대방 정보로 궁합 보기</h4><form id="compatibility-form" novalidate><div class="chart-fields">
+ <label>상대 이름<input name="partnerName" maxlength="40" required autocomplete="off" placeholder="홍길동"></label>
+ <label>상대 영문 이름<input name="partnerRoman" maxlength="80" autocomplete="off" placeholder="자동 입력"></label>
+ <div class="cmp-seg"><span>성별</span><label><input type="radio" name="partnerSex" value="m" checked>남</label><label><input type="radio" name="partnerSex" value="f">여</label></div>
+ <label>상대 생년월일 (양력)<input name="partnerDate" type="date" min="1920-01-01" required></label>
+ <label>출생 시각<input name="partnerTime" type="time"></label><label class="chk"><input type="checkbox" name="partnerNoTime">출생 시각을 선택하지 않을래요</label>
+ <label>출생지<select name="partnerPlace">${opts}</select></label><label class="chk"><input type="checkbox" name="partnerNoPlace">출생지를 선택하지 않을래요</label>
+ </div><button type="submit">궁합 보기</button><div id="compatibility-result" class="chart-feedback" aria-live="polite"></div></form></section>`}
+document.addEventListener('input',e=>{const f=e.target.form;if(!f||f.id!=='compatibility-form')return;
+ if(e.target.name==='partnerName'&&!f.partnerRoman.dataset.edited){f.partnerRoman.value=romanize(e.target.value)||''}
+ if(e.target.name==='partnerRoman')f.partnerRoman.dataset.edited=e.target.value?'1':''});
+document.addEventListener('change',e=>{const f=e.target.form;if(!f||f.id!=='compatibility-form')return;
+ if(e.target.name==='partnerNoTime')f.partnerTime.disabled=e.target.checked;if(e.target.name==='partnerNoPlace')f.partnerPlace.disabled=e.target.checked});
+function compatSubmit(f){const out=$('compatibility-result'),date=f.partnerDate.value,[y,m,d]=date.split('-').map(Number),check=new Date(Date.UTC(y,m-1,d));
+ const future=date>new Date().toLocaleDateString('sv-SE');const name=f.partnerName.value.trim();
+ if(!name){out.textContent='상대 이름을 입력해 주세요.';return}
+ if(!date||y<1920||future||check.getUTCFullYear()!==y||check.getUTCMonth()!==m-1||check.getUTCDate()!==d){out.textContent='1920년 이후의 실제 생년월일을 입력해 주세요.';return}
+ const roman=(f.partnerRoman.value.trim()||romanize(name)||'');if(!/[a-z]/i.test(roman)){out.textContent='상대의 영문 이름을 입력해 주세요.';return}
+ const noT=f.partnerNoTime.checked||!f.partnerTime.value,noP=f.partnerNoPlace.checked,P=PLACES[+f.partnerPlace.value]||PLACES[0];
+ const place=noP?{none:true,name:'출생지 미상',lon:127.5,lat:37.5,tz:9,kr:true}:{name:P[0],lat:P[1],lon:P[2],tz:P[3],kr:PLACES.indexOf(P)<26};
+ const inp={name,roman,sex:f.partnerSex.value,cal:'s',date,time:noT?'12:00':f.partnerTime.value,notime:noT,place};
+ let other;try{other=buildChart(inp)}catch(err){out.textContent='상대의 출생 정보를 계산하지 못했어요. 입력값을 확인해 주세요.';return}
+ const res=compatScore(CH,other);COMPAT={b:other,res};
+ const lv=res.total>=85?'아주 잘 맞는 편':res.total>=75?'잘 맞는 편':res.total>=65?'맞춰 가는 궁합':'서로 노력이 필요한 궁합';
+ out.innerHTML=`<div class="cmp-score"><span>${topicEsc(name)}님과 나의 궁합</span><b>${res.total}<small>점</small></b><em>${lv}</em></div><p class="cmp-note">점수가 어떻게 나왔는지, 다섯 점술별 근거와 관계에서 맞춰 갈 점은 <b>궁합 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" id="compatOpen">궁합 리포트 보기 →</button>`}
+function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'상대',tot=res.total,best=res.sys.slice().sort((x,y)=>y.score-x.score)[0],low=res.sys.slice().sort((x,y)=>x.score-y.score)[0];
+ const all=res.sys.flatMap(o=>o.items.map(x=>[o.n,...x])),pos=all.filter(x=>x[2]>0).sort((x,y)=>y[2]-x[2]),neg=all.filter(x=>x[2]<0).sort((x,y)=>x[2]-y[2]);
+ const miss=[b.inp.notime&&'상대 출생 시각',b.inp.place&&b.inp.place.none&&'상대 출생지'].filter(Boolean);
+ const sec=(o,i)=>({id:'match-c'+(i+2),kind:'system',question:o.n+' 궁합',lead:`${o.n}로 본 두 사람의 궁합은 ${o.score}점입니다.`,basis:o.items.map(x=>x[0]+' '+(x[1]>0?'+':'')+x[1]),paragraphs:o.items.length?o.items.map(x=>'['+x[0]+'] '+x[2]):['이 점술에서는 두드러진 합이나 충이 없어 기본 점수로 계산했습니다.'],action:'',table:{cap:o.n+' 점수 근거(기본 60점에서 가감)',head:['항목','가감'],rows:o.items.map(x=>[x[0],(x[1]>0?'+':'')+x[1]])}});
+ const S=[{id:'match-c1',kind:'summary',question:'궁합 종합',lead:`${me}님과 ${you}님의 궁합은 ${tot}점입니다. ${best.n}(${best.score}점)에서 가장 잘 맞고, ${low.n}(${low.score}점)에서 맞춰 갈 점이 있습니다.`,basis:res.sys.map(o=>o.n+' '+o.score+'점'),
+  paragraphs:[pos.length?'[잘 맞는 점] '+pos.slice(0,3).map(x=>x[3]).join(' '):'',neg.length?'[맞춰 갈 점] '+neg.slice(0,2).map(x=>x[3]).join(' '):'[맞춰 갈 점] 다섯 점술에서 뚜렷한 충돌 신호는 보이지 않습니다.','[점수 계산] 다섯 점술마다 기본 60점에서 전통 규칙의 합·충·조화를 더하고 빼, 사주 30%·서양 20%·인도 20%·수비학 15%·마야력 15%로 합산했습니다.'],action:'',
+  table:{cap:'점술별 궁합 점수',head:['점술','점수','비중'],rows:res.sys.map(o=>[o.n,o.score+'점',Math.round(o.w*100)+'%'])}}].concat(res.sys.map(sec));
+ S.push({id:'match-c8',kind:'advice',question:'관계에서 맞춰 갈 점',lead:neg.length?neg[0][1]+' 신호를 대화로 다루는 것이 관계의 열쇠입니다.':'큰 충돌 신호가 없어, 서로의 장점을 의식적으로 표현하는 것이 관계를 키웁니다.',basis:[],
+  paragraphs:(neg.length?neg.slice(0,3).map(x=>'['+x[0]+'] '+x[3]+' 갈등이 생기면 결론보다 서로의 기준을 먼저 말해 보세요.'):[]).concat(pos.length?['['+pos[0][0]+'] '+pos[0][3]+' 이 장점을 함께하는 시간에서 자주 확인하면 관계가 단단해집니다.']:[]),action:'한 달에 한 번, 서로에게 고마웠던 일 하나와 바라는 일 하나를 말해 보세요.'});
+ S.push({id:'match-c9',kind:'limit',question:'해석의 범위',lead:'궁합 점수는 전통 규칙을 수치로 옮긴 자체 지표입니다.',basis:[],paragraphs:[miss.length?J(miss.join('·'),'이','가')+' 없어 해당 정보를 쓰는 항목은 정오·대한민국 기준 참고값으로 계산했습니다.':'',
+  '사주 천간합·지지 육합/충/삼합, 서양 원소 조화, 인도 타라·달 별자리 거리, 수비학 인생 수 무리, 마야 기호·숫자 관계를 비교했습니다. 인도의 정식 36점 궁합(아쉬타 쿠타) 전체를 적용한 것은 아닙니다.','궁합은 관계를 결정하는 답이 아니라 서로를 이해하는 질문으로 활용해 주세요.'].filter(Boolean),action:''});
+ return {title:`${me}님과 ${you}님의 궁합 리포트`,summary:[S[0].lead].concat(pos.slice(0,2).map(x=>x[3])).concat(neg.slice(0,1).map(x=>'맞춰 갈 점: '+x[3])),
+  facts:[['사주 일간',sTxt(a.stems.d)+' / '+sTxt(b.stems.d),'나 / 상대'],['일지(배우자 자리)',BR[a.brs.d]+' / '+BR[b.brs.d],'생활 속 결속'],['띠',BR[a.brs.y]+' / '+BR[b.brs.y],'삼합·육합·충'],['태양 별자리',ZOD[sign(a.sun)]+' / '+ZOD[sign(b.sun)],'삶의 방향'],['달 별자리',ZOD[sign(a.moon)]+' / '+ZOD[sign(b.moon)],'감정 방식'],['낙샤트라',NAK[a.nk]+' / '+NAK[b.nk],'타라'],['인생 수',a.lp+' / '+b.lp,'삶의 과제'],['마야 탄생 기호',a.tone+' '+MS[a.msign][0]+' / '+b.tone+' '+MS[b.msign][0],'260일 리듬']],
+  sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'다섯 점술의 전통 궁합 규칙을 자체 점수로 옮긴 재미용 리포트입니다. 관계의 실제 결과를 예측하지 않습니다.',version:'match-2026-11-05',body:''}}
+const sTxt=i=>ST[i]+'('+'갑을병정무기경신임계'[i]+')';
+async function openCompatReport(btn){if(!COMPAT||!CH)return;const show=()=>{reportReturnFocus=btn;$('reportBody').innerHTML=approvedReportHTML(compatReportData(CH,COMPAT.b,COMPAT.res),'match');$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true})};
+ if(accountUser?.isAdmin)return show();if(!accountUser)return showReportPurchase('match',btn);
+ try{const ac=await accountAPI('/access');if(ac.isAdmin||ac.reports.includes('match')||ac.reports.includes('all'))return show()}catch(_){}showReportPurchase('match',btn)}
+document.addEventListener('click',e=>{const b=e.target.closest('#compatOpen');if(b)openCompatReport(b)});
+
+function topicHTML(ch,k){if(SUBTOPIC_COPY[k])return subtopicHTML(ch,k);if(k==='study')return studyTopicHTML(ch);if(k==='ask')return freeQuestionHTML();const t=topicData(ch,k),name=TOPICS.find(x=>x[0]===k)[1],g=TOPIC_GUIDES[k];if(k==='marry'||k==='love')return '<section class="blk blk-first topic">'+spousePreviewHTML(ch,k)+'<header class="topic-intro spouse-answer-heading"><h3>'+(k==='love'?'나의 연애·인연, 한눈에 보기':'나의 배우자, 한눈에 보기')+'</h3></header>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';if(k==='match')return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">궁합</span><h3>우리 둘은 어떤 점에서 잘 맞을까?</h3><p>상대방 정보를 입력하면 다섯 점술로 두 사람의 궁합 점수를 계산해요. 아래에는 내 차트로 읽은 관계 성향도 함께 있어요.</p></header>'+compatFormHTML()+'<div class="tp-head"><div><b class="tp-a">'+t.a+'</b><span class="qa-s">'+t.s+'</span></div></div>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+name+'</span><h3>'+g.title+'</h3><p>'+g.intro+'</p></header>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-question-example]');if(!b)return;const input=$('chart-question');if(input){input.value=b.dataset.questionExample;input.focus()}});
 document.addEventListener('submit',e=>{if(e.target.id==='free-question-form'){e.preventDefault();if(!CH)return;const q=e.target.elements.question.value.trim();if(q.length<2){$('free-question-result').textContent='궁금한 내용을 두 글자 이상 적어주세요.';return}$('free-question-result').textContent='결제 기능을 준비하고 있어요. 아직 결제되거나 질문이 전송되지는 않았어요.';}
- if(e.target.id==='compatibility-form'){e.preventDefault();if(!CH)return;const f=e.target.elements,out=$('compatibility-result'),date=f.partnerDate.value,parts=date.split('-').map(Number),[y,m,d]=parts,check=new Date(Date.UTC(y,m-1,d));const future=date>new Date().toLocaleDateString('sv-SE');if(y<1920||future||check.getUTCFullYear()!==y||check.getUTCMonth()!==m-1||check.getUTCDate()!==d){out.textContent='1920년 이후의 실제 생년월일을 확인해주세요.';return}const zone=+f.partnerZone.value,roman=f.partnerRoman.value.trim();if(!/[a-z]/i.test(roman)){out.textContent='상대의 영문 이름을 입력해주세요.';return}const inp={name:f.partnerName.value.trim(),roman,date,time:'12:00',notime:true,sex:'m',place:{none:true,name:'시각·장소 미상',lat:37.5,lon:127.5,tz:zone,kr:zone===9}};const other=buildChart(inp);out.innerHTML='<h4>'+topicEsc(inp.name)+'님과 나의 궁합</h4>'+answerCards(compatibilityRows(CH,other))+'<p class="chart-basis">출생 시각·장소 미상 기준으로 비교했어요.</p>';}
+ if(e.target.id==='compatibility-form'){e.preventDefault();if(!CH)return;compatSubmit(e.target.elements)}
 });
 
 function reportHook(ch){const b=bestCell();const tp=turningPoints(ch)[0];
@@ -4027,7 +4135,7 @@ function buildRichReport(ch,key){
       '[인도] 지금의 '+J(dashaTxt,'은','는')+' '+(curD?DSX[curD.lord]:'')+'의 시기입니다. '+(curD&&['Venus','Jupiter','Mercury'].includes(curD.lord)?'재물과 거래에 우호적인 행성 기간입니다.':curD&&['Saturn','Ketu'].includes(curD.lord)?'빠른 확장보다 구조를 다지고 부채를 줄이는 데 유리한 기간입니다.':'자기 확립과 추진의 기간이라 수입 구조를 새로 짜기에 좋습니다.'),
       '[수비학] 인생 수 '+J(ch.lp,'은','는')+' '+J((LPX[ch.lp]||''),'이라','라')+' '+([4,8,22].includes(ch.lp)?'관리와 축적에 강점이 있습니다.':[1,5].includes(ch.lp)?'기회를 잡는 속도에 강점이 있지만 꾸준한 관리가 과제입니다.':'돈보다 의미와 관계를 우선하는 경향이 있어 재정 기준을 따로 세워 두면 좋습니다.')],'');
    }
-   if(key==='invest'){
+   if(key==='invest'||key==='money'){
     const risk=(pj+(tgc['상관']||0)+(tgc['겁재']||0))-(jj+(tgc['정인']||0)+(tgc['정관']||0));
     add('core','투자 판단 성향',risk>0?'기회를 빠르게 잡는 공격형 성향이 우세합니다.':risk<0?'원칙과 안전을 먼저 보는 보수형 성향이 우세합니다.':'공격형과 보수형 성향이 균형을 이룹니다.',['편재 '+pj+' · 상관 '+(tgc['상관']||0)+' · 겁재 '+gb,'정재 '+jj+' · 정인 '+(tgc['정인']||0)+' · 정관 '+(tgc['정관']||0),'화성 '+zs(pl.mars)],
      ['[근거] 사주에서 편재·상관·겁재는 기회와 승부, 정재·정인·정관은 원칙과 안정을 상징합니다. 원국에서 앞의 그룹이 '+(pj+(tgc['상관']||0)+gb)+'개, 뒤의 그룹이 '+(jj+(tgc['정인']||0)+(tgc['정관']||0))+'개입니다.',
@@ -4035,14 +4143,14 @@ function buildRichReport(ch,key){
       '[점성술] 화성이 '+zs(pl.mars)+'('+SEL[pl.mars%4]+')에 있어 '+(pl.mars%4===0?'결정이 빠르고 충동적일 수 있습니다.':pl.mars%4===1?'느리지만 끈기 있게 보유하는 편입니다.':pl.mars%4===2?'정보와 분석에 따라 자주 조정하는 편입니다.':'감정과 분위기에 판단이 흔들리기 쉽습니다.')+' 8하우스(공동 자산·레버리지)는 '+zs(h8)+'입니다.',
       '투자 성과를 보장하는 시기나 종목은 어떤 점술로도 알 수 없습니다. 이 장은 판단 습관을 점검하는 용도로만 읽어 주세요.'],'매수 전에 이유·목표 가격·손실 한도를 한 줄씩 적고, 기록과 실제 결과를 분기마다 비교하세요.');
    }
-   if(key==='property'){
+   if(key==='property'||key==='money'){
     const ins=ng[4];
     add('core','부동산과 주거의 기질','문서·계약을 뜻하는 인성이 '+ins+'개, 토(土) 기운이 '+cnt[2]+'개입니다.',['인성 '+ins+' · 정재 '+jj,'토 '+cnt[2],'4하우스 '+zs(h4),'토성 '+zs(pl.saturn)],
      ['[근거] 사주에서 인성은 문서와 계약, 토는 땅과 기반을 상징합니다. '+(ins?'인성이 '+ins+'개 있어 계약과 문서를 꼼꼼히 다루는 힘이 있습니다.':'인성이 없어 계약 조건을 직접 검토하기보다 전문가에게 맡기는 편이 안전합니다.')+' '+(cnt[2]>=3?'토가 많아 한곳에 오래 머물며 자산을 키우는 방식이 잘 맞습니다.':cnt[2]===0?'토가 없어 거주지를 자주 옮기거나 기반을 다지는 데 시간이 걸릴 수 있습니다.':'토가 적당해 실거주와 자산 목적을 균형 있게 볼 수 있습니다.'),
       '[서양] 집과 가정을 뜻하는 4하우스가 '+J(zs(h4),'이라','라')+' '+HX.home[h4%4]+'에서 안정을 느낍니다. 토성은 '+houseOf(pl.saturn)+'하우스('+HOUSE[houseOf(pl.saturn)]+')에 있어 이 영역은 장기 계획이 필요합니다.',
       ch.has.yeokma?'[신살] 원국에 역마가 있어 직장·학업으로 인한 이동이 잦을 수 있습니다. 매수보다 임차를 유연하게 활용하는 시기가 있을 수 있습니다.':'[신살] 역마가 없어 이동보다 정착에서 안정감을 얻는 편입니다.'],'계약 전에는 등기부와 조건을 직접 확인하고, 실거주 기준(통근·생활 동선)을 먼저 정하세요.');
    }
-   if(key==='business'){
+   if(key==='business'||key==='money'){
     add('core','사업가 기질','편재 '+pj+', 식신·상관 '+ss+', 관성 '+ng[3]+'개로 '+(pj+ss>=3?'직접 사업을 꾸릴 동력이 강한 구조':'조직 안에서 사업 감각을 키운 뒤 독립하는 구조')+'입니다.',['편재 '+pj+' · 식상 '+ss+' · 관성 '+ng[3],ch.strong?'신강':'신약','10하우스 '+zs(h10),'상승궁 '+(ascOK?zs(ascS):'미확정'),'인생 수 '+ch.lp],
      ['[근거] 사업에는 기회를 보는 눈(편재), 상품을 만드는 힘(식상), 조직을 다스리는 힘(관성), 그리고 이를 감당할 체력(신강)이 필요합니다. 원국은 '+(ch.strong?'신강해 위험을 감당할 힘이 있습니다.':'신약해 혼자보다 동업자·전문가와 역할을 나눌 때 안정적입니다.'),
       '[형태] '+(ss>=2?'식상이 강해 콘텐츠·제조·서비스처럼 직접 만든 것을 파는 형태가 잘 맞습니다.':pj>=1?'편재가 있어 유통·중개·영업처럼 흐름을 다루는 형태가 잘 맞습니다.':'인성·관성 중심이라 전문 지식 기반의 1인 사업이나 컨설팅 형태가 잘 맞습니다.')+' 10하우스 '+J(zs(h10),'은','는')+' '+J(HX.work[h10%4],'을','를')+' 보여 줍니다.',
