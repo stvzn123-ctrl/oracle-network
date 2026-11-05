@@ -1753,7 +1753,8 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
 .cmp-priv{font-size:12px;line-height:1.6;color:var(--muted);margin:2px 0 0}
 .coffee-dialog{width:min(92vw,380px);border:1px solid var(--line2);border-radius:18px;background:var(--bg);color:var(--fg);padding:26px 22px 20px;text-align:center}.coffee-dialog::backdrop{background:rgba(0,0,0,.6)}.coffee-dialog h2{font-size:19px;margin:0 0 4px}.coffee-sub{margin:0 0 16px;color:var(--muted);font-size:14px}.coffee-x{position:absolute;right:10px;top:8px;width:40px;height:40px;border:0;background:none;color:var(--muted);font-size:24px;cursor:pointer}.coffee-qr{margin:0 auto 16px;background:#fff;border-radius:14px;padding:14px 14px 10px;width:250px}.coffee-pay{display:block;text-align:left;font-weight:800;font-size:18px;color:#111;margin-bottom:6px}.coffee-qr img{display:block;width:220px;height:220px;margin:0 auto;image-rendering:pixelated}.coffee-qr figcaption{color:#555;font-size:12px;margin-top:8px}.coffee-go{display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:12px;background:#fee500;color:#191919;font-weight:700;text-decoration:none;font-size:16px}.coffee-note{margin:12px 0 0;font-size:12.5px;color:var(--muted);line-height:1.6}
 .bar-actions{gap:6px!important}.bar-actions .top-icon{width:34px!important;height:34px!important;min-height:34px!important}.bar-actions .acct-login{font-size:0!important;padding:6px 12px!important}.bar-actions .acct-login::after{content:"로그인";font-size:13px}
-.brandbar{justify-content:center!important;padding-left:0!important;padding-right:150px!important}
+.brandbar{justify-content:center!important;padding-left:0!important;padding-right:0!important}
+#report .rv3-star{display:block;width:44px;height:44px;margin:14px auto 6px;color:#3fe0f0;filter:drop-shadow(0 0 3px rgba(63,224,240,.9)) drop-shadow(0 0 9px rgba(63,224,240,.55))}#report .rv3-star svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}#themeToggle{display:inline-grid!important;place-items:center!important;padding:0!important;line-height:0!important}#themeToggle svg{display:block}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -4027,7 +4028,7 @@ function approvedReportHTML(data,key){
  const ymd=new Date().toLocaleDateString('ko-KR');
  const hasTiming=secs.some(s=>s.kind==='timing'||s.kind==='flow');
  const flowOld=!hasTiming&&Array.isArray(data.years)?'<section class="r-page rv3-ch"><header class="rv3-hd"><h2>앞으로 10년의 '+E(data.category)+' 흐름</h2></header><div class="r-yearflow">'+data.years.map(r=>'<div><b>'+E(r.year)+'년</b><meter min="60" max="100" value="'+Number(r.score)+'">'+Number(r.score)+'</meter><span>'+Number(r.score)+'점</span></div>').join('')+'</div><p class="r-note">점수는 확률이 아닌 자체 흐름 지표입니다.</p></section>':'';
- return '<header class="r-cover rv3-cover"><span class="eyebrow">ORACLE NETWORK / PERSONAL REPORT</span>'+COMPASS+'<h2>'+E(data.title)+'</h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><dl class="r-cover-meta"><div><dt>발행일</dt><dd>'+ymd+'</dd></div><div><dt>구성</dt><dd>'+secs.length+'장</dd></div></dl></header>'+
+ return '<header class="r-cover rv3-cover"><span class="eyebrow">ORACLE NETWORK / PERSONAL REPORT</span><span class="rv3-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 17.6 20.5 2.6 9.3h18.8L6.4 20.5z"/></svg></span><h2>'+E(data.title)+'</h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><dl class="r-cover-meta"><div><dt>발행일</dt><dd>'+ymd+'</dd></div></dl></header>'+
   '<section class="r-page rv3-ch rv3-intro"><aside class="report-reading-key"><b>리포트 읽는 법</b><p>먼저 쉬운 해석을 읽어주세요. 본문에 괄호로 덧붙인 내용은 해당 해석의 계산값이나 점술상 근거입니다.</p></aside><header class="rv3-hd"><span class="rv3-no">SUMMARY</span><h2>핵심 요약</h2></header><ol class="rv3-sum">'+(data.summary||[]).filter(x=>readingParts(x).main).map(x=>'<li>'+readingInline(x)+'</li>').join('')+'</ol></section><section class="r-page rv3-ch rv3-contents"><header class="rv3-hd"><span class="rv3-no">CONTENTS</span><h2>목차</h2></header>'+toc+'</section>'+
   secs.map(chapter).join('')+flowOld+(String(data.version||'').startsWith('match-')?'':reportScoreGuideHTML(data,key))+
  '<section class="r-page rv3-ch rv3-appendix" id="report-appendix"><header class="rv3-hd"><span class="rv3-no">APPENDIX</span><h2>내 출생 정보와 전문 지표</h2></header>'+facts+'<div class="reading-sources">'+(data.summary||[]).filter(x=>!readingParts(x).main).map(x=>readingParagraph(x)).join('')+'</div>'+
@@ -4365,6 +4366,7 @@ function buildRichReport(ch,key){
   S.__sum=top.concat([J(CATS[ci].n,'은','는')+' '+p.year+'년('+p.score+'점)이 10년 중 가장 밝습니다.']);
   S.forEach((s,i)=>s.id=key+'-'+(i+1));
  }
+ if(key==='comprehensive'){const ORD=['summary','personality','partner','career','flow','advice','saju','west','vedic','numbers'];S.sort((x,y)=>ORD.indexOf(x.kind)-ORD.indexOf(y.kind));S.forEach((x,i)=>x.id=key+'-'+(i+1))}
  const summary=key==='comprehensive'?[S[0].lead].concat(S.slice(1,5).map(s=>s.lead)):S.__sum;
  S.forEach(s=>{s.answer=s.paragraphs.join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
@@ -4730,7 +4732,7 @@ $("profileEdit").addEventListener("click",()=>{const m=$("accountMember");if(m)m
 <script>
 /* 상단바 오른쪽 ☀/☾: 리포트 밝게(크림)·어둡게(남색) 전환, 이 기기에 기억 */
 (function(){const H=document.documentElement,b=document.getElementById("themeToggle");if(!b)return;
- const paint=()=>{const dark=H.classList.contains("rd");b.textContent=dark?"☀":"☾";const l=dark?"리포트 밝게 보기":"리포트 어둡게 보기";b.setAttribute("aria-label",l);b.title=l};
+ const paint=()=>{const dark=H.classList.contains("rd");b.innerHTML=dark?'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>':'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';const l=dark?"리포트 밝게 보기":"리포트 어둡게 보기";b.setAttribute("aria-label",l);b.title=l};
  b.addEventListener("click",e=>{e.stopPropagation();const dark=H.classList.toggle("rd");try{localStorage.setItem("oracle-theme",dark?"dark":"light")}catch(_){}paint()});
  b.addEventListener("keydown",e=>e.stopPropagation());paint()})();
 </script>

@@ -1336,6 +1336,7 @@ function buildRichReport(ch,key){
   S.__sum=top.concat([J(CATS[ci].n,'은','는')+' '+p.year+'년('+p.score+'점)이 10년 중 가장 밝습니다.']);
   S.forEach((s,i)=>s.id=key+'-'+(i+1));
  }
+ if(key==='comprehensive'){const ORD=['summary','personality','partner','career','flow','advice','saju','west','vedic','numbers'];S.sort((x,y)=>ORD.indexOf(x.kind)-ORD.indexOf(y.kind));S.forEach((x,i)=>x.id=key+'-'+(i+1))}
  const summary=key==='comprehensive'?[S[0].lead].concat(S.slice(1,5).map(s=>s.lead)):S.__sum;
  S.forEach(s=>{s.answer=s.paragraphs.join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
