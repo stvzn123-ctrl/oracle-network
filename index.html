@@ -1737,6 +1737,10 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
 
 
 .td-adv{margin:16px 0;padding:16px 18px;border-radius:14px;border:1px solid var(--line2);background:var(--panel)}.td-adv span{display:block;font-size:13px;color:var(--gold);font-weight:700;margin-bottom:4px}.td-adv b{display:block;font-family:var(--display);font-size:22px;line-height:1.4;color:var(--fg);word-break:keep-all}.td-adv p{margin:6px 0 0;font-size:15px;line-height:1.7;color:var(--ink2);word-break:keep-all}
+
+.wk-line svg{width:100%;height:auto;overflow:visible}.wk-pt{cursor:pointer}.wk-pt .wk-dot{fill:var(--bg);stroke:var(--gold);stroke-width:3}.wk-pt.sel .wk-dot{fill:var(--gold);r:10}.wk-pt .wk-v{fill:var(--fg);font-size:20px;font-weight:700}.wk-pt .wk-d{fill:var(--muted);font-size:18px}.wk-pt.sel .wk-d{fill:var(--gold);font-weight:700}.wk-pt:focus{outline:none}.wk-pt:focus-visible .wk-dot{stroke-width:5}.wk-hint{font-size:13px;color:var(--muted);margin:6px 0 0;text-align:center}
+.td-head .td-adv{margin:6px 0 4px;padding:0;border:0;background:none}.td-head .td-adv b{font-size:20px}.td-head .td-adv p{font-size:14px}
+.td-tbl{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}.td-tbl th,.td-tbl td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;word-break:keep-all}.td-tbl thead th{font-size:12.5px;color:var(--muted);font-weight:600}.td-tbl tbody th{color:var(--gold);font-weight:600;white-space:nowrap}.td-tbl td:nth-child(2){color:var(--muted);font-size:13px}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1811,9 +1815,9 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
   </div>
 <div class="res-nav"><div class="res-tabs" role="tablist" aria-label="결과 보기"><button type="button" role="tab" id="tb-natal" aria-controls="tab-natal" aria-selected="false" data-tab="natal"  tabindex="-1">나의 운명</button><button type="button" role="tab" id="tb-flow" aria-controls="tab-flow" aria-selected="false" data-tab="flow"  tabindex="-1">앞으로 10년</button><button type="button" role="tab" id="tb-today" aria-controls="tab-today" aria-selected="false" data-tab="today"  tabindex="-1">이번 주</button></div><details class="topic-fold" id="topicFold"><summary class="topic-nav-title">무엇이 궁금하세요?</summary><div class="topic-fold-in"><div class="res-topics" role="tablist" aria-label="관심 주제"><button type="button" role="tab" id="tb-romance" aria-controls="tab-love" aria-selected="false" data-tab="love" data-romance="true" tabindex="-1"><strong>연애·결혼</strong><small>언제, 어떤 사람을 만날까요?</small></button><button type="button" role="tab" id="tb-money-group" aria-controls="tab-invest" aria-selected="false" data-tab="invest" data-topic-group="money"  tabindex="-1"><strong>재물·돈</strong><small>돈의 흐름이 좋아지는 때는?</small></button><button type="button" role="tab" id="tb-work-group" aria-controls="tab-employment" aria-selected="false" data-tab="employment" data-topic-group="work"  tabindex="-1"><strong>직업</strong><small>나에게 맞는 일과 귀인은?</small></button><button type="button" role="tab" id="tb-study-group" aria-controls="tab-exam" aria-selected="false" data-tab="exam" data-topic-group="study"  tabindex="-1"><strong>학업·성취</strong><small>나에게 맞는 공부와 도전 시기는?</small></button></div><div class="romance-tabs" role="tablist" aria-label="연애·결혼 상세" hidden><button type="button" role="tab" id="tb-love" aria-controls="tab-love" aria-selected="false" data-tab="love"  tabindex="-1">연애·인연</button><button type="button" role="tab" id="tb-marry" aria-controls="tab-marry" aria-selected="false" data-tab="marry"  tabindex="-1">결혼·배우자</button><button type="button" role="tab" id="tb-reunion" aria-controls="tab-reunion" aria-selected="false" data-tab="reunion"  tabindex="-1">재회</button><button type="button" role="tab" id="tb-match" aria-controls="tab-match" aria-selected="false" data-tab="match"  tabindex="-1">궁합</button></div><div class="romance-tabs topic-subtabs" data-subgroup="work" role="tablist" aria-label="직업 상세" hidden><button type="button" role="tab" id="tb-employment" aria-controls="tab-employment" aria-selected="false" data-tab="employment" tabindex="-1">취업</button><button type="button" role="tab" id="tb-move" aria-controls="tab-move" aria-selected="false" data-tab="move" tabindex="-1">이직</button></div><div class="romance-tabs topic-subtabs" data-subgroup="money" role="tablist" aria-label="재물·돈 상세" hidden><button type="button" role="tab" id="tb-invest" aria-controls="tab-invest" aria-selected="false" data-tab="invest" tabindex="-1">투자</button><button type="button" role="tab" id="tb-property" aria-controls="tab-property" aria-selected="false" data-tab="property" tabindex="-1">부동산</button><button type="button" role="tab" id="tb-business" aria-controls="tab-business" aria-selected="false" data-tab="business" tabindex="-1">사업</button></div><div class="romance-tabs topic-subtabs" data-subgroup="study" role="tablist" aria-label="학업·성취 상세" hidden><button type="button" role="tab" id="tb-exam" aria-controls="tab-exam" aria-selected="false" data-tab="exam" tabindex="-1">대입·수능</button><button type="button" role="tab" id="tb-cert" aria-controls="tab-cert" aria-selected="false" data-tab="cert" tabindex="-1">자격증</button></div><div class="ask-nav" role="tablist" aria-label="자유질문"><button type="button" role="tab" id="tb-ask" aria-controls="tab-ask" aria-selected="false" data-tab="ask"  tabindex="-1">다른 고민이 있나요? <strong>자유질문 →</strong></button></div></div></details></div>
   <div class="tabp" id="tab-today" role="tabpanel" aria-labelledby="tb-today">
-    <section class="blk blk-first" aria-labelledby="todayTitle"><h3 class="blk-h sr-only" id="todayTitle">오늘의 운세</h3><div id="todayBox"></div></section>
-    <section class="blk" aria-labelledby="weekTitle"><h3 class="blk-h" id="weekTitle">이번 주 운세</h3><div id="weekBox"></div>
+    <section class="blk blk-first" aria-labelledby="weekTitle"><h3 class="blk-h" id="weekTitle">이번 주 운세</h3><div id="weekBox"></div>
     <p class="fine">오늘·이번 주 점수는 그날의 일진, 달의 위치, 타라, 개인일, 촐킨을 합친 자체 지표예요.</p></section>
+    <section class="blk" aria-labelledby="todayTitle"><h3 class="blk-h sr-only" id="todayTitle">오늘의 운세</h3><div id="todayBox"></div></section>
     <button type="button" class="to-report" data-goto="natal">운명 개선법·추천 장소·리포트 보기 ›</button>
   </div>
   <div class="tabp" id="tab-flow" role="tabpanel" aria-labelledby="tb-flow" hidden>
@@ -2989,12 +2993,12 @@ const TODAY_ADV={
  정관:[["당신을 지켜보는 사람이 있다","성실함이 평가로 이어지는 날입니다. 맡은 일을 깔끔하게 마치세요."],["예의가 문을 연다","공식적인 자리·연락에 운이 따릅니다."],["틀보다 사람을 본다","규칙에 매여 융통성을 잃지 않도록 하세요."]],
  편인:[["직감을 믿어라","설명하기 어려운 느낌이 오늘은 맞을 가능성이 큽니다."],["혼자만의 시간이 답을 준다","조용히 생각을 정리하면 막힌 일이 풀립니다."],["걱정은 적어 두고 덮는다","생각이 꼬리를 물기 쉬운 날입니다. 종이에 적고 내려놓으세요."]],
  정인:[["도움을 받아도 괜찮다","주변의 조언과 지원이 들어오는 날입니다. 먼저 물어보세요."],["배움이 쌓이는 날","읽고 듣는 것이 오래 남습니다. 공부와 자격 준비에 좋습니다."],["기대기보다 스스로 한 걸음","도움을 기다리기보다 작은 것부터 직접 해 보세요."]]};
-function todayAdvice(f){const b=TODAY_ADV[f.tg]||TODAY_ADV.비견,tier=f.all>=85?0:f.all>=72?1:2;let [h,t]=b[tier];
+function todayAdvice(f,isT=true){const b=TODAY_ADV[f.tg]||TODAY_ADV.비견,tier=f.all>=85?0:f.all>=72?1:2;let [h,t]=b[tier];
  if(f.my.includes("마야 탄생일"))t+=" 260일 만에 돌아온 나의 탄생일이라 새 결심을 세우기 좋습니다.";
  else if(f.sj.includes("귀인일"))t+=" 귀인일이라 도움을 청하면 응답이 옵니다.";
  else if(f.sj.includes("일지와 충"))t+=" 가까운 사람과 부딪히기 쉬우니 말을 아끼세요.";
- return `<div class="td-adv"><span>오늘의 조언</span><b>“${h}”</b><p>${t}</p></div>`}
-function todayHTML(ch){const f=dayFortune(ch,new Date());const lc=LUCKC[f.le];
+ return `<div class="td-adv"><span>${isT?"오늘의 조언":"이날의 조언"}</span><b>“${h}”</b><p>${t}</p></div>`}
+function todayHTML(ch,dt){dt=dt||new Date();const isT=dt.toDateString()===new Date().toDateString(),f=dayFortune(ch,dt);const lc=LUCKC[f.le];
   const rows=[["saju","사주",`일진 ${f.pil} · ${f.tg}`,f.sj.length?f.sj.join(" · "):`${f.tg}의 날`],
     ["west","서양 점성술",`달 ${ZOD[f.ms]}자리 · ${f.mh}하우스`,`${HOUSE[f.mh]}에 마음이 가는 날`],
     ["vedic","인도 점성술",`타라 ${f.ta+1} · ${TARA[f.ta]}`,TARAM[f.ta]],
@@ -3002,18 +3006,22 @@ function todayHTML(ch){const f=dayFortune(ch,new Date());const lc=LUCKC[f.le];
     ["maya","마야력",`${f.tone} ${MS[f.ks][0]}(${MS[f.ks][1]})`,f.my.length?f.my.join(" · "):MS[f.ks][2]]];
   return `<div class="today">
   <div class="td-head"><div class="td-ring">${ringSvgD(f.all,112)}<b>${f.all}<small>점</small></b></div>
-   <div><span class="td-date">오늘 · ${f.m}월 ${f.d}일 (${f.wd})</span><p class="td-phrase">${f.phrase}</p><span class="td-best">가장 밝은 운: <b style="color:var(--${CATS[f.best].k})">${SHORT[f.best]}</b></span></div></div>
-  ${todayAdvice(f)}
+   <div><span class="td-date">${isT?"오늘":f.wd+"요일"} · ${f.m}월 ${f.d}일 (${f.wd})</span>${todayAdvice(f,isT)}<span class="td-best">가장 밝은 운: <b style="color:var(--${CATS[f.best].k})">${SHORT[f.best]}</b></span></div></div>
   <ul class="td-cats">${CATS.map((c,ci)=>`<li><span>${SHORT[ci]}</span><i><em style="width:${(f.sc[ci]-55)/45*100}%;background:var(--${c.k})"></em></i><b>${f.sc[ci]}</b></li>`).join("")}</ul>
   <div class="td-luck"><div>${ico("color")}<span>행운의 색</span><b><i class="sw" style="background:${lc[1]}"></i>${lc[0]}</b></div><div>${ico("numb")}<span>행운의 숫자</span><b>${f.pd}</b></div><div>${ico("dir")}<span>좋은 방향</span><b>${LUCKD[f.le]}</b></div></div>
-  <h4 class="td-h">다섯 점술이 본 오늘</h4>
-  <ul class="td-sys">${rows.map(([k,n,v,t])=>`<li>${ico(k)}<div><small>${n}</small><b>${t}</b><span class="reading-evidence"> (${v})</span></div></li>`).join("")}</ul></div>`}
+  <h4 class="td-h">다섯 점술이 본 ${isT?"오늘":"이날"}</h4>
+  <table class="td-tbl"><thead><tr><th scope="col">점술</th><th scope="col">계산값</th><th scope="col">한 줄 풀이</th></tr></thead><tbody>${rows.map(([k,n,v,t])=>`<tr><th scope="row">${n}</th><td>${v}</td><td>${t}</td></tr>`).join("")}</tbody></table></div>`}
+function pickWeekDay(i){const d=weekDays()[i];if(!d||!CH)return;$("todayBox").innerHTML=todayHTML(CH,d);document.querySelectorAll("#weekBox .wk-pt").forEach(g=>g.classList.toggle("sel",+g.dataset.wkday===i));$("todayBox").scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})}
+document.addEventListener("click",e=>{const g=e.target.closest&&e.target.closest("#weekBox [data-wkday]");if(g)pickWeekDay(+g.dataset.wkday)});
+document.addEventListener("keydown",e=>{const g=e.target.closest&&e.target.closest("#weekBox [data-wkday]");if(g&&(e.key==="Enter"||e.key===" ")){e.preventDefault();pickWeekDay(+g.dataset.wkday)}});
 function weekHTML(ch){const ds=weekDays(),F=ds.map(d=>dayFortune(ch,d)),td=new Date().getDay(),ti=(td+6)%7;
   const hi=F.reduce((b,f,i)=>f.all>F[b].all?i:b,0),lo=F.reduce((b,f,i)=>f.all<F[b].all?i:b,0);
   const ca=[0,1,2,3].map(c=>F.reduce((a,f)=>a+f.sc[c],0)/7),bc=ca.indexOf(Math.max(...ca));
   const W=700,H=210,bw=56,gap=(W-40-bw*7)/6,y=v=>H-36-(v-55)/45*(H-70);
-  const bars=F.map((f,i)=>{const x=20+i*(bw+gap),yy=y(f.all);return `<g class="wk${i===ti?" now":""}${i===hi?" hi":""}"><rect x="${x}" y="${yy}" width="${bw}" height="${H-36-yy}" rx="10"/><text x="${x+bw/2}" y="${yy-8}" text-anchor="middle" class="wk-v">${f.all}</text><text x="${x+bw/2}" y="${H-12}" text-anchor="middle" class="wk-d">${"월화수목금토일"[i]}${i===ti?"·오늘":""}</text></g>`}).join("");
-  return `<div class="week"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="이번 주 요일별 점수">${bars}</svg>
+  const vmin=Math.min(...F.map(f=>f.all))-4,vmax=Math.max(...F.map(f=>f.all))+4,yv=v=>H-44-(v-vmin)/Math.max(8,vmax-vmin)*(H-90);
+  const px=i=>40+i*(W-80)/6,pts=F.map((f,i)=>[px(i),yv(f.all)]),path=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  const bars=`<path d="${path}" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`+F.map((f,i)=>`<g class="wk-pt${i===ti?" sel now":""}" data-wkday="${i}" role="button" tabindex="0" aria-label="${"월화수목금토일"[i]}요일 ${f.all}점 자세히 보기"><circle cx="${pts[i][0]}" cy="${pts[i][1]}" r="26" fill="transparent"/><circle class="wk-dot" cx="${pts[i][0]}" cy="${pts[i][1]}" r="8"/><text x="${pts[i][0]}" y="${pts[i][1]-18}" text-anchor="middle" class="wk-v">${f.all}</text><text x="${pts[i][0]}" y="${H-10}" text-anchor="middle" class="wk-d">${"월화수목금토일"[i]}${i===ti?"·오늘":""}</text></g>`).join("");
+  return `<div class="week wk-line"><svg viewBox="0 0 ${W} ${H}" role="group" aria-label="이번 주 요일별 점수. 점을 누르면 그날 운세가 아래에 나옵니다">${bars}</svg><p class="wk-hint">점을 누르면 그날의 조언과 풀이가 아래에 나와요.</p>
   <ul class="wk-sum"><li><span>가장 좋은 날</span><b>${"월화수목금토일"[hi]}요일 (${F[hi].m}/${F[hi].d})</b><em>${F[hi].phrase}</em></li>
   <li><span>쉬어 갈 날</span><b>${"월화수목금토일"[lo]}요일 (${F[lo].m}/${F[lo].d})</b><em>${TARAM[F[lo].ta]}</em></li>
   <li><span>이번 주에 밝은 운</span><b style="color:var(--${CATS[bc].k})">${SHORT[bc]}운</b><em>일주일 평균 ${Math.round(ca[bc])}점</em></li></ul></div>`}
