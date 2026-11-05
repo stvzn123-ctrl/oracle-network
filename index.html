@@ -1668,6 +1668,13 @@ html.rd .reading-evidence,html.rd #report .reading-evidence,html.rd #report .rv3
 @media(max-width:420px){#report .r-page .maya-grid .maya-label-col{width:38px}#report .r-page .maya-grid th,#report .r-page .maya-grid td{font-size:8px}#report .r-page .maya-grid .maya-row{font-size:9px;padding-right:2px}#report .r-page .maya-grid .maya-row small{font-size:7px}#report .r-page .maya-grid td{height:27px}}
 @media print{#report .r-page .maya-grid{break-inside:avoid}#report .r-page .maya-grid .maya-label-col{width:13mm}}
 
+
+/* Emphasize the defining strengths and destiny, keeping the lead sentence readable. */
+:root{--destiny-emphasis-dark:#efd58d;--destiny-emphasis-light:#8a6127}
+.destiny-highlight,.res-lead .destiny-highlight{color:var(--destiny-emphasis-dark);font:inherit;font-style:normal}
+#report .destiny-highlight{color:var(--destiny-emphasis-light);font:inherit;font-style:normal}
+html.rd #report .destiny-highlight{color:var(--destiny-emphasis-dark)}
+
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -2267,7 +2274,8 @@ function fateTraits(ch){
  return {rows,index,name:FATE_TYPES[index],code:"ON-"+rows.map(a=>a.side).join("")};
 }
 /* Intro pairs a mild version of the existing dominant-element weakness with its strength. */
-function traitDescription(ch){
+function destinyMeaningHTML(value){const text=String(value||''),m=text.match(/^(당신은[\\s\\S]*?이지만,\\s*)([\\s\\S]+?운명)(을 타고난 사람입니다[.!]?)$/);return m?topicEsc(m[1])+'<em class="destiny-highlight">'+topicEsc(m[2])+'</em>'+topicEsc(m[3]):topicEsc(text)}
+\nfunction traitDescription(ch){
  const dom=ch.cnt.indexOf(Math.max(...ch.cnt));
  const weak=[
   "관심이 넓어 마무리가 늦어지는 편",
@@ -2515,7 +2523,7 @@ function resultIntroHTML(ch){const tags=reportTags(ch);
   const kw=tags.slice(0,3).map(t=>`<div><b>${RTAG[t.k].kw}</b><span>${RTAG[t.k].s}</span></div>`).join("");
   const ag=tags.filter(t=>t.n>=2).slice(0,4);
   const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><span class="reading-evidence"> (${t.ev.join(", ")})</span><small>${t.sys.join(" · ")}</small></div></li>`).join("");
-  return `<p class="res-lead">${plain(traitDescription(ch))}</p>
+  return `<p class="res-lead">${destinyMeaningHTML(traitDescription(ch))}</p>
   <div class="r-kw">${kw}</div>
   <h3 class="res-h">운명 성향</h3>${fateTraitsHTML(ch)}<p class="r-note">출생 차트의 오행 개수와 태양 별자리로 나눈 재미용 분류예요. 심리검사가 아니며, 점은 강도가 아닌 방향을 나타내요.</p>
   <h3 class="res-h">다섯 점술이 함께 짚은 것</h3><ul class="r-agree">${agl}</ul>
@@ -3328,7 +3336,7 @@ function reportSummary(ch){const tags=reportTags(ch),b=bestCell(),d=ch.stems.d,d
   const best=CATS.map((c,ci)=>{let bi=0;R.forEach((r,hi)=>{if(D(r[ci].mean)>D(R[bi][ci].mean))bi=hi});const sum=plain(catHorizon(ci,bi).sum).split(" · ")[0];
     return `<tr><td><span class="rc" style="color:var(--${c.k})">${SHORT[ci]}</span></td><td class="num">${y0+HZ[bi].off} · ${D(R[bi][ci].mean)}점</td><td>${sum}</td></tr>`}).join("");
   const tps=turningPoints(ch).map(e=>`<li><span class="when">${e.y} · ${e.y-ch.Y+1}세</span><b>${e.src}</b><span>${e.t}</span></li>`).join("");
-  return `<p class="r-lead">${plain(traitDescription(ch))}</p>
+  return `<p class="r-lead">${destinyMeaningHTML(traitDescription(ch))}</p>
   <div class="r-kw">${kw}</div>
   <h3>운명 성향</h3>${fateTraitsHTML(ch)}<p class="r-note">출생 차트의 오행 개수와 태양 별자리로 나눈 재미용 분류예요. 심리검사가 아니며, 점은 강도가 아닌 방향을 나타내요.</p>
   <h3>다섯 점술이 함께 짚은 것</h3><ul class="r-agree">${agl}</ul>
@@ -3610,7 +3618,7 @@ function readingParts(value){
 }
 function readingInline(value){const p=readingParts(value),E=topicEsc;let basis=p.basis;
  if(p.main&&basis){for(const sentence of p.main.split(/(?<=[.!?。])\s+/).filter(Boolean)){basis=basis.replace(sentence,'')}basis=basis.replace(/(태양|달|금성|수성|화성)이\s+/g,'$1 ').replace(/에 있어(?=\s|$)/g,'').replace(/\s+/g,' ').trim()}
- return (p.main?'<span class="reading-meaning">'+E(p.main)+'</span>':'')+(basis?'<span class="reading-evidence"> ('+E(basis)+')</span>':'')}
+ return (p.main?'<span class="reading-meaning">'+destinyMeaningHTML(p.main)+'</span>':'')+(basis?'<span class="reading-evidence"> ('+E(basis)+')</span>':'')}
 
 function readingParagraph(value,cls=''){return '<p'+(cls?' class="'+cls+'"':'')+'>'+readingInline(value)+'</p>'}
 function clarifyReading(root){if(!root)return;root.querySelectorAll('.r-prose p').forEach(p=>{p.innerHTML=readingInline(p.textContent)})}
