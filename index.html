@@ -1748,6 +1748,7 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
 .cmp-form .chart-fields{display:grid;gap:10px}.cmp-form label{display:flex;flex-direction:column;gap:4px;font-size:14px}.cmp-form label.chk{flex-direction:row;align-items:center;gap:8px;font-size:13px;color:var(--muted)}.cmp-form input,.cmp-form select{min-height:44px;font-size:16px}.cmp-seg{display:flex;gap:14px;align-items:center;font-size:14px}.cmp-seg label{flex-direction:row;align-items:center;gap:6px}.cmp-form button[type=submit]{margin-top:12px;min-height:48px;width:100%}.cmp-score{text-align:center;padding:18px 0 6px}.cmp-score span{display:block;font-size:14px;color:var(--muted)}.cmp-score b{display:block;font-size:52px;line-height:1.1;color:var(--gold);font-family:var(--display)}.cmp-score b small{font-size:18px}.cmp-score em{font-style:normal;font-size:16px;font-weight:700}.cmp-note{font-size:14px;line-height:1.7;color:var(--ink2);text-align:center}.cmp-open{width:100%;min-height:48px;margin-top:6px}
 .cmp-form label.chk input{width:20px;height:20px;min-height:0;flex:none;margin:0}.cmp-form .tp-head,.topic .tp-head:not(:has(.tp-art)){display:block}
 #report .rv3-line{margin:var(--rs-3) 0}#report .rv3-line figcaption{font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:4px}#report .rv3-line svg{width:100%;height:auto;display:block}
+.cmp-saved ul{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:6px}.cmp-saved li{display:flex;gap:6px}.cmp-saved-h{font-size:13px;color:var(--muted);margin:0 0 6px}.cmp-load{flex:1;text-align:left;min-height:48px;padding:6px 12px;display:flex;flex-direction:column;gap:2px}.cmp-load small{font-size:12px;color:var(--muted)}.cmp-del{min-height:48px;padding:0 12px;font-size:13px}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -3460,15 +3461,25 @@ function compatScore(a,b){
  sys.forEach(o=>{o.score=Math.round(clamp(o.base+o.items.reduce((s,x)=>s+x[1],0),40,98))});
  const total=Math.round(clamp(sys.reduce((s,o)=>s+o.score*o.w,0),45,98));
  return {total,sys}}
+const PKEY='oracle-partners';
+function partnerList(){try{const v=JSON.parse(localStorage.getItem(PKEY)||'[]');return Array.isArray(v)?v:[]}catch(_){return []}}
+function partnerStore(l){try{localStorage.setItem(PKEY,JSON.stringify(l.slice(0,10)))}catch(_){}}
+function partnerSavedHTML(){const l=partnerList();if(!l.length)return '';return '<p class="cmp-saved-h">저장한 상대</p><ul>'+l.map((p,i)=>'<li><button type="button" class="cmp-load" data-pi="'+i+'"><b>'+topicEsc(p.name)+'</b><small>'+topicEsc(p.date)+(p.score?' · 최근 궁합 '+p.score+'점':'')+'</small></button><button type="button" class="cmp-del" data-pd="'+i+'" aria-label="'+topicEsc(p.name)+' 삭제">삭제</button></li>').join('')+'</ul>'}
+function partnerRefresh(){const el=$('cmpSaved');if(el)el.innerHTML=partnerSavedHTML()}
+document.addEventListener('click',e=>{const ld=e.target.closest('.cmp-load'),dl=e.target.closest('.cmp-del');if(!ld&&!dl)return;const l=partnerList();
+ if(dl){const p=l[+dl.dataset.pd];if(p&&confirm(p.name+'님의 정보를 삭제할까요?')){l.splice(+dl.dataset.pd,1);partnerStore(l);partnerRefresh()}return}
+ const p=l[+ld.dataset.pi],f=$('compatibility-form');if(!p||!f)return;const el=f.elements;el.partnerName.value=p.name;el.partnerRoman.value=p.roman;el.partnerRoman.dataset.edited='1';
+ [...el.partnerSex].forEach(r=>r.checked=r.value===p.sex);el.partnerDate.value=p.date;el.partnerTime.value=p.time||'';el.partnerNoTime.checked=!!p.notime;el.partnerTime.disabled=!!p.notime;
+ el.partnerNoPlace.checked=p.pi==null;el.partnerPlace.disabled=p.pi==null;if(p.pi!=null)el.partnerPlace.value=String(p.pi);f.requestSubmit()});
 function compatFormHTML(){const opts=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
- return `<section class="chart-form cmp-form"><h4>상대방 정보로 궁합 보기</h4><form id="compatibility-form" novalidate><div class="chart-fields">
+ return `<section class="chart-form cmp-form"><h4>상대방 정보로 궁합 보기</h4><div class="cmp-saved" id="cmpSaved">${partnerSavedHTML()}</div><form id="compatibility-form" novalidate><div class="chart-fields">
  <label>상대 이름<input name="partnerName" maxlength="40" required autocomplete="off" placeholder="홍길동"></label>
  <label>상대 영문 이름<input name="partnerRoman" maxlength="80" autocomplete="off" placeholder="자동 입력"></label>
  <div class="cmp-seg"><span>성별</span><label><input type="radio" name="partnerSex" value="m" checked>남</label><label><input type="radio" name="partnerSex" value="f">여</label></div>
  <label>상대 생년월일 (양력)<input name="partnerDate" type="date" min="1920-01-01" required></label>
  <label>출생 시각<input name="partnerTime" type="time"></label><label class="chk"><input type="checkbox" name="partnerNoTime">출생 시각을 선택하지 않을래요</label>
  <label>출생지<select name="partnerPlace">${opts}</select></label><label class="chk"><input type="checkbox" name="partnerNoPlace">출생지를 선택하지 않을래요</label>
- </div><button type="submit">궁합 보기</button><div id="compatibility-result" class="chart-feedback" aria-live="polite"></div></form></section>`}
+ <label class="chk"><input type="checkbox" name="partnerSave" checked>이 상대 정보를 이 기기에 저장</label></div><button type="submit">궁합 보기</button><div id="compatibility-result" class="chart-feedback" aria-live="polite"></div></form></section>`}
 document.addEventListener('input',e=>{const f=e.target.form;if(!f||f.id!=='compatibility-form')return;
  if(e.target.name==='partnerName'&&!f.partnerRoman.dataset.edited){f.partnerRoman.value=romanize(e.target.value)||''}
  if(e.target.name==='partnerRoman')f.partnerRoman.dataset.edited=e.target.value?'1':''});
@@ -3484,6 +3495,7 @@ function compatSubmit(f){const out=$('compatibility-result'),date=f.partnerDate.
  const inp={name,roman,sex:f.partnerSex.value,cal:'s',date,time:noT?'12:00':f.partnerTime.value,notime:noT,place};
  let other;try{other=buildChart(inp)}catch(err){out.textContent='상대의 출생 정보를 계산하지 못했어요. 입력값을 확인해 주세요.';return}
  const res=compatScore(CH,other);COMPAT={b:other,res};
+ if(f.partnerSave&&f.partnerSave.checked){const l=partnerList().filter(x=>!(x.name===name&&x.date===date));l.unshift({name,roman,sex:f.partnerSex.value,date,time:noT?'':f.partnerTime.value,notime:noT,pi:noP?null:+f.partnerPlace.value,score:res.total,at:new Date().toISOString().slice(0,10)});partnerStore(l);partnerRefresh()}
  const lv=res.total>=85?'아주 잘 맞는 편':res.total>=75?'잘 맞는 편':res.total>=65?'맞춰 가는 궁합':'서로 노력이 필요한 궁합';
  out.innerHTML=`<div class="cmp-score"><span>${topicEsc(name)}님과 나의 궁합</span><b>${res.total}<small>점</small></b><em>${lv}</em></div><p class="cmp-note">점수가 어떻게 나왔는지, 다섯 점술별 근거와 관계에서 맞춰 갈 점은 <b>궁합 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" id="compatOpen">궁합 리포트 보기 →</button>`}
 function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'상대',tot=res.total,EN=['목','화','토','금','수'];
