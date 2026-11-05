@@ -1743,6 +1743,7 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
 .td-tbl{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}.td-tbl th,.td-tbl td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;word-break:keep-all}.td-tbl thead th{font-size:12.5px;color:var(--muted);font-weight:600}.td-tbl tbody th{color:var(--gold);font-weight:600;white-space:nowrap}.td-tbl td:nth-child(2){color:var(--muted);font-size:13px}
 #todayHead{margin-bottom:8px}.td-prose{font-size:15px;line-height:1.8;color:var(--ink2);margin:18px 0 6px;word-break:keep-all}
 .flow-prose p{font-size:15px;line-height:1.85;color:var(--ink2);margin:0 0 14px;word-break:keep-all}.flow-prose b{display:block;color:var(--fg);margin-bottom:2px}.bc-pick span{display:block;line-height:1.75;margin-top:4px}
+.bc-grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}.bc-cell{margin:0;padding:10px 8px 4px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.18)}.bc-cell figcaption{display:flex;flex-direction:column;gap:1px;padding:0 4px 4px}.bc-cell figcaption b{font-size:15px}.bc-cell figcaption span{font-size:11.5px;color:var(--muted)}.bc-cell svg{width:100%;height:auto;display:block;overflow:visible}.bc-cell .bc-t{font-size:10px}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1827,10 +1828,10 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
     <ol class="hl" id="highlights" aria-label="나의 운명 핵심 세 가지" hidden></ol>
   <section class="blk" aria-labelledby="flowTitle">
     <h3 class="blk-h" id="flowTitle">앞으로 10년의 흐름</h3>
-    <p class="blk-p">점을 누르면 그해의 풀이가 아래에 나와요.</p>
+    <p class="blk-p">분야별 그래프의 점을 누르면 그해의 풀이가 아래에 나와요.</p>
     <div class="bigchart" id="bigchart"></div>
     <p class="bc-pick" id="bcPick" aria-live="polite"></p>
-    <ul class="fields" id="fields" aria-label="분야별 10년 요약"></ul>
+    <ul class="fields" id="fields" aria-label="분야별 10년 요약" hidden></ul>
     <h3 class="blk-h" style="margin-top:28px">10년의 흐름 한눈에 읽기</h3><div class="flow-prose" id="flowProse"></div>
     <p class="fine">점수는 다섯 점술의 규칙을 숫자로 옮긴 자체 지표예요. 성공 확률이나 예측 정확도가 아니에요.</p>
   </section>
@@ -4258,14 +4259,15 @@ function flowProseHTML(ch){const y0=new Date().getFullYear(),S=R.map(r=>r.map(c=
  if(tp.length)out.push(`<p><b>전환점</b>${tp.map(t=>`${t.y}년(${t.y-ch.Y+1}살) · ${tpShort(t)} (${t.src} 기준).`).join(" ")}</p>`);
  return out.join("")}
 function renderBig(){const el=$("bigchart");if(!el||!CH)return;bigW=el.clientWidth;const S=R.map(r=>r.map(c=>D(c.mean))),y0=new Date().getFullYear()+1;
-  const nr=el.clientWidth<560,W=nr?400:760,H=nr?280:300,L=nr?30:40,Rr=nr?12:20,T=nr?16:20,B=nr?30:36,x=k=>L+(W-L-Rr)*k/9,y=v=>T+(100-v)/40*(H-T-B);let g="",pts="";
-  [60,70,80,90,100].forEach(v=>{g+=`<line x1="${L}" x2="${W-Rr}" y1="${y(v)}" y2="${y(v)}" class="bc-grid"/><text x="${L-10}" y="${y(v)+4}" text-anchor="end" class="bc-t">${v}</text>`});
-  for(let k=0;k<10;k++)g+=`<text x="${x(k)}" y="${H-10}" text-anchor="middle" class="bc-t">${nr?"’"+String(y0+k).slice(2):y0+k}</text>`;
-  CATS.forEach((c,ci)=>{const p=S.map((r,k)=>[x(k),y(r[ci])]);g+=`<path class="bc-line${drawCls()}" pathLength="1" d="${smoothPath(p.map(q=>q.join(",")).join(" "))}" stroke="var(--${c.k})"/>`;
+  const W=220,H=150,L=26,Rr=8,T=12,B=22,x=k=>L+(W-L-Rr)*k/9,y=v=>T+(100-v)/40*(H-T-B);
+  const one=(c,ci)=>{let g="",pts="";[60,80,100].forEach(v=>{g+=`<line x1="${L}" x2="${W-Rr}" y1="${y(v)}" y2="${y(v)}" class="bc-grid"/><text x="${L-5}" y="${y(v)+4}" text-anchor="end" class="bc-t">${v}</text>`});
+    [0,3,6,9].forEach(k=>{g+=`<text x="${x(k)}" y="${H-6}" text-anchor="middle" class="bc-t">’${String(y0+k).slice(2)}</text>`});
+    const p=S.map((r,k)=>[x(k),y(r[ci])]);g+=`<path class="bc-line${drawCls()}" pathLength="1" d="${smoothPath(p.map(q=>q.join(",")).join(" "))}" stroke="var(--${c.k})"/>`;
     let bi=0;S.forEach((r,k)=>{if(r[ci]>S[bi][ci])bi=k});
-    p.forEach((q,k)=>{const top=k===bi;pts+=`<g class="bc-pg" data-c="${ci}" data-h="${k}" tabindex="0" role="button" aria-label="${y0+k}년 ${c.n} ${S[k][ci]}점"><title>${y0+k}년 ${c.n} ${S[k][ci]}점</title><circle class="bc-hit" cx="${q[0]}" cy="${q[1]}" r="${nr?11:9}"/><circle class="bc-pt${top?" top":""}" cx="${q[0]}" cy="${q[1]}" r="${top?(nr?6:6.5):(nr?3.4:3.4)}" fill="var(--${c.k})"/></g>`})});
-  el.innerHTML=`<div class="bc-legend" aria-hidden="true">${CATS.map((c,ci)=>`<span><i style="background:var(--${c.k})"></i>${SHORT[ci]}</span>`).join("")}</div>
-   <div class="bc-plot"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${y0}년부터 10년 동안 금전·애정·직업·건강 점수">${g}${pts}</svg></div>`;
+    p.forEach((q,k)=>{const top=k===bi;pts+=`<g class="bc-pg" data-c="${ci}" data-h="${k}" tabindex="0" role="button" aria-label="${y0+k}년 ${c.n} ${S[k][ci]}점"><title>${y0+k}년 ${c.n} ${S[k][ci]}점</title><circle class="bc-hit" cx="${q[0]}" cy="${q[1]}" r="10"/><circle class="bc-pt${top?" top":""}" cx="${q[0]}" cy="${q[1]}" r="${top?5:3}" fill="var(--${c.k})"/></g>`});
+    const av=Math.round(S.reduce((a,r)=>a+r[ci],0)/S.length);
+    return `<figure class="bc-cell"><figcaption><b style="color:var(--${c.k})">${c.n}</b><span>평균 ${av} · 최고 ${y0+bi}년 ${S[bi][ci]}점</span></figcaption><svg viewBox="0 0 ${W} ${H}" role="group" aria-label="${c.n} 10년 점수">${g}${pts}</svg></figure>`};
+  el.innerHTML=`<div class="bc-grid4">${CATS.map(one).join("")}</div>`;
   const go=t=>{const ci=+t.dataset.c,hi=+t.dataset.h,yy=y0+hi;el.querySelectorAll(".bc-pg.on").forEach(p=>p.classList.remove("on"));t.classList.add("on");
     $("bcPick").innerHTML=yearPickHTML(ci,hi,yy,S)};
   el.querySelectorAll(".bc-pg").forEach(t=>{t.addEventListener("click",()=>go(t));t.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go(t)}})})}
