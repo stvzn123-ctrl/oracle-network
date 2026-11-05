@@ -56,6 +56,7 @@ async function authRoute(req,env,url,ctx){
     if(!env.KAKAO_ADMIN_KEY||req.headers.get('Authorization')!=='KakaoAK '+env.KAKAO_ADMIN_KEY)return json(req,env,{error:'unauthorized'},401);
     const body=await req.text();if(body.length>4096)return json(req,env,{error:'input'},400);const p=new URLSearchParams(body),uid=p.get('user_id');
     if(p.get('app_id')!=='1636031'||!uid||! /^\d{1,24}$/.test(uid))return json(req,env,{error:'input'},400);
+    await env.DB.prepare('DELETE FROM partners WHERE user_id IN (SELECT id FROM users WHERE kakao_id=?)').bind(uid).run();
     await env.DB.prepare('DELETE FROM users WHERE kakao_id=?').bind(uid).run();return json(req,env,{ok:true});
   }
   if(req.method==='POST'&&origin!==ORIGINS[0])return json(req,env,{error:'origin'},403);
@@ -87,15 +88,29 @@ async function authRoute(req,env,url,ctx){
   const user=await member(req,env);if(!user)return json(req,env,{error:'unauthorized'},401);
   if(req.method==='GET'&&path==='/me')return json(req,env,{nickname:user.nickname,profile:user.profile?JSON.parse(user.profile):null,updated:user.profile_updated,id:user.id,isAdmin:isAdmin(user,env)});
   if(req.method==='POST'&&path==='/profile'){
-    const b=await authBody(req);if(b.action==='delete'){await env.DB.prepare('UPDATE users SET profile=NULL,profile_updated=NULL,consent_at=NULL WHERE id=?').bind(user.id).run();return json(req,env,{ok:true})}
+    const b=await authBody(req);if(b.action==='delete'){await env.DB.batch([env.DB.prepare('UPDATE users SET profile=NULL,profile_updated=NULL,consent_at=NULL WHERE id=?').bind(user.id),env.DB.prepare('DELETE FROM partners WHERE user_id=?').bind(user.id)]);return json(req,env,{ok:true})}
     const profile=validProfile(b.profile);if(!profile||b.consent!==true)return json(req,env,{error:'invalid_profile'},400);
     await env.DB.prepare('UPDATE users SET profile=?,profile_updated=?,consent_at=? WHERE id=?').bind(JSON.stringify(profile),now,now,user.id).run();return json(req,env,{ok:true,updated:now});
   }
+  if(req.method==='GET'&&path==='/partners'){const r=await env.DB.prepare('SELECT id,data,updated FROM partners WHERE user_id=? ORDER BY updated DESC LIMIT 20').bind(user.id).all();return json(req,env,{partners:r.results.map(x=>({id:x.id,...JSON.parse(x.data),updated:x.updated}))})}
+  if(req.method==='POST'&&path==='/partners'){const b=await authBody(req);
+    if(b.action==='delete'){if(typeof b.id!=='string'||!/^[a-f0-9]{32}$/.test(b.id))return json(req,env,{error:'input'},400);await env.DB.prepare('DELETE FROM partners WHERE id=? AND user_id=?').bind(b.id,user.id).run();return json(req,env,{ok:true})}
+    const v=validPartner(b.partner);if(!v||b.consent!==true)return json(req,env,{error:'invalid_partner'},400);
+    const cnt=await env.DB.prepare('SELECT COUNT(*) n FROM partners WHERE user_id=?').bind(user.id).first();const ex=await env.DB.prepare('SELECT id FROM partners WHERE user_id=? AND name=? AND date=?').bind(user.id,v.name,v.date).first();
+    if(!ex&&cnt.n>=20)return json(req,env,{error:'partner_limit'},409);
+    const id=ex?ex.id:[...crypto.getRandomValues(new Uint8Array(16))].map(x=>x.toString(16).padStart(2,'0')).join('');
+    await env.DB.prepare('INSERT INTO partners(id,user_id,name,date,data,consent_at,updated) VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data,updated=excluded.updated,consent_at=excluded.consent_at').bind(id,user.id,v.name,v.date,JSON.stringify(v),now,now).run();return json(req,env,{ok:true,id})}
   if(req.method==='POST'&&path==='/auth/logout'){const t=req.headers.get('Authorization').slice(7);await env.DB.prepare('DELETE FROM sessions WHERE token_hash=?').bind(await authHash(t)).run();return json(req,env,{ok:true})}
   return json(req,env,{error:'not_found'},404);
 }
 
 
+function validPartner(p){if(!p||typeof p!=='object')return null;const s=(x,n)=>typeof x==='string'&&x.length<=n;
+ if(!s(p.name,40)||!p.name.trim()||/[<>\u0000-\u001f]/.test(p.name)||!s(p.roman,80)||!/^[A-Za-z][A-Za-z .'-]*$/.test(p.roman.trim())||!['m','f'].includes(p.sex))return null;
+ if(typeof p.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(p.date))return null;const d=new Date(p.date+'T00:00:00Z');if(!Number.isFinite(+d)||d.toISOString().slice(0,10)!==p.date||+p.date.slice(0,4)<1920||d>new Date())return null;
+ const notime=p.notime===true;if(!notime&&!(typeof p.time==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(p.time)))return null;
+ const pi=p.pi==null?null:Number(p.pi);if(pi!==null&&!(Number.isInteger(pi)&&pi>=0&&pi<60))return null;const score=Number.isInteger(p.score)&&p.score>=0&&p.score<=100?p.score:null;
+ return {name:p.name.trim(),roman:p.roman.trim(),sex:p.sex,date:p.date,time:notime?'':p.time,notime,pi,score,at:new Date().toISOString().slice(0,10)}}
 const REPORT_KEYS=["comprehensive","money","marry","love","reunion","work","match","study","employment","move","invest","property","business","exam","cert"];
 function isAdmin(user,env){return !!user&&(env.ADMIN_USER_IDS||'').split(',').map(x=>x.trim()).filter(Boolean).includes(user.id)}
 async function accessRoute(req,env,url){

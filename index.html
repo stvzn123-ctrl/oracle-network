@@ -1750,6 +1750,7 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
 #report .rv3-line{margin:var(--rs-3) 0}#report .rv3-line figcaption{font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:4px}#report .rv3-line svg{width:100%;height:auto;display:block}
 .cmp-saved ul{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:6px}.cmp-saved li{display:flex;gap:6px}.cmp-saved-h{font-size:13px;color:var(--muted);margin:0 0 6px}.cmp-load{flex:1;text-align:left;min-height:48px;padding:6px 12px;display:flex;flex-direction:column;gap:2px}.cmp-load small{font-size:12px;color:var(--muted)}.cmp-del{min-height:48px;padding:0 12px;font-size:13px}
 #landing .landing-art{aspect-ratio:3/2!important;background-size:cover!important;background-position:center!important;height:auto!important}
+.cmp-priv{font-size:12px;line-height:1.6;color:var(--muted);margin:2px 0 0}
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -1780,7 +1781,7 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
 
 
     <div class="watercolor-welcome" aria-hidden="true"></div>
-    <dialog id="profileDeleteDialog" aria-labelledby="profileDeleteTitle"><h2 id="profileDeleteTitle">저장한 출생 정보를 삭제할까요?</h2><p>서버에 저장된 내 출생 정보가 삭제됩니다. 다시 저장하기 전까지 자동으로 불러올 수 없어요.</p><div class="account-buttons"><button type="button" id="profileDeleteCancel">취소</button><button type="button" id="profileDeleteConfirm">삭제하기</button></div></dialog>
+    <dialog id="profileDeleteDialog" aria-labelledby="profileDeleteTitle"><h2 id="profileDeleteTitle">저장한 출생 정보를 삭제할까요?</h2><p>서버에 저장된 내 출생 정보와 궁합 상대 정보가 삭제됩니다. 다시 저장하기 전까지 자동으로 불러올 수 없어요.</p><div class="account-buttons"><button type="button" id="profileDeleteCancel">취소</button><button type="button" id="profileDeleteConfirm">삭제하기</button></div></dialog>
 
     <details class="askbox" id="askbox">
     <summary><span class="who-sum" id="whoSum"></span><span class="edit">정보 수정 <span class="chev">⌄</span></span></summary>
@@ -1807,7 +1808,7 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
           <div class="save-guest" id="saveGuest"><span>로그인하지 않으면 입력한 정보는 저장되지 않아요.</span><button type="button" id="saveLogin" class="kakao-login kakao-mini">카카오로 로그인하고 저장하기</button></div>
           <label class="save-chk" id="saveMember" hidden><input type="checkbox" id="profileConsent"><span><b>카카오 계정에 자동 저장</b>운명을 확인할 때 이름·영문 이름·성별·생년월일·시각·출생지를 저장하고, 다음 방문 때 자동으로 채워요. 저장 정보는 언제든 삭제할 수 있어요.</span></label>
           <p id="accountStatus" class="account-note" role="status" aria-live="polite"></p>
-          <details class="account-privacy"><summary>로그인·정보 저장 안내</summary><p>운영: 트리웨이브 · 서비스: 오라클 네트워크. 카카오에서는 회원 구분용 식별값과 동의한 닉네임만 받아요. 이메일·전화번호·프로필 사진·현재 거주지는 요청하지 않아요. 입력한 출생 정보는 ‘카카오 계정에 자동 저장’을 켜고 운명을 확인할 때 Cloudflare 서버에 저장하고, 다음 로그인 시 입력창에 불러와요. ‘저장 정보 삭제’를 누르면 저장한 출생 정보를 삭제할 수 있어요. 로그인은 이 브라우저에서 최대 7일 유지되며 공용 기기에서는 로그아웃해 주세요.</p></details>
+          <details class="account-privacy"><summary>로그인·정보 저장 안내</summary><p>운영: 트리웨이브 · 서비스: 오라클 네트워크. 카카오에서는 회원 구분용 식별값과 동의한 닉네임만 받아요. 이메일·전화번호·프로필 사진·현재 거주지는 요청하지 않아요. 입력한 출생 정보는 ‘카카오 계정에 자동 저장’을 켜고 운명을 확인할 때 Cloudflare 서버에 저장하고, 다음 로그인 시 입력창에 불러와요. 궁합에서 ‘내 계정에 저장’을 체크하면 상대방의 이름·생년월일·출생 시각·출생지와 궁합 점수도 저장돼요(상대방 동의가 있는 경우에만 저장해 주세요). ‘저장 정보 삭제’를 누르면 내 출생 정보와 궁합 상대 정보가 함께 삭제되고, 카카오 연결을 끊어도 모두 삭제돼요. 로그인은 이 브라우저에서 최대 7일 유지되며 공용 기기에서는 로그아웃해 주세요.</p></details>
         </div>
         <small>운명 계산은 이 기기에서 진행해요.</small><span id="err" role="alert"></span></div>
     </form>
@@ -2798,7 +2799,7 @@ const TABS=["natal","flow","today","money","marry","love","reunion","work","matc
 function setTab(t,focus){t=TOPIC_GROUPS[t]?.[0]||t;{const fb=document.querySelector(`#topicFold [data-tab="${t}"]`);if(fb&&focus)document.getElementById("topicFold").open=true;}document.querySelectorAll("[data-subgroup]").forEach(el=>{el.hidden=!TOPIC_GROUPS[el.dataset.subgroup].includes(t)});document.querySelectorAll(".res-nav [role=tab]").forEach(b=>{const on=b.dataset.topicGroup?TOPIC_GROUPS[b.dataset.topicGroup].includes(t):b.hasAttribute("data-romance")?["love","marry","reunion","match"].includes(t):b.dataset.tab===t;b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1;if(on){if(focus)b.focus();}});
   document.querySelector(".romance-tabs").hidden=!["love","marry","reunion","match"].includes(t);
   TABS.forEach(k=>{$("tab-"+k).hidden=k!==t});
-  if(CH&&TOPICS.some(x=>x[0]===t)&&!$("tab-"+t).innerHTML)$("tab-"+t).innerHTML=t==="money"?moneyAllHTML(CH):topicHTML(CH,t);if(t==="flow"&&CH){drawGraph=true;renderBig();setTimeout(()=>{drawGraph=false},0)}}
+  if(t==="match")setTimeout(partnerSync,0);if(CH&&TOPICS.some(x=>x[0]===t)&&!$("tab-"+t).innerHTML)$("tab-"+t).innerHTML=t==="money"?moneyAllHTML(CH):topicHTML(CH,t);if(t==="flow"&&CH){drawGraph=true;renderBig();setTimeout(()=>{drawGraph=false},0)}}
 document.addEventListener("click",e=>{const g=e.target.closest("[data-goto]");if(g){setTab(g.dataset.goto);requestAnimationFrame(()=>document.querySelector("#tab-natal .act")?.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"}));return}
   const b=e.target.closest("[data-buy]");if(b&&b.dataset.buy!=="ask"){openTopicReport(b.dataset.buy,b);return}if(b){const msg=b.closest(".topic-offer")?.querySelector(".buy-msg")||b.nextElementSibling;if(msg)msg.textContent="결제 기능을 준비하고 있어요. 아직 결제되지는 않았어요."}});
 document.querySelectorAll(".res-nav [role=tab]").forEach((b,i,all)=>{b.addEventListener("click",()=>setTab(b.dataset.tab));b.addEventListener("keydown",e=>{all=Array.from(b.closest("[role=tablist]").querySelectorAll("[role=tab]"));i=all.indexOf(b);const k=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(!k)return;e.preventDefault();setTab(all[(i+k+all.length)%all.length].dataset.tab,true)})});
@@ -3477,13 +3478,18 @@ function compatScore(a,b){
  sys.forEach(o=>{o.score=Math.round(clamp(o.base+o.items.reduce((s,x)=>s+x[1],0),40,98))});
  const total=Math.round(clamp(sys.reduce((s,o)=>s+o.score*o.w,0),45,98));
  return {total,sys}}
-const PKEY='oracle-partners';
-function partnerList(){try{const v=JSON.parse(localStorage.getItem(PKEY)||'[]');return Array.isArray(v)?v:[]}catch(_){return []}}
+const PKEY='oracle-partners';let PSRV=null;
+function partnerLocal(){try{const v=JSON.parse(localStorage.getItem(PKEY)||'[]');return Array.isArray(v)?v:[]}catch(_){return []}}
+function partnerList(){return accountUser?(PSRV||[]):partnerLocal()}
 function partnerStore(l){try{localStorage.setItem(PKEY,JSON.stringify(l.slice(0,10)))}catch(_){}}
-function partnerSavedHTML(){const l=partnerList();if(!l.length)return '';return '<p class="cmp-saved-h">저장한 상대</p><ul>'+l.map((p,i)=>'<li><button type="button" class="cmp-load" data-pi="'+i+'"><b>'+topicEsc(p.name)+'</b><small>'+topicEsc(p.date)+(p.score?' · 최근 궁합 '+p.score+'점':'')+'</small></button><button type="button" class="cmp-del" data-pd="'+i+'" aria-label="'+topicEsc(p.name)+' 삭제">삭제</button></li>').join('')+'</ul>'}
-function partnerRefresh(){const el=$('cmpSaved');if(el)el.innerHTML=partnerSavedHTML()}
+async function partnerSync(){if(!accountUser){PSRV=null;partnerRefresh();return}try{const d=await accountAPI('/partners');PSRV=Array.isArray(d.partners)?d.partners:[]}catch(_){PSRV=PSRV||[]}partnerRefresh()}
+async function partnerSave(p){if(accountUser){try{await accountAPI('/partners',{partner:p,consent:true});await partnerSync();return '내 계정에 저장했어요.'}catch(e){return '저장하지 못했어요. 잠시 뒤 다시 시도해 주세요.'}}
+ const l=partnerLocal().filter(x=>!(x.name===p.name&&x.date===p.date));l.unshift({...p,at:new Date().toISOString().slice(0,10)});partnerStore(l);partnerRefresh();return '이 기기에 저장했어요.'}
+async function partnerDelete(i){const p=partnerList()[i];if(!p)return;if(accountUser&&p.id){try{await accountAPI('/partners',{action:'delete',id:p.id})}catch(_){}await partnerSync()}else{const l=partnerLocal();l.splice(i,1);partnerStore(l);partnerRefresh()}}
+function partnerSavedHTML(){const l=partnerList();if(!l.length)return '';return '<p class="cmp-saved-h">저장한 상대'+(accountUser?' (내 계정)':' (이 기기)')+'</p><ul>'+l.map((p,i)=>'<li><button type="button" class="cmp-load" data-pi="'+i+'"><b>'+topicEsc(p.name)+'</b><small>'+topicEsc(p.date)+(p.score!=null?' · 최근 궁합 '+p.score+'점':'')+'</small></button><button type="button" class="cmp-del" data-pd="'+i+'" aria-label="'+topicEsc(p.name)+' 삭제">삭제</button></li>').join('')+'</ul>'}
+function partnerRefresh(){const el=$('cmpSaved');if(el)el.innerHTML=partnerSavedHTML();const lb=document.querySelector('#compatibility-form .cmp-save-lb');if(lb)lb.textContent=accountUser?'상대방의 동의를 받았고, 내 계정에 저장할게요':'이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)'}
 document.addEventListener('click',e=>{const ld=e.target.closest('.cmp-load'),dl=e.target.closest('.cmp-del');if(!ld&&!dl)return;const l=partnerList();
- if(dl){const p=l[+dl.dataset.pd];if(p&&confirm(p.name+'님의 정보를 삭제할까요?')){l.splice(+dl.dataset.pd,1);partnerStore(l);partnerRefresh()}return}
+ if(dl){const p=l[+dl.dataset.pd];if(p&&confirm(p.name+'님의 정보를 삭제할까요?'))partnerDelete(+dl.dataset.pd);return}
  const p=l[+ld.dataset.pi],f=$('compatibility-form');if(!p||!f)return;const el=f.elements;el.partnerName.value=p.name;el.partnerRoman.value=p.roman;el.partnerRoman.dataset.edited='1';
  [...el.partnerSex].forEach(r=>r.checked=r.value===p.sex);el.partnerDate.value=p.date;el.partnerTime.value=p.time||'';el.partnerNoTime.checked=!!p.notime;el.partnerTime.disabled=!!p.notime;
  el.partnerNoPlace.checked=p.pi==null;el.partnerPlace.disabled=p.pi==null;if(p.pi!=null)el.partnerPlace.value=String(p.pi);f.requestSubmit()});
@@ -3495,7 +3501,7 @@ function compatFormHTML(){const opts=PLACES.map((p,i)=>`<option value="${i}">${p
  <label>상대 생년월일 (양력)<input name="partnerDate" type="date" min="1920-01-01" required></label>
  <label>출생 시각<input name="partnerTime" type="time"></label><label class="chk"><input type="checkbox" name="partnerNoTime">출생 시각을 선택하지 않을래요</label>
  <label>출생지<select name="partnerPlace">${opts}</select></label><label class="chk"><input type="checkbox" name="partnerNoPlace">출생지를 선택하지 않을래요</label>
- <label class="chk"><input type="checkbox" name="partnerSave" checked>이 상대 정보를 이 기기에 저장</label></div><button type="submit">궁합 보기</button><div id="compatibility-result" class="chart-feedback" aria-live="polite"></div></form></section>`}
+ <label class="chk"><input type="checkbox" name="partnerSave"><span class="cmp-save-lb">${accountUser?"상대방의 동의를 받았고, 내 계정에 저장할게요":"이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)"}</span></label><p class="cmp-priv">상대방의 이름과 생년월일은 그 사람의 개인정보예요. 상대방이 동의한 경우에만 저장하고, 필요 없으면 언제든 삭제해 주세요. 이름 대신 별명을 써도 돼요.</p></div><button type="submit">궁합 보기</button><div id="compatibility-result" class="chart-feedback" aria-live="polite"></div></form></section>`}
 document.addEventListener('input',e=>{const f=e.target.form;if(!f||f.id!=='compatibility-form')return;
  if(e.target.name==='partnerName'&&!f.partnerRoman.dataset.edited){f.partnerRoman.value=romanize(e.target.value)||''}
  if(e.target.name==='partnerRoman')f.partnerRoman.dataset.edited=e.target.value?'1':''});
@@ -3511,9 +3517,9 @@ function compatSubmit(f){const out=$('compatibility-result'),date=f.partnerDate.
  const inp={name,roman,sex:f.partnerSex.value,cal:'s',date,time:noT?'12:00':f.partnerTime.value,notime:noT,place};
  let other;try{other=buildChart(inp)}catch(err){out.textContent='상대의 출생 정보를 계산하지 못했어요. 입력값을 확인해 주세요.';return}
  const res=compatScore(CH,other);COMPAT={b:other,res};
- if(f.partnerSave&&f.partnerSave.checked){const l=partnerList().filter(x=>!(x.name===name&&x.date===date));l.unshift({name,roman,sex:f.partnerSex.value,date,time:noT?'':f.partnerTime.value,notime:noT,pi:noP?null:+f.partnerPlace.value,score:res.total,at:new Date().toISOString().slice(0,10)});partnerStore(l);partnerRefresh()}
+ if(f.partnerSave&&f.partnerSave.checked){partnerSave({name,roman,sex:f.partnerSex.value,date,time:noT?'':f.partnerTime.value,notime:noT,pi:noP?null:+f.partnerPlace.value,score:res.total}).then(m=>{const n=$('cmpSaveMsg');if(n)n.textContent=m})}
  const lv=res.total>=85?'아주 잘 맞는 편':res.total>=75?'잘 맞는 편':res.total>=65?'맞춰 가는 궁합':'서로 노력이 필요한 궁합';
- out.innerHTML=`<div class="cmp-score"><span>${topicEsc(name)}님과 나의 궁합</span><b>${res.total}<small>점</small></b><em>${lv}</em></div><p class="cmp-note">점수가 어떻게 나왔는지, 다섯 점술별 근거와 관계에서 맞춰 갈 점은 <b>궁합 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" id="compatOpen">궁합 리포트 보기 →</button>`}
+ out.innerHTML=`<div class="cmp-score"><span>${topicEsc(name)}님과 나의 궁합</span><b>${res.total}<small>점</small></b><em>${lv}</em></div><p class="cmp-note">점수가 어떻게 나왔는지, 다섯 점술별 근거와 관계에서 맞춰 갈 점은 <b>궁합 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" id="compatOpen">궁합 리포트 보기 →</button><p class="cmp-priv" id="cmpSaveMsg" aria-live="polite"></p>`}
 function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'상대',tot=res.total,EN=['목','화','토','금','수'];
  const all=res.sys.flatMap(o=>o.items.map(x=>[o.n,...x])),pos=all.filter(x=>x[2]>0).sort((x,y)=>y[2]-x[2]),neg=all.filter(x=>x[2]<0).sort((x,y)=>x[2]-y[2]);
  const miss=[b.inp.notime&&'상대 출생 시각',b.inp.place&&b.inp.place.none&&'상대 출생지'].filter(Boolean);
