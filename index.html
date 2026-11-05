@@ -1580,6 +1580,30 @@ html.rd #report .rv3-act{background:#1d273b}html.rd #report .rv3-basis li{backgr
 #report .annual-caption{font-size:11px;line-height:1.7;margin:12px 0 0;color:var(--ink2)}
 @media print{.reading-evidence,#report .reading-evidence{font-size:9pt;color:var(--ink2)}#report .annual-score-chart{break-inside:avoid}#report .annual-track>span{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
 
+
+/* Parentheses carry evidence in the same text style as the interpretation. */
+.reading-meaning,.reading-evidence,#report .reading-evidence{display:inline;font:inherit;color:inherit;line-height:inherit;letter-spacing:inherit;margin:0;font-weight:inherit;overflow-wrap:anywhere}
+#report .rv3-lead .reading-evidence{font:inherit;color:inherit}
+#report .report-reading-key{margin:0 0 30px;padding-bottom:20px;border-bottom:1px solid var(--line2)}
+#report .report-reading-key p{margin:10px 0 0}
+#report .rv3-contents{min-height:420px}
+#report .encounter-guide{display:grid;gap:22px;margin:20px 0 28px}
+#report .encounter-guide>div{display:grid;grid-template-columns:58px minmax(0,1fr);gap:14px;align-items:start}
+#report .encounter-guide dt{font-weight:700;color:var(--gold)}
+#report .encounter-guide dd{margin:0;line-height:1.9;overflow-wrap:anywhere}
+.spouse-preview .spouse-preview-content{grid-template-columns:120px minmax(0,1fr);gap:18px;align-items:start}
+.spouse-preview .spouse-preview-content figure{width:100%;margin:0}
+.spouse-preview .spouse-preview-copy{text-align:left;min-width:0}
+.spouse-preview .spouse-preview-copy p{font-size:13px;line-height:1.65;margin:0 0 12px}
+.spouse-preview .spouse-preview-copy .spouse-preview-note{font-size:12px;color:var(--muted);margin-top:12px}
+.spouse-preview .spouse-portrait{aspect-ratio:4/5;border-radius:10px}
+.spouse-preview .spouse-portrait-label{font-size:10px;line-height:1.4;padding:18px 5px 8px}
+.spouse-preview .spouse-face-traits{justify-content:flex-start;gap:5px}
+.spouse-preview .spouse-face-traits span{font-size:11px;padding:4px 6px}
+.spouse-preview h4{font-size:21px;margin:8px 0 18px}
+@media(max-width:420px){.spouse-preview .spouse-preview-content{grid-template-columns:100px minmax(0,1fr);gap:12px}.spouse-preview{padding:15px}.spouse-preview .spouse-preview-copy button{font-size:12px;padding:8px;max-width:100%}}
+@media print{#report .r-page.rv3-contents{break-before:page!important;break-after:page!important;min-height:230mm}#report .rv3-intro{break-after:page!important}}
+
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -2421,12 +2445,12 @@ function natalReadingHTML(ch){
  const d=ch.stems.d,asc=ch.asc!=null?sign(ch.asc):null;
  const meaning=DM[ST[d]]+' 사람입니다. '+(ch.strong?'남의 기준을 따르기보다 스스로 방향을 정하고 움직일 때 강점을 살리기 좋아요.':'좋은 사람과 편안한 환경을 곁에 두고 도움을 주고받을 때 강점을 살리기 좋아요.');
  const strengths=SUNG[sign(ch.sun)]+'을 지녔어요. '+(asc!=null?'처음 만나는 사람에게는 '+SUNP[asc]+'의 인상으로 기억되기 쉬워요. ':'')+NAKG[DL[ch.nk%9]]+'도 강점으로 읽어요.';
- return '<p><span class="reading-meaning">'+topicEsc(meaning)+'</span><small class="reading-evidence">근거: 일간 '+topicEsc(ST[d])+' · '+(ch.strong?'신강':'신약')+'</small></p><p><span class="reading-meaning">'+topicEsc(strengths)+'</span><small class="reading-evidence">근거: 태양 '+topicEsc(ZOD[sign(ch.sun)])+'자리'+(asc!=null?' · 상승궁 '+topicEsc(ZOD[asc])+'자리':'')+' · 낙샤트라 '+topicEsc(NAK[ch.nk])+'</small></p>'+readingParagraph(natalProse(ch)[2]);
+ return '<p><span class="reading-meaning">'+topicEsc(meaning)+'</span><span class="reading-evidence"> (일간 '+topicEsc(ST[d])+' · '+(ch.strong?'신강':'신약')+')</span></p><p><span class="reading-meaning">'+topicEsc(strengths)+'</span><span class="reading-evidence"> (태양 '+topicEsc(ZOD[sign(ch.sun)])+'자리'+(asc!=null?' · 상승궁 '+topicEsc(ZOD[asc])+'자리':'')+' · 낙샤트라 '+topicEsc(NAK[ch.nk])+')</span></p>'+readingParagraph(natalProse(ch)[2]);
 }
 function resultIntroHTML(ch){const tags=reportTags(ch);
   const kw=tags.slice(0,3).map(t=>`<div><b>${RTAG[t.k].kw}</b><span>${RTAG[t.k].s}</span></div>`).join("");
   const ag=tags.filter(t=>t.n>=2).slice(0,4);
-  const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><span class="reading-evidence">근거: ${J(t.ev.join(", "),"이","가")} ${t.ev.length>1?"모두 같은 이야기를 해요":"이렇게 말해요"}.</span><small>${t.sys.join(" · ")}</small></div></li>`).join("");
+  const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><span class="reading-evidence"> (${t.ev.join(", ")})</span><small>${t.sys.join(" · ")}</small></div></li>`).join("");
   return `<p class="res-lead">${plain(traitDescription(ch))}</p>
   <div class="r-kw">${kw}</div>
   <h3 class="res-h">운명 성향</h3>${fateTraitsHTML(ch)}<p class="r-note">출생 차트의 오행 개수와 태양 별자리로 나눈 재미용 분류예요. 심리검사가 아니며, 점은 강도가 아닌 방향을 나타내요.</p>
@@ -2833,7 +2857,7 @@ function todayHTML(ch){const f=dayFortune(ch,new Date());const lc=LUCKC[f.le];
   <ul class="td-cats">${CATS.map((c,ci)=>`<li><span>${SHORT[ci]}</span><i><em style="width:${(f.sc[ci]-55)/45*100}%;background:var(--${c.k})"></em></i><b>${f.sc[ci]}</b></li>`).join("")}</ul>
   <div class="td-luck"><div>${ico("color")}<span>행운의 색</span><b><i class="sw" style="background:${lc[1]}"></i>${lc[0]}</b></div><div>${ico("numb")}<span>행운의 숫자</span><b>${f.pd}</b></div><div>${ico("dir")}<span>좋은 방향</span><b>${LUCKD[f.le]}</b></div></div>
   <h4 class="td-h">다섯 점술이 본 오늘</h4>
-  <ul class="td-sys">${rows.map(([k,n,v,t])=>`<li>${ico(k)}<div><small>${n}</small><b>${t}</b><small class="reading-evidence">근거: ${v}</small></div></li>`).join("")}</ul></div>`}
+  <ul class="td-sys">${rows.map(([k,n,v,t])=>`<li>${ico(k)}<div><small>${n}</small><b>${t}</b><span class="reading-evidence"> (${v})</span></div></li>`).join("")}</ul></div>`}
 function weekHTML(ch){const ds=weekDays(),F=ds.map(d=>dayFortune(ch,d)),td=new Date().getDay(),ti=(td+6)%7;
   const hi=F.reduce((b,f,i)=>f.all>F[b].all?i:b,0),lo=F.reduce((b,f,i)=>f.all<F[b].all?i:b,0);
   const ca=[0,1,2,3].map(c=>F.reduce((a,f)=>a+f.sc[c],0)/7),bc=ca.indexOf(Math.max(...ca));
@@ -3187,7 +3211,8 @@ function spouseFaceProfile(ch){
  return candidates[spouseFaceHash(key)%candidates.length];
 }
 
-function spousePreviewHTML(ch,topic='marry'){const face=spouseFaceProfile(ch),selected=face.gender,love=topic==='love',person=love?'연애 상대':'배우자',title=love?'나와 인연이 될 사람은 어떤 외형을 갖고 있을까요?':'나의 배우자가 될 사람은 어떤 외형을 갖고 있을까요?';return '<section class="spouse-preview" data-face-id="'+face.id+'" aria-labelledby="spouse-preview-title-'+topic+'"><header><span class="eyebrow">미리 만나는 인연의 모습</span><h4 id="spouse-preview-title-'+topic+'">'+title+'</h4></header><div class="spouse-preview-content"><figure><div class="spouse-portrait"><img src="'+face.preview+'" width="48" height="60" alt="흐리게 처리한 '+(selected==='male'?'남성':'여성')+' '+person+' 예시 일러스트" decoding="async"><div class="spouse-portrait-label"><span>선명한 모습은 나의 리포트에서</span></div></div><figcaption>내 차트와 연결한 얼굴 이미지</figcaption></figure><div class="spouse-preview-copy"><p>사주, 서양 점성술, 인도 점성술, 수비학, 마야력으로 분석한 당신에게 맞는 사람의 외형을 예측해드립니다.</p><div class="spouse-face-traits">'+face.features.map(t=>'<span>'+t+'</span>').join('')+'</div><p class="spouse-promise">운명의 상대가 나타났을 때,<br>알아볼 수 있을 거예요.</p><button type="button" data-spouse-report>상세 리포트 내용 보기 ↓</button></div></div></section>'}
+function spousePreviewHTML(ch,topic='marry'){const face=spouseFaceProfile(ch),person=topic==='love'?'연애 상대':'배우자',E=topicEsc;return '<section class="spouse-preview" data-face-id="'+face.id+'" aria-labelledby="spouse-preview-title-'+topic+'"><header><span class="eyebrow">미리 만나는 인연의 모습</span><h4 id="spouse-preview-title-'+topic+'">나와 잘 맞는 '+person+'</h4></header><div class="spouse-preview-content"><figure><div class="spouse-portrait"><img src="'+face.preview+'" width="120" height="150" alt="흐리게 처리한 '+person+'의 상징 이미지" decoding="async"><div class="spouse-portrait-label"><span>선명한 모습은 리포트에서</span></div></div></figure><div class="spouse-preview-copy"><p>내 차트로 살펴본 인연의 분위기예요.</p><div class="spouse-face-traits">'+face.features.map(t=>'<span>'+E(t)+'</span>').join('')+'</div><p class="spouse-preview-note">얼굴은 실제 인물 예측이 아닌 상징 이미지예요.</p><button type="button" data-spouse-report>상세 리포트 보기 ↓</button></div></div></section>'}
+
 document.addEventListener('click',e=>{const b=e.target.closest('[data-spouse-report]');if(!b)return;const section=b.closest('.spouse-preview');section?.parentElement.querySelector('.topic-offer')?.scrollIntoView({behavior:reduceM?'auto':'smooth',block:'center'})});
 const SUBTOPIC_COPY={"employment":{"title":"나에게 맞는 첫 일자리는?","intro":"취업의 방향과 준비 시기, 기회를 여는 강점을 살펴보세요.","rows":["어떤 직무에 지원하면 좋을까?","취업을 준비하기 좋은 흐름은?","면접에서 보여줄 나의 강점은?"],"outline":["나에게 맞는 직무와 조직 분위기","취업 준비 시기와 지원 전략","면접에서 드러낼 강점과 귀인"]},"move":{"title":"다음 직장에서는 더 잘 맞을까요?","intro":"이직의 흐름과 다음 일터를 고르는 기준을 살펴보세요.","rows":["이직을 검토할 시기는?","다음 직장은 어떤 기준으로 고를까?","옮기기 전에 준비할 것은?"],"outline":["이직·전환을 검토할 시기","잘 맞는 업무와 조직 환경","경력 정리와 도움을 줄 인연"]},"invest":{"title":"나에게 맞는 투자 습관은?","intro":"재물의 흐름과 돈을 다루는 성향을 함께 살펴보세요.","rows":["투자를 돌아볼 시기는?","내 돈 관리 방식은?","투자 전에 점검할 습관은?"],"outline":["재물 흐름과 투자 성향","결정 전 돌아볼 소비·위험 감수 습관","목표와 자금 계획을 정리하는 실천"]},"property":{"title":"나에게 맞는 공간과 자산 계획은?","intro":"주거의 우선순위와 큰 지출을 준비하는 흐름을 살펴보세요.","rows":["주거·자산 계획을 점검할 시기는?","공간을 고를 때 무엇을 중시할까?","큰 결정을 앞두고 준비할 것은?"],"outline":["주거와 자산 계획을 돌아볼 흐름","생활 성향에 맞는 공간의 기준","예산과 장기 계획을 정리하는 실천"]},"business":{"title":"나의 강점으로 어떤 사업을 시작할까?","intro":"사업에서 살릴 강점과 시작 전 준비할 일을 살펴보세요.","rows":["어떤 사업 방식이 나에게 맞을까?","사업 준비를 검토할 흐름은?","시작하기 전에 해볼 일은?"],"outline":["사업에 활용할 강점과 역할","사업·확장을 준비할 흐름","협업 상대와 작은 검증 과제"]},"exam":{"title":"대입·수능, 나에게 맞게 준비하기","intro":"공부 성향과 진학 준비의 흐름을 살펴보세요.","rows":["나에게 맞는 수능 공부 방식은?","진학 준비에서 눈여겨볼 흐름은?","시험 전 바꿔볼 습관은?"],"outline":["공부 성향과 과목별 접근 방식","진학 준비와 학습 흐름","오답·복습·실전 연습 계획"]},"cert":{"title":"다음 자격증, 어떻게 준비할까요?","intro":"경력과 연결할 배움, 꾸준히 완주하는 공부 방식을 살펴보세요.","rows":["어떤 분야의 자격증을 살펴볼까?","자격증 공부에 맞는 방식은?","언제부터 어떻게 준비할까?"],"outline":["강점과 연결되는 배움의 분야","자격증 준비 시기와 학습 방식","실기·필기 준비와 완주 습관"]}};
 Object.entries(SUBTOPIC_COPY).forEach(([k,v])=>{TOPIC_REPORT_CONTENTS[k]=v.outline});
@@ -3519,7 +3544,10 @@ function readingParts(value){
  }
  return {main:main.join(' '),basis:basis.join(' '),label:tag?tag[1]:''};
 }
-function readingInline(value){const p=readingParts(value),E=topicEsc;return (p.main?'<span class="reading-meaning">'+E(p.main)+'</span>':'')+(p.basis?'<small class="reading-evidence"><span>근거</span> '+E(p.basis)+'</small>':'')}
+function readingInline(value){const p=readingParts(value),E=topicEsc;let basis=p.basis;
+ if(p.main&&basis){for(const sentence of p.main.split(/(?<=[.!?。])\s+/).filter(Boolean)){basis=basis.replace(sentence,'')}basis=basis.replace(/(태양|달|금성|수성|화성)이\s+/g,'$1 ').replace(/에 있어(?=\s|$)/g,'').replace(/\s+/g,' ').trim()}
+ return (p.main?'<span class="reading-meaning">'+E(p.main)+'</span>':'')+(basis?'<span class="reading-evidence"> ('+E(basis)+')</span>':'')}
+
 function readingParagraph(value,cls=''){return '<p'+(cls?' class="'+cls+'"':'')+'>'+readingInline(value)+'</p>'}
 function clarifyReading(root){if(!root)return;root.querySelectorAll('.r-prose p').forEach(p=>{p.innerHTML=readingInline(p.textContent)})}
 /* Annual values stay unchanged. Every bar uses the same explicit 60–100 axis. */
@@ -3535,11 +3563,18 @@ function annualScoreChart(t){
  return charts?'<div class="annual-score-grid">'+charts+'</div>':'';
 }
 
+function encounterData(ch){
+ const rows=sysScan(ch,'mate').filter(r=>r.S.length&&r.age>=20),top=rows.slice().sort((a,b)=>b.v-a.v).slice(0,2).sort((a,b)=>a.y-b.y),best=top[0],element=(sign(ch.asc??ch.sun)+6)%12%4;
+ const months=best?(best.months||[]).slice(0,2).map(m=>m[0]+'월').join('·'):'';
+ return {when:best?top.map(t=>t.y+'년').join('·')+(months?' 중 '+best.y+'년 '+months+' 전후':''):'현재 계산 범위에서는 두드러지는 만남 시기를 좁히기 어려워요.',where:MEET[element],how:['운동 수업이나 여행·행사에서 함께 참여하는 활동을 골라보세요. 활동이 끝난 뒤 다음 모임을 제안하며 대화를 이어가세요.','협업 프로젝트나 업무 관련 모임에서 반복해서 만날 기회를 만들어보세요. 함께 맡은 일을 계기로 자연스럽게 대화를 늘려보세요.','관심사가 같은 모임이나 지인의 소개를 활용해보세요. 온라인에서 대화가 잘 통한다면 공개된 장소에서 짧게 만나는 약속부터 잡아보세요.','전시·공연 모임에 참여하거나 지인에게 소규모 만남을 부탁해보세요. 함께 본 작품이나 좋아하는 취향을 주제로 대화를 시작해보세요.'][element],basis:best?best.sys.join('·')+'의 관계 시기 신호 · '+best.y+'년':'관계 시기 신호가 부족한 경우 특정 날짜를 정하지 않음'};
+}
+function encounterHTML(ch){const d=encounterData(ch),E=topicEsc;return '<dl class="encounter-guide"><div><dt>언제</dt><dd>'+E(d.when)+' <span class="reading-evidence">('+E(d.basis)+')</span></dd></div><div><dt>어디서</dt><dd>'+E(d.where)+' <span class="reading-evidence">(관계 자리의 별자리 상징을 장소 유형으로 해석)</span></dd></div><div><dt>어떻게</dt><dd>'+E(d.how)+'</dd></div></dl><p>시기는 만남의 가능성을 돌아보는 참고값이며, 위의 행동은 인연을 넓히기 위한 제안이에요. 이미 관계가 있다면 함께하는 활동과 대화를 늘리는 계기로 읽어주세요.</p>'}
+
 function approvedReportHTML(data,key){
  const E=topicEsc;
  if(!Array.isArray(data.sections))return '<section class="r-page"><h2>'+E(data.title)+'</h2><div class="private-report-text">'+E(data.body)+'</div></section>';
  const v3=data.sections.some(s=>s.lead!=null),ch=reportChart(),comp=key==='comprehensive';
- const secs=data.sections.slice(),n2=i=>String(i+1).padStart(2,'0');
+ const secs=data.sections.map(s=>["love","marry"].includes(key)&&s.kind==="meet"?{...s,question:"인연은 언제·어디서·어떻게 만날까요?"}:s),n2=i=>String(i+1).padStart(2,'0');
  if(['love','marry'].includes(key)){const at=secs.findIndex(s=>s.kind==='partner');if(at>=0){const partner={...secs.splice(at,1)[0],question:'나와 잘 맞는 사람'};secs.unshift(partner)}}
  let bodies=null;const charts={west:()=>{bodies=bodies||birthBodies(ch);return birthWest(ch,bodies)},vedic:()=>{bodies=bodies||birthBodies(ch);return birthVedic(ch,bodies)},numbers:()=>birthNumerology(ch)+birthMaya(ch)};
  const chartHTML=k=>{if(!ch||!charts[k])return '';try{return '<div class="birth-atlas rv3-chart">'+charts[k]()+'</div>'}catch(e){return ''}};
@@ -3550,19 +3585,19 @@ function approvedReportHTML(data,key){
  const paraHTML=s=>{const paras=(s.paragraphs||[s.answer]).filter(Boolean),meaning=paras.filter(p=>readingParts(p).main),evidence=paras.filter(p=>!readingParts(p).main);return meaning.map(p=>readingParagraph(p)).join('')+(evidence.length?'<div class="reading-sources" aria-label="풀이의 근거">'+evidence.map(p=>readingParagraph(p)).join('')+'</div>':'')};
  const chapter=(s,i)=>{
   const face=s.kind==='partner'?faceHTML():null;
-  const body=paraHTML(s)+tableHTML(s.table)+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
+  const body=(["love","marry"].includes(key)&&s.kind==='meet'&&ch?encounterHTML(ch):paraHTML(s))+tableHTML(s.table)+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
   return '<section class="r-page rv3-ch" id="chapter-'+i+'"><header class="rv3-hd"><span class="rv3-no">'+(v3?'CHAPTER '+n2(i):(i+1)+'장')+'</span><h2>'+E(s.question)+'</h2></header>'+
-   (s.lead&&readingParts(s.lead).main?readingParagraph(s.lead,'rv3-lead'):'')+
+   (s.lead&&readingParts(s.lead).main&&!(ch&&['love','marry'].includes(key)&&s.kind==='meet')?readingParagraph(s.lead,'rv3-lead'):'')+
 
    (face?'<div class="rv3-profile">'+face+'<div class="rv3-profile-tx">'+body+'</div></div>':body)+
    (s.chart?chartHTML(s.chart):'')+(s.lead&&!readingParts(s.lead).main?readingParagraph(s.lead):'')+'</section>'};
  const facts=Array.isArray(data.facts)&&data.facts.length?'<div class="rv3-tw"><table class="rv3-table rv3-facts"><caption>계산된 출생 지표</caption><thead><tr><th scope="col">지표</th><th scope="col">값</th><th scope="col">전통적 의미</th></tr></thead><tbody>'+data.facts.map(f=>'<tr><th scope="row">'+E(f[0])+'</th><td>'+E(f[1])+'</td><td>'+E(f[2])+'</td></tr>').join('')+'</tbody></table></div>':'';
- const toc='<nav class="rv3-toc" aria-label="리포트 목차"><h3>목차</h3><ol>'+secs.map((s,i)=>'<li><a href="#chapter-'+i+'"><b>'+(v3?n2(i):i+1)+'</b>'+E(s.question)+'</a></li>').join('')+'<li><a href="#report-appendix"><b>부록</b>내 출생 정보와 전문 지표</a></li></ol></nav>';
+ const toc='<nav class="rv3-toc" aria-label="리포트 목차"><ol>'+secs.map((s,i)=>'<li><a href="#chapter-'+i+'"><b>'+(v3?n2(i):i+1)+'</b>'+E(s.question)+'</a></li>').join('')+'<li><a href="#report-appendix"><b>부록</b>내 출생 정보와 전문 지표</a></li></ol></nav>';
  const ymd=new Date().toLocaleDateString('ko-KR');
  const hasTiming=secs.some(s=>s.kind==='timing'||s.kind==='flow');
  const flowOld=!hasTiming&&Array.isArray(data.years)?'<section class="r-page rv3-ch"><header class="rv3-hd"><h2>앞으로 10년의 '+E(data.category)+' 흐름</h2></header><div class="r-yearflow">'+data.years.map(r=>'<div><b>'+E(r.year)+'년</b><meter min="60" max="100" value="'+Number(r.score)+'">'+Number(r.score)+'</meter><span>'+Number(r.score)+'점</span></div>').join('')+'</div><p class="r-note">점수는 확률이 아닌 자체 흐름 지표입니다.</p></section>':'';
  return '<header class="r-cover rv3-cover"><span class="eyebrow">ORACLE NETWORK / PERSONAL REPORT</span>'+COMPASS+'<h2>'+E(data.title)+'</h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><dl class="r-cover-meta"><div><dt>발행일</dt><dd>'+ymd+'</dd></div><div><dt>구성</dt><dd>'+secs.length+'장</dd></div></dl></header>'+
-  '<section class="r-page rv3-ch rv3-intro"><header class="rv3-hd"><span class="rv3-no">SUMMARY</span><h2>핵심 요약</h2></header><ol class="rv3-sum">'+(data.summary||[]).filter(x=>readingParts(x).main).map(x=>'<li>'+readingInline(x)+'</li>').join('')+'</ol>'+toc+'</section>'+
+  '<section class="r-page rv3-ch rv3-intro"><aside class="report-reading-key"><b>리포트 읽는 법</b><p>먼저 쉬운 해석을 읽어주세요. 본문에 괄호로 덧붙인 내용은 해당 해석의 계산값이나 점술상 근거입니다. 연도와 점수는 참고용 자체 지표이며 실제 사건을 보장하지 않아요.</p></aside><header class="rv3-hd"><span class="rv3-no">SUMMARY</span><h2>핵심 요약</h2></header><ol class="rv3-sum">'+(data.summary||[]).filter(x=>readingParts(x).main).map(x=>'<li>'+readingInline(x)+'</li>').join('')+'</ol></section><section class="r-page rv3-ch rv3-contents"><header class="rv3-hd"><span class="rv3-no">CONTENTS</span><h2>목차</h2></header>'+toc+'</section>'+
   secs.map(chapter).join('')+flowOld+reportScoreGuideHTML(data,key)+
  '<section class="r-page rv3-ch rv3-appendix" id="report-appendix"><header class="rv3-hd"><span class="rv3-no">APPENDIX</span><h2>내 출생 정보와 전문 지표</h2></header>'+facts+'<div class="reading-sources">'+(data.summary||[]).filter(x=>!readingParts(x).main).map(x=>readingParagraph(x)).join('')+'</div>'+
  secs.filter(s=>(s.basis||[]).some(Boolean)).map(s=>'<div class="rv3-tw"><table class="rv3-table"><caption>'+E(s.question)+' · 근거 지표</caption><thead><tr><th scope="col">구분</th><th scope="col">계산값 및 지표</th></tr></thead><tbody>'+s.basis.filter(Boolean).map(b=>'<tr><th scope="row">'+E(s.question)+'</th><td>'+E(b)+'</td></tr>').join('')+'</tbody></table></div>').join('')+'</section>'+'<p class="r-foot">'+E(data.note)+'</p>';
