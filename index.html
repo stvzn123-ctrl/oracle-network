@@ -1772,6 +1772,20 @@ html.rd #report .annual-line-chart circle{fill:var(--fg)}
 #report .pp{margin:0 0 12px}#report .pp-h{font-weight:800;font-size:16px;color:var(--navy,var(--fg));margin:0 0 8px}#report .pp-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}#report .pp-chips span{font-size:12.5px;padding:4px 10px;border-radius:999px;border:1px solid var(--line2);background:#fffaf1}#report .pp-list{margin:0;display:grid;gap:4px}#report .pp-list div{display:grid;grid-template-columns:84px 1fr;gap:8px;font-size:14px;line-height:1.55;padding:5px 0;border-bottom:1px dashed var(--line)}#report .pp-list dt{color:var(--gold);font-weight:700;font-size:12.5px}#report .pp-list dd{margin:0}#report .pp-note{font-size:12px;color:var(--muted);margin:6px 0 0}#report .fun-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}#report .fun-card{padding:12px;border-radius:10px;background:#f4ebdb;display:flex;flex-direction:column;gap:4px}#report .fun-card small{font-size:12px;color:var(--gold);font-weight:700}#report .fun-card b{font-size:15px;line-height:1.45;word-break:keep-all}html.rd #report .fun-card{background:#1d273b}html.rd #report .pp-chips span{background:#1d273b}
 .spouse-facts{margin:10px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:6px}.spouse-facts div{padding:8px 10px;border:1px solid var(--line2);border-radius:10px}.spouse-facts dt{font-size:11.5px;color:var(--gold)}.spouse-facts dd{margin:2px 0 0;font-size:14px;font-weight:700}
 #report .pp-facts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 8px}#report .pp-facts div{padding:8px 10px;border-radius:8px;background:#f4ebdb}#report .pp-facts small{display:block;font-size:11.5px;color:var(--gold);font-weight:700}#report .pp-facts b{font-size:15px;word-break:keep-all}#report .pp-vibe{font-size:14.5px;font-weight:700;margin:0}#report .pp-rest{margin-top:14px}html.rd #report .pp-facts div{background:#1d273b}
+
+#report .r-page .rv3-profile{grid-template-columns:100px minmax(0,1fr);gap:20px;align-items:start;margin:0 0 24px}
+#report .r-page .rv3-profile-tx{min-width:0}
+#report .r-page .pp-rest{margin:24px 0 12px}
+#report .r-page .pp-list>div{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;padding:12px 0}
+#report .r-page .pp-list dt{font-size:12px;line-height:1.7}
+#report .r-page .pp-list dd{margin:0;font-size:14px;line-height:1.8;overflow-wrap:anywhere}
+#report .r-page p.pp-note{font-size:11px;line-height:1.7;color:var(--evidence-ink);font-weight:400;margin:8px 0 24px}
+html.rd #report .r-page p.pp-note{color:var(--evidence-ink-dark)}
+#report .r-page .partner-reading{margin-top:24px;padding-top:24px;border-top:1px solid var(--line)}
+#report .r-page .encounter-story{margin:0 0 24px}
+#report .r-page .encounter-story h3{margin:0 0 12px}
+@media(max-width:420px){#report .r-page .rv3-profile{grid-template-columns:85px minmax(0,1fr);gap:16px}#report .r-page .pp-list>div{grid-template-columns:76px minmax(0,1fr);gap:10px}}
+
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -4111,7 +4125,8 @@ function encounterData(ch){
  const months=best?(best.months||[]).slice(0,2).map(m=>m[0]+'월').join('·'):'';
  return {when:best?top.map(t=>t.y+'년').join('·')+(months?' 중 '+best.y+'년 '+months+' 전후':''):'현재 계산 범위에서는 두드러지는 만남 시기를 좁히기 어려워요.',where:MEET[element],how:['운동 수업이나 여행·행사에서 함께 참여하는 활동을 골라보세요. 활동이 끝난 뒤 다음 모임을 제안하며 대화를 이어가세요.','협업 프로젝트나 업무 관련 모임에서 반복해서 만날 기회를 만들어보세요. 함께 맡은 일을 계기로 자연스럽게 대화를 늘려보세요.','관심사가 같은 모임이나 지인의 소개를 활용해보세요. 온라인에서 대화가 잘 통한다면 공개된 장소에서 짧게 만나는 약속부터 잡아보세요.','전시·공연 모임에 참여하거나 지인에게 소규모 만남을 부탁해보세요. 함께 본 작품이나 좋아하는 취향을 주제로 대화를 시작해보세요.'][element],basis:best?best.sys.join('·')+'의 관계 시기 신호 · '+best.y+'년':'관계 시기 신호가 부족한 경우 특정 날짜를 정하지 않음'};
 }
-function encounterHTML(ch){const d=encounterData(ch),E=topicEsc;return '<dl class="encounter-guide"><div><dt>언제</dt><dd>'+E(d.when)+' <span class="reading-evidence">('+E(d.basis)+')</span></dd></div><div><dt>어디서</dt><dd>'+E(d.where)+' <span class="reading-evidence">(관계 자리의 별자리 상징을 장소 유형으로 해석)</span></dd></div><div><dt>어떻게</dt><dd>'+E(d.how)+'</dd></div></dl><p>이미 관계가 있다면 함께하는 활동과 대화를 늘리는 계기로 읽어주세요.</p>'}
+function encounterHTML(ch){const d=encounterData(ch),E=topicEsc,p=partnerProfile(ch),when=d.when.match(/(\d{4})년\s+(\d+)월/),timing=when?when[1]+'년 '+when[2]+'월':d.when;return '<section class="encounter-story"><h3>어디서 만나게 될까?</h3><p>'+E(p.meet)+'에서 인연을 만나기 좋은 흐름으로 읽혀요. '+(when?'특히 '+E(timing)+' 무렵에는 모임이나 소개 자리를 눈여겨보세요.':'')+'</p></section><dl class="encounter-guide"><div><dt>언제</dt><dd>'+E(d.when)+' <span class="reading-evidence">('+E(d.basis)+')</span></dd></div><div><dt>어디서</dt><dd>'+E(p.meet)+'</dd></div><div><dt>어떻게</dt><dd>'+E(d.how)+'</dd></div></dl>'}
+
 
 function reportEditorialCopy(value){return String(value||'')
  .replace(/점수는 다섯 점술의 규칙을 같은 기준으로 더한 자체 지표이며 확률이 아닙니다\.\s*/g,'')
@@ -4131,7 +4146,7 @@ function partnerProfile(ch){const mE=SE[BMAIN[ch.brs.d]],tg=tenGod(ch.stems.d,BM
  const hobby=['산책·식물 가꾸기·독서','공연·여행·사진','맛집 탐방·요리·캠핑','운동·정리·전시 관람','음악·영화·물가 산책'][mE];
  return {mbti,age,job,vibe,hobby,meet:MEET[vE],style:LOVE_STYLE[vE],h7,mE}}
 function partnerProfileHTML(ch,key,part){let f=null;try{f=spouseFaceProfile(ch)}catch(_){}const p=partnerProfile(ch),E=topicEsc;
- if(part==='rest')return '<dl class="pp-list pp-rest">'+[['잘 어울리는 일',p.job[0]+' — '+p.job[1]+' 사람'],['좋아할 취미',p.hobby],['첫 만남 장소',p.meet],['연애 스타일',p.style+' 연애']].map(r=>'<div><dt>'+r[0]+'</dt><dd>'+E(r[1])+'</dd></div>').join('')+'</dl><p class="pp-note">MBTI·나이 차이는 차트의 상징을 재미로 옮긴 예시예요.</p>';
+ if(part==='rest')return '<dl class="pp-list pp-rest">'+[['잘 어울리는 일',p.job[0]+' — '+p.job[1]+' 사람'],['좋아할 취미',p.hobby],['첫 만남 장소',p.meet],['연애 스타일',p.style+' 연애']].map(r=>'<div><dt>'+r[0]+'</dt><dd>'+E(r[1])+'</dd></div>').join('')+'</dl><p class="pp-note">MBTI·나이 차이는 도출된 차트 정보를 바탕으로 정리한 내용입니다.</p>';
  return '<div class="pp"><p class="pp-h">'+(key==='marry'?'배우자가 될 가능성이 높은 사람':'잘 맞는 연인이 될 가능성이 높은 사람')+'</p>'+(f&&f.features?'<div class="pp-chips">'+f.features.map(x=>'<span>'+E(x)+'</span>').join('')+'</div>':'')+'<div class="pp-facts"><div><small>예상 MBTI</small><b>'+p.mbti+'</b></div><div><small>예상 나이 차이</small><b>'+E(p.age)+'</b></div></div><p class="pp-vibe">'+E(p.vibe)+' 사람</p></div>'}
 function funItems(ch,key){const d=ch.stems.d,cnt=ch.cnt,dom=cnt.indexOf(Math.max(...cnt)),ng=natalGroups(ch),ven=sign(birthExtraLon('Venus',ch.jd)),pick=(arr,n)=>arr[((n%arr.length)+arr.length)%arr.length],seed=ch.Y+ch.Mo*31+ch.D*7+d;
  const COLOR=['초록','빨강','노랑','하양','검정·남색'][(dom+2)%5];
@@ -4167,10 +4182,10 @@ function approvedReportHTML(data,key){
   const face=s.kind==='partner'?faceHTML():null;
   const body=(s.kind==='fun'&&ch?funHTML(ch,key):'')+(["love","marry"].includes(key)&&s.kind==='meet'&&ch?encounterHTML(ch):paraHTML(s))+lineHTML(s.line)+tableHTML(s.table)+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
   return '<section class="r-page rv3-ch" id="chapter-'+i+'"><header class="rv3-hd"><span class="rv3-no">'+(v3?'CHAPTER '+n2(i):(i+1)+'장')+'</span><h2>'+E(s.question)+'</h2></header>'+
-   (s.lead&&readingParts(s.lead).main&&!(ch&&['love','marry'].includes(key)&&s.kind==='meet')?readingParagraph(s.lead,'rv3-lead'):'')+
+   (s.lead&&readingParts(s.lead).main&&!(ch&&['love','marry'].includes(key)&&['meet','partner'].includes(s.kind))?readingParagraph(s.lead,'rv3-lead'):'')+
 
-   (face?'<div class="rv3-profile">'+face+'<div class="rv3-profile-tx">'+(ch&&['love','marry'].includes(key)?partnerProfileHTML(ch,key):'')+body+'</div></div>'+(ch&&['love','marry'].includes(key)?partnerProfileHTML(ch,key,'rest'):''):body)+
-   (s.chart?chartHTML(s.chart):'')+(s.lead&&!readingParts(s.lead).main?readingParagraph(s.lead):'')+'</section>'};
+   (face?'<div class="rv3-profile">'+face+'<div class="rv3-profile-tx">'+(ch&&['love','marry'].includes(key)?partnerProfileHTML(ch,key):'')+'</div></div>'+(ch&&['love','marry'].includes(key)?partnerProfileHTML(ch,key,'rest'):'')+'<div class="partner-reading">'+body+'</div>':body)+
+   (s.chart?chartHTML(s.chart):'')+(s.lead&&!readingParts(s.lead).main&&!(ch&&['love','marry'].includes(key)&&s.kind==='partner')?readingParagraph(s.lead):'')+'</section>'};
  const facts=Array.isArray(data.facts)&&data.facts.length?'<div class="rv3-tw"><table class="rv3-table rv3-facts"><caption>계산된 출생 지표</caption><thead><tr><th scope="col">지표</th><th scope="col">값</th><th scope="col">전통적 의미</th></tr></thead><tbody>'+data.facts.map(f=>'<tr><th scope="row">'+E(f[0])+'</th><td>'+E(f[1])+'</td><td>'+E(f[2])+'</td></tr>').join('')+'</tbody></table></div>':'';
  const toc='<nav class="rv3-toc" aria-label="리포트 목차"><ol>'+secs.map((s,i)=>'<li><a href="#chapter-'+i+'"><b>'+(v3?n2(i):i+1)+'</b>'+E(s.question)+'</a></li>').join('')+'<li><a href="#report-appendix"><b>부록</b>내 출생 정보와 전문 지표</a></li></ol></nav>';
  const ymd=new Date().toLocaleDateString('ko-KR');
