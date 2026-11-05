@@ -2274,7 +2274,7 @@ function fateTraits(ch){
  return {rows,index,name:FATE_TYPES[index],code:"ON-"+rows.map(a=>a.side).join("")};
 }
 /* Intro pairs a mild version of the existing dominant-element weakness with its strength. */
-function destinyMeaningHTML(value){const text=String(value||''),m=text.match(/^(당신은[\\s\\S]*?이지만,\\s*)([\\s\\S]+?운명)(을 타고난 사람입니다[.!]?)$/);return m?topicEsc(m[1])+'<em class="destiny-highlight">'+topicEsc(m[2])+'</em>'+topicEsc(m[3]):topicEsc(text)}
+function destinyMeaningHTML(value){const text=String(value||''),m=text.match(/^(당신은[\s\S]*?이지만,\s*)([\s\S]+?운명)(을 타고난 사람입니다[.!]?)$/);return m?topicEsc(m[1])+'<em class="destiny-highlight">'+topicEsc(m[2])+'</em>'+topicEsc(m[3]):topicEsc(text)}
 \nfunction traitDescription(ch){
  const dom=ch.cnt.indexOf(Math.max(...ch.cnt));
  const weak=[
