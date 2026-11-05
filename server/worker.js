@@ -106,7 +106,7 @@ async function authRoute(req,env,url,ctx){
 
 
 function validPartner(p){if(!p||typeof p!=='object')return null;const s=(x,n)=>typeof x==='string'&&x.length<=n;
- if(!s(p.name,40)||!p.name.trim()||/[<>\u0000-\u001f]/.test(p.name)||!s(p.roman,80)||!/^[A-Za-z][A-Za-z .'-]*$/.test(p.roman.trim())||!['m','f'].includes(p.sex))return null;
+ if(!s(p.name,40)||!p.name.trim()||/[<>\u0000-\u001f]/.test(p.name)||!s(p.roman,80)||(p.roman.trim()&&!/^[A-Za-z][A-Za-z .'-]*$/.test(p.roman.trim()))||!['m','f'].includes(p.sex))return null;
  if(typeof p.date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(p.date))return null;const d=new Date(p.date+'T00:00:00Z');if(!Number.isFinite(+d)||d.toISOString().slice(0,10)!==p.date||+p.date.slice(0,4)<1920||d>new Date())return null;
  const notime=p.notime===true;if(!notime&&!(typeof p.time==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(p.time)))return null;
  const pi=p.pi==null?null:Number(p.pi);if(pi!==null&&!(Number.isInteger(pi)&&pi>=0&&pi<60))return null;const score=Number.isInteger(p.score)&&p.score>=0&&p.score<=100?p.score:null;

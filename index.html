@@ -2799,7 +2799,7 @@ const TABS=["natal","flow","today","money","marry","love","reunion","work","matc
 function setTab(t,focus){t=TOPIC_GROUPS[t]?.[0]||t;{const fb=document.querySelector(`#topicFold [data-tab="${t}"]`);if(fb&&focus)document.getElementById("topicFold").open=true;}document.querySelectorAll("[data-subgroup]").forEach(el=>{el.hidden=!TOPIC_GROUPS[el.dataset.subgroup].includes(t)});document.querySelectorAll(".res-nav [role=tab]").forEach(b=>{const on=b.dataset.topicGroup?TOPIC_GROUPS[b.dataset.topicGroup].includes(t):b.hasAttribute("data-romance")?["love","marry","reunion","match"].includes(t):b.dataset.tab===t;b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1;if(on){if(focus)b.focus();}});
   document.querySelector(".romance-tabs").hidden=!["love","marry","reunion","match"].includes(t);
   TABS.forEach(k=>{$("tab-"+k).hidden=k!==t});
-  if(t==="match")setTimeout(partnerSync,0);if(CH&&TOPICS.some(x=>x[0]===t)&&!$("tab-"+t).innerHTML)$("tab-"+t).innerHTML=t==="money"?moneyAllHTML(CH):topicHTML(CH,t);if(t==="flow"&&CH){drawGraph=true;renderBig();setTimeout(()=>{drawGraph=false},0)}}
+  if(t==="match"||t==="reunion")setTimeout(partnerSync,0);if(CH&&TOPICS.some(x=>x[0]===t)&&!$("tab-"+t).innerHTML)$("tab-"+t).innerHTML=t==="money"?moneyAllHTML(CH):topicHTML(CH,t);if(t==="flow"&&CH){drawGraph=true;renderBig();setTimeout(()=>{drawGraph=false},0)}}
 document.addEventListener("click",e=>{const g=e.target.closest("[data-goto]");if(g){setTab(g.dataset.goto);requestAnimationFrame(()=>document.querySelector("#tab-natal .act")?.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"}));return}
   const b=e.target.closest("[data-buy]");if(b&&b.dataset.buy!=="ask"){openTopicReport(b.dataset.buy,b);return}if(b){const msg=b.closest(".topic-offer")?.querySelector(".buy-msg")||b.nextElementSibling;if(msg)msg.textContent="결제 기능을 준비하고 있어요. 아직 결제되지는 않았어요."}});
 document.querySelectorAll(".res-nav [role=tab]").forEach((b,i,all)=>{b.addEventListener("click",()=>setTab(b.dataset.tab));b.addEventListener("keydown",e=>{all=Array.from(b.closest("[role=tablist]").querySelectorAll("[role=tab]"));i=all.indexOf(b);const k=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(!k)return;e.preventDefault();setTab(all[(i+k+all.length)%all.length].dataset.tab,true)})});
@@ -3487,39 +3487,41 @@ async function partnerSave(p){if(accountUser){try{await accountAPI('/partners',{
  const l=partnerLocal().filter(x=>!(x.name===p.name&&x.date===p.date));l.unshift({...p,at:new Date().toISOString().slice(0,10)});partnerStore(l);partnerRefresh();return '이 기기에 저장했어요.'}
 async function partnerDelete(i){const p=partnerList()[i];if(!p)return;if(accountUser&&p.id){try{await accountAPI('/partners',{action:'delete',id:p.id})}catch(_){}await partnerSync()}else{const l=partnerLocal();l.splice(i,1);partnerStore(l);partnerRefresh()}}
 function partnerSavedHTML(){const l=partnerList();if(!l.length)return '';return '<p class="cmp-saved-h">저장한 상대'+(accountUser?' (내 계정)':' (이 기기)')+'</p><ul>'+l.map((p,i)=>'<li><button type="button" class="cmp-load" data-pi="'+i+'"><b>'+topicEsc(p.name)+'</b><small>'+topicEsc(p.date)+(p.score!=null?' · 최근 궁합 '+p.score+'점':'')+'</small></button><button type="button" class="cmp-del" data-pd="'+i+'" aria-label="'+topicEsc(p.name)+' 삭제">삭제</button></li>').join('')+'</ul>'}
-function partnerRefresh(){const el=$('cmpSaved');if(el)el.innerHTML=partnerSavedHTML();const lb=document.querySelector('#compatibility-form .cmp-save-lb');if(lb)lb.textContent=accountUser?'상대방의 동의를 받았고, 내 계정에 저장할게요':'이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)'}
+function partnerRefresh(){document.querySelectorAll('.cmp-saved').forEach(el=>el.innerHTML=partnerSavedHTML());document.querySelectorAll('.cmp-form .cmp-save-lb').forEach(lb=>lb.textContent=accountUser?'상대방의 동의를 받았고, 내 계정에 저장할게요':'이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)')}
 document.addEventListener('click',e=>{const ld=e.target.closest('.cmp-load'),dl=e.target.closest('.cmp-del');if(!ld&&!dl)return;const l=partnerList();
  if(dl){const p=l[+dl.dataset.pd];if(p&&confirm(p.name+'님의 정보를 삭제할까요?'))partnerDelete(+dl.dataset.pd);return}
- const p=l[+ld.dataset.pi],f=$('compatibility-form');if(!p||!f)return;const el=f.elements;el.partnerName.value=p.name;el.partnerRoman.value=p.roman;el.partnerRoman.dataset.edited='1';
+ const p=l[+ld.dataset.pi],f=ld.closest('.cmp-form')?.querySelector('form');if(!p||!f)return;const el=f.elements;el.partnerName.value=/^이름 없음/.test(p.name)?'':p.name;el.partnerRoman.value=p.roman;el.partnerRoman.dataset.edited='1';
  [...el.partnerSex].forEach(r=>r.checked=r.value===p.sex);el.partnerDate.value=p.date;el.partnerTime.value=p.time||'';el.partnerNoTime.checked=!!p.notime;el.partnerTime.disabled=!!p.notime;
  el.partnerNoPlace.checked=p.pi==null;el.partnerPlace.disabled=p.pi==null;if(p.pi!=null)el.partnerPlace.value=String(p.pi);f.requestSubmit()});
-function compatFormHTML(){const opts=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
- return `<section class="chart-form cmp-form"><h4>상대방 정보로 궁합 보기</h4><div class="cmp-saved" id="cmpSaved">${partnerSavedHTML()}</div><form id="compatibility-form" novalidate><div class="chart-fields">
- <label>상대 이름<input name="partnerName" maxlength="40" required autocomplete="off" placeholder="홍길동"></label>
- <label>상대 영문 이름<input name="partnerRoman" maxlength="80" autocomplete="off" placeholder="자동 입력"></label>
+function compatFormHTML(mode='match'){const RU=mode==='reunion',opts=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
+ return `<section class="chart-form cmp-form"><h4>${RU?"상대방 정보로 재회 흐름 보기":"상대방 정보로 궁합 보기"}</h4><div class="cmp-saved">${partnerSavedHTML()}</div><form id="${RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate><div class="chart-fields">
+ <label>상대 이름 <small>(선택)</small><input name="partnerName" maxlength="40" autocomplete="off" placeholder="홍길동 · 비워 두면 이름 없이 봐요"></label>
+ <label>상대 영문 이름 <small>(선택)</small><input name="partnerRoman" maxlength="80" autocomplete="off" placeholder="자동 입력"></label>
+ <p class="cmp-priv">이름을 넣지 않으면 이름으로 계산하는 수비학 영혼 수는 빼고, 생년월일로 보는 점술만으로 계산해요.</p>
  <div class="cmp-seg"><span>성별</span><label><input type="radio" name="partnerSex" value="m" checked>남</label><label><input type="radio" name="partnerSex" value="f">여</label></div>
  <label>상대 생년월일 (양력)<input name="partnerDate" type="date" min="1920-01-01" required></label>
  <label>출생 시각<input name="partnerTime" type="time"></label><label class="chk"><input type="checkbox" name="partnerNoTime">출생 시각을 선택하지 않을래요</label>
  <label>출생지<select name="partnerPlace">${opts}</select></label><label class="chk"><input type="checkbox" name="partnerNoPlace">출생지를 선택하지 않을래요</label>
- <label class="chk"><input type="checkbox" name="partnerSave"><span class="cmp-save-lb">${accountUser?"상대방의 동의를 받았고, 내 계정에 저장할게요":"이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)"}</span></label><p class="cmp-priv">상대방의 이름과 생년월일은 그 사람의 개인정보예요. 상대방이 동의한 경우에만 저장하고, 필요 없으면 언제든 삭제해 주세요. 이름 대신 별명을 써도 돼요.</p></div><button type="submit">궁합 보기</button><div id="compatibility-result" class="chart-feedback" aria-live="polite"></div></form></section>`}
-document.addEventListener('input',e=>{const f=e.target.form;if(!f||f.id!=='compatibility-form')return;
+ <label class="chk"><input type="checkbox" name="partnerSave"><span class="cmp-save-lb">${accountUser?"상대방의 동의를 받았고, 내 계정에 저장할게요":"이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)"}</span></label><p class="cmp-priv">상대방의 이름과 생년월일은 그 사람의 개인정보예요. 상대방이 동의한 경우에만 저장하고, 필요 없으면 언제든 삭제해 주세요. 이름 대신 별명을 써도 돼요.</p></div><button type="submit">${RU?"재회 흐름 보기":"궁합 보기"}</button><div class="chart-feedback cmp-result" aria-live="polite"></div></form></section>`}
+document.addEventListener('input',e=>{const f=e.target.form;if(!f||!f.dataset.mode)return;
  if(e.target.name==='partnerName'&&!f.partnerRoman.dataset.edited){f.partnerRoman.value=romanize(e.target.value)||''}
  if(e.target.name==='partnerRoman')f.partnerRoman.dataset.edited=e.target.value?'1':''});
-document.addEventListener('change',e=>{const f=e.target.form;if(!f||f.id!=='compatibility-form')return;
+document.addEventListener('change',e=>{const f=e.target.form;if(!f||!f.dataset.mode)return;
  if(e.target.name==='partnerNoTime')f.partnerTime.disabled=e.target.checked;if(e.target.name==='partnerNoPlace')f.partnerPlace.disabled=e.target.checked});
-function compatSubmit(f){const out=$('compatibility-result'),date=f.partnerDate.value,[y,m,d]=date.split('-').map(Number),check=new Date(Date.UTC(y,m-1,d));
+function compatSubmit(f,form){const mode=form.dataset.mode,RU=mode==='reunion',out=form.querySelector('.cmp-result'),date=f.partnerDate.value,[y,m,d]=date.split('-').map(Number),check=new Date(Date.UTC(y,m-1,d));
  const future=date>new Date().toLocaleDateString('sv-SE');const name=f.partnerName.value.trim();
- if(!name){out.textContent='상대 이름을 입력해 주세요.';return}
  if(!date||y<1920||future||check.getUTCFullYear()!==y||check.getUTCMonth()!==m-1||check.getUTCDate()!==d){out.textContent='1920년 이후의 실제 생년월일을 입력해 주세요.';return}
- const roman=(f.partnerRoman.value.trim()||romanize(name)||'');if(!/[a-z]/i.test(roman)){out.textContent='상대의 영문 이름을 입력해 주세요.';return}
+ const roman=name?(f.partnerRoman.value.trim()||romanize(name)||''):f.partnerRoman.value.trim();if(name&&!/[a-z]/i.test(roman)){out.textContent='영문 이름을 입력하거나, 이름 칸을 비워 주세요.';return}
+ const label=name||'상대';
  const noT=f.partnerNoTime.checked||!f.partnerTime.value,noP=f.partnerNoPlace.checked,P=PLACES[+f.partnerPlace.value]||PLACES[0];
  const place=noP?{none:true,name:'출생지 미상',lon:127.5,lat:37.5,tz:9,kr:true}:{name:P[0],lat:P[1],lon:P[2],tz:P[3],kr:PLACES.indexOf(P)<26};
- const inp={name,roman,sex:f.partnerSex.value,cal:'s',date,time:noT?'12:00':f.partnerTime.value,notime:noT,place};
+ const inp={name:label,roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,cal:'s',date,time:noT?'12:00':f.partnerTime.value,notime:noT,place};
  let other;try{other=buildChart(inp)}catch(err){out.textContent='상대의 출생 정보를 계산하지 못했어요. 입력값을 확인해 주세요.';return}
- const res=compatScore(CH,other);COMPAT={b:other,res};
- if(f.partnerSave&&f.partnerSave.checked){partnerSave({name,roman,sex:f.partnerSex.value,date,time:noT?'':f.partnerTime.value,notime:noT,pi:noP?null:+f.partnerPlace.value,score:res.total}).then(m=>{const n=$('cmpSaveMsg');if(n)n.textContent=m})}
+ const res=compatScore(CH,other);COMPAT={b:other,res,mode};const ru=RU?reunionCalc(CH,other,res):null;if(ru)COMPAT.ru=ru;
+ if(f.partnerSave&&f.partnerSave.checked){partnerSave({name:name||('이름 없음 '+date.slice(2).replace(/-/g,'.')),roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,date,time:noT?'':f.partnerTime.value,notime:noT,pi:noP?null:+f.partnerPlace.value,score:RU?ru.score:res.total}).then(m=>{const n=form.querySelector('.cmp-save-msg');if(n)n.textContent=m})}
+ if(RU){out.innerHTML=`<div class="cmp-score"><span>${topicEsc(J(label+(name?'님':''),'과','와'))}의 재회 흐름</span><b>${ru.score}<small>점</small></b><em>${ru.level}</em></div><p class="cmp-note">다시 연락하기 좋은 시기, 헤어짐에 영향을 준 차이, 다시 만나면 달라져야 할 점은 <b>재회 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" data-cmp-open>재회 리포트 보기 →</button><p class="cmp-priv cmp-save-msg" aria-live="polite"></p>`;return}
  const lv=res.total>=85?'아주 잘 맞는 편':res.total>=75?'잘 맞는 편':res.total>=65?'맞춰 가는 궁합':'서로 노력이 필요한 궁합';
- out.innerHTML=`<div class="cmp-score"><span>${topicEsc(name)}님과 나의 궁합</span><b>${res.total}<small>점</small></b><em>${lv}</em></div><p class="cmp-note">점수가 어떻게 나왔는지, 다섯 점술별 근거와 관계에서 맞춰 갈 점은 <b>궁합 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" id="compatOpen">궁합 리포트 보기 →</button><p class="cmp-priv" id="cmpSaveMsg" aria-live="polite"></p>`}
+ out.innerHTML=`<div class="cmp-score"><span>${topicEsc(J(label+(name?"님":""),"과","와"))} 나의 궁합</span><b>${res.total}<small>점</small></b><em>${lv}</em></div><p class="cmp-note">점수가 어떻게 나왔는지, 다섯 점술별 근거와 관계에서 맞춰 갈 점은 <b>궁합 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" data-cmp-open>궁합 리포트 보기 →</button><p class="cmp-priv cmp-save-msg" aria-live="polite"></p>`}
 function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'상대',tot=res.total,EN=['목','화','토','금','수'];
  const all=res.sys.flatMap(o=>o.items.map(x=>[o.n,...x])),pos=all.filter(x=>x[2]>0).sort((x,y)=>y[2]-x[2]),neg=all.filter(x=>x[2]<0).sort((x,y)=>x[2]-y[2]);
  const miss=[b.inp.notime&&'상대 출생 시각',b.inp.place&&b.inp.place.none&&'상대 출생지'].filter(Boolean);
@@ -3571,15 +3573,68 @@ function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'�
  return {title:`${me}님과 ${you}님의 궁합 리포트`,summary:[S[0].lead,`가까워지는 해: ${up.map(x=>x.y+'년').join(', ')} · 느슨해지기 쉬운 해: ${dn.map(x=>x.y+'년').join(', ')}`,S[3].lead,neg.length?'맞춰 갈 점: '+neg[0][3]:S[1].lead],
   sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'다섯 점술의 전통 궁합 규칙을 자체 점수로 옮긴 재미용 리포트입니다. 관계의 실제 결과를 예측하지 않습니다.',version:'match-2026-11-05b',body:''}}
 const sTxt=i=>ST[i]+'('+'갑을병정무기경신임계'[i]+')';
-async function openCompatReport(btn){if(!COMPAT||!CH)return;const show=()=>{reportReturnFocus=btn;$('reportBody').innerHTML=approvedReportHTML(compatReportData(CH,COMPAT.b,COMPAT.res),'match');$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true})};
- if(accountUser?.isAdmin)return show();if(!accountUser)return showReportPurchase('match',btn);
- try{const ac=await accountAPI('/access');if(ac.isAdmin||ac.reports.includes('match')||ac.reports.includes('all'))return show()}catch(_){}showReportPurchase('match',btn)}
-document.addEventListener('click',e=>{const b=e.target.closest('#compatOpen');if(b)openCompatReport(b)});
+/* 재회(2026-11-05): 궁합 점수 + 앞으로 5년의 재연결 신호(배우자 자리 합·충, 개인년 2·6·9, 두 사람의 애정 흐름) */
+function reunionCalc(a,b,res){const y0=new Date().getFullYear(),LIU=x=>(13-x)%12,love=(c,y)=>D(ORC.reduce((s,fn)=>s+fn(c,{y,frac:y+.5},1)[0],0)/ORC.length);
+ const yrs=[0,1,2,3,4].map(i=>{const y=y0+i,yb=mod(y-4,12),pa=pyOf(a,y),pb=pyOf(b,y),why=[],warn=[];let s=(love(a,y)+love(b,y))/2;
+  if(LIU(yb)===a.brs.d||LIU(yb)===b.brs.d){s+=6;why.push('끊긴 인연이 다시 맞닿는 합의 해')}
+  else if(yb%4===a.brs.d%4||yb%4===b.brs.d%4){s+=2;why.push('배우자 자리와 같은 기운이 모이는 해')}
+  if(mod(yb-a.brs.d,12)===6||mod(yb-b.brs.d,12)===6){s-=5;warn.push('관계 자리가 흔들리는 충의 해')}
+  if(pa===2||pb===2){s+=4;why.push('화해와 조율의 해(개인년 2)')}if(pa===6||pb===6){s+=3;why.push('책임과 다시 돌보는 해(개인년 6)')}
+  if(pa===9||pb===9){s-=3;warn.push('지난 일을 정리하는 해(개인년 9)')}if(pa===1||pb===1){warn.push('각자 새 출발을 원하는 해(개인년 1)')}
+  return {y,s:Math.round(s),why,warn,pa,pb}});
+ const best=yrs.slice().sort((x,z)=>z.s-x.s)[0],near=Math.max(...yrs.slice(0,3).map(x=>x.s));
+ const score=Math.round(clamp(res.total*.55+near*.45,45,96));
+ const level=score>=82?'다시 이어질 여지가 큰 흐름':score>=74?'다시 이어질 여지가 있는 흐름':score>=66?'시간과 변화가 필요한 흐름':'각자의 새 출발이 자연스러운 흐름';
+ const mo=[...new Set([LIU(a.brs.d),LIU(b.brs.d)])].map(x=>brMonth(x)).sort((x,z)=>x-z);
+ return {score,level,yrs,best,mo}}
+function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name||'상대',EN=['목','화','토','금','수'];
+ const all=res.sys.flatMap(o=>o.items.map(x=>[o.n,...x])),pos=all.filter(x=>x[2]>0).sort((x,y)=>y[2]-x[2]),neg=all.filter(x=>x[2]<0).sort((x,y)=>x[2]-y[2]);
+ const yrs=ru.yrs,up=yrs.filter(x=>x.why.length).sort((x,z)=>z.s-x.s).slice(0,2),dn=yrs.filter(x=>x.warn.length&&!x.why.length).slice(0,2);
+ const ma=sign(a.moon)%4,mb=sign(b.moon)%4,eA=SE[a.stems.d],eB=SE[b.stems.d];
+ const TALK=['서운함은 바로 말하고 짧게 끝내는 편','시간을 두고 차분히 이야기할 때 마음이 풀리는 편','감정을 말로 정리해 들려줄 때 오해가 풀리는 편','먼저 공감받은 뒤에야 이유를 들을 수 있는 편'];
+ const FIRST=['짧고 솔직한 한 줄(“잘 지냈어? 생각나서 연락했어”)이 가장 자연스럽습니다.','부담 없는 안부와 함께, 답장을 서두르지 않아도 된다는 여유를 남겨 두세요.','함께 나눴던 관심사나 소식(책·음악·장소)으로 대화를 여는 편이 좋습니다.','지난 일에 대한 미안함이나 고마움을 먼저 짧게 전하면 마음의 문이 열리기 쉽습니다.'];
+ const sum=[0,1,2,3,4].map(i=>a.cnt[i]+b.cnt[i]),need=sum.indexOf(Math.min(...sum));
+ const PLACE=['나무가 많은 공원이나 산책로','밝은 카페나 낮 시간의 열린 공간','익숙한 동네의 조용한 식당','전시장이나 서점처럼 차분한 곳','강변·호숫가처럼 물이 보이는 곳'];
+ const clash=mod(a.brs.d-b.brs.d,12)===6,ctl=(eA+2)%5===eB||(eB+2)%5===eA;
+ const S=[];const add=(kind,q,lead,paras,action,extra)=>S.push(Object.assign({id:'reunion-c'+(S.length+1),kind,question:q,lead,basis:[],paragraphs:paras.filter(Boolean),action:action||''},extra||{}));
+ add('summary','재회 흐름 한눈에 보기',`${me}님과 ${you}님의 재회 흐름은 ${ru.score}점, ${ru.level}입니다.`,
+  [`두 사람의 기본 궁합은 ${res.total}점이고, 앞으로 5년 중 다시 가까워질 신호가 가장 뚜렷한 해는 ${ru.best.y}년입니다.`,
+   pos.length?`다시 끌릴 수 있는 이유: ${pos.slice(0,2).map(x=>x[3]).join(' ')}`:'',
+   ru.score<66?'지금은 억지로 관계를 되돌리기보다, 각자의 시간을 보내며 마음이 정리되는지 지켜보는 편이 자연스러운 흐름입니다.':'']);
+ add('timing','다시 연락하기 좋은 시기',up.length?`${up.map(x=>x.y+'년').join('과 ')}이 다시 연락해 보기 좋은 흐름입니다.`:'앞으로 5년 안에 뚜렷한 재연결 신호는 약한 편입니다.',
+  up.map(x=>`${x.y}년 — ${x.why.join(', ')}입니다. ${x.pa===2||x.pb===2?'오해를 풀고 대화를 다시 여는 데 마음이 쓰이는 해입니다.':'관계를 다시 돌아볼 여유가 생기는 해입니다.'}`)
+  .concat([ru.mo.length?`한 해 중에서는 ${ru.mo.map(m=>m+'월').join('·')} 무렵이 두 사람의 배우자 자리와 합이 드는 달이라 연락을 시도하기 좋습니다.`:''])
+  .concat(dn.map(x=>`${x.y}년은 ${x.warn.join(', ')}라, 이 해의 연락은 서두르지 않는 편이 좋습니다.`)),
+  (()=>{if(!up.length)return '';const cm=new Date().getMonth()+1,cy=new Date().getFullYear();let y=up[0].y,m=ru.mo.find(x=>y>cy||x>cm);if(!m&&ru.mo.length){const nx=up.find(x=>x.y>cy);if(nx){y=nx.y;m=ru.mo[0]}}return m?`${y}년 ${m}월 전후에 부담 없는 안부 한 번으로 시작해 보세요.`:`${y}년 안에 부담 없는 안부 한 번으로 시작해 보세요.`})(),
+  {line:{cap:'앞으로 5년, 다시 가까워질 흐름(자체 지표)',labels:yrs.map(x=>"’"+String(x.y).slice(2)),values:yrs.map(x=>x.s),hi:up.map(x=>yrs.indexOf(x)),lo:dn.map(x=>yrs.indexOf(x))}});
+ add('cause','헤어짐에 영향을 준 차이',neg.length?'두 사람 사이에는 부딪히기 쉬운 지점이 분명히 있었습니다.':'두 사람 사이에 큰 충돌 신호는 적어, 상황과 타이밍의 영향이 컸을 가능성이 큽니다.',
+  neg.slice(0,3).map(x=>x[3]).concat([ma===mb?`두 사람 모두 ${TALK[ma]}이라 화해 방식은 같지만, 둘이 동시에 물러서면 대화가 길게 끊기기 쉽습니다.`:`${me}님은 ${TALK[ma]}이고, ${you}님은 ${TALK[mb]}입니다. 서운함을 푸는 속도가 달라 오해가 쌓였을 수 있습니다.`,
+   clash?'배우자 자리가 서로 충을 이뤄, 함께 지낼 때 생활 리듬과 공간을 쓰는 방식에서 마찰이 컸을 수 있습니다.':'',ctl?'일간이 서로 제어하는 관계라, 중요한 결정에서 서로의 기준이 부딪혔을 가능성이 큽니다.':'']));
+ add('change','다시 만난다면 달라져야 할 것','같은 이유로 다시 헤어지지 않으려면, 이번에는 방식을 바꾸는 것이 핵심입니다.',
+  [ma!==mb?`${me}님은 ${you}님이 ${['바로','천천히','말로','공감받으며'][mb]} 마음을 푸는 사람이라는 것을 기억해 주세요.`:'',
+   ctl?'중요한 결정은 한쪽이 정해 통보하지 말고, 각자 기준을 먼저 말한 뒤 함께 고르세요.':'작은 불만을 쌓아 두지 말고 그때그때 가볍게 꺼내는 규칙을 정하세요.',
+   clash?'함께 있는 시간만큼 각자의 시간과 공간을 존중하는 약속을 처음부터 정해 두세요.':'',
+   '다시 만나는 첫 몇 번은 지난 일을 따지기보다, 지금의 서로를 새로 알아 가는 자리로 만들어 주세요.'],
+  '다시 만나기 전에, 헤어질 때 가장 아쉬웠던 점 하나와 이번에 바꿀 점 하나를 적어 보세요.');
+ add('contact','연락하는 방법과 만나기 좋은 곳',FIRST[mb].split('.')[0]+'.',
+  [`첫 연락: ${FIRST[mb]}`,`처음 다시 만난다면 ${PLACE[need]}처럼 두 사람에게 부족한 ${EN[need]} 기운을 채우는 곳이 편안합니다. 오래 머무는 자리보다 짧게 걷거나 차 한잔하는 정도가 부담이 적습니다.`,
+   '답이 늦거나 짧다면 바로 다시 연락하지 말고, 상대가 대화를 이어 갈 여유를 남겨 두세요.']);
+ add('letgo','마음을 정리하는 게 나은 신호','아래 신호가 겹친다면 재회보다 각자의 길을 응원하는 편이 서로에게 좋습니다.',
+  ['상대가 연락을 원하지 않는다고 분명히 말했거나 답이 없다면, 그 뜻을 존중하는 것이 가장 우선입니다.',
+   dn.length?`${dn.map(x=>x.y+'년').join('·')}처럼 정리와 새 출발의 기운이 강한 해에는 관계를 붙잡기보다 나를 돌보는 데 힘을 쓰는 편이 좋습니다.`:'',
+   ru.score<70?`재회 흐름 점수가 ${ru.score}점으로 높지 않아, 이번 인연에서 배운 점을 다음 관계에 가져가는 것도 좋은 선택입니다.`:'']);
+ add('table','점술별 궁합 한눈에 보기','다섯 점술의 기본 궁합 점수입니다.',[],'',{table:{cap:'점술별 궁합(기본 60점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
+ add('limit','해석의 범위','재회 리포트는 두 사람의 출생 차트만 읽습니다.',['이 리포트는 상대방의 현재 마음이나 의사를 알 수 없습니다. 관계를 다시 시작할지는 두 사람의 실제 대화와 선택으로 정해집니다.',b.inp.notime||b.inp.place?.none?'상대의 출생 시각·출생지가 없는 항목은 참고값으로 계산했습니다.':'','점수와 시기는 전통 규칙을 수치로 옮긴 참고 지표입니다.']);
+ return {title:`${me}님과 ${you}님의 재회 리포트`,summary:[S[0].lead,S[1].lead,S[3].lead,S[4].lead],sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'두 사람의 출생 차트로 재회 흐름을 읽은 재미용 리포트입니다. 상대의 마음을 예측하지 않습니다.',version:'match-reunion-2026-11-05',body:''}}
+async function openCompatReport(btn){if(!COMPAT||!CH)return;const key=COMPAT.mode==='reunion'?'reunion':'match';const show=()=>{reportReturnFocus=btn;$('reportBody').innerHTML=approvedReportHTML(key==='reunion'?reunionReportData(CH,COMPAT.b,COMPAT.res,COMPAT.ru):compatReportData(CH,COMPAT.b,COMPAT.res),key);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true})};
+ if(accountUser?.isAdmin)return show();if(!accountUser)return needLogin();
+ try{const ac=await accountAPI('/access');if(ac.isAdmin||ac.reports.includes(key)||ac.reports.includes('all'))return show()}catch(_){}showReportPurchase(key,btn)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cmp-open]');if(b)openCompatReport(b)});
 
-function topicHTML(ch,k){if(SUBTOPIC_COPY[k])return subtopicHTML(ch,k);if(k==='study')return studyTopicHTML(ch);if(k==='ask')return freeQuestionHTML();const t=topicData(ch,k),name=TOPICS.find(x=>x[0]===k)[1],g=TOPIC_GUIDES[k];if(k==='marry'||k==='love')return '<section class="blk blk-first topic">'+spousePreviewHTML(ch,k)+'<header class="topic-intro spouse-answer-heading"><h3>'+(k==='love'?'나의 연애·인연, 한눈에 보기':'나의 배우자, 한눈에 보기')+'</h3></header>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';if(k==='match')return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">궁합</span><h3>우리 둘은 어떤 점에서 잘 맞을까?</h3><p>사주·서양 점성술·인도 점성술·수비학·마야력을 나란히 읽어 궁합을 평가하고, 관계를 좋게 만들기 위한 방법을 알려드려요.</p></header>'+compatFormHTML()+topicReportHTML(k)+'</section>';return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+name+'</span><h3>'+g.title+'</h3><p>'+g.intro+'</p></header>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';}
+function topicHTML(ch,k){if(SUBTOPIC_COPY[k])return subtopicHTML(ch,k);if(k==='study')return studyTopicHTML(ch);if(k==='ask')return freeQuestionHTML();const t=topicData(ch,k),name=TOPICS.find(x=>x[0]===k)[1],g=TOPIC_GUIDES[k];if(k==='marry'||k==='love')return '<section class="blk blk-first topic">'+spousePreviewHTML(ch,k)+'<header class="topic-intro spouse-answer-heading"><h3>'+(k==='love'?'나의 연애·인연, 한눈에 보기':'나의 배우자, 한눈에 보기')+'</h3></header>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';if(k==='reunion')return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">재회</span><h3>우리, 다시 이어질 수 있을까?</h3><p>두 사람의 출생 차트를 나란히 읽어 다시 연락하기 좋은 시기, 헤어짐에 영향을 준 차이, 다시 만난다면 달라져야 할 점을 알려드려요.</p></header>'+compatFormHTML('reunion')+'</section>';if(k==='match')return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">궁합</span><h3>우리 둘은 어떤 점에서 잘 맞을까?</h3><p>사주·서양 점성술·인도 점성술·수비학·마야력을 나란히 읽어 궁합을 평가하고, 관계를 좋게 만들기 위한 방법을 알려드려요.</p></header>'+compatFormHTML()+topicReportHTML(k)+'</section>';return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+name+'</span><h3>'+g.title+'</h3><p>'+g.intro+'</p></header>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-question-example]');if(!b)return;const input=$('chart-question');if(input){input.value=b.dataset.questionExample;input.focus()}});
 document.addEventListener('submit',e=>{if(e.target.id==='free-question-form'){e.preventDefault();if(!CH)return;const q=e.target.elements.question.value.trim();if(q.length<2){$('free-question-result').textContent='궁금한 내용을 두 글자 이상 적어주세요.';return}$('free-question-result').textContent='결제 기능을 준비하고 있어요. 아직 결제되거나 질문이 전송되지는 않았어요.';}
- if(e.target.id==='compatibility-form'){e.preventDefault();if(!CH)return;compatSubmit(e.target.elements)}
+ if(e.target.dataset&&e.target.dataset.mode){e.preventDefault();if(!CH)return;compatSubmit(e.target.elements,e.target)}
 });
 
 function reportHook(ch){const b=bestCell();const tp=turningPoints(ch)[0];
@@ -3867,7 +3922,8 @@ const REPORT_TOPIC_ART={"relationship":{"src":"data:image/jpeg;base64,/9j/4AAQSk
 
 let purchaseReportKey=null,purchaseTrigger=null;
 function showReportPurchase(key,trigger){purchaseReportKey=key;purchaseTrigger=trigger;const name=key==='comprehensive'?'종합':TOPICS.find(x=>x[0]===key)?.[1]||'나의 운명';$('purchaseTitle').textContent=name+' 리포트';$('purchasePrice').textContent=(key==='comprehensive'?15900:3900).toLocaleString()+'원';$('purchaseContents').replaceChildren();const items=key==='comprehensive'?['타고난 성향과 강점·주의점','연애·재물·직업의 개인별 풀이','앞으로 10년의 분야별 흐름']:TOPIC_REPORT_CONTENTS[key]||[];for(const t of items){const li=document.createElement('li');li.textContent=t;$('purchaseContents').append(li)}$('purchaseStatus').textContent=accountUser?'결제 확인 후 관리자가 승인하면 열람할 수 있어요.':'로그인 후 출생 정보를 저장하면 승인된 리포트를 볼 수 있어요.';$('reportPurchase').showModal();}
-async function requestReport(key,trigger){if(accountUser?.isAdmin){if(key==='comprehensive')openReport();else openTopicReport(key,trigger);return}if(!accountUser){showReportPurchase(key,trigger);return}try{const access=await accountAPI('/access');if(access.isAdmin||access.reports.includes(key)||access.reports.includes('all')){if($('reportPurchase').open)$('reportPurchase').close();await loadPrivateReport(key,trigger);return}showReportPurchase(key,trigger);}catch(e){showReportPurchase(key,trigger);$('purchaseStatus').textContent=e.message;}}
+function needLogin(){if(confirm('리포트는 로그인한 뒤 볼 수 있어요.\n카카오로 로그인할까요?')){const b=$('accountLogin');if(b)b.click()}}
+async function requestReport(key,trigger){if(accountUser?.isAdmin){if(key==='comprehensive')openReport();else openTopicReport(key,trigger);return}if(!accountUser){needLogin();return}try{const access=await accountAPI('/access');if(access.isAdmin||access.reports.includes(key)||access.reports.includes('all')){if($('reportPurchase').open)$('reportPurchase').close();await loadPrivateReport(key,trigger);return}showReportPurchase(key,trigger);}catch(e){showReportPurchase(key,trigger);$('purchaseStatus').textContent=e.message;}}
 /* Interpretation first; preserve the original technical statement as evidence. */
 function readingParts(value){
  const source=String(value||'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').trim();
