@@ -1604,6 +1604,13 @@ html.rd #report .rv3-act{background:#1d273b}html.rd #report .rv3-basis li{backgr
 @media(max-width:420px){.spouse-preview .spouse-preview-content{grid-template-columns:100px minmax(0,1fr);gap:12px}.spouse-preview{padding:15px}.spouse-preview .spouse-preview-copy button{font-size:12px;padding:8px;max-width:100%}}
 @media print{#report .r-page.rv3-contents{break-before:page!important;break-after:page!important;min-height:230mm}#report .rv3-intro{break-after:page!important}}
 
+
+/* Secondary evidence ink; retain the surrounding body size and inline flow. */
+:root{--evidence-ink:#73767b;--evidence-ink-dark:#a5acb8}
+.reading-evidence,#report .reading-evidence,#report .rv3-lead .reading-evidence{color:var(--evidence-ink)}
+html.rd .reading-evidence,html.rd #report .reading-evidence,html.rd #report .rv3-lead .reading-evidence{color:var(--evidence-ink-dark)}
+#resIntro .reading-evidence,.today .reading-evidence,.topic .reading-evidence{color:var(--evidence-ink-dark)}
+
 </style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
