@@ -3363,7 +3363,7 @@ cert:[['필기와 실기 중 어떻게 시간을 나눌까?',style+' 강점을 �
 function answerCards(rows){return '<div class="topic-answers">'+rows.map(([q,a])=>'<article class="topic-answer"><h4>'+topicEsc(q)+'</h4>'+readingParagraph(a)+'</article>').join('')+'</div>'}
 function matchFormHTML(){return `<section class="chart-form"><h4>상대방 정보를 입력하고 궁합 맞춰보기</h4><p>상대의 생년월일과 영문 이름을 입력하면 두 사람의 다섯 점술을 비교해요.</p><form id="compatibility-form"><div class="chart-fields"><label>상대 이름<input name="partnerName" maxlength="40" required autocomplete="off"></label><label>상대 영문 이름<input name="partnerRoman" maxlength="80" pattern=".*[A-Za-z].*" title="영문 알파벳을 포함해 입력해 주세요" required autocomplete="off"></label><label>상대 생년월일 (양력)<input name="partnerDate" type="date" min="1920-01-01" required></label><label>상대 출생 시각 기준<select name="partnerZone"><option value="9">대한민국 표준시</option><option value="0">UTC</option><option value="8">UTC+8</option><option value="-5">UTC−5</option><option value="-8">UTC−8</option></select></label></div><p>해외 출생은 출생 당시의 UTC 기준을 선택해 주세요. 해외 서머타임은 자동 보정하지 않아요.</p><button type="submit">두 사람의 궁합 보기</button><div id="compatibility-result" class="chart-feedback" aria-live="polite"></div></form></section>`}
 function compatibilityRows(a,b){const ae=SE[a.stems.d],be=SE[b.stems.d],ab=a.brs.d,bb=b.brs.d;const relation=ae===be?'비슷한 기질을 알아보기 쉬운 조합':(ae+1)%5===be||(be+1)%5===ae?'서로의 강점을 북돋는 상생 상징의 조합':'서로 다른 기준을 설명하며 맞춰볼 조합';const num=reduceNum(a.lp,false),num2=reduceNum(b.lp,false);return [['사주 · 두 사람의 기질',`${ST[a.stems.d]}${EL[ae]}와 ${ST[b.stems.d]}${EL[be]}는 ${relation}이에요. ${mod(ab-bb,12)===6?'일지 충의 상징이 있어 생활 리듬과 갈등 때의 대화 방식을 미리 맞춰보세요.':ab===bb?'같은 일지여서 익숙한 방식에 공감할 수 있지만 서로의 고집도 살펴보세요.':'같이 있을 때 편한 생활 방식과 서로 다른 기준을 직접 이야기해보세요.'}`,'오행 상생·동일 기질, 일지 동일·충 비교'],['서양 점성술 · 태양의 성향',`${ZOD[sign(a.sun)]}자리와 ${ZOD[sign(b.sun)]}자리예요. ${sign(a.sun)%4===sign(b.sun)%4?'같은 원소의 별자리라 기본적인 표현 방식에 공통점이 있어요.':'원소가 달라 활력을 얻는 방식과 관계의 속도를 맞춰보는 것이 좋아요.'}`,'태양 별자리 원소 비교 · 상승궁·하우스 미비교'],['베딕 점성술 · 달의 리듬',`달의 낙샤트라는 ${NAK[a.nk]}와 ${NAK[b.nk]}예요. ${a.nk===b.nk?'같은 낙샤트라로 정서적인 주제에 공통점이 있어요.':'서로의 감정을 처리하는 방식과 필요한 휴식의 차이를 살펴보세요.'}`,'항성황도 달의 낙샤트라 비교 · 전통 36점 궁합 미적용'],['수비학 · 삶의 방향',`두 사람의 인생 수는 각각 ${a.lp} / ${b.lp}, 표현 수는 ${a.expr??'미계산'} / ${b.expr??'미계산'}예요. ${num===num2?'축약 인생 수가 같아 삶의 주제에 공통점을 떠올릴 수 있어요.':'삶에서 우선하는 목표가 다를 수 있으니 장기 계획을 나누어보세요.'}`,'두 생년월일의 구간 축약과 영문 이름 계산'],['마야력 · 탄생 상징',`두 사람의 탄생 조합은 ${a.tone} ${MS[a.msign][0]} / ${b.tone} ${MS[b.msign][0]}예요. 각각의 주제인 「${MS[a.msign][2]}」, 「${MS[b.msign][2]}」를 함께 읽어보세요.`,'전통 촐킨의 탄생 기호 비교 · 궁합 의미는 자체 해석']];}
-const TOPIC_REPORT_CONTENTS={"study":["나에게 맞는 공부 방식과 집중 습관","시험·자격증·진학을 준비할 시기","학업을 돕는 귀인과 배움의 환경","성취를 방해하는 습관과 실천 계획"],"money":["재물운이 열리는 시기와 연도별 흐름","나에게 맞는 수입·저축 방식","돈이 새는 습관과 재물운을 키우는 실천"],"marry":["배우자를 만날 시기와 장소","예상 배우자의 외모·분위기 일러스트","배우자의 성격·MBTI 이미지","배우자의 직업·경제관·가정 분위기","결혼의 흐름과 오래가는 관계의 비결"],"love":["새 인연을 만날 시기와 장소","예상 연애 상대의 외모·분위기 일러스트","내 매력과 상대가 끌리는 포인트","연애 상대의 성격·직업·경제관","관계가 깊어지는 시기와 연애 패턴"],"reunion":["관계를 다시 돌아볼 시기","연락과 대화의 흐름","다시 만났을 때 맞춰볼 점","새로운 인연으로 나아가는 방향"],"work":["나에게 맞는 직업과 업무 방식","이직·승진·도전을 준비할 시기","귀인을 만날 때·장소·인물상","기회를 만드는 준비와 실천"],"match":["두 사람의 다섯 점술 궁합","잘 맞는 성향과 서로 끌리는 차이","대화·감정·생활·경제관 비교","관계를 깊게 만드는 시기와 실천"],"ask":["내 질문에 대한 개인별 풀이","사주·별자리·베딕·수비학·마야력의 관련 근거","주목할 시기와 구체적인 실천 제안"]};
+const TOPIC_REPORT_CONTENTS={"study":["나에게 맞는 공부 방식과 집중 습관","시험·자격증·진학을 준비할 시기","학업을 돕는 귀인과 배움의 환경","성취를 방해하는 습관과 실천 계획"],"money":["타고난 재물 구조와 돈을 다루는 방식","투자 습관·집과 부동산·사업과 부수입","앞으로 10년의 재물 흐름과 주의할 패턴"],"marry":["배우자를 만날 시기와 장소","예상 배우자의 외모·분위기 일러스트","배우자의 성격·MBTI 이미지","배우자의 직업·경제관·가정 분위기","결혼의 흐름과 오래가는 관계의 비결"],"love":["새 인연을 만날 시기와 장소","예상 연애 상대의 외모·분위기 일러스트","내 매력과 상대가 끌리는 포인트","연애 상대의 성격·직업·경제관","관계가 깊어지는 시기와 연애 패턴"],"reunion":["관계를 다시 돌아볼 시기","연락과 대화의 흐름","다시 만났을 때 맞춰볼 점","새로운 인연으로 나아가는 방향"],"work":["나에게 맞는 직업과 업무 방식","이직·승진·도전을 준비할 시기","귀인을 만날 때·장소·인물상","기회를 만드는 준비와 실천"],"match":["두 사람의 다섯 점술 궁합","잘 맞는 성향과 서로 끌리는 차이","대화·감정·생활·경제관 비교","관계를 깊게 만드는 시기와 실천"],"ask":["내 질문에 대한 개인별 풀이","사주·별자리·베딕·수비학·마야력의 관련 근거","주목할 시기와 구체적인 실천 제안"]};
 const TOPIC_REPORT_PRICE=3900,FREE_QUESTION_PRICE=4900,COMPREHENSIVE_REPORT_PRICE=15900;
 function topicReportHTML(k){const name=TOPICS.find(t=>t[0]===k)[1],ask=k==='ask';return '<section class="topic-offer"><span class="eyebrow">'+(ask?'나의 질문에 대한 리포트':'더 구체적인 나의 리포트')+'</span><h4>'+name+' 리포트에서 볼 내용</h4><ul>'+TOPIC_REPORT_CONTENTS[k].map(x=>'<li>'+x+'</li>').join('')+'</ul>'+(ask?'':'<div class="topic-offer-action"><strong>'+TOPIC_REPORT_PRICE.toLocaleString()+'원</strong><button type="button" data-buy="'+k+'">나의 리포트 보기</button></div><p class="buy-msg" aria-live="polite"></p>')+'</section>'}
 
@@ -3404,8 +3404,23 @@ function studyTopicHTML(ch){
 }
 /* ---------- 궁합(2026-11-05): 두 사람의 차트를 다섯 점술 전통 규칙으로 비교하는 자체 점수 ---------- */
 let COMPAT=null;
-function moneyAllHTML(ch){const strip=h=>h.replace(/<section class="topic-offer"[\s\S]*?<\/section>/g,'').replace(/^<section class="blk blk-first topic">/,'<section class="blk topic">');
- return topicHTML(ch,'money')+['invest','property','business'].map(k=>strip(topicHTML(ch,k))).join('')}
+function moneyAllHTML(ch){const d=ch.stems.d,y0=new Date().getFullYear(),tg=[];
+ [ch.stems.y,ch.stems.m,ch.stems.h].forEach(v=>{if(v!=null)tg.push(tenGod(d,v))});[ch.brs.y,ch.brs.m,ch.brs.d,ch.brs.h].forEach(b=>{if(b!=null)tg.push(tenGod(d,BMAIN[b]))});
+ const n=t=>tg.filter(x=>x===t).length,jj=n('정재'),pj=n('편재'),gb=n('겁재')+n('비견'),ss=n('식신')+n('상관'),gk=n('정관')+n('편관'),ins=n('정인')+n('편인');
+ const Y=R.map((r,i)=>({y:y0+1+i,v:D(r[0].mean)})),srt=Y.slice().sort((a,b)=>b.v-a.v),top=srt.slice(0,2).sort((a,b)=>a.y-b.y),low=srt[srt.length-1];
+ const earn=ss>=2?'만든 것을 파는 방식(재능·콘텐츠·서비스)':pj>jj?'기회를 잡는 방식(부수입·거래·영업)':gk>=2?'조직 안에서 직급과 함께 오르는 월급':ins>=2?'자격과 전문성을 인정받는 방식':'꾸준한 고정 수입을 쌓는 방식';
+ const leak=gb>=2?'사람 때문에 나가는 돈(동업·빌려주기·모임 지출)':ch.cnt[3]===0?'끊지 못하는 구독·습관성 지출':ch.cnt[1]>=3?'기분이 좋을 때 하는 충동 구매':'눈에 잘 안 띄는 고정비';
+ const risk=(pj+n('상관')+n('겁재'))-(jj+n('정인')+n('정관'));
+ const home=Y.filter(x=>[4,8].includes(pyOf(ch,x.y))).sort((a,b)=>b.v-a.v)[0]||srt[0];
+ const biz=(pj+ss>=3&&ch.strong)?'해볼 만한 구조예요. 작게 시작해 숫자로 확인하며 키워 가세요.':(pj+ss>=2)?'부업이나 작은 판매부터 시작해 반응을 확인한 뒤 키우는 편이 맞아요.':'혼자 크게 벌이기보다, 직장이나 파트너와 함께하며 내 전문성을 파는 쪽이 안전해요.';
+ const rows=[
+  ['돈이 가장 잘 들어오는 해는?',`${top.map(x=>x.y+'년('+x.v+'점)').join('과 ')}이 앞으로 10년 중 가장 밝아요. ${low.y}년(${low.v}점)은 큰 지출을 미루고 지키는 해로 두세요.`],
+  ['나는 어떻게 돈을 버는 게 맞을까?',`${earn}이 잘 맞아요. `+(jj+pj?`사주에 재물 별이 ${jj+pj}개 있어 돈의 흐름을 읽는 감각이 있어요.`:`사주에 재물 별이 드러나 있지 않아, 돈 자체보다 일과 실력을 통해 재물이 따라오는 구조예요.`)],
+  ['내 돈은 어디로 새기 쉬울까?',`${leak}을 조심하세요. 한 달에 한 번 이 항목만 따로 확인해도 새는 돈이 크게 줄어요.`],
+  ['투자는 어떤 스타일이 맞을까?',risk>0?'기회를 빨리 잡는 공격형이에요. 들어가기 전에 손실 한도를 숫자로 정해 두는 것이 핵심이에요.':risk<0?'안전을 먼저 보는 보수형이에요. 한 번에 넣기보다 나눠서 들어가는 방식이 잘 맞아요.':'공격과 안정의 균형형이에요. 안전 자산을 바탕에 두고 일부만 기회에 쓰는 방식이 맞아요.'],
+  ['집·부동산은 언제 생각해 볼까?',`${home.y}년이 계약과 기반을 다지기 좋은 흐름이에요. ${ins?'문서를 꼼꼼히 보는 힘이 있으니 직접 조건을 비교해 보세요.':'계약 조건은 전문가와 함께 확인하는 편이 안전해요.'}`],
+  ['사업이나 부업을 해도 될까?',biz]];
+ return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">재물·돈</span><h3>내 돈은 언제, 어떻게 불어날까?</h3><p>수입·지출·투자·부동산·사업까지, 많이 궁금해하는 질문에 짧게 답했어요. 자세한 근거와 연도별 흐름은 리포트에서 정리해 드려요.</p></header>'+answerCards(rows)+topicReportHTML('money')+'</section>'}
 function compatScore(a,b){
  const SAN=x=>x%4,LIU=x=>(13-x)%12,el=s=>SE[s],gen=(x,y)=>(x+1)%5===y,ctl=(x,y)=>(x+2)%5===y,EN=['목','화','토','금','수'],SEL=['불','흙','공기','물'],COMP=[2,3,0,1];
  const sys=[];const S=(n,w)=>{const o={n,w,base:60,items:[]};sys.push(o);return (label,v,t)=>o.items.push([label,v,t])};
@@ -4187,7 +4202,7 @@ function buildRichReport(ch,key){
    }
    if(key==='invest'||key==='money'){
     const risk=(pj+(tgc['상관']||0)+(tgc['겁재']||0))-(jj+(tgc['정인']||0)+(tgc['정관']||0));
-    add('core','투자 판단 성향',risk>0?'기회를 빠르게 잡는 공격형 성향이 우세합니다.':risk<0?'원칙과 안전을 먼저 보는 보수형 성향이 우세합니다.':'공격형과 보수형 성향이 균형을 이룹니다.',['편재 '+pj+' · 상관 '+(tgc['상관']||0)+' · 겁재 '+gb,'정재 '+jj+' · 정인 '+(tgc['정인']||0)+' · 정관 '+(tgc['정관']||0),'화성 '+zs(pl.mars)],
+    add('core',key==='money'?'투자할 때의 판단 습관':'투자 판단 성향',risk>0?'기회를 빠르게 잡는 공격형 성향이 우세합니다.':risk<0?'원칙과 안전을 먼저 보는 보수형 성향이 우세합니다.':'공격형과 보수형 성향이 균형을 이룹니다.',['편재 '+pj+' · 상관 '+(tgc['상관']||0)+' · 겁재 '+gb,'정재 '+jj+' · 정인 '+(tgc['정인']||0)+' · 정관 '+(tgc['정관']||0),'화성 '+zs(pl.mars)],
      ['[근거] 사주에서 편재·상관·겁재는 기회와 승부, 정재·정인·정관은 원칙과 안정을 상징합니다. 원국에서 앞의 그룹이 '+(pj+(tgc['상관']||0)+gb)+'개, 뒤의 그룹이 '+(jj+(tgc['정인']||0)+(tgc['정관']||0))+'개입니다.',
       risk>0?'[해석] 기회를 포착하는 감각은 장점이지만, 손절 기준 없이 들어가면 한 번의 손실이 커지기 쉬운 구조입니다. 진입 전에 손실 한도를 숫자로 정해 두는 것이 이 성향의 핵심 보완책입니다.':'[해석] 손실을 피하는 감각이 좋아 큰 실수는 적지만, 확신이 들 때까지 기다리다 적정 시점을 놓치기 쉽습니다. 소액으로 나눠 들어가는 규칙이 이 성향과 잘 맞습니다.',
       '[점성술] 화성이 '+zs(pl.mars)+'('+SEL[pl.mars%4]+')에 있어 '+(pl.mars%4===0?'결정이 빠르고 충동적일 수 있습니다.':pl.mars%4===1?'느리지만 끈기 있게 보유하는 편입니다.':pl.mars%4===2?'정보와 분석에 따라 자주 조정하는 편입니다.':'감정과 분위기에 판단이 흔들리기 쉽습니다.')+' 8하우스(공동 자산·레버리지)는 '+zs(h8)+'입니다.',
@@ -4195,13 +4210,13 @@ function buildRichReport(ch,key){
    }
    if(key==='property'||key==='money'){
     const ins=ng[4];
-    add('core','부동산과 주거의 기질','문서·계약을 뜻하는 인성이 '+ins+'개, 토(土) 기운이 '+cnt[2]+'개입니다.',['인성 '+ins+' · 정재 '+jj,'토 '+cnt[2],'4하우스 '+zs(h4),'토성 '+zs(pl.saturn)],
+    add('core',key==='money'?'집과 부동산':'부동산과 주거의 기질','문서·계약을 뜻하는 인성이 '+ins+'개, 토(土) 기운이 '+cnt[2]+'개입니다.',['인성 '+ins+' · 정재 '+jj,'토 '+cnt[2],'4하우스 '+zs(h4),'토성 '+zs(pl.saturn)],
      ['[근거] 사주에서 인성은 문서와 계약, 토는 땅과 기반을 상징합니다. '+(ins?'인성이 '+ins+'개 있어 계약과 문서를 꼼꼼히 다루는 힘이 있습니다.':'인성이 없어 계약 조건을 직접 검토하기보다 전문가에게 맡기는 편이 안전합니다.')+' '+(cnt[2]>=3?'토가 많아 한곳에 오래 머물며 자산을 키우는 방식이 잘 맞습니다.':cnt[2]===0?'토가 없어 거주지를 자주 옮기거나 기반을 다지는 데 시간이 걸릴 수 있습니다.':'토가 적당해 실거주와 자산 목적을 균형 있게 볼 수 있습니다.'),
       '[서양] 집과 가정을 뜻하는 4하우스가 '+J(zs(h4),'이라','라')+' '+HX.home[h4%4]+'에서 안정을 느낍니다. 토성은 '+houseOf(pl.saturn)+'하우스('+HOUSE[houseOf(pl.saturn)]+')에 있어 이 영역은 장기 계획이 필요합니다.',
       ch.has.yeokma?'[신살] 원국에 역마가 있어 직장·학업으로 인한 이동이 잦을 수 있습니다. 매수보다 임차를 유연하게 활용하는 시기가 있을 수 있습니다.':'[신살] 역마가 없어 이동보다 정착에서 안정감을 얻는 편입니다.'],'계약 전에는 등기부와 조건을 직접 확인하고, 실거주 기준(통근·생활 동선)을 먼저 정하세요.');
    }
    if(key==='business'||key==='money'){
-    add('core','사업가 기질','편재 '+pj+', 식신·상관 '+ss+', 관성 '+ng[3]+'개로 '+(pj+ss>=3?'직접 사업을 꾸릴 동력이 강한 구조':'조직 안에서 사업 감각을 키운 뒤 독립하는 구조')+'입니다.',['편재 '+pj+' · 식상 '+ss+' · 관성 '+ng[3],ch.strong?'신강':'신약','10하우스 '+zs(h10),'상승궁 '+(ascOK?zs(ascS):'미확정'),'인생 수 '+ch.lp],
+    add('core',key==='money'?'사업과 부수입':'사업가 기질','편재 '+pj+', 식신·상관 '+ss+', 관성 '+ng[3]+'개로 '+(pj+ss>=3?'직접 사업을 꾸릴 동력이 강한 구조':'조직 안에서 사업 감각을 키운 뒤 독립하는 구조')+'입니다.',['편재 '+pj+' · 식상 '+ss+' · 관성 '+ng[3],ch.strong?'신강':'신약','10하우스 '+zs(h10),'상승궁 '+(ascOK?zs(ascS):'미확정'),'인생 수 '+ch.lp],
      ['[근거] 사업에는 기회를 보는 눈(편재), 상품을 만드는 힘(식상), 조직을 다스리는 힘(관성), 그리고 이를 감당할 체력(신강)이 필요합니다. 원국은 '+(ch.strong?'신강해 위험을 감당할 힘이 있습니다.':'신약해 혼자보다 동업자·전문가와 역할을 나눌 때 안정적입니다.'),
       '[형태] '+(ss>=2?'식상이 강해 콘텐츠·제조·서비스처럼 직접 만든 것을 파는 형태가 잘 맞습니다.':pj>=1?'편재가 있어 유통·중개·영업처럼 흐름을 다루는 형태가 잘 맞습니다.':'인성·관성 중심이라 전문 지식 기반의 1인 사업이나 컨설팅 형태가 잘 맞습니다.')+' 10하우스 '+J(zs(h10),'은','는')+' '+J(HX.work[h10%4],'을','를')+' 보여 줍니다.',
       '[리더십] '+dm[2]+'. '+dm[3]+'. 사업에서는 '+dm[4]+'.',
