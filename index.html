@@ -4821,7 +4821,7 @@ async function openShare(){
   if(useInvite){try{await ensureInvite();url=inviteUrl();startPoll();checkInvite()}catch(_){}}
   $("share-preview").value=SHARE_TITLE+"\n"+url;
   if(typeof navigator.share==="function"){
-    try{await navigator.share({title:SHARE_TITLE,text:SHARE_TITLE,url});
+    try{await navigator.share({url});
       if(useInvite&&url!==SHARE_URL)return;
       if(typeof CH!=="undefined"&&CH&&!INVITE_API)unlockGraphs();return}
     catch(e){if(e&&e.name==="AbortError")return}}
