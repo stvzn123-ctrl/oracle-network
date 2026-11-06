@@ -164,7 +164,7 @@ async function loadAll(reset){
   const first=members.length===0;
   while(more){
     const d=await api('/admin/users?offset='+offset);
-    members.push(...d.users);offset=d.nextOffset;more=offset!==null;
+    members.push(...d.users);for(const u of d.users)if(Array.isArray(u.active)&&!cache.has(u.id))cache.set(u.id,{partial:true,u:{nickname:u.nickname,profile:null,grants:u.active.map(k=>({report_key:k,revoked_at:null}))}});offset=d.nextOffset;more=offset!==null;
     if(first||!more||members.length%100===0)renderList();
     if(members.length>=2000)break;
   }
@@ -202,7 +202,7 @@ function paint(u,id){
 }
 async function open(id){
   const c=cache.get(id);
-  if(c){paint(c.u,id)}                           // 캐시가 있으면 즉시 표시
+  if(c){paint(c.u,id);if(c.partial)$('facts').innerHTML='<div class="skel" style="grid-column:1/-1"></div>'}                           // 캐시가 있으면 즉시 표시
   else{const m=members.find(x=>x.id===id);paint({nickname:m?.nickname,profile:null,grants:[]},id);$('facts').innerHTML='<div class="skel" style="grid-column:1/-1"></div>';$('grid').style.opacity=.4}
   const my=++seq;
   try{
