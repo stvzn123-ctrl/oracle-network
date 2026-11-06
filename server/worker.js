@@ -1346,11 +1346,49 @@ function buildRichReport(ch,key){
 
 CH=buildChart(profile);compute();return buildRichReport(CH,key);}
 
+/* 자유질문: 저장 + 운영자 알림. 표는 처음 요청 때 자동으로 만든다.
+   알림(선택): TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID, 또는 NOTIFY_WEBHOOK(디스코드 웹후크 주소). */
+let questionTableReady=false;
+async function questionTable(env){if(questionTableReady)return;await env.DB.prepare("CREATE TABLE IF NOT EXISTS questions(id INTEGER PRIMARY KEY AUTOINCREMENT,user_id TEXT,email TEXT NOT NULL,question TEXT NOT NULL,sig TEXT,created INTEGER NOT NULL,done_at INTEGER)").run();questionTableReady=true}
+async function notifyOwner(env,text){const jobs=[];
+  if(env.TELEGRAM_BOT_TOKEN&&env.TELEGRAM_CHAT_ID)jobs.push(fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/sendMessage",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({chat_id:env.TELEGRAM_CHAT_ID,text:text.slice(0,4000)})}));
+  if(env.NOTIFY_WEBHOOK)jobs.push(fetch(env.NOTIFY_WEBHOOK,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({content:text.slice(0,1900),text:text.slice(0,4000)})}));
+  await Promise.allSettled(jobs)}
+async function questionRoute(req,env,url,ctx){
+  const path=url.pathname.replace(/\/+$/,"");
+  if(path!=="/question"&&path!=="/admin/questions"&&path!=="/admin/question")return null;
+  if(req.method==="POST"&&req.headers.get("Origin")!==ORIGINS[0])return json(req,env,{error:"origin"},403);
+  await questionTable(env);
+  const user=await member(req,env),now=Date.now();
+  if(path==="/question"&&req.method==="POST"){
+    let b;try{const t=await req.text();if(t.length>8000)throw 0;b=JSON.parse(t)}catch{return json(req,env,{error:"input"},400)}
+    const question=typeof b.question==="string"?b.question.trim():"",email=typeof b.email==="string"?b.email.trim():"";
+    if(question.length<2||question.length>1000||!/^[^\s@<>]{1,64}@[^\s@<>]{1,190}\.[a-z]{2,}$/i.test(email))return json(req,env,{error:"input"},400);
+    const sig=await sigOf(req),recent=await env.DB.prepare("SELECT COUNT(*) n FROM questions WHERE sig=? AND created>?").bind(sig,now-864e5).first();
+    if(recent.n>=5)return json(req,env,{error:"too_many"},429);
+    const r=await env.DB.prepare("INSERT INTO questions(user_id,email,question,sig,created) VALUES(?,?,?,?,?)").bind(user?user.id:null,email,question,sig,now).run();
+    ctx.waitUntil(notifyOwner(env,"[오라클 자유질문 #"+(r.meta?.last_row_id??"")+"]\n이메일: "+email+"\n회원: "+(user?user.nickname:"비로그인")+"\n\n"+question));
+    return json(req,env,{ok:true});
+  }
+  if(!user)return json(req,env,{error:"unauthorized"},401);
+  if(!isAdmin(user,env))return json(req,env,{error:"forbidden"},403);
+  if(path==="/admin/questions"&&req.method==="GET"){
+    const rows=await env.DB.prepare("SELECT q.id,q.email,q.question,q.created,q.done_at,u.nickname,u.profile FROM questions q LEFT JOIN users u ON u.id=q.user_id ORDER BY q.created DESC LIMIT 200").all();
+    return json(req,env,{questions:rows.results.map(r=>({...r,profile:r.profile?JSON.parse(r.profile):null}))});
+  }
+  if(path==="/admin/question"&&req.method==="POST"){
+    const b=await req.json().catch(()=>({}));if(!Number.isInteger(b.id))return json(req,env,{error:"input"},400);
+    await env.DB.prepare("UPDATE questions SET done_at=? WHERE id=?").bind(b.done?now:null,b.id).run();return json(req,env,{ok:true});
+  }
+  return json(req,env,{error:"not_found"},404);
+}
+
 export default {
   async fetch(req, env, ctx) {
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors(req, env) });
     const url = new URL(req.url), path = url.pathname.replace(/\/+$/, "");
     try {
+      const q=await questionRoute(req,env,url,ctx);if(q)return q;
       const access=await accessRoute(req,env,url);if(access)return access;
       const auth=await authRoute(req,env,url,ctx);if(auth)return auth;
       if (req.method === "POST" && path === "/invite") {

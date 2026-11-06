@@ -78,7 +78,7 @@ body:not(.picked) #detailCard{display:none}
 </style>
 </head>
 <body>
-<div class="bar"><h1>운명 네트워크 · 관리자</h1><span class="me" id="me"></span><button id="refresh" title="목록 새로고침">새로고침</button><a href="index.html">사이트 →</a></div>
+<div class="bar"><h1>운명 네트워크 · 관리자</h1><span class="me" id="me"></span><button id="qOpen">자유질문</button><button id="refresh" title="목록 새로고침">새로고침</button><a href="index.html">사이트 →</a></div>
 <div class="wrap" id="app" hidden>
  <aside class="card list" id="listCard">
   <input id="q" type="search" placeholder="이름 또는 계정 ID 검색" autocomplete="off" aria-label="회원 검색">
@@ -113,6 +113,14 @@ body:not(.picked) #detailCard{display:none}
 </div>
 <div class="empty" id="gate"><p id="gateMsg">권한 확인 중…</p></div>
 <div id="toast" hidden role="status" aria-live="polite"></div>
+<dialog id="qDlg" style="max-width:760px;width:94vw;max-height:86vh;background:var(--panel,#0d1622);color:inherit;border:1px solid #2a3a4f;border-radius:14px;padding:18px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="margin:0;font-size:18px">자유질문</h2><button id="qClose">닫기</button></div><div id="qList" style="margin-top:12px"></div></dialog>
+<script>
+(()=>{const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+async function load(){const el=$('qList');el.textContent='불러오는 중…';try{const d=await api('/admin/questions');
+ el.innerHTML=d.questions.length?d.questions.map(q=>{const p=q.profile;return '<div style="border-top:1px solid #2a3a4f;padding:12px 0;'+(q.done_at?'opacity:.5':'')+'"><div style="font-size:12px;opacity:.75">#'+q.id+' · '+new Date(q.created).toLocaleString('ko-KR')+' · '+esc(q.nickname||'비로그인')+(p?' · '+esc(p.name)+' '+esc(p.date)+' '+(p.notime?'시간 모름':esc(p.time))+' '+(p.sex==='m'?'남':'여'):'')+'</div><div style="margin:6px 0"><a href="mailto:'+esc(q.email)+'">'+esc(q.email)+'</a></div><div style="white-space:pre-wrap;line-height:1.7">'+esc(q.question)+'</div><label style="display:inline-flex;gap:6px;margin-top:6px;font-size:13px"><input type="checkbox" data-qdone="'+q.id+'"'+(q.done_at?' checked':'')+'>답변 완료</label></div>'}).join(''):'아직 들어온 질문이 없어요.'}catch(e){el.textContent=e.message}}
+$('qOpen').onclick=()=>{$('qDlg').showModal();load()};$('qClose').onclick=()=>$('qDlg').close();
+$('qList').addEventListener('change',async e=>{const c=e.target.closest('[data-qdone]');if(!c)return;try{await api('/admin/question',{id:+c.dataset.qdone,done:c.checked});c.closest('div[style]').style.opacity=c.checked?.5:1}catch(err){toast(err.message,1);c.checked=!c.checked}});})();
+</script>
 <script>
 const API='https://oracle-api.stvzn123.workers.dev';
 const KEYS={comprehensive:'종합',money:'재물·돈',love:'연애·인연',marry:'결혼·배우자',reunion:'재회',match:'궁합',work:'직업',study:'학업·성취'};
