@@ -2316,7 +2316,7 @@ function reportScoreGuideHTML(data,key){
 
 
 function reportTopicRows(ch,k){if(SUBTOPIC_COPY[k]){const html=subtopicHTML(ch,k),decode=x=>x.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');return Array.from(html.matchAll(/<article class="topic-answer"><h4>([\s\S]*?)<\/h4><p>([\s\S]*?)<\/p><\/article>/g)).map(m=>[decode(m[1]),decode(m[2])]);}return topicAnswerRows(ch,k);}
-const {narrativeComprehensive,narrativeRelation}=(()=>{
+const {narrativeComprehensive,narrativeRelation,narrativeMoney}=(()=>{
 /* 종합 리포트 줄글 엔진 (API 없이 미리 써 둔 완성 문단을 조합).
    규칙
    - 본문 문단에는 전문 용어(오행·일간·십성·하우스·다샤·개인년·인생 수 등)를 쓰지 않는다.
@@ -2632,7 +2632,57 @@ function narrativeRelation(c, key) {
     basis: [] });
   return out;
 }
-return {narrativeComprehensive,narrativeRelation};})();
+
+/* ───────── 재물 리포트 ───────── */
+const MSTYLE = [
+  "{name}님은 내 힘으로 벌고 내 방식으로 쓰고 싶은 사람이에요. 누가 정해 준 길보다 직접 판단해서 움직일 때 돈도 더 잘 붙어요. 다만 친구나 가족과 돈이 얽히면 마음이 약해져서 손해를 보기 쉬우니, 가까운 사이일수록 돈 약속은 글로 남겨 두세요.",
+  "{name}님은 재능이 곧 돈이 되는 사람이에요. 잘하는 것을 결과물로 만들어 보여 줄 때 수입이 따라오고, 좋아하는 일을 할수록 돈도 오래 들어와요. 그래서 {name}님에게는 '무엇으로 벌까'보다 '무엇을 잘 만들까'를 먼저 고민하는 게 돈을 부르는 길이에요.",
+  "{name}님은 돈의 흐름을 읽는 눈이 있는 사람이에요. 어디에 기회가 있고 무엇이 남는 장사인지 남들보다 빨리 알아채요. 그 감각 덕분에 큰돈을 만질 기회도 오지만, 그만큼 판이 커질 때는 한 번 더 숨을 고르는 습관이 {name}님의 돈을 지켜 줘요.",
+  "{name}님은 믿음과 책임으로 돈을 버는 사람이에요. 맡은 자리에서 인정받을수록 수입도 함께 올라가는 흐름이라, 한 곳에서 실력을 쌓아 갈 때 재물운이 가장 안정적이에요. 갑작스러운 한 방보다 꾸준히 오르는 계단 같은 재물이에요.",
+  "{name}님은 아는 것이 돈이 되는 사람이에요. 배운 지식과 자격, 경험이 쌓일수록 몸값이 올라가고, 그게 그대로 재산이 돼요. 그래서 {name}님에게 가장 좋은 투자는 결국 나 자신에게 하는 투자예요."
+];
+const MLEAK = [
+  "{name}님의 돈이 새기 쉬운 곳은 '새로 시작하는 일'이에요. 배우고 싶은 것, 해 보고 싶은 것이 많아서 등록비나 장비값으로 돈이 조금씩 빠져나가요. 새로 시작하기 전에 지금 하고 있는 것 하나를 끝냈는지 먼저 확인해 보세요.",
+  "{name}님의 돈이 새기 쉬운 곳은 '기분'이에요. 기분이 좋은 날은 한턱 내고 싶고, 우울한 날은 나를 위로하고 싶어서 지갑이 쉽게 열려요. 큰 지출은 마음이 들뜬 날이 아니라 평범한 날에 결정하는 규칙을 세워 보세요.",
+  "{name}님의 돈이 새기 쉬운 곳은 '익숙한 고정비'예요. 잘 쓰지 않는 구독이나 습관처럼 내는 지출이 오래 쌓여 있기 쉬워요. 석 달에 한 번, 매달 빠져나가는 돈을 한 번에 훑어보는 것만으로도 꽤 큰돈이 아껴져요.",
+  "{name}님의 돈이 새기 쉬운 곳은 '좋은 것에 대한 기준'이에요. 마음에 드는 물건을 고르다 보면 조금 더 좋은 것, 조금 더 비싼 것으로 손이 가요. 사기 전에 \"이게 꼭 이 가격이어야 하나\" 한 번만 물어보세요.",
+  "{name}님의 돈이 새기 쉬운 곳은 '미룬 결정'이에요. 알아보고 비교하는 동안 좋은 조건을 놓치거나, 정리해야 할 지출을 오래 그대로 두기 쉬워요. 충분히 알아봤다면 마감일을 정해 결정해 보세요."
+];
+const MSAVE = [
+  "모으는 방식은 단순할수록 좋아요. 월급이나 수입이 들어오는 날 정해 둔 금액을 바로 다른 통장으로 옮겨 두고, 남은 돈으로 생활하는 방식이 {name}님에게 가장 잘 맞아요. 크게 불리는 것보다 잃지 않는 것을 먼저 생각하면 시간이 {name}님 편이 돼요.",
+  "모으는 방식은 '나눠 두기'가 잘 맞아요. 생활비, 비상금, 미래를 위한 돈을 통장부터 나눠 두면 흐름이 눈에 보여서 쓰는 것도 모으는 것도 편해져요. 수입이 늘어나는 해에는 늘어난 만큼의 절반을 따로 떼어 두는 규칙을 세워 보세요.",
+  "모으는 방식은 '두 개의 주머니'가 잘 맞아요. 하나는 절대 건드리지 않는 지키는 돈, 다른 하나는 기회가 왔을 때 쓸 수 있는 도전하는 돈이에요. 수입이 들어올 때마다 두 주머니에 나눠 담아 두면, 좋은 기회가 와도 생활을 흔들지 않고 과감하게 움직일 수 있어요."
+];
+const MYEAR = [
+  "{y}년, {age}살의 {name}님에게는 돈의 흐름이 눈에 띄게 좋아져요. 하던 일에서 보상이 커지거나 새로운 수입의 길이 열리기 쉬운 해예요. 이 해에 들어오는 제안은 가볍게 넘기지 말고 꼼꼼히 들여다보세요.",
+  "{y}년({age}살)은 재물이 차곡차곡 쌓이는 해예요. 큰 한 방보다 그동안 해 온 일들이 하나씩 결실을 맺는 느낌이고, 모아 둔 것을 불릴 계획을 세우기에도 좋아요.",
+  "{y}년({age}살)에는 뜻밖의 곳에서 돈이 들어올 수 있어요. 오래 알고 지낸 사람의 소개나, 취미처럼 하던 일이 수입으로 이어지기 쉬우니 주변의 제안에 귀를 열어 두세요."
+];
+const MREST = "{y}년({age}살)은 돈에서 조금 지키는 해예요. 크게 벌이기보다 지출을 정리하고 빚을 줄이고, 다음 기회를 위한 종잣돈을 다지기 좋은 시기예요. 이 해에 아껴 둔 힘이 그다음 상승기에 그대로 돌아와요.";
+
+function narrativeMoney(c) {
+  const v = { name: c.name }, F = t => fill(t, v), out = [];
+  out.push({ kind: "core", title: "나의 돈 그릇", lead: F(MSTYLE[c.topG]).split(/(?<=[.!?])\s+/)[0],
+    paras: [F(MSTYLE[c.topG]), F(MONEY[c.moneyTier])], basis: c.basis.core });
+  out.push({ kind: "earn", title: "돈이 들어오는 길", lead: "",
+    paras: [F(WORK[c.topG]), c.jobs ? "구체적으로는 " + c.jobs.replace(/\s*·\s+/g, ", ") + " 같은 분야에서 {name}님의 강점이 돈으로 이어지기 쉬워요. 지금 하는 일이 달라도, 그 안에서 이런 성격의 역할을 맡을수록 수입이 커지는 흐름이에요.".replace(/\{name\}/g, c.name) : ""],
+    action: "이번 달 수입을 '본업'과 '그 밖의 수입'으로 나눠 적어 보세요. 어디서 돈이 들어오는지 보이면 키울 곳도 보여요.",
+    basis: c.basis.earn });
+  const ys = c.moneyYears.map((k, i) => ({ y: k.y, t: fill(MYEAR[i % 3], { name: c.name, y: k.y, age: k.age }) }));
+  if (c.moneyRest) ys.push({ y: c.moneyRest.y, t: fill(MREST, { y: c.moneyRest.y, age: c.moneyRest.age }) });
+  out.push({ kind: "timing", title: "앞으로 10년, 돈의 흐름", lead: "",
+    paras: [F("돈에도 밀물과 썰물이 있어요. 크게 들어오는 해가 있고, 지키며 다지는 해가 있어요. {name}님에게 특히 중요한 해들을 순서대로 짚어 볼게요."), ...ys.sort((a, b) => a.y - b.y).map(x => x.t)],
+    basis: c.basis.timing });
+  out.push({ kind: "save", title: "모으고 불리는 방법", lead: "", paras: [F(MSAVE[c.moneyTier])],
+    action: "수입이 들어오는 날, 정해 둔 금액을 자동으로 옮기는 이체를 하나 걸어 두세요.", basis: [] });
+  out.push({ kind: "caution", title: "돈이 새기 쉬운 곳", lead: "", paras: [F(MLEAK[c.dom]), F(CLOSE_CARE[0])],
+    action: "지난달 카드 내역에서 '없어도 괜찮았던 지출' 세 가지를 찾아 표시해 보세요.", basis: [] });
+  out.push({ kind: "advice", title: F("{name}님에게 전하는 이야기"), lead: "",
+    paras: [F("돈은 많이 버는 사람보다 자기 그릇을 아는 사람에게 오래 머물러요. {name}님은 이미 돈을 부를 힘을 가지고 있어요. 언제 크게 움직이고 언제 지켜야 하는지만 알면, 같은 노력으로도 훨씬 많이 남길 수 있어요. 이 리포트가 그 타이밍을 고르는 데 작은 나침반이 되었으면 좋겠어요.")],
+    action: "이 리포트에서 마음에 남은 문장 하나를 메모장에 적어 두세요. 힘든 날 다시 꺼내 보면 생각보다 큰 힘이 돼요.", basis: [] });
+  return out;
+}
+return {narrativeComprehensive,narrativeRelation,narrativeMoney};})();
 function buildRichReport(ch,key){
  /* 2026-11 리포트 엔진 v3: 계산된 출생 지표 → 전통 해석 → 나에게 의미 → 실천 순서로 쓴다.
     계산식(buildChart·enrich·oracles·compute)은 읽기만 하고 바꾸지 않는다. index.html과 server/worker.js에 같은 코드가 들어간다. */
@@ -2789,6 +2839,17 @@ function buildRichReport(ch,key){
     systems:[sTx(d)+' 일간 · '+(ch.strong?'신강':'신약'),'태양 '+zs(sunS)+' · 달 '+zs(moonS),curD?PK[curD.lord]+' 다샤 ~'+Math.floor(curD.end)+'년':'','인생 수 '+ch.lp,'마야 '+ch.tone+' '+maya[0]]
    }
   }).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',s.chart?{chart:s.chart}:{}));
+ }else if(key==='money'){
+  /* 2026-11 줄글 엔진(server/narrative.js narrativeMoney). */
+  const topG=ng.indexOf(Math.max(...ng)),nm=ch.inp.name||'당신',job=lifeQ(ch).find(x=>x.k==='job');
+  const moneyYears=[...Y4[0]].sort((a,b)=>b.score-a.score).slice(0,3).sort((a,b)=>a.year-b.year).map(r=>({y:r.year,age:kage(r.year)}));
+  const lw=low(Y4[0]),moneyRest=moneyYears.some(k=>k.y===lw.year)?null:{y:lw.year,age:kage(lw.year)};
+  narrativeMoney({name:nm,dom:maxEl,topG,moneyTier:Math.min(2,ng[2]),jobs:job?strip(job.a):'',moneyYears,moneyRest,
+   basis:{core:['많은 십성 '+GN[topG],'재성 '+ng[2]+'개 · 식상 '+ng[1]+'개','2하우스 '+zs(hs(2)),'인생 수 '+ch.lp],
+    earn:['10하우스 '+zs(hs(10)),'가장 많은 오행 '+ELN[maxEl]],
+    timing:Y4[0].map(r=>r.year+'년 금전 '+r.score+'점')}}).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',{}));
+  S.__sum=S.slice(0,3).map(s=>s.lead||String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0]).filter(Boolean);
+  S.forEach((s,i)=>s.id=key+'-'+(i+1));
  }else if(key==='love'||key==='marry'){
   /* 2026-11 줄글 엔진(server/narrative.js narrativeRelation). 근거는 basis(부록)로만. */
   const topG=ng.indexOf(Math.max(...ng)),mateEl=SE[BMAIN[ch.brs.d]],nm=ch.inp.name||'당신';

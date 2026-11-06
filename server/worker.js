@@ -1,6 +1,6 @@
 // 오라클 네트워크 공용 API (Cloudflare Worker + D1)
 // 초대 기록 및 카카오 로그인 회원의 명시적으로 저장한 출생 정보를 다룬다.
-import { narrativeComprehensive, narrativeRelation } from "./narrative.js";
+import { narrativeComprehensive, narrativeRelation, narrativeMoney } from "./narrative.js";
 const ORIGINS = ["https://stvzn123-ctrl.github.io"];
 const ABC = "abcdefghjkmnpqrstuvwxyz23456789";
 
@@ -1200,6 +1200,17 @@ function buildRichReport(ch,key){
     systems:[sTx(d)+' 일간 · '+(ch.strong?'신강':'신약'),'태양 '+zs(sunS)+' · 달 '+zs(moonS),curD?PK[curD.lord]+' 다샤 ~'+Math.floor(curD.end)+'년':'','인생 수 '+ch.lp,'마야 '+ch.tone+' '+maya[0]]
    }
   }).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',s.chart?{chart:s.chart}:{}));
+ }else if(key==='money'){
+  /* 2026-11 줄글 엔진(server/narrative.js narrativeMoney). */
+  const topG=ng.indexOf(Math.max(...ng)),nm=ch.inp.name||'당신',job=lifeQ(ch).find(x=>x.k==='job');
+  const moneyYears=[...Y4[0]].sort((a,b)=>b.score-a.score).slice(0,3).sort((a,b)=>a.year-b.year).map(r=>({y:r.year,age:kage(r.year)}));
+  const lw=low(Y4[0]),moneyRest=moneyYears.some(k=>k.y===lw.year)?null:{y:lw.year,age:kage(lw.year)};
+  narrativeMoney({name:nm,dom:maxEl,topG,moneyTier:Math.min(2,ng[2]),jobs:job?strip(job.a):'',moneyYears,moneyRest,
+   basis:{core:['많은 십성 '+GN[topG],'재성 '+ng[2]+'개 · 식상 '+ng[1]+'개','2하우스 '+zs(hs(2)),'인생 수 '+ch.lp],
+    earn:['10하우스 '+zs(hs(10)),'가장 많은 오행 '+ELN[maxEl]],
+    timing:Y4[0].map(r=>r.year+'년 금전 '+r.score+'점')}}).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',{}));
+  S.__sum=S.slice(0,3).map(s=>s.lead||String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0]).filter(Boolean);
+  S.forEach((s,i)=>s.id=key+'-'+(i+1));
  }else if(key==='love'||key==='marry'){
   /* 2026-11 줄글 엔진(server/narrative.js narrativeRelation). 근거는 basis(부록)로만. */
   const topG=ng.indexOf(Math.max(...ng)),mateEl=SE[BMAIN[ch.brs.d]],nm=ch.inp.name||'당신';
