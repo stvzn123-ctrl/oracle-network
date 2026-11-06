@@ -1,5 +1,6 @@
 // 오라클 네트워크 공용 API (Cloudflare Worker + D1)
 // 초대 기록 및 카카오 로그인 회원의 명시적으로 저장한 출생 정보를 다룬다.
+import { narrativeComprehensive } from "./narrative.js";
 const ORIGINS = ["https://stvzn123-ctrl.github.io"];
 const ABC = "abcdefghjkmnpqrstuvwxyz23456789";
 
@@ -1170,62 +1171,35 @@ function buildRichReport(ch,key){
  /* ---------- 카테고리별 구성 ---------- */
  const p1=peak(years);
  if(key==='comprehensive'){
-  const fieldPk=[0,1,2,3].map(k=>peak(Y4[k])),best=[0,1,2,3].sort((a,b)=>avg(Y4[b])-avg(Y4[a]))[0],tp=turningPoints(ch).slice(0,4);
-  add('summary','종합 요약',strip(traitDescription(ch)),[sTx(d)+' 일간',ELN[maxEl]+' 우세',zs(sunS),NAK[ch.nk],'인생 수 '+ch.lp],
-   ['사주에서는 '+sTx(d)+' 일간이 '+(ch.strong?'신강':'신약')+'하고 '+ELN[maxEl]+' 기운이 가장 많습니다('+cnt[maxEl]+'/'+tot+'). '+dm[0]+'처럼 '+dm[1]+' 기질이 중심이며, 이를 보완하는 기운은 '+good.map(g=>GNL[g]).join('·')+'입니다.',
-    '서양 점성술의 태양은 '+zs(sunS)+'('+SEL[sunS%4]+' 원소), 달은 '+zs(moonS)+'에 있어 '+HX.emo[moonS%4]+'. 인도 점성술에서는 달이 '+NAK[ch.nk]+' 낙샤트라에 있고 지금은 '+dashaTxt+' 기간으로, '+J((curD?DSX[curD.lord]:''),'이','가')+' 시기의 주제입니다.',
-    '수비학 인생 수 '+J(ch.lp,'은','는')+' '+J((LPX[ch.lp]||''),'을','를')+', 마야력 탄생 기호 '+ch.tone+' '+maya[0]+'('+J(maya[1]+')','은','는')+' '+J(maya[2],'을','를')+' 상징합니다. 다섯 체계 중 앞으로 10년 평균이 가장 높은 분야는 '+CATS[best].n+'('+avg(Y4[best])+'점)입니다.',
-    tp.length?'가장 가까운 전환점은 '+tp[0].y+'년의 '+tp[0].src+' 신호입니다. '+strip(tp[0].t):''],'',{table:{cap:'분야별 10년 요약(자체 지표)',head:['분야','10년 평균','가장 밝은 해'],rows:[0,1,2,3].map(k=>[CATS[k].n,avg(Y4[k])+'점',fieldPk[k].year+'년 '+fieldPk[k].score+'점'])}});
-  add('personality','성격과 기본 기질',dm[0]+' 일간의 '+dm[1]+' 기질에 '+ELN[maxEl]+' 우세가 더해진 구조입니다.',['일간 '+sTx(d),'오행 '+cnt.join('·'),'가장 많은 십성 그룹 '+GN[topG]+' '+ng[topG]+'개','태양 '+zs(sunS)+' · '+SMOD[sunS%3],ascOK?'상승궁 '+zs(ascS):''],
-   ['의사 결정: '+dm[2]+'. '+(sunS%3===1?'태양이 고정궁에 있어 한 번 정한 방향을 오래 지키는 힘이 이를 강화합니다.':sunS%3===0?'태양이 활동궁에 있어 먼저 움직이고 시작하는 성향이 더해집니다.':'태양이 변통궁에 있어 상황에 맞춰 방향을 조정하는 유연함이 더해집니다.'),
-    '소통: '+dm[3]+'. '+(ascOK?'상승궁 '+zs(ascS)+'의 영향으로 처음 만나는 사람에게는 '+J(HX.self[ascS%4],'을','를')+' 줍니다.':'')+' 원국에서 '+J(GN[topG],'이','가')+' '+ng[topG]+'개로 가장 많아 '+J(GRX.gen[topG],'이','가')+' 행동 방식의 바탕을 이룹니다.',
-    '감정: 달이 '+zs(moonS)+'에 있어 '+HX.emo[moonS%4]+'.',
-    '강점과 사각지대: '+(mainEl||ELO[maxEl])+'. '+(zero.length?zero.map(i=>J(ELN[i],'이','가')+' 없어 '+ELZ[i]+'.').join(' '):'다섯 오행이 모두 있어 극단적인 치우침은 적습니다.')+' 또한 '+dm[4]+'.'],
-   strip(actionProfile(ch).fill.boost),{});
-  add('saju','사주 분석',sTx(d)+' 일간, '+(ch.strong?'신강':'신약')+' 사주이며 지금은 '+(dwK?pillar(dwIdx)+' 대운':'대운 시작 전')+'입니다.',['네 기둥 '+[ch.stems.y,ch.stems.m,ch.stems.d,ch.stems.h].map((s,i)=>s==null?'??':ST[s]+BR[[ch.brs.y,ch.brs.m,ch.brs.d,ch.brs.h][i]]).join(' '),'신살 '+(shin.join('·')||'없음'),clash.join(', ')],
-   ['일간 '+J(sTx(d),'은','는')+' '+ELN[dEl]+'의 '+(yang?'양':'음')+' 기운으로, '+dm[0]+'에 비유됩니다. 월지 '+J(bTx(ch.brs.m),'은','는')+' 나에게 '+J(tgAt['월지'],'이며','며')+', 사회에서 쓰는 기본 능력을 '+GRX.gen[grpOf(tgAt['월지'])]+' 쪽으로 이끕니다.',
-    '오행은 '+cnt.map((v,i)=>ELS1[i]+' '+v).join(', ')+'개입니다. '+(over.length?over.map(i=>ELN[i]+' 과다: '+ELO[i]+'.').join(' '):'과다한 오행은 없습니다.')+(zero.length?' '+zero.map(i=>ELN[i]+' 부재: '+ELZ[i]+'.').join(' '):''),
-    (ch.strong?'일간의 힘이 강한 신강 사주라 에너지를 밖으로 쓰게 하는 ':'일간의 힘이 약한 신약 사주라 힘을 보태 주는 ')+good.map(g=>GNL[g]).join('·')+' 기운이 들어올 때 운이 편안해집니다.',
-    shin.length?'원국에 '+J(shin.join('·'),'이','가')+' 있습니다. '+[ch.has.gui&&'천을귀인은 어려운 순간에 돕는 사람이 나타나는 상징',ch.has.munc&&'문창귀인은 글과 시험, 학습 능력의 상징',ch.has.dohwa&&'도화는 사람을 끄는 매력과 인기의 상징',ch.has.yeokma&&'역마는 이동·출장·해외와 변화의 상징'].filter(Boolean).join(', ')+'입니다.':'',
-    clash.length?'원국 안의 관계: '+clash.join(', ')+'. 충은 변화와 긴장을, 육합은 결속과 협력을 상징합니다.':'',
-    dwK?'현재 '+pillar(dwIdx)+' 대운('+dwFrom+'~'+(dwNextY-1)+'년)은 천간이 나에게 '+J(dwTG,'이라','라')+' '+J(TGY[dwTG],'이','가')+' 10년의 주제입니다. '+(good.includes(grpOf(dwTG))?'내 사주에 필요한 기운이라 바탕이 밝습니다.':'필요한 기운과는 거리가 있어 속도보다 관리가 중요합니다.')+' 다음 대운은 '+dwNextY+'년에 시작합니다.':''],
-   '',{table:pillarTable,bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars}});
-  add('west','서양 점성술',zs(sunS)+' 태양, '+zs(moonS)+' 달'+(ascOK?', '+zs(ascS)+' 상승궁':'')+'의 조합입니다.',['회귀황도 · 홀사인 하우스',noteMissing],
-   ['[계산값] 태양 '+zs(sunS)+' '+houseOf(sunS)+'하우스, 달 '+zs(moonS)+' '+houseOf(moonS)+'하우스'+(ascOK?', 상승궁 '+zs(ascS):'')+', 금성 '+zs(pl.venus)+', 화성 '+zs(pl.mars)+', 목성 '+zs(pl.jupiter)+', 토성 '+zs(pl.saturn)+'.',
-    '[해석] 태양은 삶의 목적과 정체성을 뜻합니다. '+J(zs(sunS),'은','는')+' '+SEL[sunS%4]+' 원소의 '+J(SMOD[sunS%3],'으로','로')+', '+SUNP[sunS]+'의 모습입니다. '+HOUSE[houseOf(sunS)]+'의 자리('+houseOf(sunS)+'하우스)에 있어 이 영역에서 자신을 증명하려는 동기가 강합니다.',
-    '[해석] 달은 감정과 안정의 욕구를 뜻합니다. '+zs(moonS)+'의 달은 '+HX.emo[moonS%4]+'. 태양과 달의 원소가 '+(sunS%4===moonS%4?'같아 겉과 속이 일치하는 편입니다.':((sunS%4)+(moonS%4))%2===0?'서로 보완적이라 큰 충돌 없이 균형을 잡습니다.':'달라 겉으로 보이는 모습과 속마음 사이에 간극이 생기기 쉽습니다.'),
-    '[해석] 일과 사회적 무대인 10하우스는 '+J(zs(hs(10)),'으로','로')+' '+J(HX.work[hs(10)%4],'이','가')+' 잘 맞고, 토성이 '+houseOf(pl.saturn)+'하우스('+HOUSE[houseOf(pl.saturn)]+')에 있어 이 영역은 시간이 걸려도 단단하게 완성해야 하는 과제입니다. 목성은 '+houseOf(pl.jupiter)+'하우스('+HOUSE[houseOf(pl.jupiter)]+')에서 확장과 행운을 상징합니다.'],
-   '',{table:westTable,chart:'west'});
-  add('vedic','인도 점성술',NAK[ch.nk]+' 낙샤트라, 현재 '+dashaTxt+'입니다.',['라히리 아야남사 '+ch.ayan.toFixed(2)+'°','달(항성황도) '+zs(sidMoon),'라그나 '+(ch.chandra?'미확정(달 기준)':zs(ch.lagna))],
-   ['[계산값] 항성황도의 달은 '+zs(sidMoon)+', 낙샤트라는 '+NAK[ch.nk]+', 그 주인 행성은 '+PK[nakLord]+'입니다. 빔쇼타리 다샤는 출생 시 달의 낙샤트라에서 시작해 '+ch.dashas.map(x=>PK[x.lord]).slice(0,5).join('→')+' 순서로 이어집니다.',
-    '[해석] '+NAK[ch.nk]+'의 주인 '+J(PK[nakLord],'은','는')+' '+J((NAKG[nakLord]||DSX[nakLord]),'을','를')+' 타고난 주제로 줍니다. '+(ch.chandra?'출생 시각이 없어 라그나 대신 달을 기준으로 읽었습니다.':'라그나 '+zs(ch.lagna)+' 기준으로 '+(curD?J(PK[curD.lord],'은','는')+' '+(ch.prole[curD.lord]||'')+'입니다.':'')),
-    curD?'[시기] 지금의 '+J(dashaTxt,'은','는')+' '+DSX[curD.lord]+'의 시기입니다.'+(nextD?' '+Math.floor(nextD.start)+'년부터는 '+PK[nextD.lord]+' 다샤로 넘어가 '+J(DSX[nextD.lord],'으로','로')+' 주제가 바뀝니다.':''):''],
-   '',{table:{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows},chart:'vedic'});
-  add('numbers','수비학과 마야력','인생 수 '+ch.lp+', 표현 수 '+ch.expr+', 마야 탄생 기호 '+ch.tone+' '+maya[0]+'입니다.',['피타고라스식 구간 축약','전통 촐킨(GMT 584283)'],
-   ['[계산값] 인생 수는 생년월일을 월·일·연 구간별로 축약해 '+J(String(ch.lp),'이','가')+(ch.masters&&ch.masters.length?' 나오며, 마스터 넘버 '+ch.masters.join('·')+'를 포함합니다.':' 나옵니다.')+' 영문 이름에서는 표현 수 '+ch.expr+(ch.soul?', 모음에서는 영혼 수 '+ch.soul:'')+'를 얻습니다.',
-    '[해석] 인생 수 '+J(ch.lp,'은','는')+' '+J((LPX[ch.lp]||''),'을','를')+' 평생의 과제로 봅니다. 표현 수 '+J(ch.expr,'은','는')+' '+J((LPX[ch.expr]||''),'으로','로')+' 드러나는 능력, '+(ch.soul?'영혼 수 '+J(ch.soul,'은','는')+' '+J((LPX[ch.soul]||''),'을','를')+' 향한 내면의 동기입니다.':'영혼 수는 계산하지 않았습니다.'),
-    '[시기] '+y0+'년 개인년은 '+py+'('+PYX[py]+'), '+(y0+1)+'년은 '+py1+'('+PYX[py1]+')입니다.',
-    '[마야력] 260일 촐킨에서 탄생 기호는 '+maya[0]+'('+maya[1]+'), 숫자는 '+ch.tone+'('+(tone?tone[0]:'')+')입니다. '+J(maya[1],'은','는')+' '+J(maya[2],'을','를')+' 상징하며, 해마다 같은 기호가 돌아오는 날(260일 주기)이 개인적 리듬을 점검하기 좋은 날로 쓰입니다.'],
-   '',{chart:'numbers'});
-  const mq=mateQ(ch);
-  add('partner','연애와 결혼',strip(mq.a)+'.',['배우자 자리(일지) '+bTx(ch.brs.d)+' · '+tgAt['일지'],'7하우스 '+zs(hs(7)),'금성 '+zs(pl.venus),'원국 '+(ch.male?'재성':'관성')+' '+ng[spouseStar]+'개'],
-   ['[근거] 일지 '+J(bTx(ch.brs.d),'은','는')+' 배우자의 자리이며, 나에게 '+tgAt['일지']+'입니다. 원국에 배우자 별인 '+J((ch.male?'재성':'관성'),'이','가')+' '+ng[spouseStar]+'개 있어 '+(ng[spouseStar]?'관계에 대한 관심과 기회가 꾸준한 구조':'인연이 늦게 무르익거나 스스로 찾아 나설 때 열리는 구조')+'입니다.',
-    '[성향] 금성이 '+zs(pl.venus)+'에 있어 '+J(HX.love[pl.venus%4],'을','를')+' 선호합니다. 7하우스가 '+J(zs(hs(7)),'이라','라')+' 장기적인 파트너로는 '+J(HX.partner[hs(7)%4],'과','와')+' 잘 맞습니다.',
-    '[시기] '+strip(mq.s),
-    '얼굴 일러스트는 차트의 상징을 시각화한 참고 이미지이며, 실제 인물의 외모를 예측한 것이 아닙니다.'],'',{});
-  const lq=lifeQ(ch),job=lq.find(x=>x.k==='job'||/직업/.test(x.q)),ap=actionProfile(ch);
-  add('career','직업·재물·성장',job?'잘 맞는 분야 후보는 '+strip(job.a)+'입니다.':GRX.work[topG]+'.',['10하우스 '+zs(hs(10)),'2하우스 '+zs(hs(2)),'재성 '+ng[2]+' · 관성 '+ng[3]+' · 식상 '+ng[1],'인생 수 '+ch.lp],
-   ['[직업] '+GRX.work[topG]+'. 10하우스 '+J(zs(hs(10)),'은','는')+' '+J(HX.work[hs(10)%4],'이','가')+' 맞는 무대임을 보여 줍니다.'+(job?' 다섯 점술을 함께 보면 '+strip(job.a)+' 분야가 후보로 꼽힙니다.':''),
-    '[재물] '+GRX.money[ng[2]?2:topG]+'. 돈을 다루는 2하우스는 '+J(zs(hs(2)),'으로','로')+' '+J(HX.money[hs(2)%4],'이','가')+' 자연스럽습니다.',
-    '[성장] 지금 보완하면 좋은 기운은 '+good.map(g=>GN[g]).join('·')+'입니다. 생활에서는 \''+strip(ap.fill.gift)+'\'를 의식적으로 연습하면 이 기운을 채울 수 있습니다.'],strip(ap.strong.boost),{});
-  add('flow','10년 흐름과 전환점','금전 '+fieldPk[0].year+'년, 애정 '+fieldPk[1].year+'년, 직업·학업 '+fieldPk[2].year+'년, 건강 '+fieldPk[3].year+'년이 각 분야에서 가장 밝습니다.',tp.map(t=>t.y+'년 '+t.src),
-   [0,1,2].map(k=>J(CATS[k].n,'은','는')+' '+fieldPk[k].year+'년이 가장 높습니다. 이 해에는 '+whyTxt(fieldPk[k].year,k)+'.').concat(tp.map(t=>'['+t.y+'년 · '+kage(t.y)+'살 · '+t.src+'] '+strip(t.t))),'',
-   {table:{cap:'분야별 연도 점수(60~100, 자체 지표)',head:['연도'].concat(CATS.map(c=>c.n)),rows:Y4[0].map((r,i)=>[r.year+'년'].concat(Y4.map(a=>a[i].score)))}});
-  add('advice','통합 제언과 방법론','다섯 체계가 공통으로 가리키는 강점을 중심에 두고, 부족한 기운을 생활 습관으로 보완하는 것이 핵심입니다.',[],
-   ['[통합 결론] '+J(GRX.gen[topG],'이','가')+' 강점의 바탕이고, '+good.map(g=>GN[g]).join('·')+' 기운이 들어오는 시기와 '+CATS[best].n+'의 밝은 해('+peak(Y4[best]).year+'년)가 겹칠 때 성과를 내기 쉽습니다.',
-    '[실천] '+strip(ap.strong.boost)+' '+strip(ap.fill.boost),
-    '[방법] 사주는 한국 자평명리(절기 기준 월주, 지방시 보정), 서양 점성술은 회귀황도와 홀사인 하우스, 인도 점성술은 라히리 아야남사와 빔쇼타리 다샤, 수비학은 피타고라스식 구간 축약, 마야력은 GMT 584283 상관식을 따릅니다.',
-    '[점수] 분야 점수는 다섯 점술의 해석 규칙을 수치로 더해 60~100점으로 옮긴 자체 지표입니다. 성공 확률이나 합격률이 아니며, 같은 사람의 해마다 상대적인 흐름을 비교하는 용도입니다.',noteMissing],'',{});
+  /* 2026-11 줄글 엔진: 미리 써 둔 완성 문단 조합(server/narrative.js). 전문 근거는 basis(부록)로만 보낸다. */
+  const lack=cnt.indexOf(Math.min(...cnt)),topG=ng.indexOf(Math.max(...ng)),mateEl=SE[BMAIN[ch.brs.d]];
+  const mateYears=sysScan(ch,'mate').filter(r=>r.S.length&&r.age>=20).sort((a,b)=>b.v-a.v).slice(0,2).sort((a,b)=>a.y-b.y).map(r=>({y:r.y,age:r.age}));
+  const catAvg=[0,1,2,3].map(k=>avg(Y4[k])),bestCat=catAvg.indexOf(Math.max(...catAvg)),worstCat=catAvg.indexOf(Math.min(...catAvg));
+  const tot10=Y4[0].map((r,i)=>({y:r.year,s:Y4.reduce((a,arr)=>a+arr[i].score,0)}));
+  const keyYears=[0,1,2,3].map(k=>{const p=peak(Y4[k]);return {cat:k,y:p.year,age:kage(p.year),s:p.score}}).sort((a,b)=>b.s-a.s).filter((x,i,a)=>a.findIndex(z=>z.y===x.y)===i).slice(0,3).sort((a,b)=>a.y-b.y);
+  const restRow=tot10.reduce((a,b)=>b.s<a.s?b:a),restYear=keyYears.some(k=>k.y===restRow.y)?null:{y:restRow.y,age:kage(restRow.y)};
+  const job=lifeQ(ch).find(x=>x.k==='job');
+  const GOODTXT=['함께하는 사람','표현하고 만드는 일','결과와 재물','책임과 역할','배움과 도움'];
+  const COMMON=['새로운 길을 먼저 여는 힘이 {name}님의 중심에 있다는 것이에요.','사람의 마음을 밝히는 따뜻함이 {name}님의 가장 큰 재산이라는 것이에요.','한결같이 버티고 쌓아 가는 힘이 결국 {name}님을 멀리 데려간다는 것이에요.','분명한 기준과 판단력이 {name}님을 믿음직한 사람으로 만든다는 것이에요.','깊이 생각하고 읽어 내는 힘이 {name}님만의 무기라는 것이에요.'];
+  const nm=ch.inp.name||'당신';
+  narrativeComprehensive({
+   name:nm,d,dom:maxEl,lack,moonEl:moonS%4,venusEl:pl.venus%4,descEl:(base+6)%12%4,topG,strong:!!ch.strong,mateEl,mateYears,
+   oneLine:strip(traitDescription(ch)),bestCat,worstCat,bestYear:peak(Y4[bestCat]).year,
+   jobs:job?strip(job.a):'',moneyTier:Math.min(2,ng[2]),workYear:peak(Y4[2]).year,
+   keyYears,restYear,turnYear:dwK&&dwNextY>y0&&dwNextY<=y0+10?dwNextY:null,
+   strongTxt:'',goodTxt:good.map(g=>GOODTXT[g]).join('·'),
+   sunSign:zs(sunS),sunIdx:sunS,moonSign:zs(moonS),
+   planet:curD?curD.lord:null,planetEnd:curD?Math.floor(curD.end):'',
+   lp:ch.lp,mayaKo:ch.tone+' '+maya[1],mayaMeaning:maya[2],common:COMMON[maxEl].replace('{name}',nm),
+   basis:{
+    summary:[sTx(d)+' 일간',ELN[maxEl]+' 우세',zs(sunS),NAK[ch.nk],'인생 수 '+ch.lp],
+    personality:['일간 '+sTx(d),'가장 많은 오행 '+ELN[maxEl]+' '+cnt[maxEl]+'개','가장 적은 오행 '+ELN[lack],'달 '+zs(moonS),(ch.strong?'신강':'신약')+' · 많은 십성 '+GN[topG]],
+    partner:['일지(배우자 자리) '+bTx(ch.brs.d),'금성 '+zs(pl.venus),'7하우스 '+zs(hs(7)),mateYears.length?'인연 신호 해 '+mateYears.map(m=>m.y).join('·'):''],
+    career:['많은 십성 '+GN[topG],'재성 '+ng[2]+'개','10하우스 '+zs(hs(10)),'직업·학업 10년 최고 '+peak(Y4[2]).year+'년'],
+    flow:[...keyYears.map(k=>k.y+'년 '+['금전','애정','직업·학업','건강'][k.cat]+' '+k.s+'점'),restYear?restYear.y+'년 종합 최저':'',dwK?'다음 대운 '+dwNextY+'년':''],
+    systems:[sTx(d)+' 일간 · '+(ch.strong?'신강':'신약'),'태양 '+zs(sunS)+' · 달 '+zs(moonS),curD?PK[curD.lord]+' 다샤 ~'+Math.floor(curD.end)+'년':'','인생 수 '+ch.lp,'마야 '+ch.tone+' '+maya[0]]
+   }
+  }).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',s.chart?{chart:s.chart}:{}));
  }else{
   const label={0:'재물',1:'애정',2:ci===2&&['study','exam','cert'].includes(key)?'학업':'직업'}[ci];
   const sumBasis=[sTx(d)+' 일간',GN[topG]+' 우세'];
@@ -1336,8 +1310,8 @@ function buildRichReport(ch,key){
   S.__sum=top.concat([J(CATS[ci].n,'은','는')+' '+p.year+'년('+p.score+'점)이 10년 중 가장 밝습니다.']);
   S.forEach((s,i)=>s.id=key+'-'+(i+1));
  }
- if(key==='comprehensive'){const ORD=['summary','personality','partner','career','flow','advice','saju','west','vedic','numbers'];S.sort((x,y)=>ORD.indexOf(x.kind)-ORD.indexOf(y.kind));S.forEach((x,i)=>x.id=key+'-'+(i+1))}
- const summary=key==='comprehensive'?[S[0].lead].concat(S.slice(1,5).map(s=>s.lead)):S.__sum;
+ if(key==='comprehensive'){const ORD=['summary','personality','partner','career','flow','systems','advice'];S.sort((x,y)=>ORD.indexOf(x.kind)-ORD.indexOf(y.kind));S.forEach((x,i)=>x.id=key+'-'+(i+1))}
+ const summary=key==='comprehensive'?[S[0].lead].concat(S.slice(1,5).map(s=>String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0])).filter(Boolean):S.__sum;
  S.forEach(s=>{s.answer=s.paragraphs.join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
  return {title:(ch.inp.name||'당신')+'님의 '+NAMES[key]+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,version:'chapters-2026-11-05-v3',
