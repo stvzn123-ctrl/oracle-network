@@ -1107,7 +1107,7 @@ body.fresh #share-open{display:none}
 .fnote{color:var(--muted)}
 .landing-note,.landing-bottom p,.report-cta .eyebrow,.r-badge,.ymark,.vedic-cell>span{font-size:12.5px}
 
-.brandbar{cursor:pointer;user-select:none}
+.brandbar{cursor:default;user-select:none;-webkit-tap-highlight-color:transparent}.brandbar-brand{cursor:pointer}.brandbar *{-webkit-tap-highlight-color:transparent}
 #whoName:not(.noname){color:var(--emerald)}
 #resTitle{display:none}
 .hero-top .share-icon{width:40px;min-height:40px!important;height:40px;padding:0!important;display:inline-grid;place-items:center;border-radius:50%!important;color:var(--gold)}
@@ -5000,7 +5000,7 @@ function goTop(){const rp=$("report");if(rp&&!rp.hidden&&rp.scrollTop>4){rp.scro
  if(rp&&!rp.hidden){$("reportClose").click()}
  if(window.scrollY>4){window.scrollTo({top:0,behavior:"smooth"});return}
  if(document.body.classList.contains("app-entered")){document.body.classList.remove("app-entered");window.scrollTo({top:0,behavior:"instant"})}}
-$("brandbar").addEventListener("click",e=>{if(e.target.closest("button,a,details"))return;goTop()});
+$("brandbar").addEventListener("click",e=>{if(!e.target.closest(".brandbar-brand"))return;goTop()});
 $("brandbar").addEventListener("keydown",e=>{if(e.target!==e.currentTarget)return;if(e.key==="Enter"||e.key===" "){e.preventDefault();goTop()}});
 $("profileEdit").addEventListener("click",()=>{const m=$("accountMember");if(m)m.open=false;const a=$("askbox");a.open=true;a.scrollIntoView({behavior:"smooth",block:"start"})});
 })();

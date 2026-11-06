@@ -28,7 +28,7 @@ input,select{padding:10px 12px;width:100%}
 .list{position:sticky;top:64px;display:flex;flex-direction:column;max-height:calc(100vh - 80px)}
 .count{font-size:12px;color:var(--muted);margin:8px 2px}
 #users{overflow:auto;display:grid;gap:6px;align-content:start;flex:1;min-height:0;overscroll-behavior:contain}
-.u{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:10px 12px;min-height:56px;border-radius:10px}
+.u{display:flex;align-items:center;gap:6px;width:100%;padding:4px;min-height:60px;border-radius:10px;background:var(--field);border:1px solid var(--line)}.um{flex:1;min-width:0;display:flex;align-items:center;gap:8px;text-align:left;border:0;background:none;min-height:50px;padding:4px 8px}.qa{flex:none;display:flex;align-items:center;gap:8px;min-height:50px;padding:4px 12px;font-size:13px}.qa.on{background:#123226;border-color:#2f7a58;color:var(--ok)}.qa .box{width:18px;height:18px;font-size:12px}.qa.busy{opacity:.5;pointer-events:none}
 .u .n{flex:1;min-width:0}
 .u b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .u small{color:var(--muted);font:11px ui-monospace,Consolas,monospace}
@@ -134,13 +134,17 @@ async function api(path,body){
 
 /* ---------- 목록 ---------- */
 function rowEl(u){
-  const b=document.createElement('button');b.className='u';b.dataset.id=u.id;
+  const b=document.createElement('div');b.className='u';b.dataset.id=u.id;
+  const um=document.createElement('button');um.className='um';
   const n=document.createElement('span');n.className='n';
   const nm=document.createElement('b');nm.textContent=u.nickname||'회원';
   const sm=document.createElement('small');sm.textContent=short(u.id)+(fmt(u.created)?' · '+fmt(u.created):'');
-  n.append(nm,sm);b.append(n);
-  if(u.profile_updated){const t=document.createElement('span');t.className='tag';t.textContent='정보';b.append(t)}
-  const c=cache.get(u.id);if(c){const g=grantsOf(c.u).size;if(g){const t=document.createElement('span');t.className='tag ok';t.textContent='승인 '+g;b.append(t)}}
+  n.append(nm,sm);um.append(n);
+  if(u.profile_updated){const t=document.createElement('span');t.className='tag';t.textContent='정보';um.append(t)}
+  const c=cache.get(u.id),gs=c?grantsOf(c.u):null;
+  if(gs&&gs.size&&!gs.has('all')){const t=document.createElement('span');t.className='tag ok';t.textContent='승인 '+gs.size;um.append(t)}
+  const qa=document.createElement('button'),all=!!gs&&gs.has('all');qa.className='qa'+(all?' on':'');qa.dataset.qa='1';qa.setAttribute('role','checkbox');qa.setAttribute('aria-checked',all);qa.setAttribute('aria-label',(u.nickname||'회원')+' 전체 승인');
+  const bx=document.createElement('span');bx.className='box';bx.textContent='✓';const ql=document.createElement('span');ql.textContent='전체 승인';qa.append(bx,ql);b.append(um,qa);
   if(u.id===selected)b.classList.add('on');
   return b;
 }
@@ -152,7 +156,7 @@ function renderList(){
   box.replaceChildren(frag);
   $('count').textContent=(q?'검색 결과 '+list.length+'명 / ':'')+'전체 '+members.length+'명'+(more?' (불러오는 중…)':'')+(list.length>300?' · 검색으로 좁혀 보세요':'');
 }
-$('users').onclick=e=>{const b=e.target.closest('.u');if(b)open(b.dataset.id)};
+$('users').onclick=e=>{const b=e.target.closest('.u');if(!b)return;if(e.target.closest('.qa'))quickAll(b.dataset.id,e.target.closest('.qa'));else open(b.dataset.id)};
 $('q').oninput=renderList;
 
 async function loadAll(reset){
@@ -164,10 +168,16 @@ async function loadAll(reset){
     if(first||!more||members.length%100===0)renderList();
     if(members.length>=2000)break;
   }
-  more=false;renderList();
+  more=false;renderList();prefetch();
   try{sessionStorage.setItem('admin-users',JSON.stringify(members.slice(0,300)))}catch{}
 }
 
+async function prefetch(){
+  const ids=members.slice(0,60).map(m=>m.id).filter(id=>!cache.has(id));
+  for(let i=0;i<ids.length;i+=4){
+    await Promise.all(ids.slice(i,i+4).map(id=>api('/admin/user?id='+encodeURIComponent(id)).then(u=>{if(!cache.has(id)){cache.set(id,{u});const m=members.find(x=>x.id===id),row=$('users').querySelector('.u[data-id="'+id+'"]');if(m&&row)row.replaceWith(rowEl(m))}}).catch(()=>{})));
+  }
+}
 /* ---------- 상세 ---------- */
 function facts(p){
   const f=$('facts');f.replaceChildren();
@@ -206,6 +216,19 @@ $('back').onclick=()=>{document.body.classList.remove('picked');window.scrollTo(
 $('copy').onclick=async()=>{try{await navigator.clipboard.writeText(selected);toast('계정 ID를 복사했어요.')}catch{prompt('계정 ID',selected)}};
 
 /* ---------- 권한 토글 ---------- */
+async function quickAll(id,btn){
+  let c=cache.get(id);btn.classList.add('busy');
+  try{
+    if(!c){const u=await api('/admin/user?id='+encodeURIComponent(id));c={u};cache.set(id,c)}
+    const has=grantsOf(c.u).has('all'),m=members.find(x=>x.id===id);
+    if(has&&!confirm((m?.nickname||'회원')+'님의 전체 승인을 회수할까요?')){btn.classList.remove('busy');return}
+    await api('/admin/permission',{userId:id,key:'all',action:has?'revoke':'grant'});
+    const now=Date.now();c.u.grants=c.u.grants.filter(g=>g.report_key!=='all');c.u.grants.push({report_key:'all',granted_at:now,revoked_at:has?now:null});
+    const row=$('users').querySelector('.u[data-id="'+id+'"]');if(m&&row)row.replaceWith(rowEl(m));
+    if(selected===id)paintGrants(c.u);
+    toast((m?.nickname||'회원')+(has?' 전체 승인을 회수했어요.':' 전체 승인했어요.'));
+  }catch(err){btn.classList.remove('busy');toast(err.message,true)}
+}
 $('grid').onclick=async e=>{
   const b=e.target.closest('.k');if(!b||!selected)return;
   const id=selected,key=b.dataset.key,c=cache.get(id);if(!c)return;
