@@ -1849,3 +1849,4 @@ html.rep-lock #brandbar{padding-left:max(56px,env(safe-area-inset-left))!importa
 .spouse-preview{padding:20px 22px}.spouse-preview h4{margin:0 0 16px;font-size:21px}.spouse-preview-content{gap:20px}.spouse-preview-copy .spouse-preview-note{margin:10px 0}
 .topic-intro .eyebrow{display:none}.topic-intro h3{margin-top:0}.tabp .blk-first{margin-top:14px}
 .spouse-preview-content{align-items:start}.spouse-preview-copy{text-align:left}.spouse-preview .spouse-face-traits{margin-top:0}.spouse-preview figcaption.spouse-preview-note{font-size:11px;line-height:1.5;margin-top:6px;color:var(--muted)}
+.spouse-preview h4 .spouse-preview-note{font-size:11px;font-weight:400;color:var(--muted);margin-left:6px;white-space:nowrap;vertical-align:middle;font-family:inherit}
