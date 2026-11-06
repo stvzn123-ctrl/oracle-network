@@ -2316,7 +2316,7 @@ function reportScoreGuideHTML(data,key){
 
 
 function reportTopicRows(ch,k){if(SUBTOPIC_COPY[k]){const html=subtopicHTML(ch,k),decode=x=>x.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');return Array.from(html.matchAll(/<article class="topic-answer"><h4>([\s\S]*?)<\/h4><p>([\s\S]*?)<\/p><\/article>/g)).map(m=>[decode(m[1]),decode(m[2])]);}return topicAnswerRows(ch,k);}
-const narrativeComprehensive=(()=>{
+const {narrativeComprehensive,narrativeRelation}=(()=>{
 /* 종합 리포트 줄글 엔진 (API 없이 미리 써 둔 완성 문단을 조합).
    규칙
    - 본문 문단에는 전문 용어(오행·일간·십성·하우스·다샤·개인년·인생 수 등)를 쓰지 않는다.
@@ -2550,7 +2550,89 @@ function narrativeComprehensive(c) {
 
   return out;
 }
-return narrativeComprehensive;})();
+
+/* ───────── 연애·결혼 리포트 ───────── */
+const LOVE_SELF = [
+  "연애할 때 {name}님은 대등한 관계를 원해요. 한쪽이 일방적으로 맞춰 주는 사이보다 친구처럼 편하게 말하고, 각자의 생활도 존중하는 관계에서 마음이 오래 가요. 너무 간섭받는다고 느끼면 한 발 물러서는 편이라, 처음부터 \"나는 이런 거리가 편해\"라고 알려 주면 좋아요.",
+  "연애할 때 {name}님은 마음을 표현하고 챙겨 주는 사람이에요. 좋아하는 사람이 생기면 작은 선물이나 맛있는 음식, 다정한 말로 마음을 보여 주고, 상대가 기뻐하는 모습에서 가장 큰 행복을 느껴요. 다만 주는 만큼 돌려받지 못한다고 느끼면 서운함이 쌓이니, 나도 받고 싶은 걸 솔직하게 말해 보세요.",
+  "연애할 때 {name}님은 현실적인 배려로 사랑을 보여 줘요. 화려한 이벤트보다 바쁜 날 챙겨 준 밥 한 끼, 함께 세운 계획을 지키는 것에서 진심을 느끼고 또 그렇게 표현해요. 그래서 시간이 지날수록 \"이 사람은 믿을 수 있다\"는 평가를 듣는 연인이에요.",
+  "연애할 때 {name}님은 약속을 지키는 사람이에요. 한번 마음을 정하면 쉽게 흔들리지 않고, 상대에게도 같은 진지함을 바라요. 가벼운 만남보다 미래를 함께 그릴 수 있는 관계에 끌리고, 그래서 연애가 자연스럽게 결혼 이야기로 이어지는 경우가 많아요.",
+  "연애할 때 {name}님은 편안함을 가장 중요하게 여겨요. 함께 있을 때 마음이 놓이는 사람, 내 이야기를 끝까지 들어 주는 사람에게 깊이 빠져요. 사랑받는다는 확신이 들 때 가장 빛나는 사람이라, 불안한 관계에서는 쉽게 지쳐요."
+];
+const LOVE_CARE = [
+  "사랑에서 {name}님이 조심할 점은 마음이 앞서 속도를 너무 내는 거예요. 좋아하는 마음이 크면 상대가 따라올 시간을 주지 않고 결론부터 내리고 싶어져요. 관계가 깊어지는 데는 시간이 필요하다는 걸 기억하고, 한 템포 쉬어 가면 오히려 더 단단해져요.",
+  "사랑에서 {name}님이 조심할 점은 감정의 온도가 빠르게 변하는 거예요. 기분이 좋을 때는 한없이 다정하다가, 서운할 때는 그 마음이 그대로 드러나 상대를 당황하게 할 수 있어요. 마음이 뜨거울 때일수록 중요한 말은 하루 쉬었다 꺼내 보세요.",
+  "사랑에서 {name}님이 조심할 점은 익숙함에 기대는 거예요. 관계가 안정되면 표현이 줄어들기 쉬운데, 상대는 그걸 마음이 식은 걸로 오해할 수 있어요. 오래된 사이일수록 \"고마워\", \"좋아\" 같은 말을 일부러 더 자주 해 주세요.",
+  "사랑에서 {name}님이 조심할 점은 옳고 그름으로 관계를 판단하는 거예요. 다툼이 생기면 누가 맞는지 따지고 싶어지지만, 연인 사이에서는 이기는 것보다 마음을 알아주는 게 먼저일 때가 많아요. \"그랬구나\" 한마디가 긴 설명보다 힘이 세요.",
+  "사랑에서 {name}님이 조심할 점은 속마음을 너무 늦게 말하는 거예요. 혼자 오래 생각하고 정리한 뒤에 꺼내다 보니, 상대는 갑작스럽게 느끼기 쉬워요. 결론이 나지 않았어도 \"요즘 이런 생각이 들어\" 정도는 미리 나눠 보세요."
+];
+const MARRY_VIEW = [
+  "결혼에 대해 {name}님은 서로의 독립을 지키는 동반자 관계를 그려요. 함께 살아도 각자의 일과 시간을 존중하고, 중요한 결정은 대등하게 의논하는 부부가 {name}님에게 맞아요. 한 사람이 다른 사람에게 기대기만 하는 관계는 오래 버티기 어려워요.",
+  "결혼에 대해 {name}님은 따뜻하고 활기찬 가정을 꿈꿔요. 함께 요리하고 웃고, 집에 사람이 자주 오가는 모습이 {name}님이 그리는 행복이에요. 표현이 많은 가정에서 가장 편안함을 느끼는 사람이라, 배우자와 감정을 자주 나누는 것이 무엇보다 중요해요.",
+  "결혼에 대해 {name}님은 현실적이고 단단한 기반을 중요하게 여겨요. 사랑만큼이나 함께 꾸려 갈 생활, 돈 관리, 미래 계획이 맞는지가 중요하고, 그게 맞을 때 비로소 마음 편히 결혼을 결심해요. 그래서 결혼 후에는 오히려 누구보다 안정적인 가정을 만들어요.",
+  "결혼에 대해 {name}님은 책임과 약속을 무겁게 여겨요. 결혼은 감정만으로 하는 게 아니라 평생의 약속이라고 생각해서 쉽게 결정하지 않지만, 한번 결심하면 끝까지 지켜요. 서로의 역할을 분명히 하고 믿음을 쌓아 가는 부부가 잘 맞아요.",
+  "결혼에 대해 {name}님은 마음이 편안한 집을 가장 바라요. 밖에서 아무리 힘들어도 집에 돌아오면 쉴 수 있는 곳, 서로를 다독여 주는 관계가 {name}님이 그리는 결혼이에요. 그래서 배우자를 고를 때는 조건보다 함께 있을 때의 편안함을 먼저 보게 돼요."
+];
+const SPOUSE_LIFE = [
+  "함께 사는 모습을 그려 보면, 서로의 꿈을 응원하며 같이 자라는 부부예요. 주말에는 함께 새로운 곳에 가거나 무언가를 배우고, 서로의 계획을 들어 주며 다음 목표를 세우는 집이 될 가능성이 커요.",
+  "함께 사는 모습을 그려 보면, 웃음소리가 많은 집이에요. 서로에게 고마운 걸 자주 말하고, 기념일이나 작은 이벤트를 챙기며 생활에 활기를 더하는 부부가 될 거예요.",
+  "함께 사는 모습을 그려 보면, 생활이 안정되고 살림이 착실히 쌓이는 집이에요. 함께 장을 보고 가계부를 맞추고, 집을 조금씩 가꿔 가는 평범한 하루가 두 사람에게 가장 큰 행복이 돼요.",
+  "함께 사는 모습을 그려 보면, 정돈되고 규칙이 분명한 집이에요. 서로의 역할이 잘 나뉘어 있고, 약속한 것은 지키는 믿음 속에서 다툼이 적은 부부가 될 가능성이 커요.",
+  "함께 사는 모습을 그려 보면, 조용하고 깊은 대화가 있는 집이에요. 하루를 마치고 마주 앉아 이야기를 나누고, 말없이 같이 있어도 편안한 부부가 될 거예요."
+];
+const LOVE_DATE = [
+  "둘이 함께하는 모습을 그려 보면, 서로의 꿈을 응원하며 같이 자라는 커플이에요. 새로운 곳에 같이 가 보고, 서로가 배우는 것에 관심을 가져 주는 데이트가 두 사람을 더 가깝게 만들어요.",
+  "둘이 함께하는 모습을 그려 보면, 웃음이 끊이지 않는 커플이에요. 맛집과 공연, 작은 이벤트를 함께 즐기며 서로에게 고마운 걸 자주 말해 주는 사이가 될 거예요.",
+  "둘이 함께하는 모습을 그려 보면, 편안하고 든든한 커플이에요. 거창한 데이트보다 같이 밥을 먹고 동네를 걷는 시간이 쌓이면서, 어느새 서로에게 가장 믿음직한 사람이 돼 있을 거예요.",
+  "둘이 함께하는 모습을 그려 보면, 서로를 존중하는 깔끔한 커플이에요. 약속을 잘 지키고 각자의 시간도 아껴 주는 관계라, 다툼이 적고 오래 가요.",
+  "둘이 함께하는 모습을 그려 보면, 깊은 대화가 있는 커플이에요. 조용한 카페나 밤 산책길에서 오래 이야기를 나누고, 말없이 같이 있어도 편안한 사이가 될 거예요."
+];
+const LYEAR = [
+  "{y}년, {age}살의 {name}님에게는 사람 복이 크게 들어와요. 새로운 인연이 시작되거나, 만나던 사람과의 관계가 한 단계 깊어지기 쉬운 해예요. 마음이 가는 사람이 있다면 이 해에 조금 더 용기를 내 보세요.",
+  "{y}년({age}살)은 관계가 따뜻해지는 해예요. 소중한 사람과 함께하는 시간이 늘고, 오해가 있던 관계도 자연스럽게 풀리기 쉬워요. 연인이 있다면 미래를 이야기하기 좋은 시기예요.",
+  "{y}년({age}살)에는 뜻밖의 자리에서 마음이 움직일 수 있어요. 평소와 다른 모임이나 여행, 새로운 일을 시작한 곳에서 인연이 닿기 쉬우니, 이 해에는 초대를 거절하지 말고 한 번 더 나가 보세요."
+];
+const LREST = "{y}년({age}살)은 사랑에서 조금 쉬어 가는 해예요. 인연이 없다는 뜻이 아니라, 나를 돌보고 내가 원하는 관계가 무엇인지 정리하기 좋은 시기라는 뜻이에요. 이 해에 마음을 잘 정리해 두면 그다음 만남이 훨씬 편안해져요.";
+
+function narrativeRelation(c, key) {
+  const v = { name: c.name }, F = t => fill(t, v), marry = key === "marry";
+  const out = [];
+  const when = c.mateYears.length
+    ? c.mateYears.map(m => m.y + "년(" + m.age + "살)").join("과 ") + "에 " + (marry ? "결혼 인연" : "인연") + "의 기운이 가장 뚜렷해요."
+    : "앞으로 10년 안에서는 인연의 시기가 한 해에 몰리기보다 고르게 열려 있어요.";
+
+  out.push({ kind: "core", title: marry ? "결혼을 대하는 나" : "사랑할 때의 나",
+    lead: marry ? F(MARRY_VIEW[c.topG]).split(/(?<=[.!?])\s+/)[0] : F(LOVE[c.venusEl]).split(/(?<=[.!?])\s+/)[0],
+    paras: marry ? [F(MARRY_VIEW[c.topG]), F(LOVE_SELF[c.topG]), F(FEEL[c.moonEl])] : [F(LOVE[c.venusEl]), F(LOVE_SELF[c.topG]), F(FEEL[c.moonEl])],
+    basis: c.basis.core });
+
+  out.push({ kind: "partner", title: marry ? "배우자가 될 사람" : "나와 잘 맞는 사람",
+    lead: F(MATE[c.mateEl]).split(/(?<=[.!?])\s+/)[0],
+    paras: marry ? [F(MATE[c.mateEl]), SPOUSE_LIFE[c.mateEl]] : [F(MATE[c.mateEl]), LOVE_DATE[c.mateEl]],
+    basis: c.basis.partner });
+
+  out.push({ kind: "meet", title: "인연은 언제·어디서·어떻게 만날까요?", lead: "",
+    paras: [MEETP[c.descEl] + " 시기로 보면 " + when], basis: c.basis.meet });
+
+  const ys = c.loveYears.map((k, i) => ({ y: k.y, t: fill(LYEAR[i % 3], { name: c.name, y: k.y, age: k.age }) }));
+  if (c.loveRest) ys.push({ y: c.loveRest.y, t: fill(LREST, { y: c.loveRest.y, age: c.loveRest.age }) });
+  out.push({ kind: "timing", title: marry ? "앞으로 10년, 결혼의 흐름" : "앞으로 10년, 사랑의 흐름", lead: "",
+    paras: [(marry ? "결혼은 한 해의 운만으로 결정되지 않지만, 마음을 열기 좋은 해와 쉬어 갈 해는 분명히 있어요. " : "사랑에도 계절이 있어요. 마음이 활짝 열리는 해가 있고, 나를 돌보며 준비하는 해가 있어요. ") + F("{name}님에게 특히 중요한 해들을 순서대로 짚어 볼게요."),
+      ...ys.sort((a, b) => a.y - b.y).map(x => x.t),
+      c.mateYears.length && marry ? "그중에서도 " + when.replace("가장 뚜렷해요.", "가장 뚜렷하니, 결혼을 생각하는 사람이 있다면 이 시기를 눈여겨보세요.") : ""],
+    basis: c.basis.timing });
+
+  out.push({ kind: "caution", title: "사랑에서 조심할 점", lead: "", paras: [F(LOVE_CARE[c.dom]), F(CLOSE_CARE[1])],
+    action: marry ? "결혼을 생각하는 사람과 '돈, 집, 가족, 혼자만의 시간'에 대해 한 번씩 이야기해 보세요. 미리 나눈 대화가 결혼 후의 다툼을 크게 줄여 줘요." : "이번 달에 평소 가지 않던 모임이나 자리에 한 번 나가 보세요. 인연은 늘 새로운 문 하나에서 시작돼요.",
+    basis: [] });
+
+  out.push({ kind: "advice", title: F("{name}님에게 전하는 이야기"), lead: "",
+    paras: [F(marry ? "좋은 결혼은 완벽한 사람을 만나는 게 아니라, 서로의 부족함을 알고도 함께 걷기로 하는 거예요. {name}님은 이미 누군가에게 그런 사람이 될 힘을 가지고 있어요. 서두르지 않아도 괜찮아요. 마음이 편안한 사람을 알아보는 눈만 잃지 않으면, 인연은 제때 찾아와요." : "사랑은 찾아다닌다고 오는 것도, 기다린다고 오는 것도 아니에요. 내가 나답게 지낼 때 그 모습을 알아보는 사람이 나타나요. {name}님이 좋아하는 일을 하고, 좋아하는 곳에 가는 것, 그게 가장 좋은 인연을 부르는 방법이에요.")],
+    action: "이 리포트에서 마음에 남은 문장 하나를 메모장에 적어 두세요. 힘든 날 다시 꺼내 보면 생각보다 큰 힘이 돼요.",
+    basis: [] });
+  return out;
+}
+return {narrativeComprehensive,narrativeRelation};})();
 function buildRichReport(ch,key){
  /* 2026-11 리포트 엔진 v3: 계산된 출생 지표 → 전통 해석 → 나에게 의미 → 실천 순서로 쓴다.
     계산식(buildChart·enrich·oracles·compute)은 읽기만 하고 바꾸지 않는다. index.html과 server/worker.js에 같은 코드가 들어간다. */
@@ -2707,6 +2789,19 @@ function buildRichReport(ch,key){
     systems:[sTx(d)+' 일간 · '+(ch.strong?'신강':'신약'),'태양 '+zs(sunS)+' · 달 '+zs(moonS),curD?PK[curD.lord]+' 다샤 ~'+Math.floor(curD.end)+'년':'','인생 수 '+ch.lp,'마야 '+ch.tone+' '+maya[0]]
    }
   }).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',s.chart?{chart:s.chart}:{}));
+ }else if(key==='love'||key==='marry'){
+  /* 2026-11 줄글 엔진(server/narrative.js narrativeRelation). 근거는 basis(부록)로만. */
+  const topG=ng.indexOf(Math.max(...ng)),mateEl=SE[BMAIN[ch.brs.d]],nm=ch.inp.name||'당신';
+  const mateYears=sysScan(ch,'mate').filter(r=>r.S.length&&r.age>=20).sort((a,b)=>b.v-a.v).slice(0,2).sort((a,b)=>a.y-b.y).map(r=>({y:r.y,age:r.age}));
+  const loveYears=[...mateYears.map(m=>m.y),...[...Y4[1]].sort((a,b)=>b.score-a.score).map(r=>r.year)].filter((y,i,a)=>a.indexOf(y)===i).slice(0,3).sort((a,b)=>a-b).map(y=>({y,age:kage(y)}));
+  const lr=low(Y4[1]),loveRest=loveYears.some(k=>k.y===lr.year)?null:{y:lr.year,age:kage(lr.year)};
+  narrativeRelation({name:nm,dom:maxEl,moonEl:moonS%4,venusEl:pl.venus%4,descEl:(base+6)%12%4,topG,mateEl,mateYears,loveYears,loveRest,
+   basis:{core:['금성 '+zs(pl.venus),'달 '+zs(moonS),'많은 십성 '+GN[topG],'가장 많은 오행 '+ELN[maxEl]],
+    partner:['일지(배우자 자리) '+bTx(ch.brs.d)+' · '+tgAt['일지'],'7하우스 '+zs(hs(7)),'배우자 별('+(ch.male?'재성':'관성')+') '+ng[spouseStar]+'개'],
+    meet:['7하우스 '+zs(hs(7)),mateYears.length?'인연 신호 해 '+mateYears.map(m=>m.y).join('·'):''],
+    timing:Y4[1].map(r=>r.year+'년 애정 '+r.score+'점')}},key).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',{}));
+  S.__sum=S.slice(0,4).map(s=>s.lead||String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0]).filter(Boolean);
+  S.forEach((s,i)=>s.id=key+'-'+(i+1));
  }else{
   const label={0:'재물',1:'애정',2:ci===2&&['study','exam','cert'].includes(key)?'학업':'직업'}[ci];
   const sumBasis=[sTx(d)+' 일간',GN[topG]+' 우세'];

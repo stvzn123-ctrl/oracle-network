@@ -1,6 +1,6 @@
 // 오라클 네트워크 공용 API (Cloudflare Worker + D1)
 // 초대 기록 및 카카오 로그인 회원의 명시적으로 저장한 출생 정보를 다룬다.
-import { narrativeComprehensive } from "./narrative.js";
+import { narrativeComprehensive, narrativeRelation } from "./narrative.js";
 const ORIGINS = ["https://stvzn123-ctrl.github.io"];
 const ABC = "abcdefghjkmnpqrstuvwxyz23456789";
 
@@ -1200,6 +1200,19 @@ function buildRichReport(ch,key){
     systems:[sTx(d)+' 일간 · '+(ch.strong?'신강':'신약'),'태양 '+zs(sunS)+' · 달 '+zs(moonS),curD?PK[curD.lord]+' 다샤 ~'+Math.floor(curD.end)+'년':'','인생 수 '+ch.lp,'마야 '+ch.tone+' '+maya[0]]
    }
   }).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',s.chart?{chart:s.chart}:{}));
+ }else if(key==='love'||key==='marry'){
+  /* 2026-11 줄글 엔진(server/narrative.js narrativeRelation). 근거는 basis(부록)로만. */
+  const topG=ng.indexOf(Math.max(...ng)),mateEl=SE[BMAIN[ch.brs.d]],nm=ch.inp.name||'당신';
+  const mateYears=sysScan(ch,'mate').filter(r=>r.S.length&&r.age>=20).sort((a,b)=>b.v-a.v).slice(0,2).sort((a,b)=>a.y-b.y).map(r=>({y:r.y,age:r.age}));
+  const loveYears=[...mateYears.map(m=>m.y),...[...Y4[1]].sort((a,b)=>b.score-a.score).map(r=>r.year)].filter((y,i,a)=>a.indexOf(y)===i).slice(0,3).sort((a,b)=>a-b).map(y=>({y,age:kage(y)}));
+  const lr=low(Y4[1]),loveRest=loveYears.some(k=>k.y===lr.year)?null:{y:lr.year,age:kage(lr.year)};
+  narrativeRelation({name:nm,dom:maxEl,moonEl:moonS%4,venusEl:pl.venus%4,descEl:(base+6)%12%4,topG,mateEl,mateYears,loveYears,loveRest,
+   basis:{core:['금성 '+zs(pl.venus),'달 '+zs(moonS),'많은 십성 '+GN[topG],'가장 많은 오행 '+ELN[maxEl]],
+    partner:['일지(배우자 자리) '+bTx(ch.brs.d)+' · '+tgAt['일지'],'7하우스 '+zs(hs(7)),'배우자 별('+(ch.male?'재성':'관성')+') '+ng[spouseStar]+'개'],
+    meet:['7하우스 '+zs(hs(7)),mateYears.length?'인연 신호 해 '+mateYears.map(m=>m.y).join('·'):''],
+    timing:Y4[1].map(r=>r.year+'년 애정 '+r.score+'점')}},key).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',{}));
+  S.__sum=S.slice(0,4).map(s=>s.lead||String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0]).filter(Boolean);
+  S.forEach((s,i)=>s.id=key+'-'+(i+1));
  }else{
   const label={0:'재물',1:'애정',2:ci===2&&['study','exam','cert'].includes(key)?'학업':'직업'}[ci];
   const sumBasis=[sTx(d)+' 일간',GN[topG]+' 우세'];
