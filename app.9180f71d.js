@@ -2274,7 +2274,7 @@ function approvedReportHTML(data,key){
  return '<header class="r-cover rv3-cover"><span class="eyebrow">ORACLE NETWORK / PERSONAL REPORT</span><span class="rv3-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 17.6 20.5 2.6 9.3h18.8L6.4 20.5z"/></svg></span><h2>'+E(data.title)+'</h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><dl class="r-cover-meta"><div><dt>발행일</dt><dd>'+ymd+'</dd></div></dl></header>'+
   '<section class="r-page rv3-ch rv3-intro"><aside class="report-reading-key"><b>리포트 읽는 법</b><p>먼저 쉬운 해석을 읽어주세요. 본문에 괄호로 덧붙인 내용은 해당 해석의 계산값이나 점술상 근거입니다.</p></aside><header class="rv3-hd"><span class="rv3-no">SUMMARY</span><h2>핵심 요약</h2></header><ol class="rv3-sum">'+(data.summary||[]).filter(x=>readingParts(x).main).map(x=>'<li>'+readingInline(x)+'</li>').join('')+'</ol></section><section class="r-page rv3-ch rv3-contents"><header class="rv3-hd"><span class="rv3-no">CONTENTS</span><h2>목차</h2></header>'+toc+'</section>'+
   secs.map(chapter).join('')+flowOld+(String(data.version||'').startsWith('match-')?'':reportScoreGuideHTML(data,key))+
- '<template id="reportAppendixTemplate"><section class="r-page rv3-ch rv3-appendix" id="report-appendix"><header class="rv3-hd"><span class="rv3-no">APPENDIX</span><h2>내 출생 정보와 전문 지표</h2></header>'+facts+'<div class="reading-sources">'+(data.summary||[]).filter(x=>!readingParts(x).main).map(x=>readingParagraph(x)).join('')+'</div>'+
+ '<template id="reportAppendixTemplate"><section class="r-page rv3-ch rv3-appendix" id="report-appendix"><header class="rv3-hd"><span class="rv3-no">APPENDIX</span><h2>내 출생 정보와 전문 지표</h2></header>'+facts+(data.appendix?barsHTML(data.appendix.bars)+(data.appendix.tables||[]).map(dataTableHTML).join(''):'')+(comp?chartHTML('west')+chartHTML('vedic')+chartHTML('numbers'):'')+'<div class="reading-sources">'+(data.summary||[]).filter(x=>!readingParts(x).main).map(x=>readingParagraph(x)).join('')+'</div>'+
  secs.filter(s=>(s.basis||[]).some(Boolean)).map(s=>'<div class="rv3-tw"><table class="rv3-table"><caption>'+E(s.question)+' · 근거 지표</caption><thead><tr><th scope="col">구분</th><th scope="col">계산값 및 지표</th></tr></thead><tbody>'+s.basis.filter(Boolean).map(b=>'<tr><th scope="row">'+E(s.question)+'</th><td>'+E(b)+'</td></tr>').join('')+'</tbody></table></div>').join('')+'</section></template>'+(data.note?'<p class="r-foot">'+E(data.note)+'</p>':'');
 }
 
@@ -2531,7 +2531,6 @@ function narrativeComprehensive(c) {
       "마야력으로 보면 {name}님은 '" + c.mayaMeaning + "'" + josa(c.mayaMeaning, "을", "를") + " 뜻하는 기호를 타고났어요. 이 힘을 품고 있어서, 그 힘을 쓰는 일을 할 때 가장 자연스럽게 빛나요.",
       "다섯 가지 점술은 서로 다른 시대와 문화에서 왔지만, {name}님에 대해서는 같은 이야기를 하고 있어요. " + c.common
     ].map(t => t.replace(/\{name\}/g, c.name)),
-    chart: "west",
     basis: c.basis.systems
   });
 
@@ -3179,7 +3178,7 @@ function buildRichReport(ch,key){
  const summary=key==='comprehensive'?[S[0].lead].concat(S.slice(1,5).map(s=>String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0])).filter(Boolean):S.__sum;
  S.forEach(s=>{s.answer=s.paragraphs.join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
- return {title:(ch.inp.name||'당신')+'님의 '+NAMES[key]+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,version:'chapters-2026-11-05-v3',
+ return {title:(ch.inp.name||'당신')+'님의 '+NAMES[key]+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'chapters-2026-11-05-v3',
   body:S.map((r,i)=>(i+1)+'장 · '+r.question+'\n\n핵심: '+r.lead+(r.basis.length?'\n근거: '+r.basis.join(' / '):'')+'\n\n'+r.answer+(r.action?'\n\n실천 · '+r.action:'')).join('\n\n────────────────\n\n')+'\n\n'+note};
 }
 

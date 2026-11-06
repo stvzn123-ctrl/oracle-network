@@ -212,7 +212,6 @@ export function narrativeComprehensive(c) {
       "마야력으로 보면 {name}님은 '" + c.mayaMeaning + "'" + josa(c.mayaMeaning, "을", "를") + " 뜻하는 기호를 타고났어요. 이 힘을 품고 있어서, 그 힘을 쓰는 일을 할 때 가장 자연스럽게 빛나요.",
       "다섯 가지 점술은 서로 다른 시대와 문화에서 왔지만, {name}님에 대해서는 같은 이야기를 하고 있어요. " + c.common
     ].map(t => t.replace(/\{name\}/g, c.name)),
-    chart: "west",
     basis: c.basis.systems
   });
 
