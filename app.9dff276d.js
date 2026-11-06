@@ -2768,11 +2768,12 @@ function resultShareText(){return SHARE_TITLE+"\n"+SHARE_URL}
 
 /* 초대 링크 잠금: INVITE_API가 있으면 친구가 내 링크(?r=코드)로 들어와야 열린다. 비어 있으면 예전 방식(공유 완료·복사 후 열림). */
 const INVITE_API="https://oracle-api.stvzn123.workers.dev";
+const INVITE_LOCK=""; /* 비우면 공유·복사만 해도 바로 열림. 초대 링크 방식으로 되돌리려면 INVITE_API를 넣는다. */
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
 function deviceId(){let d=lsGet("fate-dev");if(!d||!/^[a-z0-9-]{4,64}$/i.test(d)){d=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));lsSet("fate-dev",d)}return d}
 let invite=null;try{invite=JSON.parse(lsGet("fate-invite")||"null")}catch(_){}
 let graphUnlocked=false;
-try{graphUnlocked=INVITE_API?lsGet("fate-unlocked")==="1":sessionStorage.getItem("fate-graphs-unlocked")==="1"}catch(_){}
+try{graphUnlocked=lsGet("fate-unlocked")==="1"}catch(_){}
 function applyGraphLock(){
   $("result-gate").classList.toggle("is-locked",!graphUnlocked);
   $("graph-content").inert=!graphUnlocked;
@@ -2780,43 +2781,43 @@ function applyGraphLock(){
   $("graph-gate").hidden=graphUnlocked;
 }
 function unlockGraphs(){
-  graphUnlocked=true;try{INVITE_API?lsSet("fate-unlocked","1"):sessionStorage.setItem("fate-graphs-unlocked","1")}catch(_){}
+  graphUnlocked=true;try{lsSet("fate-unlocked","1")}catch(_){}
   applyGraphLock();if($("share-dialog").open)$("share-dialog").close();stopPoll();
-  $("unlock-status").textContent=INVITE_API?"친구가 링크를 열었어요. 운을 높이는 법과 운명 리포트가 열렸어요.":"운을 높이는 법과 운명 리포트가 열렸어요.";
+  $("unlock-status").textContent=INVITE_LOCK?"친구가 링크를 열었어요. 운을 높이는 법과 운명 리포트가 열렸어요.":"운을 높이는 법과 운명 리포트가 열렸어요.";
 }
 async function ensureInvite(){if(invite&&invite.ref&&invite.key)return invite;
-  const r=await fetch(INVITE_API+"/invite",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({d:deviceId()})});
+  const r=await fetch(INVITE_LOCK+"/invite",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({d:deviceId()})});
   if(!r.ok)throw new Error("invite "+r.status);invite=await r.json();lsSet("fate-invite",JSON.stringify(invite));return invite}
 const inviteUrl=()=>SHARE_URL+"?r="+invite.ref;
 let pollT=null;
 function stopPoll(){if(pollT){clearInterval(pollT);pollT=null}}
-async function checkInvite(){if(!INVITE_API||graphUnlocked||!invite)return;
-  try{const r=await fetch(INVITE_API+"/status?r="+encodeURIComponent(invite.ref)+"&k="+encodeURIComponent(invite.key),{cache:"no-store"});
+async function checkInvite(){if(!INVITE_LOCK||graphUnlocked||!invite)return;
+  try{const r=await fetch(INVITE_LOCK+"/status?r="+encodeURIComponent(invite.ref)+"&k="+encodeURIComponent(invite.key),{cache:"no-store"});
     if(r.status===404){invite=null;try{localStorage.removeItem("fate-invite")}catch(_){}stopPoll();return}
     const j=await r.json();if(j.opened)unlockGraphs()}catch(_){}}
-function startPoll(){if(!INVITE_API||graphUnlocked||!invite||pollT)return;pollT=setInterval(()=>{if(document.visibilityState==="visible")checkInvite()},5000)}
+function startPoll(){if(!INVITE_LOCK||graphUnlocked||!invite||pollT)return;pollT=setInterval(()=>{if(document.visibilityState==="visible")checkInvite()},5000)}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")checkInvite()});
 async function openShare(){
   $("share-status").textContent="";$("share-manual").hidden=true;
-  const useInvite=INVITE_API&&!graphUnlocked&&typeof CH!=="undefined"&&CH;
+  const useInvite=INVITE_LOCK&&!graphUnlocked&&typeof CH!=="undefined"&&CH;
   let url=SHARE_URL;
   if(useInvite){try{await ensureInvite();url=inviteUrl();startPoll();checkInvite()}catch(_){}}
   $("share-preview").value=SHARE_TITLE+"\n"+url;
   if(typeof navigator.share==="function"){
     try{await navigator.share({url});
       if(useInvite&&url!==SHARE_URL)return;
-      if(typeof CH!=="undefined"&&CH&&!INVITE_API)unlockGraphs();return}
+      if(typeof CH!=="undefined"&&CH&&!INVITE_LOCK)unlockGraphs();return}
     catch(e){if(e&&e.name==="AbortError")return}}
   $("share-native").hidden=true;
   $("share-lead").textContent=useInvite&&url!==SHARE_URL?"나만의 초대 링크예요. 친구가 이 링크로 들어오면 운을 높이는 법과 운명 리포트가 열려요. 개인 정보나 결과는 들어가지 않아요.":"사이트 소개와 링크를 복사해 보내 주세요. 개인 정보나 결과는 들어가지 않아요.";
   $("share-copy").textContent="링크 복사";$("share-dialog").showModal();
 }
-const inviteMode=()=>INVITE_API&&!graphUnlocked&&invite&&$("share-preview").value.includes("?r=");
+const inviteMode=()=>INVITE_LOCK&&!graphUnlocked&&invite&&$("share-preview").value.includes("?r=");
 const SENT_MSG="보냈다면 이제 친구가 링크를 열기를 기다려 주세요. 열리면 이 화면이 자동으로 바뀌어요.";
 /* SNS 공유: 카카오톡(JS 키가 있으면 카카오 SDK, 없으면 시스템 공유·복사), 인스타그램(웹 공유 주소가 없어 시스템 공유·복사), 스레드·X(웹 작성 창) */
 const KAKAO_JS_KEY="c453f5e58337280c43c42a35481c5337";
 const shareLink=()=>{const m=$("share-preview").value.match(/https?:\/\/\S+/);return m?m[0]:SHARE_URL};
-function afterShare(msg){if(inviteMode()){$("share-status").textContent=(msg?msg+" ":"")+SENT_MSG;return}if(INVITE_API&&!graphUnlocked){if(msg)$("share-status").textContent=msg;return}unlockGraphs()}
+function afterShare(msg){if(inviteMode()){$("share-status").textContent=(msg?msg+" ":"")+SENT_MSG;return}if(INVITE_LOCK&&!graphUnlocked){if(msg)$("share-status").textContent=msg;return}unlockGraphs()}
 async function copyFor(app){const area=$("share-preview");
   try{if(!navigator.clipboard?.writeText)throw 0;await navigator.clipboard.writeText(area.value);afterShare(`링크를 복사했어요. ${app}에 붙여 넣어 보내 주세요.`)}
   catch(_){area.focus();area.select();$("share-status").textContent=`글을 길게 눌러 복사한 뒤 ${app}에 붙여 넣어 주세요.`}}
@@ -2839,11 +2840,11 @@ $("share-copy").addEventListener("click",async()=>{
     if(!navigator.clipboard?.writeText)throw new Error("Clipboard unavailable");
     await navigator.clipboard.writeText(text);
     if(inviteMode()){$("share-status").textContent="링크를 복사했어요. 카카오톡 등에 붙여 넣어 친구에게 보내 주세요. "+SENT_MSG;return}
-    if(INVITE_API&&!graphUnlocked)return;
+    if(INVITE_LOCK&&!graphUnlocked)return;
     unlockGraphs();$("unlock-status").textContent="결과를 복사했어요. 친구에게 붙여넣어 주세요. 전체 결과가 열렸어요.";
   }catch(_){
     area.focus();area.select();
-    if(INVITE_API){$("share-status").textContent="자동 복사를 사용할 수 없어요. 글을 길게 누르거나 Ctrl+C / ⌘C로 복사해 친구에게 보내 주세요.";return}
+    if(INVITE_LOCK){$("share-status").textContent="자동 복사를 사용할 수 없어요. 글을 길게 누르거나 Ctrl+C / ⌘C로 복사해 친구에게 보내 주세요.";return}
     $("share-manual").hidden=false;
     $("share-status").textContent="자동 복사를 사용할 수 없어요. 글을 길게 누르거나 Ctrl+C / ⌘C로 복사한 뒤 ‘직접 복사 후 결과 보기’를 눌러 주세요.";
   }
@@ -2852,18 +2853,18 @@ $("share-native").addEventListener("click",async()=>{
   try{
     await navigator.share({title:"운명 네트워크",text:$("share-preview").value});
     if(inviteMode()){$("share-status").textContent=SENT_MSG;return}
-    if(INVITE_API&&!graphUnlocked)return;
+    if(INVITE_LOCK&&!graphUnlocked)return;
     unlockGraphs();
   }catch(e){
     $("share-status").textContent=e.name==="AbortError"?"공유를 취소했어요.":"공유 창을 열지 못했어요. 링크 복사를 이용해 주세요.";
   }
 });
-if(INVITE_API){
+if(INVITE_LOCK){
   $("gate-share").textContent="친구에게 초대 링크 보내기 ↗";
   $("gate-note").innerHTML="친구가 내 초대 링크로 들어오면 열려요.<br>내 기기에서 직접 연 것은 세지 않아요.";
   const q=new URLSearchParams(location.search),ref=q.get("r");
   if(ref&&/^[a-z0-9]{4,16}$/i.test(ref)&&!(invite&&invite.ref===ref)){
-    fetch(INVITE_API+"/open",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({r:ref,d:deviceId()}),keepalive:true}).catch(()=>{});
+    fetch(INVITE_LOCK+"/open",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({r:ref,d:deviceId()}),keepalive:true}).catch(()=>{});
   }
   if(ref){q.delete("r");history.replaceState(null,"",location.pathname+(q.toString()?"?"+q:"")+location.hash)}
   checkInvite();startPoll();
