@@ -1346,14 +1346,9 @@ function buildRichReport(ch,key){
 
 CH=buildChart(profile);compute();return buildRichReport(CH,key);}
 
-/* 자유질문: 저장 + 운영자 알림. 표는 처음 요청 때 자동으로 만든다.
-   알림(선택): TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID, 또는 NOTIFY_WEBHOOK(디스코드 웹후크 주소). */
+/* 자유질문: 저장만 한다(알림 없음). 운영자가 관리자 페이지에서 하루 한 번 확인해 이메일로 답한다. 표는 처음 요청 때 자동 생성. */
 let questionTableReady=false;
 async function questionTable(env){if(questionTableReady)return;await env.DB.prepare("CREATE TABLE IF NOT EXISTS questions(id INTEGER PRIMARY KEY AUTOINCREMENT,user_id TEXT,email TEXT NOT NULL,question TEXT NOT NULL,sig TEXT,created INTEGER NOT NULL,done_at INTEGER)").run();questionTableReady=true}
-async function notifyOwner(env,text){const jobs=[];
-  if(env.TELEGRAM_BOT_TOKEN&&env.TELEGRAM_CHAT_ID)jobs.push(fetch("https://api.telegram.org/bot"+env.TELEGRAM_BOT_TOKEN+"/sendMessage",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({chat_id:env.TELEGRAM_CHAT_ID,text:text.slice(0,4000)})}));
-  if(env.NOTIFY_WEBHOOK)jobs.push(fetch(env.NOTIFY_WEBHOOK,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({content:text.slice(0,1900),text:text.slice(0,4000)})}));
-  await Promise.allSettled(jobs)}
 async function questionRoute(req,env,url,ctx){
   const path=url.pathname.replace(/\/+$/,"");
   if(path!=="/question"&&path!=="/admin/questions"&&path!=="/admin/question")return null;
@@ -1367,7 +1362,6 @@ async function questionRoute(req,env,url,ctx){
     const sig=await sigOf(req),recent=await env.DB.prepare("SELECT COUNT(*) n FROM questions WHERE sig=? AND created>?").bind(sig,now-864e5).first();
     if(recent.n>=5)return json(req,env,{error:"too_many"},429);
     const r=await env.DB.prepare("INSERT INTO questions(user_id,email,question,sig,created) VALUES(?,?,?,?,?)").bind(user?user.id:null,email,question,sig,now).run();
-    ctx.waitUntil(notifyOwner(env,"[오라클 자유질문 #"+(r.meta?.last_row_id??"")+"]\n이메일: "+email+"\n회원: "+(user?user.nickname:"비로그인")+"\n\n"+question));
     return json(req,env,{ok:true});
   }
   if(!user)return json(req,env,{error:"unauthorized"},401);
