@@ -2819,7 +2819,7 @@ const KAKAO_JS_KEY="c453f5e58337280c43c42a35481c5337";
 const shareLink=()=>{const m=$("share-preview").value.match(/https?:\/\/\S+/);return m?m[0]:SHARE_URL};
 function afterShare(msg){if(inviteMode()){$("share-status").textContent=(msg?msg+" ":"")+SENT_MSG;return}if(INVITE_LOCK&&!graphUnlocked){if(msg)$("share-status").textContent=msg;return}unlockGraphs()}
 async function copyFor(app){const area=$("share-preview");
-  try{if(!navigator.clipboard?.writeText)throw 0;await navigator.clipboard.writeText(area.value);afterShare(`링크를 복사했어요. ${app}에 붙여 넣어 보내 주세요.`)}
+  try{if(!navigator.clipboard?.writeText)throw 0;await navigator.clipboard.writeText(area.value);$("share-status").textContent=`링크를 복사했어요. ${app}에 붙여 넣어 보내 주세요. 복사만으로는 열리지 않고, 공유를 완료하면 열려요.`}
   catch(_){area.focus();area.select();$("share-status").textContent=`글을 길게 눌러 복사한 뒤 ${app}에 붙여 넣어 주세요.`}}
 async function systemShare(app){if(typeof navigator.share==="function"){try{await navigator.share({title:SHARE_TITLE,text:SHARE_TITLE,url:shareLink()});afterShare();return}catch(e){if(e.name==="AbortError"){$("share-status").textContent="공유를 취소했어요.";return}}}copyFor(app)}
 let kakaoReady=null;
@@ -2833,7 +2833,7 @@ document.querySelectorAll("#share-sns [data-sns]").forEach(b=>b.addEventListener
 $("share-open").addEventListener("click",openShare);
 $("gate-share").addEventListener("click",openShare);
 $("share-close").addEventListener("click",()=>$("share-dialog").close());
-$("share-manual").addEventListener("click",unlockGraphs);
+
 $("share-copy").addEventListener("click",async()=>{
   const area=$("share-preview"),text=area.value;
   try{
@@ -2841,12 +2841,11 @@ $("share-copy").addEventListener("click",async()=>{
     await navigator.clipboard.writeText(text);
     if(inviteMode()){$("share-status").textContent="링크를 복사했어요. 카카오톡 등에 붙여 넣어 친구에게 보내 주세요. "+SENT_MSG;return}
     if(INVITE_LOCK&&!graphUnlocked)return;
-    unlockGraphs();$("unlock-status").textContent="결과를 복사했어요. 친구에게 붙여넣어 주세요. 전체 결과가 열렸어요.";
+    $("share-status").textContent="링크를 복사했어요. 복사만으로는 열리지 않아요. 위 SNS 버튼으로 공유를 완료하면 열려요.";
   }catch(_){
     area.focus();area.select();
     if(INVITE_LOCK){$("share-status").textContent="자동 복사를 사용할 수 없어요. 글을 길게 누르거나 Ctrl+C / ⌘C로 복사해 친구에게 보내 주세요.";return}
-    $("share-manual").hidden=false;
-    $("share-status").textContent="자동 복사를 사용할 수 없어요. 글을 길게 누르거나 Ctrl+C / ⌘C로 복사한 뒤 ‘직접 복사 후 결과 보기’를 눌러 주세요.";
+    $("share-status").textContent="자동 복사를 사용할 수 없어요. 글을 길게 누르거나 Ctrl+C / ⌘C로 복사해 주세요.";
   }
 });
 $("share-native").addEventListener("click",async()=>{
