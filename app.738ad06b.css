@@ -1845,3 +1845,5 @@ html.rep-lock #brandbar{padding-left:max(56px,env(safe-area-inset-left))!importa
 @media print{.auth-feedback{display:none!important}}
 
 
+
+.spouse-preview{padding:20px 22px}.spouse-preview h4{margin:0 0 16px;font-size:21px}.spouse-preview-content{gap:20px}.spouse-preview-copy .spouse-preview-note{margin:10px 0}
