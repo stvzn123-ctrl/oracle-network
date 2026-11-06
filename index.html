@@ -4290,7 +4290,7 @@ function approvedReportHTML(data,key){
  secs.filter(s=>(s.basis||[]).some(Boolean)).map(s=>'<div class="rv3-tw"><table class="rv3-table"><caption>'+E(s.question)+' · 근거 지표</caption><thead><tr><th scope="col">구분</th><th scope="col">계산값 및 지표</th></tr></thead><tbody>'+s.basis.filter(Boolean).map(b=>'<tr><th scope="row">'+E(s.question)+'</th><td>'+E(b)+'</td></tr>').join('')+'</tbody></table></div>').join('')+'</section></template>'+(data.note?'<p class="r-foot">'+E(data.note)+'</p>':'');
 }
 
-function paintAccessAccount(){const el=$('accountIdLabel');if(el)el.textContent=accountUser?(accountUser.id?'내 계정 ID: '+accountUser.id:'계정 ID 표시를 위한 서버 업데이트가 필요해요.') :'';const a=$('adminPageLink');if(a)a.hidden=accountUser?!accountUser.isAdmin:!(accountToken&&lsGet('oracle-admin')==='1');}
+function paintAccessAccount(){const el=$('accountIdLabel');if(el){el.textContent='';el.hidden=true}const a=$('adminPageLink');if(a)a.hidden=accountUser?!accountUser.isAdmin:!(accountToken&&lsGet('oracle-admin')==='1');}
 async function loadPrivateReport(key,trigger){if(!accountUser){accountStatus('리포트는 로그인 후 관리자 승인이 필요해요.');alert('카카오 로그인 후 리포트 열람 승인을 요청해주세요.');return;}
  const prior=trigger?.textContent;if(trigger){trigger.disabled=true;trigger.textContent='권한 확인 중…'}
  try{const data=await accountAPI('/reports?key='+encodeURIComponent(key));if(typeof data.body!=='string'||typeof data.title!=='string')throw Error('리포트를 준비하고 있어요.');reportReturnFocus=trigger;$('reportBody').innerHTML=approvedReportHTML(data,key);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true});}
