@@ -2943,7 +2943,7 @@ $('profileDeleteConfirm').addEventListener('click',async()=>{
 });
 $('accountLogout').addEventListener('click',async()=>{
   if(accountBusy)return;accountBusy=true;accountPaint();
-  try{await accountAPI('/auth/logout',{});accountToken='';accountUser=null;localStorage.removeItem('oracle-session');accountStatus('로그아웃했어요. 공용 기기라면 입력창도 비워 주세요.')}catch(e){accountStatus(e.message)}finally{accountBusy=false;accountPaint()}
+  try{await accountAPI('/auth/logout',{});accountToken='';accountUser=null;localStorage.removeItem('oracle-session');try{sessionStorage.removeItem('oracle-pending');sessionStorage.removeItem('oracle-save-intent');localStorage.removeItem('oracle-admin')}catch(_){}location.replace(location.pathname);return}catch(e){accountStatus(e.message)}finally{accountBusy=false;accountPaint()}
 });
 async function accountInit(){
   const startVersion=formVersion;const hash=new URLSearchParams(location.hash.slice(1)),code=hash.get('oracle_code'),error=hash.get('oracle_error');
