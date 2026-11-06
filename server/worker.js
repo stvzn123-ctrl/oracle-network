@@ -1,6 +1,6 @@
 // 오라클 네트워크 공용 API (Cloudflare Worker + D1)
 // 초대 기록 및 카카오 로그인 회원의 명시적으로 저장한 출생 정보를 다룬다.
-import { narrativeComprehensive, narrativeRelation, narrativeMoney, narrativeWork } from "./narrative.js";
+import { narrativeComprehensive, narrativeRelation, narrativeMoney, narrativeWork, narrativeStudy, narrativeReunion, narrativeMatch } from "./narrative.js";
 const ORIGINS = ["https://stvzn123-ctrl.github.io"];
 const ABC = "abcdefghjkmnpqrstuvwxyz23456789";
 
@@ -1223,6 +1223,26 @@ function buildRichReport(ch,key){
     fit:['10하우스 '+zs(hs(10)),'6하우스 '+zs(hs(6)),'인생 수 '+ch.lp],
     gui:['필요한 기운 '+good.map(g=>GN[g]).join('·'),'천을귀인 '+ch.gui.map(b=>BR[b]).join('·'),gTop?gTop.y+'년 귀인 신호':''],
     timing:Y4[2].map(r=>r.year+'년 직업·학업 '+r.score+'점')}}).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',{}));
+  S.__sum=S.slice(0,3).map(s=>s.lead||String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0]).filter(Boolean);
+  S.forEach((s,i)=>s.id=key+'-'+(i+1));
+ }else if(key==='study'||key==='reunion'||key==='match'){
+  /* 2026-11 줄글 엔진(server/narrative.js narrativeStudy·Reunion·Match). */
+  const topG=ng.indexOf(Math.max(...ng)),nm=ch.inp.name||'당신',mateEl=SE[BMAIN[ch.brs.d]];
+  const top3=arr=>[...arr].sort((a,b)=>b.score-a.score).slice(0,3).sort((a,b)=>a.year-b.year).map(r=>({y:r.year,age:kage(r.year)}));
+  let secs;
+  if(key==='study'){const sy=top3(Y4[2]),lw=low(Y4[2]);
+   secs=narrativeStudy({name:nm,dom:maxEl,topG,studyYears:sy,studyRest:sy.some(k=>k.y===lw.year)?null:{y:lw.year,age:kage(lw.year)},
+    basis:{core:['가장 많은 오행 '+ELN[maxEl],'많은 십성 '+GN[topG],'수성 '+zs(pl.mercury),'문창귀인 '+(ch.has.munc?'있음':'없음')],timing:Y4[2].map(r=>r.year+'년 직업·학업 '+r.score+'점')}});}
+  else if(key==='reunion'){const reYears=[1,2,3,4,5].map(i=>y0+i).filter(y=>(13-yb(y))%12===ch.brs.d||pyOf(ch,y)===2);
+   secs=narrativeReunion({name:nm,dom:maxEl,moonEl:moonS%4,reYears,
+    basis:{core:['일간 '+sTx(d),'달 '+zs(moonS),'가장 많은 오행 '+ELN[maxEl]],meet:['일지 '+bTx(ch.brs.d)+'와 육합하는 해, 개인년 2인 해: '+(reYears.join('·')||'없음')]}});}
+  else{const yB=ch.brs.y,san=[mod(yB+4,12),mod(yB+8,12)],liu=(13-yB)%12,el=sunS%4,comp=[2,3,0,1][el];
+   const mateYears=sysScan(ch,'mate').filter(r=>r.S.length&&r.age>=20).sort((a,b)=>b.v-a.v).slice(0,2).map(r=>r.y);
+   const loveYears=[...mateYears,...[...Y4[1]].sort((a,b)=>b.score-a.score).map(r=>r.year)].filter((y,i,a)=>a.indexOf(y)===i).slice(0,3).sort((a,b)=>a-b).map(y=>({y,age:kage(y)}));
+   secs=narrativeMatch({name:nm,dom:maxEl,topG,venusEl:pl.venus%4,mateEl,loveYears,
+    goodAnimals:[san[0],san[1],liu].map(b=>ANI[b]).join('·'),goodSigns:ZOD.map((z,i)=>i).filter(i=>i!==sunS&&(i%4===el||i%4===comp)).slice(0,4).map(i=>ZOD[i]+'자리').join('·'),
+    basis:{core:['금성 '+zs(pl.venus),'많은 십성 '+GN[topG]],partner:['내 띠 '+ANI[yB]+' · 삼합 '+ANI[san[0]]+'·'+ANI[san[1]]+' · 육합 '+ANI[liu],'태양 '+zs(sunS),'일지 '+bTx(ch.brs.d)],timing:Y4[1].map(r=>r.year+'년 애정 '+r.score+'점')}});}
+  secs.forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',{}));
   S.__sum=S.slice(0,3).map(s=>s.lead||String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0]).filter(Boolean);
   S.forEach((s,i)=>s.id=key+'-'+(i+1));
  }else if(key==='love'||key==='marry'){
