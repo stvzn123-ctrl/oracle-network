@@ -66,7 +66,7 @@ async function authRoute(req,env,url,ctx){
     const {challenge}=await authBody(req);if(typeof challenge!=='string'||! /^[a-f0-9]{64}$/.test(challenge))return json(req,env,{error:'input'},400);
     const sig=await sigOf(req);const recent=await env.DB.prepare('SELECT COUNT(*) AS n FROM auth_flows WHERE sig=? AND created>?').bind(sig,now-3600000).first();if(recent.n>=30)return json(req,env,{error:'too_many'},429);
     const state=authRandom();await env.DB.prepare('INSERT INTO auth_flows(state_hash,challenge,sig,created,expires) VALUES(?,?,?,?,?)').bind(await authHash(state),challenge,sig,now,now+600000).run();
-    ctx.waitUntil(env.DB.batch([env.DB.prepare('DELETE FROM auth_flows WHERE expires<?').bind(now),env.DB.prepare('DELETE FROM auth_grants WHERE expires<?').bind(now),env.DB.prepare('DELETE FROM sessions WHERE expires<?').bind(now)]));
+    ctx.waitUntil(env.DB.batch([env.DB.prepare('DELETE FROM auth_flows WHERE expires<?').bind(now),env.DB.prepare('DELETE FROM auth_grants WHERE expires<?').bind(now),env.DB.prepare('DELETE FROM sessions WHERE expires<?').bind(now)]).then(()=>env.DB.batch([env.DB.prepare('DELETE FROM invites WHERE created<?').bind(now-365*864e5),env.DB.prepare('DELETE FROM admin_audit WHERE created<?').bind(now-365*864e5)])).then(()=>questionTable(env)).then(()=>env.DB.prepare('DELETE FROM questions WHERE done_at IS NOT NULL AND done_at<?').bind(now-90*864e5).run()).catch(()=>{}));
     const authorize=new URL('https://kauth.kakao.com/oauth/authorize');authorize.search=new URLSearchParams({client_id:env.KAKAO_CLIENT_ID,redirect_uri:url.origin+'/auth/kakao/callback',response_type:'code',state}).toString();return json(req,env,{url:authorize.toString()});
   }
   if(req.method==='GET'&&path==='/auth/kakao/callback'){
