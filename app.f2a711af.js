@@ -1459,7 +1459,7 @@ function topicRowsV2(ch,k){
  const S=R.map((r,i)=>({y:y0+1+i,v:D(r[2].mean)})),best=S.slice().sort((a,b)=>b.v-a.v),love=R.map((r,i)=>({y:y0+1+i,v:D(r[1].mean)})).sort((a,b)=>b.v-a.v);
  const lq=lifeQ(ch),job=lq.find(x=>x.k==='job'),mv=lq.find(x=>x.k==='move'),gui=sysScan(ch,'gui').filter(r=>r.S.length).sort((a,b)=>b.v-a.v)[0];
  const ng=natalGroups(ch),mateE=pp.mE,rich=ng[2]+(ch.cnt[2]>=2?1:0)+(ch.cnt[3]>=2?1:0);
- const age=`${AGEGAP[tg]||pp.age}이 가장 잘 맞아요. ${AGEWHY[tg]||''}.`;
+ const age=`${compactPartnerAge(pp.age)}이 가장 잘 맞아요. ${AGEWHY[tg]||''}.`;
  const look=face&&face.features?face.features.join(' · '):'';
  const contact=['하루에도 여러 번 짧게 연락하는','하루 1~2번 안부를 꼭 챙기는','자기 전 통화로 하루를 나누는','서로 바쁠 땐 몰아서 길게 이야기하는'][vE];
  const step=['만난 지 2~3주 안에, 세 번째 만남 전후','네 번째 만남, 함께 여행을 다녀온 뒤','한 달쯤 꾸준히 연락한 뒤, 둘만의 저녁 자리','두 달 가까이 대화가 깊어진 뒤'][vE];
@@ -2203,12 +2203,18 @@ function reportEditorialCopy(value){return String(value||'').replace("건강·�
 /* 2026-11-05 인연 프로필·재미 요소: 기존 차트 값만 읽는 재미용 분류(계산식 불변) */
 function partnerProfile(ch){const mE=SE[BMAIN[ch.brs.d]],tg=tenGod(ch.stems.d,BMAIN[ch.brs.d]),g=Math.floor(TG.indexOf(tg)/2),base=ch.asc!=null?sign(ch.asc):sign(ch.sun),h7=(base+6)%12,ven=sign(birthExtraLon('Venus',ch.jd)),vE=ven%4;
  const mbti=([1,3].includes(h7%4)?'I':'E')+([2,3].includes(mE)?'S':'N')+([1,2].includes(vE)?'T':'F')+(h7%3===2?'P':'J');
- const age='나보다 '+(AGEGAP[tg]||'1~3살 차이');
+ const age='나보다 '+fitAgeGap(AGEGAP[tg]||'1~3살 차이',marryAge(ch));
  const job=[['교육·기획·디자인','성장하는 일을 하는'],['마케팅·방송·서비스','사람 앞에 서는 일을 하는'],['공공기관·부동산·운영','안정된 조직에서 일하는'],['금융·법률·IT','전문 기준이 분명한 일을 하는'],['연구·의료·해외 업무','깊이 파고드는 일을 하는']][mE];
  const vibe=['다정하고 성장 욕구가 큰','밝고 표현이 풍부한','듬직하고 현실적인','원칙이 분명하고 깔끔한','차분하고 생각이 깊은'][mE];
  const hobby=['산책·식물 가꾸기·독서','공연·여행·사진','맛집 탐방·요리·캠핑','운동·정리·전시 관람','음악·영화·물가 산책'][mE];
  return {mbti,age,job,vibe,hobby,meet:MEET[vE],style:LOVE_STYLE[vE],h7,mE}}
 function partnerFirstMeeting(ch){const p=partnerProfile(ch),d=encounterData(ch),m=d.when.match(/(\d{4})년\s+(\d+)월/);return p.meet+'에서 만날 가능성이 가장 커요.'+(m?' 특히 '+m[1]+'년 '+m[2]+'월 무렵의 모임·소개 자리를 눈여겨보세요.':' 시기는 '+d.when)}
+/* 결혼할 나이(한국 나이)에서 상대가 너무 어려지지 않게(만 22세 이상) 연하 폭을 줄이고, 연상 폭도 현실적으로 맞춘다. */
+function marryAge(ch){try{const r=sysScan(ch,'mate').filter(x=>x.S.length&&x.age>=20).sort((a,b)=>a.y-b.y)[0];if(r)return r.age}catch(_){}const now=new Date().getFullYear()-ch.Y+1;return Math.max(now,30)}
+function fitAgeGap(t,ma){const m=t.match(/(\d+)~(\d+)살/),young=/연하/.test(t);if(!m)return t;let a=+m[1],b=+m[2];
+ if(young){const cap=Math.max(0,ma-24);if(cap<1)return '동갑이거나 1~2살 연상';if(b>cap){b=cap;a=Math.max(1,Math.min(a,b-2))}if(a>=b)return '동갑이거나 1~'+b+'살 연하'}
+ else if(/연상/.test(t)&&ma<=24&&b>5){b=5;a=Math.min(a,3)}
+ return t.replace(m[0],a+'~'+b+'살')}
 function compactPartnerAge(value){return String(value||'').replace(/나보다\s*/g,'').trim()}
 
 function partnerProfileHTML(ch,key,part){let f=null;try{f=spouseFaceProfile(ch)}catch(_){}const p=partnerProfile(ch),E=topicEsc;
