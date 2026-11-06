@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ko">
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://t1.kakaocdn.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.kakaocdn.net; connect-src 'self' https://oracle-api.stvzn123.workers.dev https://*.kakao.com; frame-src https://*.kakao.com; form-action 'self' https://*.kakao.com; base-uri 'none'; object-src 'none'">
 <meta name="color-scheme" content="dark light">
 <script>try{var H=document.documentElement,sb=/SamsungBrowser/i.test(navigator.userAgent),t=null;if(sb)H.classList.add("sbx");if(/KAKAOTALK|NAVER\(|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp/i.test(navigator.userAgent))H.classList.add("lite");try{t=localStorage.getItem("oracle-theme")}catch(e){}if(t==="dark"||(t!=="light"&&sb&&matchMedia("(prefers-color-scheme: dark)").matches))H.classList.add("rd")}catch(e){}</script>
 <script>try{if(localStorage.getItem("oracle-session"))document.documentElement.classList.add("boot");setTimeout(function(){document.documentElement.classList.remove("boot")},4000)}catch(e){}</script>
@@ -44,7 +45,7 @@
 </dialog>
 <dialog class="coffee-dialog" id="coffeeDialog" aria-labelledby="coffeeTitle"><button type="button" class="coffee-x" id="coffeeClose" aria-label="닫기">×</button>
 <h2 id="coffeeTitle">오라클 네트워크에 커피값 보내기</h2><p class="coffee-sub">카카오페이로 후원할 수 있어요.</p>
-<figure class="coffee-qr"><span class="coffee-pay">pay</span><img src="img/c5f2be65aa.png" width="220" height="220" alt="카카오페이 후원 QR 코드"><figcaption>휴대폰 카메라로 찍으면 카카오페이가 열려요</figcaption></figure>
+<figure class="coffee-qr"><span class="coffee-pay">pay</span><img src="img/c5f2be65aa.png" width="220" height="220" loading="lazy" decoding="async" alt="카카오페이 후원 QR 코드"><figcaption>휴대폰 카메라로 찍으면 카카오페이가 열려요</figcaption></figure>
 <a class="coffee-go" href="https://qr.kakaopay.com/281006011171489501009852" target="_blank" rel="noopener">카카오페이로 커피값 보내기</a>
 <p class="coffee-note">커피값은 서버 운영에 사용돼요. 후원은 자율이며, 리포트 구매와는 관계없어요.</p><div class="coffee-feedback"><b>관리자에게 건의하기</b><p>이용하면서 불편한 점이나 건의사항이 있다면 아래 메일로 보내 주세요. 꼼꼼히 확인하고 개선하겠습니다. 감사합니다.</p><a href="mailto:triwave001@gmail.com?subject=%5B%EC%98%A4%EB%9D%BC%ED%81%B4%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%5D%20%EA%B1%B4%EC%9D%98%EC%82%AC%ED%95%AD">triwave001@gmail.com</a></div></dialog>
 <div id="authFeedback" class="auth-feedback" hidden role="status" aria-live="polite"><span id="authFeedbackText"></span><button id="authFeedbackClose" aria-label="로그인 알림 닫기" type="button">×</button></div>

@@ -6,6 +6,7 @@ const ABC = "abcdefghjkmnpqrstuvwxyz23456789";
 
 const rand = n => { const b = crypto.getRandomValues(new Uint8Array(n)); return [...b].map(x => ABC[x % ABC.length]).join(""); };
 const sha = async t => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)))].map(b => b.toString(16).padStart(2, "0")).join("").slice(0, 32);
+const sameSecret = (a, b) => { if (typeof a !== "string" || typeof b !== "string" || a.length !== b.length) return false; let d = 0; for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i); return d === 0; };
 const okId = (s, max = 64) => typeof s === "string" && /^[a-z0-9-]{4,64}$/i.test(s) && s.length <= max;
 
 function cors(req, env) {
@@ -20,7 +21,7 @@ function cors(req, env) {
   };
 }
 const json = (req, env, body, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", ...cors(req, env) } });
+  new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff", ...cors(req, env) } });
 
 // 같은 사람이 시크릿 창으로 다시 여는 경우를 거르기 위한 값(IP + 브라우저 정보의 해시, 원문은 저장하지 않음)
 const sigOf = req => sha((req.headers.get("CF-Connecting-IP") || "") + "|" + (req.headers.get("User-Agent") || ""));
@@ -54,7 +55,7 @@ async function authRoute(req,env,url,ctx){
   const now=Date.now(),origin=req.headers.get('Origin');
   // 카카오 설정에서 연결을 끊은 회원은 서버의 세션과 출생 정보도 정리한다.
   if(req.method==='POST'&&path==='/auth/kakao/unlink'){
-    if(!env.KAKAO_ADMIN_KEY||req.headers.get('Authorization')!=='KakaoAK '+env.KAKAO_ADMIN_KEY)return json(req,env,{error:'unauthorized'},401);
+    if(!env.KAKAO_ADMIN_KEY||!sameSecret(req.headers.get('Authorization')||'','KakaoAK '+env.KAKAO_ADMIN_KEY))return json(req,env,{error:'unauthorized'},401);
     const body=await req.text();if(body.length>4096)return json(req,env,{error:'input'},400);const p=new URLSearchParams(body),uid=p.get('user_id');
     if(p.get('app_id')!=='1636031'||!uid||! /^\d{1,24}$/.test(uid))return json(req,env,{error:'input'},400);
     await env.DB.prepare('DELETE FROM partners WHERE user_id IN (SELECT id FROM users WHERE kakao_id=?)').bind(uid).run();
@@ -1444,7 +1445,7 @@ export default {
         const r = url.searchParams.get("r"), k = url.searchParams.get("k");
         if (!okId(r, 16) || !okId(k)) return json(req, env, { error: "bad request" }, 400);
         const row = await env.DB.prepare("SELECT key_hash,opened_at FROM invites WHERE ref=?").bind(r).first();
-        if (!row || row.key_hash !== await sha(k)) return json(req, env, { error: "not found" }, 404);
+        if (!row || !sameSecret(row.key_hash, await sha(k))) return json(req, env, { error: "not found" }, 404);
         return json(req, env, { opened: !!row.opened_at });
       }
       if (path === "" || path === "/health") return json(req, env, { ok: true });
