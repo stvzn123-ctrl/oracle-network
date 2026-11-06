@@ -1,6 +1,6 @@
 // 오라클 네트워크 공용 API (Cloudflare Worker + D1)
 // 초대 기록 및 카카오 로그인 회원의 명시적으로 저장한 출생 정보를 다룬다.
-import { narrativeComprehensive, narrativeRelation, narrativeMoney } from "./narrative.js";
+import { narrativeComprehensive, narrativeRelation, narrativeMoney, narrativeWork } from "./narrative.js";
 const ORIGINS = ["https://stvzn123-ctrl.github.io"];
 const ABC = "abcdefghjkmnpqrstuvwxyz23456789";
 
@@ -1209,6 +1209,20 @@ function buildRichReport(ch,key){
    basis:{core:['많은 십성 '+GN[topG],'재성 '+ng[2]+'개 · 식상 '+ng[1]+'개','2하우스 '+zs(hs(2)),'인생 수 '+ch.lp],
     earn:['10하우스 '+zs(hs(10)),'가장 많은 오행 '+ELN[maxEl]],
     timing:Y4[0].map(r=>r.year+'년 금전 '+r.score+'점')}}).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',{}));
+  S.__sum=S.slice(0,3).map(s=>s.lead||String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0]).filter(Boolean);
+  S.forEach((s,i)=>s.id=key+'-'+(i+1));
+ }else if(key==='work'){
+  /* 2026-11 줄글 엔진(server/narrative.js narrativeWork). */
+  const topG=ng.indexOf(Math.max(...ng)),nm=ch.inp.name||'당신',job=lifeQ(ch).find(x=>x.k==='job');
+  const who=good.slice().sort((a,b)=>ng[a]-ng[b]||good.indexOf(a)-good.indexOf(b))[0],gTop=sysScan(ch,'gui').filter(r=>r.S.length).sort((a,b)=>b.v-a.v)[0];
+  const workYears=[...Y4[2]].sort((a,b)=>b.score-a.score).slice(0,3).sort((a,b)=>a.year-b.year).map(r=>({y:r.year,age:kage(r.year)}));
+  const lw=low(Y4[2]),workRest=workYears.some(k=>k.y===lw.year)?null:{y:lw.year,age:kage(lw.year)};
+  narrativeWork({name:nm,dom:maxEl,topG,jobs:job?strip(job.a):'',guiWho:GUI_AGE[who??0],guiWhere:QWHERE[actionProfile(ch).support],guiYear:gTop?gTop.y:null,
+   workYears,workRest,turnYear:dwK&&dwNextY>y0&&dwNextY<=y0+10?dwNextY:null,
+   basis:{core:['많은 십성 '+GN[topG],'가장 많은 오행 '+ELN[maxEl],'월지 '+bTx(ch.brs.m)+' · '+tgAt['월지']],
+    fit:['10하우스 '+zs(hs(10)),'6하우스 '+zs(hs(6)),'인생 수 '+ch.lp],
+    gui:['필요한 기운 '+good.map(g=>GN[g]).join('·'),'천을귀인 '+ch.gui.map(b=>BR[b]).join('·'),gTop?gTop.y+'년 귀인 신호':''],
+    timing:Y4[2].map(r=>r.year+'년 직업·학업 '+r.score+'점')}}).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',{}));
   S.__sum=S.slice(0,3).map(s=>s.lead||String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0]).filter(Boolean);
   S.forEach((s,i)=>s.id=key+'-'+(i+1));
  }else if(key==='love'||key==='marry'){

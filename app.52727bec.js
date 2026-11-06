@@ -2316,7 +2316,7 @@ function reportScoreGuideHTML(data,key){
 
 
 function reportTopicRows(ch,k){if(SUBTOPIC_COPY[k]){const html=subtopicHTML(ch,k),decode=x=>x.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');return Array.from(html.matchAll(/<article class="topic-answer"><h4>([\s\S]*?)<\/h4><p>([\s\S]*?)<\/p><\/article>/g)).map(m=>[decode(m[1]),decode(m[2])]);}return topicAnswerRows(ch,k);}
-const {narrativeComprehensive,narrativeRelation,narrativeMoney}=(()=>{
+const {narrativeComprehensive,narrativeRelation,narrativeMoney,narrativeWork}=(()=>{
 /* 종합 리포트 줄글 엔진 (API 없이 미리 써 둔 완성 문단을 조합).
    규칙
    - 본문 문단에는 전문 용어(오행·일간·십성·하우스·다샤·개인년·인생 수 등)를 쓰지 않는다.
@@ -2682,7 +2682,62 @@ function narrativeMoney(c) {
     action: "이 리포트에서 마음에 남은 문장 하나를 메모장에 적어 두세요. 힘든 날 다시 꺼내 보면 생각보다 큰 힘이 돼요.", basis: [] });
   return out;
 }
-return {narrativeComprehensive,narrativeRelation,narrativeMoney};})();
+
+/* ───────── 직업 리포트 ───────── */
+const WSTYLE = [
+  "하루하루 일하는 모습을 보면, {name}님은 새로운 걸 시작할 때 가장 힘이 나요. 기존 방식을 그대로 따르기보다 \"이렇게 하면 더 좋지 않을까\" 하고 개선점을 찾아내고, 그 아이디어가 팀의 방향을 바꾸는 일도 많아요. 반대로 매일 똑같은 일이 반복되면 금방 지루함을 느껴요.",
+  "하루하루 일하는 모습을 보면, {name}님은 사람과 함께할 때 가장 신나게 일해요. 회의에서 분위기를 띄우고, 어색한 사이를 이어 주고, 내 생각을 설득력 있게 전하는 데 강해요. 혼자 오래 책상에 붙어 있는 일보다 사람을 만나고 보여 주는 일에서 실력이 빛나요.",
+  "하루하루 일하는 모습을 보면, {name}님은 맡은 일을 끝까지 책임지는 사람이에요. 화려하게 앞에 나서지 않아도, 마감을 지키고 빈틈을 메우는 모습 덕분에 팀에서 없어서는 안 될 사람이 돼요. 시간이 지날수록 \"이건 그 사람한테 물어보면 된다\"는 자리에 서게 돼요.",
+  "하루하루 일하는 모습을 보면, {name}님은 기준이 분명하고 정확한 사람이에요. 일의 순서를 정리하고, 숫자나 문서의 작은 오류도 놓치지 않아요. 그래서 꼼꼼함이 필요한 일에서는 누구보다 믿음직하지만, 대충 넘어가는 분위기에서는 혼자 스트레스를 받기 쉬워요.",
+  "하루하루 일하는 모습을 보면, {name}님은 깊이 생각하고 흐름을 읽는 사람이에요. 문제가 생기면 겉보다 원인을 먼저 찾고, 남들이 놓친 연결고리를 발견해요. 조용히 집중할 시간이 주어질 때 가장 좋은 결과를 내는 타입이에요."
+];
+const WENV = [
+  "{name}님에게 맞는 일터는 새로운 시도를 반기는 곳이에요. 정해진 틀이 너무 단단한 곳보다, 제안한 아이디어를 직접 해 볼 수 있는 팀이나 성장하는 회사에서 실력이 빠르게 늘어요.",
+  "{name}님에게 맞는 일터는 사람과 소통이 많은 곳이에요. 고객이나 동료를 자주 만나고, 내 결과물을 보여 줄 기회가 많은 환경에서 동기가 커져요.",
+  "{name}님에게 맞는 일터는 안정적이고 오래 머물 수 있는 곳이에요. 체계가 잡혀 있고 노력한 만큼 인정해 주는 조직에서, 시간이 갈수록 자리가 단단해져요.",
+  "{name}님에게 맞는 일터는 기준과 역할이 분명한 곳이에요. 평가 방식이 투명하고 각자의 책임이 명확한 환경에서 {name}님의 정확함이 제대로 인정받아요.",
+  "{name}님에게 맞는 일터는 깊이 파고들 수 있는 곳이에요. 전문성을 키울 수 있고, 혼자 집중할 시간과 공간이 보장되는 환경에서 가장 큰 성과를 내요."
+];
+const WCARE = [
+  "일에서 {name}님이 조심할 점은 시작한 일을 너무 많이 벌이는 거예요. 아이디어가 많은 만큼 손대는 일도 많아져서, 정작 끝까지 마무리한 결과가 적어 보일 수 있어요. 새 일을 맡기 전에 지금 하고 있는 일 중 하나를 먼저 끝내 보세요.",
+  "일에서 {name}님이 조심할 점은 에너지를 한꺼번에 쏟는 거예요. 의욕이 넘칠 때는 밤을 새워서라도 해내지만, 그 뒤에 급격히 지치기 쉬워요. 일정에 일부러 쉬는 칸을 넣어 두면 오래 달릴 수 있어요.",
+  "일에서 {name}님이 조심할 점은 익숙한 방식에 머무는 거예요. 성실함은 큰 장점이지만, 변화가 필요한 순간에도 하던 대로만 하면 기회를 놓칠 수 있어요. 1년에 한 번은 새로운 기술이나 방법을 하나씩 익혀 보세요.",
+  "일에서 {name}님이 조심할 점은 말이 날카롭게 전달되는 거예요. 옳은 지적이어도 표현이 단호하면 상대가 상처받기 쉬워요. 고칠 점을 말하기 전에 잘한 점 하나를 먼저 짚어 주면 같은 말도 훨씬 잘 받아들여져요.",
+  "일에서 {name}님이 조심할 점은 결정을 미루는 거예요. 충분히 알아보고 싶은 마음에 판단이 늦어지면, 좋은 기회가 다른 사람에게 넘어갈 수 있어요. 80%쯤 확신이 들면 움직이는 연습을 해 보세요."
+];
+const WYEAR = [
+  "{y}년, {age}살의 {name}님에게는 일에서 큰 기회가 와요. 맡는 역할이 커지거나, 새로운 분야에 도전할 문이 열리기 쉬운 해예요. 그동안 준비해 온 것이 있다면 이 해에 꺼내 보이세요.",
+  "{y}년({age}살)은 실력이 인정받는 해예요. 공부나 자격, 경력이 성과로 이어지고 윗사람이나 선배의 도움을 받기도 쉬워요. 이직이나 승진을 생각하고 있다면 눈여겨볼 해예요.",
+  "{y}년({age}살)에는 일의 방향이 새롭게 열릴 수 있어요. 지금 하는 일과 다른 분야의 제안을 받거나, 배워 둔 것을 새로운 방식으로 쓸 기회가 생기기 쉬워요."
+];
+const WREST = "{y}년({age}살)은 일에서 내실을 다지는 해예요. 겉으로 큰 변화는 적어도, 실력을 쌓고 다음 도약을 준비하기 좋은 시기예요. 이 해에 배우고 정리해 둔 것이 그다음 기회의 문을 여는 열쇠가 돼요.";
+
+function narrativeWork(c) {
+  const v = { name: c.name }, F = t => fill(t, v), out = [];
+  out.push({ kind: "core", title: "일할 때의 나", lead: F(WORK[c.topG]).split(/(?<=[.!?])\s+/)[0],
+    paras: [F(WORK[c.topG]), F(WSTYLE[c.dom])], basis: c.basis.core });
+  out.push({ kind: "fit", title: "나에게 맞는 일", lead: "",
+    paras: [c.jobs ? "{name}님의 기질과 잘 어울리는 분야는 ".replace("{name}", c.name) + c.jobs.replace(/\s*·\s+/g, ", ") + " 같은 쪽이에요. 꼭 이 직업이 아니어도, 지금 하는 일 안에서 이런 성격의 역할을 맡을수록 일이 즐거워지고 성과도 커져요." : "", F(WENV[c.dom])],
+    action: "지금 하는 일에서 가장 신났던 순간 세 가지를 적어 보세요. 그 순간들의 공통점이 {name}님에게 맞는 일의 방향이에요.".replace("{name}", c.name),
+    basis: c.basis.fit });
+  out.push({ kind: "gui", title: "일에서 만나는 귀인", lead: "",
+    paras: ["일에서 {name}님을 도와줄 사람은 ".replace("{name}", c.name) + c.guiWho + "일 가능성이 커요. " + c.guiWhere + " 같은 곳에서 인연이 닿기 쉬우니, 이런 자리에 꾸준히 얼굴을 비춰 두세요." + (c.guiYear ? " 특히 " + c.guiYear + "년 무렵에 결정적인 도움을 주는 사람이 나타나기 쉬워요." : ""),
+      "귀인은 갑자기 나타나는 게 아니라, 평소에 쌓아 둔 관계에서 나와요. 지금 함께 일하는 사람에게 한 번 더 고맙다고 말하고, 도움을 받았을 때 작게라도 갚아 두면 그 인연이 중요한 순간에 돌아와요."],
+    basis: c.basis.gui });
+  const ys = c.workYears.map((k, i) => ({ y: k.y, t: fill(WYEAR[i % 3], { name: c.name, y: k.y, age: k.age }) }));
+  if (c.workRest) ys.push({ y: c.workRest.y, t: fill(WREST, { y: c.workRest.y, age: c.workRest.age }) });
+  if (c.turnYear) ys.push({ y: c.turnYear - 0.5, t: fill(TURN, { y: c.turnYear }) });
+  out.push({ kind: "timing", title: "앞으로 10년, 일의 흐름", lead: "",
+    paras: [F("커리어에도 오르막과 평지가 있어요. 크게 도약할 해가 있고, 실력을 다지며 준비할 해가 있어요. {name}님에게 특히 중요한 해들을 순서대로 짚어 볼게요."), ...ys.sort((a, b) => a.y - b.y).map(x => x.t)],
+    basis: c.basis.timing });
+  out.push({ kind: "caution", title: "일에서 조심할 점", lead: "", paras: [F(WCARE[c.dom]), F(CLOSE_CARE[2])],
+    action: "이번 주 할 일 목록에서 '내가 안 해도 되는 일' 하나를 골라 다른 사람에게 부탁하거나 과감히 빼 보세요.", basis: [] });
+  out.push({ kind: "advice", title: F("{name}님에게 전하는 이야기"), lead: "",
+    paras: [F("좋은 일은 나에게 맞는 옷과 같아요. 남들이 좋다는 일보다 {name}님이 가진 힘을 제대로 쓸 수 있는 일을 고를 때, 오래 즐겁게 일할 수 있어요. 지금 하는 일이 조금 버겁더라도, 그 안에서 배운 것은 반드시 다음 기회로 이어져요. {name}님의 커리어는 이제부터 더 넓어질 거예요.")],
+    action: "이 리포트에서 마음에 남은 문장 하나를 메모장에 적어 두세요. 힘든 날 다시 꺼내 보면 생각보다 큰 힘이 돼요.", basis: [] });
+  return out;
+}
+return {narrativeComprehensive,narrativeRelation,narrativeMoney,narrativeWork};})();
 function buildRichReport(ch,key){
  /* 2026-11 리포트 엔진 v3: 계산된 출생 지표 → 전통 해석 → 나에게 의미 → 실천 순서로 쓴다.
     계산식(buildChart·enrich·oracles·compute)은 읽기만 하고 바꾸지 않는다. index.html과 server/worker.js에 같은 코드가 들어간다. */
@@ -2848,6 +2903,20 @@ function buildRichReport(ch,key){
    basis:{core:['많은 십성 '+GN[topG],'재성 '+ng[2]+'개 · 식상 '+ng[1]+'개','2하우스 '+zs(hs(2)),'인생 수 '+ch.lp],
     earn:['10하우스 '+zs(hs(10)),'가장 많은 오행 '+ELN[maxEl]],
     timing:Y4[0].map(r=>r.year+'년 금전 '+r.score+'점')}}).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',{}));
+  S.__sum=S.slice(0,3).map(s=>s.lead||String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0]).filter(Boolean);
+  S.forEach((s,i)=>s.id=key+'-'+(i+1));
+ }else if(key==='work'){
+  /* 2026-11 줄글 엔진(server/narrative.js narrativeWork). */
+  const topG=ng.indexOf(Math.max(...ng)),nm=ch.inp.name||'당신',job=lifeQ(ch).find(x=>x.k==='job');
+  const who=good.slice().sort((a,b)=>ng[a]-ng[b]||good.indexOf(a)-good.indexOf(b))[0],gTop=sysScan(ch,'gui').filter(r=>r.S.length).sort((a,b)=>b.v-a.v)[0];
+  const workYears=[...Y4[2]].sort((a,b)=>b.score-a.score).slice(0,3).sort((a,b)=>a.year-b.year).map(r=>({y:r.year,age:kage(r.year)}));
+  const lw=low(Y4[2]),workRest=workYears.some(k=>k.y===lw.year)?null:{y:lw.year,age:kage(lw.year)};
+  narrativeWork({name:nm,dom:maxEl,topG,jobs:job?strip(job.a):'',guiWho:GUI_AGE[who??0],guiWhere:QWHERE[actionProfile(ch).support],guiYear:gTop?gTop.y:null,
+   workYears,workRest,turnYear:dwK&&dwNextY>y0&&dwNextY<=y0+10?dwNextY:null,
+   basis:{core:['많은 십성 '+GN[topG],'가장 많은 오행 '+ELN[maxEl],'월지 '+bTx(ch.brs.m)+' · '+tgAt['월지']],
+    fit:['10하우스 '+zs(hs(10)),'6하우스 '+zs(hs(6)),'인생 수 '+ch.lp],
+    gui:['필요한 기운 '+good.map(g=>GN[g]).join('·'),'천을귀인 '+ch.gui.map(b=>BR[b]).join('·'),gTop?gTop.y+'년 귀인 신호':''],
+    timing:Y4[2].map(r=>r.year+'년 직업·학업 '+r.score+'점')}}).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',{}));
   S.__sum=S.slice(0,3).map(s=>s.lead||String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0]).filter(Boolean);
   S.forEach((s,i)=>s.id=key+'-'+(i+1));
  }else if(key==='love'||key==='marry'){
