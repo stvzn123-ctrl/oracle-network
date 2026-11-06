@@ -46,7 +46,7 @@ input,select{padding:10px 12px;width:100%}
 .facts div{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-width:0}
 .facts dt{font-size:11px;color:var(--muted)}
 .facts dd{margin:2px 0 0;overflow-wrap:anywhere;font-size:14px}
-.facts{margin-bottom:0}
+.facts{margin:12px 0 0}.sec.first{margin-top:14px;padding-top:0;border-top:0}.box{flex:none;width:20px;height:20px;border:2px solid var(--muted);border-radius:6px;display:grid;place-items:center;font-size:14px;line-height:1;color:transparent}.k.on .box{background:var(--ok);border-color:var(--ok);color:#081723}.k .t{flex:1;text-align:left}
 .sec{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
 .sec h3{font-size:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .help{font-size:12.5px;color:var(--muted);margin-top:4px}
@@ -96,12 +96,12 @@ body:not(.picked) #detailCard{display:none}
     </div>
     <span class="tag" id="badge"></span>
    </div>
-   <dl class="facts" id="facts"></dl>
-   <div class="sec">
-    <h3>열람 권한 <span class="tag" id="grantCount"></span></h3>
-    <p class="help">누르면 바로 승인되고, 다시 누르면 회수돼요. 결제는 연결돼 있지 않으니 입금 확인 후 승인하세요.</p>
+   <div class="sec first">
+    <h3>리포트 승인 <span class="tag" id="grantCount"></span></h3>
+    <p class="help">체크하면 바로 승인되고, 체크를 풀면 회수돼요. 결제는 연결돼 있지 않으니 입금 확인 후 승인하세요.</p>
     <div class="grid" id="grid"></div>
    </div>
+   <div class="sec"><h3>출생 정보</h3><dl class="facts" id="facts"></dl></div>
    <div class="sec">
     <h3>리포트 미리보기</h3>
     <p class="help">저장된 출생 정보로 자동 생성한 내용이에요.</p>
@@ -176,7 +176,7 @@ function facts(p){
 }
 function paintGrants(u){
   const on=grantsOf(u),grid=$('grid');grid.replaceChildren();
-  const mk=(k,label,cls)=>{const b=document.createElement('button');b.className='k'+(cls?' '+cls:'')+(on.has(k)?' on':'');b.dataset.key=k;b.setAttribute('aria-pressed',on.has(k));const s=document.createElement('span');s.textContent=label;const i=document.createElement('i');i.textContent=on.has(k)?'승인됨':'—';b.append(s,i);return b};
+  const mk=(k,label,cls)=>{const b=document.createElement('button');b.className='k'+(cls?' '+cls:'')+(on.has(k)?' on':'');b.dataset.key=k;const bx=document.createElement('span');bx.className='box';bx.textContent='✓';const s=document.createElement('span');s.className='t';s.textContent=label;b.setAttribute('role','checkbox');b.setAttribute('aria-checked',on.has(k));b.append(bx,s);return b};
   grid.append(mk('all','전체 리포트','all'));
   for(const [k,v]of Object.entries(KEYS))grid.append(mk(k,v));
   const n=on.size;$('grantCount').textContent=n?(on.has('all')?'전체 승인':n+'개 승인'):'승인 없음';
@@ -243,6 +243,7 @@ $('refresh').onclick=async()=>{const b=$('refresh');b.disabled=true;try{await lo
     $('me').textContent=short(acc.id);
     if(!acc.isAdmin)throw Error('관리자 계정이 아니에요.');
     $('gate').hidden=true;$('app').hidden=false;
+    if(!selected&&members[0]&&matchMedia('(min-width:821px)').matches)open(members[0].id);
   }catch(e){$('app').hidden=true;$('gate').hidden=false;$('gateMsg').textContent=e.message}
 })();
 </script>
