@@ -115,7 +115,7 @@ body:not(.picked) #detailCard{display:none}
 <div id="toast" hidden role="status" aria-live="polite"></div>
 <script>
 const API='https://oracle-api.stvzn123.workers.dev';
-const KEYS={comprehensive:'종합',money:'재물·돈',love:'연애·인연',marry:'결혼·배우자',reunion:'재회',match:'궁합',work:'직업',study:'학업·성취',employment:'취업',move:'이직',invest:'투자',property:'부동산',business:'사업',exam:'대입·수능',cert:'자격증'};
+const KEYS={comprehensive:'종합',money:'재물·돈',love:'연애·인연',marry:'결혼·배우자',reunion:'재회',match:'궁합',work:'직업',study:'학업·성취'};
 const $=id=>document.getElementById(id);
 let token='';try{token=localStorage.getItem('oracle-session')||''}catch{}
 const short=id=>id.slice(0,8)+'…'+id.slice(-6);
