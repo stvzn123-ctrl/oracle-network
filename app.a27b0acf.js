@@ -1589,58 +1589,60 @@ function moneyAllHTML(ch){const d=ch.stems.d,y0=new Date().getFullYear(),tg=[];
   ['집·부동산은 언제 생각해 볼까?',`${home.y}년이 계약과 기반을 다지기 좋은 흐름이에요. ${ins?'문서를 꼼꼼히 보는 힘이 있으니 직접 조건을 비교해 보세요.':'계약 조건은 전문가와 함께 확인하는 편이 안전해요.'}`],
   ['사업이나 부업을 해도 될까?',biz]];
  return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">재물·돈</span><h3>내 돈은 언제, 어떻게 불어날까?</h3></header>'+answerCards(rows)+topicReportHTML('money')+'</section>'}
+const PYW={1:'새로운 시작을 꿈꾸는',2:'함께하는 시간을 원하는',3:'즐거움과 표현을 원하는',4:'안정과 계획을 원하는',5:'변화와 자유를 원하는',6:'가정과 책임을 생각하는',7:'혼자 생각할 시간이 필요한',8:'일과 성과에 집중하는',9:'정리하고 마무리하는'};
 function compatScore(a,b){
+ const me=a.inp.name||'나',you=b.inp.name||'상대';
  const SAN=x=>x%4,LIU=x=>(13-x)%12,el=s=>SE[s],gen=(x,y)=>(x+1)%5===y,ctl=(x,y)=>(x+2)%5===y,EN=['목','화','토','금','수'],SEL=['불','흙','공기','물'],COMP=[2,3,0,1];
  const sys=[];const S=(n,w)=>{const o={n,w,base:60,items:[]};sys.push(o);return (label,v,t)=>o.items.push([label,v,t])};
  // 사주
  let add=S('사주',.3);const ad=a.stems.d,bd=b.stems.d,ae=el(ad),be=el(bd);
- if((ad+5)%10===bd)add('일간 천간합',15,`두 사람의 일간 ${ST[ad]}·${ST[bd]}는 천간합을 이뤄 서로 끌리는 결합의 상징입니다.`);
- if(ae===be)add('같은 오행 일간',6,`둘 다 ${EN[ae]} 기운의 일간이라 생각과 속도가 비슷합니다.`);
- else if(gen(ae,be)||gen(be,ae)){const x=gen(ae,be)?ae:be,y=gen(ae,be)?be:ae;add('일간 상생',10,`${J(EN[x],'이','가')} ${J(EN[y],'을','를')} 살리는 상생 관계라 한쪽이 다른 쪽을 북돋는 구조입니다.`)}
- else add('일간 상극',-6,`${J(EN[ae],'과','와')} ${J(EN[be],'은','는')} 서로 제어하는 상극 관계라 기준이 부딪히기 쉽습니다.`);
+ if((ad+5)%10===bd)add('일간 천간합',15,`이유를 설명하기 어려운 끌림이 있는 조합입니다. 말이 특별히 잘 통해서가 아니라, 같이 있으면 그냥 편하고 헤어진 뒤에 자꾸 생각나는 쪽이에요.`);
+ if(ae===be)add('같은 오행 일간',6,`생각하는 속도가 비슷해서 약속 잡을 때 실랑이가 없습니다. 같이 신나고 같이 지치는 편이라 여행 궁합이 특히 좋습니다.`);
+ else if(gen(ae,be)||gen(be,ae)){const x=gen(ae,be)?ae:be,y=gen(ae,be)?be:ae;add('일간 상생',10,`한쪽이 밀어 주면 다른 한쪽이 쭉 뻗어 나가는 구조입니다. ${gen(ae,be)?me+'님':you+'님'}이 챙기는 역할을 자연스럽게 맡게 되는데, 고맙다는 말을 자주 듣지 못하면 그쪽이 먼저 지칩니다.`)}
+ else add('일간 기준 차이',-6,`"이 정도면 됐지"의 기준선이 서로 다릅니다. 집이 어질러진 정도, 돈 쓰는 선, 약속 시간을 지키는 기준 같은 사소한 데서 먼저 부딪힙니다. 큰 문제는 아닌데 자주 생기는 쪽이에요.`);
  const ab=a.brs.d,bb=b.brs.d;
- if(LIU(ab)===bb)add('일지 육합',12,`배우자 자리(일지) ${BR[ab]}·${BR[bb]}가 육합을 이뤄 생활 속 결속력이 큽니다.`);
- else if(mod(ab-bb,12)===6)add('일지 충',-10,`일지 ${BR[ab]}·${BR[bb]}가 충을 이뤄 생활 방식에서 마찰이 생기기 쉽습니다.`);
- else if(SAN(ab)===SAN(bb)&&ab!==bb)add('일지 삼합',8,`일지가 같은 삼합 무리라 함께할 때 목표를 모으기 쉽습니다.`);
- else if(ab===bb)add('같은 일지',4,`일지가 같아 익숙한 생활 방식에 공감합니다.`);
+ if(LIU(ab)===bb)add('일지 육합',12,`같이 살면 더 좋아지는 조합입니다. 생활 리듬이 맞아서 비슷한 시간에 배고프고 비슷한 시간에 졸립니다. 같은 공간에 오래 있어도 숨이 막히지 않아요.`);
+ else if(mod(ab-bb,12)===6)add('일지 충',-10,`함께 있는 시간이 길어질수록 피곤해집니다. 한 사람은 치우고 싶고 한 사람은 쉬고 싶은 식으로, 집에서의 기본값이 반대입니다. 데이트는 좋은데 동거는 어려운 조합이에요.`);
+ else if(SAN(ab)===SAN(bb)&&ab!==bb)add('일지 삼합',8,`둘이 뭔가를 같이 시작하면 끝까지 갑니다. 취미든 운동이든 사업이든, 같이 벌이는 일에 유독 강한 조합입니다.`);
+ else if(ab===bb)add('같은 일지',4,`설명하지 않아도 서로의 생활 방식이 이해됩니다. 대신 약점도 똑같아서, 미뤄야 할 일은 둘 다 미릅니다.`);
  const ay=a.brs.y,by=b.brs.y;
- if(SAN(ay)===SAN(by)&&ay!==by)add('띠 삼합',6,`띠가 삼합 관계라 전통적으로 협력이 잘 되는 조합입니다.`);
- else if(LIU(ay)===by)add('띠 육합',6,`띠가 육합 관계라 서로를 편하게 받아들입니다.`);
- else if(mod(ay-by,12)===6)add('띠 충',-6,`띠가 충 관계라 가치관 차이를 대화로 좁혀야 합니다.`);
+ if(SAN(ay)===SAN(by)&&ay!==by)add('띠 삼합',6,`주변에서 "둘이 잘 어울린다"는 말을 자주 듣습니다. 가족 모임이나 친구들 자리에 데려가도 잡음이 적은 편이에요.`);
+ else if(LIU(ay)===by)add('띠 육합',6,`상대의 이상한 습관을 "원래 저런 사람이지" 하고 넘깁니다. 고치려 들지 않는다는 게 이 조합의 큰 장점이에요.`);
+ else if(mod(ay-by,12)===6)add('띠 충',-6,`자라면서 배운 기본값이 다릅니다. 명절을 어떻게 보내는지, 가족과 얼마나 가까이 지내는지, 돈을 모으는지 쓰는지 같은 데서 갈립니다.`);
  const fillA=[0,1,2,3,4].filter(i=>!a.cnt[i]&&b.cnt[i]>=2),fillB=[0,1,2,3,4].filter(i=>!b.cnt[i]&&a.cnt[i]>=2);
- if(fillA.length)add('오행 보완(상대→나)',4*fillA.length,`내게 없는 ${fillA.map(i=>EN[i]).join('·')} 기운을 상대가 채워 줍니다.`);
- if(fillB.length)add('오행 보완(나→상대)',4*fillB.length,`상대에게 없는 ${fillB.map(i=>EN[i]).join('·')} 기운을 내가 채워 줍니다.`);
+ if(fillA.length)add('오행 보완(상대→나)',4*fillA.length,`${me}님에게 비어 있던 자리를 ${you}님이 채웁니다. 혼자서는 안 되던 일이 이 사람과 함께면 되는 경험을 하게 돼요.`);
+ if(fillB.length)add('오행 보완(나→상대)',4*fillB.length,`${you}님이 못 하는 걸 ${me}님이 대신 해 줍니다. 상대가 ${me}님에게 기대게 되는 지점이고, 이게 관계의 접착제 역할을 합니다.`);
  // 서양
  add=S('서양 점성술',.2);const as=sign(a.sun),bs=sign(b.sun),am=sign(a.moon),bm=sign(b.moon);
- if(as%4===bs%4)add('태양 같은 원소',10,`태양이 둘 다 ${SEL[as%4]} 원소라 삶의 방향과 표현 방식이 닮았습니다.`);
- else if(COMP[as%4]===bs%4)add('태양 보완 원소',12,`태양이 ${SEL[as%4]}·${SEL[bs%4]} 원소로 서로를 살리는 조합입니다.`);
- else add('태양 원소 차이',-4,`태양 원소가 ${SEL[as%4]}·${SEL[bs%4]}로 달라 관계의 속도를 맞춰야 합니다.`);
- if(mod(as-bs,12)===6)add('태양 맞은편',4,`태양이 서로 맞은편 별자리라 끌림과 긴장이 함께 있습니다.`);
- if(am%4===bm%4||COMP[am%4]===bm%4)add('달의 조화',8,`달(감정)이 ${SEL[am%4]}·${SEL[bm%4]} 원소로 감정을 처리하는 방식이 잘 맞습니다.`);
- else add('달의 차이',-3,`달(감정)의 원소가 달라 서운함을 푸는 방식이 다릅니다.`);
+ if(as%4===bs%4)add('태양 같은 원소',10,`인생에서 중요하게 여기는 게 같습니다. "왜 그런 걸 신경 써?" 같은 말이 나올 일이 거의 없어요.`);
+ else if(COMP[as%4]===bs%4)add('태양 보완 원소',12,`한 사람이 불을 붙이고 한 사람이 끌어 주는 조합입니다. 혼자일 때보다 둘일 때 결과가 분명히 큽니다.`);
+ else add('태양 원소 차이',-4,`한쪽이 "지금 하자"일 때 다른 쪽은 "좀 더 생각해 보자"입니다. 결정에 시한을 미리 정해 두는 것만으로 다툼이 크게 줄어듭니다.`);
+ if(mod(as-bs,12)===6)add('태양 맞은편',4,`정반대라서 끌립니다. 초반 설렘이 큰 대신, 길어지면 그 차이가 그대로 숙제로 남습니다. 처음에 좋았던 이유를 잊지 않는 게 핵심이에요.`);
+ if(am%4===bm%4||COMP[am%4]===bm%4)add('달의 조화',8,`서운할 때 푸는 방식이 비슷합니다. 다퉈도 오래 끌지 않고, 화해하는 타이밍이 자연스럽게 맞아떨어집니다.`);
+ else add('달의 차이',-3,`화해 속도가 다릅니다. 한쪽은 지금 당장 풀고 싶고 한쪽은 혼자 삭일 시간이 필요합니다. 이 차이를 모르면 "날 무시하는 거냐"로 번지기 쉬워요.`);
  const av=sign(birthExtraLon('Venus',a.jd)),bv=sign(birthExtraLon('Venus',b.jd)),amr=sign(birthExtraLon('Mars',a.jd)),bmr=sign(birthExtraLon('Mars',b.jd));
- if(av%4===bmr%4||COMP[av%4]===bmr%4)add('내 금성–상대 화성',6,`내 금성(${ZOD[av]})과 상대 화성(${ZOD[bmr]})이 조화를 이뤄 끌림이 자연스럽습니다.`);
- if(bv%4===amr%4||COMP[bv%4]===amr%4)add('상대 금성–내 화성',6,`상대 금성(${ZOD[bv]})과 내 화성(${ZOD[amr]})이 조화를 이룹니다.`);
+ if(av%4===bmr%4||COMP[av%4]===bmr%4)add('내 금성–상대 화성',6,`${me}님이 설레는 방식으로 ${you}님이 다가옵니다. 머리로 설명되지 않는 끌림이 생기는 자리예요.`);
+ if(bv%4===amr%4||COMP[bv%4]===amr%4)add('상대 금성–내 화성',6,`${you}님이 바라는 방식으로 ${me}님이 표현합니다. 상대가 사랑받고 있다고 느끼기 쉬운 조합입니다.`);
  // 인도
  add=S('인도 점성술',.2);const tara=(x,y)=>(mod(y-x,27)+1)%9;const T1=tara(a.nk,b.nk),T2=tara(b.nk,a.nk);
- [[T1,'나→상대'],[T2,'상대→나']].forEach(([t,n])=>{if([2,4,6,8,0].includes(t))add('타라 '+n,8,`낙샤트라 거리로 본 타라(${n})가 길한 자리입니다.`);else if([3,5,7].includes(t))add('타라 '+n,-6,`낙샤트라 거리로 본 타라(${n})가 조심할 자리입니다.`)});
+ [[T1,'나→상대'],[T2,'상대→나']].forEach(([t,n])=>{if([2,4,6,8,0].includes(t))add('타라 '+n,8,`${n} 방향으로 운을 밀어 올려 주는 자리입니다. 이 사람을 만난 뒤로 되는 일이 늘었다면 우연이 아니에요.`);else if([3,5,7].includes(t))add('타라 '+n,-6,`${n} 방향으로는 기운이 눌립니다. 상대 앞에서 유독 일이 안 풀리거나 내가 작아지는 느낌이 들면 이 자리의 영향입니다.`)});
  const sa=sign(norm(a.moon-a.ayan)),sb=sign(norm(b.moon-b.ayan)),dist=mod(sb-sa,12)+1;
- if([1,7].includes(dist))add('달 별자리 1·7',10,`두 사람의 달(항성황도)이 ${dist===1?'같은 별자리':'마주 보는 별자리'}라 정서적 균형이 좋습니다.`);
- else if([3,11,4,10].includes(dist))add('달 별자리 조화',6,`달 별자리 거리가 ${dist}로 무난한 조합입니다.`);
- else add('달 별자리 긴장',-6,`달 별자리 거리가 ${dist}로 전통적으로 조율이 필요한 조합입니다.`);
- if(a.nk===b.nk)add('같은 낙샤트라',4,`같은 낙샤트라(${NAK[a.nk]})라 감정의 주제가 닮았습니다.`);
+ if([1,7].includes(dist))add('달 별자리 1·7',10,`감정의 온도가 맞습니다. 슬플 때 같이 가라앉고 기쁠 때 같이 들뜨는, 궁합에서 가장 귀한 요소예요.`);
+ else if([3,11,4,10].includes(dist))add('달 별자리 조화',6,`감정 문제로 크게 사고 날 일은 적습니다. 불타오르지는 않아도 오래 가는 쪽입니다.`);
+ else add('달 별자리 긴장',-6,`감정의 주파수가 어긋납니다. 같은 상황을 두고 한쪽은 아무렇지 않은데 한쪽은 상처받는 일이 반복돼요. 말해 주지 않으면 서로 끝까지 모릅니다.`);
+ if(a.nk===b.nk)add('같은 낙샤트라',4,`마음이 걸리는 지점이 똑같습니다. 서로를 깊이 이해하는 대신, 같은 약점을 공유해서 둘 다 같은 함정에 빠집니다.`);
  // 수비학
  add=S('수비학',.15);const red=n=>reduceNum(n,false),G=n=>[1,5,7].includes(n)?0:[2,4,8].includes(n)?1:2;const la=red(a.lp),lb=red(b.lp);
- if(la===lb)add('같은 인생 수',10,`축약 인생 수가 둘 다 ${la}라 삶의 과제가 같습니다.`);
- else if(G(la)===G(lb))add('인생 수 조화',14,`인생 수 ${la}·${lb}는 같은 성향 무리라 방향이 잘 맞습니다.`);
- else add('인생 수 차이',-2,`인생 수 ${la}·${lb}는 우선순위가 달라 장기 계획을 함께 세워야 합니다.`);
- if(a.soul&&b.soul&&G(red(a.soul))===G(red(b.soul)))add('영혼 수 조화',6,`영혼 수가 같은 성향 무리라 속마음의 동기가 닮았습니다.`);
+ if(la===lb)add('같은 인생 수',10,`삶에서 풀어야 할 숙제가 같습니다. 같은 고민을 하고 있어서 대화가 깊게 들어갑니다.`);
+ else if(G(la)===G(lb))add('인생 수 조화',14,`원하는 삶의 모양이 비슷합니다. 10년 뒤에 어떻게 살고 싶냐는 이야기를 해도 크게 어긋나지 않아요.`);
+ else add('인생 수 차이',-2,`우선순위가 다릅니다. 한쪽이 안정을 고를 때 다른 쪽이 모험을 골라서, 큰 결정마다 한 번씩 멈춰 서게 됩니다.`);
+ if(a.soul&&b.soul&&G(red(a.soul))===G(red(b.soul)))add('영혼 수 조화',6,`겉으로 하는 말이 아니라 속으로 바라는 게 닮았습니다. 오래 알수록 편해지는 이유예요.`);
  // 마야
  add=S('마야력',.15);
- if(mod(a.msign-b.msign,20)===10)add('맞은편 기호',10,`탄생 기호 ${MS[a.msign][1]}·${MS[b.msign][1]}가 맞은편에 놓여 서로를 보완합니다.`);
- else if(a.msign%4===b.msign%4)add('같은 색 무리',8,`탄생 기호가 같은 색 무리라 리듬이 비슷합니다.`);
- if(a.tone+b.tone===14)add('숫자 보완',6,`탄생 숫자 ${a.tone}·${b.tone}의 합이 14라 서로 비어 있는 부분을 채웁니다.`);
- else if(a.tone===b.tone)add('같은 숫자',4,`탄생 숫자가 같아 일을 진행하는 박자가 비슷합니다.`);
+ if(mod(a.msign-b.msign,20)===10)add('맞은편 기호',10,`정반대의 기질이 서로를 완성합니다. 혼자서는 손도 못 대던 일을 둘이면 해냅니다.`);
+ else if(a.msign%4===b.msign%4)add('같은 색 무리',8,`일을 처리하는 리듬이 같습니다. 같이 여행 계획을 세워도 스트레스가 적은 조합이에요.`);
+ if(a.tone+b.tone===14)add('숫자 보완',6,`한 사람이 비어 있는 자리를 다른 사람이 정확히 채웁니다. 역할 분담이 의논 없이도 자연스럽게 됩니다.`);
+ else if(a.tone===b.tone)add('같은 숫자',4,`일의 박자가 같습니다. 같이 바쁘고 같이 쉬어서 서로를 기다리는 시간이 적습니다.`);
  sys.forEach(o=>{o.score=Math.round(clamp(o.base+o.items.reduce((s,x)=>s+x[1],0),40,98))});
  const total=Math.round(clamp(sys.reduce((s,o)=>s+o.score*o.w,0),45,98));
  return {total,sys}}
@@ -1695,14 +1697,13 @@ function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'�
  const lv=tot>=85?'서로를 자연스럽게 끌어당기는 궁합':tot>=75?'편안하게 잘 맞는 궁합':tot>=65?'맞춰 갈수록 단단해지는 궁합':'서로의 차이를 배우며 가까워지는 궁합';
  /* 해마다의 관계 흐름: 두 사람의 애정 점수 + 두 사람 사이의 해마다 신호 */
  const y0=new Date().getFullYear(),love=(c,y)=>D(ORC.reduce((s,fn)=>s+fn(c,{y,frac:y+.5},1)[0],0)/ORC.length),LIU=x=>(13-x)%12;
- const yrs=[...Array(10)].map((_,i)=>{const y=y0+1+i,yb=mod(y-4,12),pa=pyOf(a,y),pb=pyOf(b,y),why=[],warn=[];let s=(love(a,y)+love(b,y))/2;
-  if(LIU(yb)===a.brs.d||LIU(yb)===b.brs.d){s+=4;why.push('배우자 자리와 합이 드는 해')}
-  if(mod(yb-a.brs.d,12)===6||mod(yb-b.brs.d,12)===6){s-=4;warn.push('배우자 자리가 흔들리는 충의 해')}
-  if([2,6].includes(pa)||[2,6].includes(pb)){s+=3;why.push('관계와 약속에 마음이 가는 해')}
-  if([5,9].includes(pa)||[5,9].includes(pb)){s-=2;warn.push('각자의 변화와 정리가 커지는 해')}
+ const yrs=[...Array(3)].map((_,i)=>{const y=y0+i,yb=mod(y-4,12),pa=pyOf(a,y),pb=pyOf(b,y),why=[],warn=[];let s=(love(a,y)+love(b,y))/2;
+  if(LIU(yb)===a.brs.d||LIU(yb)===b.brs.d){s+=4;why.push('결혼·동거 이야기가 자연스럽게 나오는 해')}
+  if(mod(yb-a.brs.d,12)===6||mod(yb-b.brs.d,12)===6){s-=4;warn.push('같이 있는 시간이 줄고 서로 예민해지는 해')}
+  if([2,6].includes(pa)||[2,6].includes(pb)){s+=3;why.push('둘 다 관계를 진지하게 생각하게 되는 해')}
+  if([5,9].includes(pa)||[5,9].includes(pb)){s-=2;warn.push('각자 자기 일로 바빠 연락이 뜸해지는 해')}
   return {y,s:Math.round(s),why,warn,pa,pb}});
- const up=yrs.slice().sort((x,z)=>z.s-x.s).slice(0,3).sort((x,z)=>x.y-z.y),dn=yrs.slice().sort((x,z)=>x.s-z.s).slice(0,2).sort((x,z)=>x.y-z.y);
- const PYW={1:'새로운 시작을 꿈꾸는',2:'함께하는 시간을 원하는',3:'즐거움과 표현을 원하는',4:'안정과 계획을 원하는',5:'변화와 자유를 원하는',6:'가정과 책임을 생각하는',7:'혼자 생각할 시간이 필요한',8:'일과 성과에 집중하는',9:'정리하고 마무리하는'};
+ const up=yrs.slice().sort((x,z)=>z.s-x.s).slice(0,1),dn=yrs.filter(x=>x.y!==up[0].y).sort((x,z)=>x.s-z.s).slice(0,1);
  /* 장소: 두 사람이 함께 부족한 오행을 채우는 곳 + 태양 원소의 취향 */
  const sum=[0,1,2,3,4].map(i=>a.cnt[i]+b.cnt[i]),need=sum.indexOf(Math.min(...sum)),rich=sum.indexOf(Math.max(...sum));
  const PLACE=[['숲길·수목원·식물원','초록이 많은 곳을 함께 걸으면 새 계획을 이야기하기 좋아집니다.'],['공연장·축제·햇살 좋은 루프톱','밝고 활기찬 곳에서 서로의 표현이 살아나고 설렘이 커집니다.'],['산책하기 좋은 동네 골목·전통시장·공방 체험','손으로 무언가를 함께 만들거나 맛있는 것을 나누며 안정감이 쌓입니다.'],['전시·박물관·도심 야경','차분하게 보고 이야기하는 데이트가 서로의 취향과 기준을 알게 해 줍니다.'],['바다·호수·강변·온천','물가에서는 말하지 못한 감정이 자연스럽게 흘러나옵니다.']];
@@ -1716,38 +1717,43 @@ function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'�
  add('summary','두 사람의 궁합',`${me}님과 ${you}님의 궁합은 ${tot}점, ${lv}입니다.`,
   [pos.length?'잘 맞는 점: '+pos.slice(0,3).map(x=>x[3]).join(' '):'',
    `관계 속 역할을 보면 ${roleTxt}입니다.`,
-   `앞으로 10년 중 두 사람이 가장 가까워지기 쉬운 해는 ${up.map(x=>x.y+'년').join(', ')}이고, 거리가 생기기 쉬운 해는 ${dn.map(x=>x.y+'년').join(', ')}입니다.`]);
+   `앞으로 3년만 보면 ${up[0].y}년이 가장 가까워지기 쉬운 해이고, ${dn.length?dn[0].y+'년에는 거리가 생기기 쉽습니다':'세 해 모두 큰 기복은 없습니다'}.`]);
  add('advice','관계에서 맞춰 갈 점',neg.length?'서로 다른 점을 먼저 알고 있으면 다툼이 훨씬 짧아집니다.':'큰 충돌 신호는 적지만, 편안함에 기대 표현을 줄이지 않는 것이 중요합니다.',
   (neg.length?neg.slice(0,3).map(x=>x[3]):[]).concat([ma===mb?`대화 방식: 두 사람 모두 ${TALK[ma]}. 푸는 방식이 같아 화해가 빠른 편이지만, 둘이 동시에 물러서면 대화가 길게 끊길 수 있으니 먼저 손을 내미는 순서를 정해 두세요.`:`대화 방식: ${me}님은 ${TALK[ma]}. 반면 ${you}님은 ${TALK[mb]}. 다툰 날에는 이 차이를 기억해 두세요.`,
    SE[dmA]!==SE[dmB]&&((eA+2)%5===eB||(eB+2)%5===eA)?'중요한 결정(돈·이사·가족 행사)은 한쪽이 정해서 통보하기보다, 각자 기준을 먼저 말하고 함께 고르는 방식이 맞습니다.':'중요한 결정은 비교적 쉽게 합의하는 편이라, 오히려 사소한 생활 습관에서 쌓이는 불만을 그때그때 꺼내는 것이 좋습니다.']),
   '다툰 뒤에는 "누가 맞았나"보다 "다음엔 어떻게 할까"를 한 문장으로 정해 두세요.');
- add('flow','언제 가까워지고, 언제 느슨해질까',`${up[0].y}년 전후가 관계가 가장 깊어지기 쉬운 시기입니다.`,
-  up.map((x,i)=>`${x.y}년 · 가까워지는 해 — ${x.why.length?x.why.join(', ')+'이라':'두 사람 모두 애정 흐름이 밝아'} ${['함께하는 시간을 늘리기 좋습니다.','관계를 한 단계 진전시키는 이야기를 꺼내기 좋습니다.','둘만의 새로운 경험을 시작하기 좋습니다.'][i%3]} ${x.pa===x.pb?`두 사람 모두 ${PYW[x.pa]} 해라 마음이 같은 곳을 향합니다.`:`${me}님은 ${PYW[x.pa]} 해, ${you}님은 ${PYW[x.pb]} 해입니다.`}`)
-  .concat(dn.map((x,i)=>`${x.y}년 · 느슨해지기 쉬운 해 — ${x.warn.length?x.warn.join(', ')+'라':'두 사람의 관심이 각자의 일로 향해'} 연락과 만남이 줄어들 수 있습니다. ${['이 해에는 정해진 데이트 날을 두고, 서운함을 쌓아 두지 마세요.','각자의 시간을 존중하되, 짧은 안부라도 매일 나누는 습관을 지켜 주세요.'][i%2]}`)),
-  `${up[0].y}년에는 여행이나 기념일처럼 둘만의 큰 추억을 하나 만들어 두세요.`,
-  {line:{cap:'해마다 두 사람의 관계 흐름(자체 지표)',labels:yrs.map(x=>"’"+String(x.y).slice(2)),values:yrs.map(x=>x.s),hi:up.map(x=>yrs.indexOf(x)),lo:dn.map(x=>yrs.indexOf(x))}});
- add('place','함께 가면 좋은 곳',`${PLACE[need][0]}처럼 두 사람에게 부족한 ${EN[need]} 기운을 채우는 곳이 잘 맞습니다.`,
-  [`${PLACE[need][0]}: ${PLACE[need][1]}`,`${me}님의 태양은 ${SEL[sa]} 원소라 ${SUNPL[sa]}를, ${you}님은 ${SEL[sb]} 원소라 ${SUNPL[sb]}를 좋아합니다.${sa===sb?' 취향이 같아 데이트 계획이 쉽게 맞습니다.':' 번갈아 서로의 취향대로 계획하면 둘 다 만족합니다.'}`,
-   `두 사람 모두 ${EN[rich]} 기운이 강해, ${['새로운 일을 벌이는','감정이 뜨거워지는','한자리에 머무르는','따지고 정리하는','생각이 많아지는'][rich]} 데이트가 반복되기 쉽습니다. 가끔은 반대 성격의 장소로 분위기를 바꿔 보세요.`],
+ add('flow','앞으로 3년, 관계는 어떻게 흐를까',`${up[0].y}년이 두 사람에게 가장 좋은 해입니다.`,
+  yrs.map((x,i)=>{const tone=x.s>=70?'좋은 해':x.s>=58?'무난한 해':'버티는 해';
+   const body=x.s>=70?['미뤄 둔 이야기를 꺼내기 좋습니다. 같이 살기, 양가 인사, 긴 여행처럼 한 단계 넘어가는 일을 이 해에 올려 두세요.','둘만의 큰 결정을 내리기 좋은 해입니다. 이 해에 미루면 다음 기회는 한참 뒤에 봐야 합니다.'][i%2]
+    :x.s>=58?['큰일은 없지만 가만히 둬서 좋아지지도 않는 해입니다. 둘만의 약속 하나를 정해 지키는 것만으로 충분합니다.','조용히 흐르는 해입니다. 기념일이나 짧은 여행처럼 작은 이벤트를 일부러 끼워 넣어야 관계가 식지 않습니다.','특별한 사건 없이 지나가는 해입니다. 이럴 때 쌓인 사소한 서운함이 다음 해에 터지니, 그때그때 말로 꺼내 두세요.'][i%3]
+    :['연락과 만남이 눈에 띄게 줄어듭니다. 바쁜 쪽이 짧게라도 먼저 연락하는 쪽으로 규칙을 정해 두세요.','서로에게 쓸 에너지가 적은 해입니다. 많이 바라지 말고, 서로를 놓지 않는 것만 목표로 두세요.'][i%2];
+   const sig=x.why.length?x.why.join(', ')+'. ':x.warn.length?x.warn.join(', ')+'. ':'';
+   const mind=x.pa===x.pb?`두 사람 모두 ${PYW[x.pa]} 해라 마음이 같은 곳을 봅니다.`:[`${me}님은 ${PYW[x.pa]} 해, ${you}님은 ${PYW[x.pb]} 해입니다. 원하는 게 다른 해라, 각자 뭘 바라는지 한 번씩 말로 해 두세요.`,`이 해 ${me}님은 ${PYW[x.pa]} 쪽이고, ${you}님은 ${PYW[x.pb]} 쪽입니다. 상대가 내 속도를 안 맞춰 준다고 느끼기 쉽지만 서로 보는 곳이 다를 뿐입니다.`,`${me}님은 ${PYW[x.pa]} 해인데 ${you}님은 ${PYW[x.pb]} 해입니다. 누가 양보하는 게 아니라, 각자 하고 싶은 걸 하면서 만나는 날만 지키는 쪽이 맞습니다.`][i%3];
+   return `${x.y}년 · ${tone} — ${sig}${body} ${mind}`}),
+  `${up[0].y}년에는 여행이나 기념일처럼 둘만 아는 추억을 하나 만들어 두세요. 관계가 느슨해지는 해에 그 기억이 버팀목이 됩니다.`,
+  {table:{cap:'앞으로 3년 관계 흐름',head:['해','분위기','가까워지는 신호','조심할 것'],rows:yrs.map(x=>[x.y+'년',(x.s>=70?'좋음':x.s>=58?'보통':'주의')+' · '+x.s,x.why.join(', ')||(x.pa===x.pb?'두 사람 다 '+PYW[x.pa]+' 해':me+'님은 '+PYW[x.pa]+' 해, '+you+'님은 '+PYW[x.pb]+' 해'),x.warn.join(', ')||'없음'])}});
+ add('place','함께 가면 좋은 곳',`${PLACE[need][0]} 같은 곳이 두 사람에게 가장 잘 맞습니다.`,
+  [`${PLACE[need][0]}: ${PLACE[need][1]}`,`${me}님의 태양은 ${SEL[sa]} 원소라 ${SUNPL[sa]} 쪽을, ${you}님은 ${SEL[sb]} 원소라 ${SUNPL[sb]} 쪽을 좋아합니다.${sa===sb?' 취향이 같아 데이트 계획이 쉽게 맞습니다.':' 번갈아 서로의 취향대로 계획하면 둘 다 만족합니다.'}`,
+   `두 사람이 같이 있으면 ${['자꾸 새로운 일을 벌이는','금방 뜨거워지고 금방 지치는','한자리에 오래 머무르는','계획하고 따지는','생각만 많아지는'][rich]} 쪽으로 흐릅니다. 데이트가 비슷해진다고 느껴질 때는 일부러 반대 성격의 장소를 골라 보세요.`],
   `이번 달 데이트 한 번은 ${PLACE[need][0].split('·')[0]}로 정해 보세요.`);
  add('long','오래 함께하려면',`두 사람은 ${dayRel} 조합입니다.`,
-  [`결혼이나 동거를 생각한다면, 사주의 배우자 자리로 볼 때 ${dayRel} 관계입니다. 집안일·돈 관리·혼자 있는 시간에 대한 규칙을 미리 정해 두면 좋습니다.`,
-   [1,5,7].includes(reduceNum(a.lp,false))===[1,5,7].includes(reduceNum(b.lp,false))?'인생 수로 보면 삶에서 중요하게 여기는 방향이 비슷해 장기 목표를 함께 세우기 쉽습니다.':'인생 수로 보면 우선순위가 달라, 5년 뒤 각자 바라는 모습을 한 번씩 이야기해 두면 엇갈림이 줄어듭니다.',
+  [`결혼이나 동거를 생각한다면 ${dayRel} 관계입니다. 같이 살기 전에 집안일 분담, 돈 관리, 각자 혼자 있는 시간만 정해 두면 대부분의 다툼이 미리 걸러집니다.`,
+   [1,5,7].includes(reduceNum(a.lp,false))===[1,5,7].includes(reduceNum(b.lp,false))?'삶에서 중요하게 여기는 것이 비슷해서, 장기 계획을 같이 세워도 중간에 어긋나지 않습니다.':'중요하게 여기는 것이 서로 다릅니다. 5년 뒤 어떻게 살고 싶은지를 한 번씩 말해 두지 않으면, 어느 순간 다른 방향을 보고 있게 됩니다.',
    up.length?`관계를 한 단계 진전시키기 좋은 때는 ${up.filter(x=>x.why.length).map(x=>x.y+'년').join(', ')||up[0].y+'년'}입니다.`:''],
   '1년에 한 번, 둘만의 관계 점검 날을 정해 고마운 점과 바라는 점을 나눠 보세요.');
  add('table','점술별 궁합 한눈에 보기','다섯 점술의 궁합 점수를 정리했습니다.',[],'',{table:{cap:'점술별 궁합(기본 60점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
  add('limit','해석의 범위','궁합 점수와 시기는 전통 규칙을 수치로 옮긴 참고 지표입니다.',[miss.length?J(miss.join('·'),'이','가')+' 없어 해당 정보는 정오·대한민국 기준 참고값으로 계산했습니다.':'','관계의 실제 결과는 두 사람의 대화와 선택이 만듭니다. 이 리포트는 서로를 이해하는 질문으로 활용해 주세요.']);
  return {title:`${me}님과 ${you}님의 궁합 리포트`,summary:[S[0].lead,`가까워지는 해: ${up.map(x=>x.y+'년').join(', ')} · 느슨해지기 쉬운 해: ${dn.map(x=>x.y+'년').join(', ')}`,S[3].lead,neg.length?'맞춰 갈 점: '+neg[0][3]:S[1].lead],
-  sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'다섯 점술의 전통 궁합 규칙을 자체 점수로 옮긴 재미용 리포트입니다. 관계의 실제 결과를 예측하지 않습니다.',birthCharts:[a,b],version:'match-2026-11-05b',body:''}}
+  sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'다섯 점술의 전통 궁합 규칙을 자체 점수로 옮긴 재미용 리포트입니다. 관계의 실제 결과를 예측하지 않습니다.',birthCharts:[a,b],version:'match-2026-11-07',body:''}}
 const sTxt=i=>ST[i]+'('+'갑을병정무기경신임계'[i]+')';
-/* 재회(2026-11-05): 궁합 점수 + 앞으로 5년의 재연결 신호(배우자 자리 합·충, 개인년 2·6·9, 두 사람의 애정 흐름) */
+/* 재회(2026-11-07): 궁합 점수 + 앞으로 3년의 재연결 신호(배우자 자리 합·충, 개인년 2·6·9, 두 사람의 애정 흐름) */
 function reunionCalc(a,b,res){const y0=new Date().getFullYear(),LIU=x=>(13-x)%12,love=(c,y)=>D(ORC.reduce((s,fn)=>s+fn(c,{y,frac:y+.5},1)[0],0)/ORC.length);
- const yrs=[0,1,2,3,4].map(i=>{const y=y0+i,yb=mod(y-4,12),pa=pyOf(a,y),pb=pyOf(b,y),why=[],warn=[];let s=(love(a,y)+love(b,y))/2;
-  if(LIU(yb)===a.brs.d||LIU(yb)===b.brs.d){s+=6;why.push('끊긴 인연이 다시 맞닿는 합의 해')}
-  else if(yb%4===a.brs.d%4||yb%4===b.brs.d%4){s+=2;why.push('배우자 자리와 같은 기운이 모이는 해')}
-  if(mod(yb-a.brs.d,12)===6||mod(yb-b.brs.d,12)===6){s-=5;warn.push('관계 자리가 흔들리는 충의 해')}
-  if(pa===2||pb===2){s+=4;why.push('화해와 조율의 해(개인년 2)')}if(pa===6||pb===6){s+=3;why.push('책임과 다시 돌보는 해(개인년 6)')}
-  if(pa===9||pb===9){s-=3;warn.push('지난 일을 정리하는 해(개인년 9)')}if(pa===1||pb===1){warn.push('각자 새 출발을 원하는 해(개인년 1)')}
+ const yrs=[0,1,2].map(i=>{const y=y0+i,yb=mod(y-4,12),pa=pyOf(a,y),pb=pyOf(b,y),why=[],warn=[];let s=(love(a,y)+love(b,y))/2;
+  if(LIU(yb)===a.brs.d||LIU(yb)===b.brs.d){s+=6;why.push('끊어진 연락이 다시 닿기 쉬운 해')}
+  else if(yb%4===a.brs.d%4||yb%4===b.brs.d%4){s+=2;why.push('서로 생각이 자주 나는 해')}
+  if(mod(yb-a.brs.d,12)===6||mod(yb-b.brs.d,12)===6){s-=5;warn.push('다시 만나도 같은 일로 부딪히기 쉬운 해')}
+  if(pa===2||pb===2){s+=4;why.push('먼저 손 내밀고 싶어지는 해')}if(pa===6||pb===6){s+=3;why.push('관계를 책임지고 싶어지는 해')}
+  if(pa===9||pb===9){s-=3;warn.push('지난 일을 접고 싶어지는 해')}if(pa===1||pb===1){warn.push('각자 새로 시작하고 싶어지는 해')}
   return {y,s:Math.round(s),why,warn,pa,pb}});
  const best=yrs.slice().sort((x,z)=>z.s-x.s)[0],near=Math.max(...yrs.slice(0,3).map(x=>x.s));
  const score=Math.round(clamp(res.total*.55+near*.45,45,96));
@@ -1765,18 +1771,18 @@ function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name
  const clash=mod(a.brs.d-b.brs.d,12)===6,ctl=(eA+2)%5===eB||(eB+2)%5===eA;
  const S=[];const add=(kind,q,lead,paras,action,extra)=>S.push(Object.assign({id:'reunion-c'+(S.length+1),kind,question:q,lead,basis:[],paragraphs:paras.filter(Boolean),action:action||''},extra||{}));
  add('summary','재회 흐름 한눈에 보기',`${me}님과 ${you}님의 재회 흐름은 ${ru.score}점, ${ru.level}입니다.`,
-  [`두 사람의 기본 궁합은 ${res.total}점이고, 앞으로 5년 중 다시 가까워질 신호가 가장 뚜렷한 해는 ${ru.best.y}년입니다.`,
+  [`두 사람의 기본 궁합은 ${res.total}점이고, 앞으로 3년 중 흐름이 가장 좋은 해는 ${ru.best.y}년입니다.${up.length?'':' 다만 세 해 모두 다시 이어질 결정적인 신호는 약한 편이라, 시기보다 두 사람의 마음이 더 중요합니다.'}`,
    pos.length?`다시 끌릴 수 있는 이유: ${pos.slice(0,2).map(x=>x[3]).join(' ')}`:'',
    ru.score<66?'지금은 억지로 관계를 되돌리기보다, 각자의 시간을 보내며 마음이 정리되는지 지켜보는 편이 자연스러운 흐름입니다.':'']);
- add('timing','다시 연락하기 좋은 시기',up.length?`${up.map(x=>x.y+'년').join('과 ')}이 다시 연락해 보기 좋은 흐름입니다.`:'앞으로 5년 안에 뚜렷한 재연결 신호는 약한 편입니다.',
+ add('timing','다시 연락하기 좋은 시기',up.length?`${up.map(x=>x.y+'년').join('과 ')}이 다시 연락해 보기 좋은 흐름입니다.`:'앞으로 3년 안에는 뚜렷한 재연결 신호가 약합니다.',
   up.map(x=>`${x.y}년 — ${x.why.join(', ')}입니다. ${x.pa===2||x.pb===2?'오해를 풀고 대화를 다시 여는 데 마음이 쓰이는 해입니다.':'관계를 다시 돌아볼 여유가 생기는 해입니다.'}`)
-  .concat([ru.mo.length?`한 해 중에서는 ${ru.mo.map(m=>m+'월').join('·')} 무렵이 두 사람의 배우자 자리와 합이 드는 달이라 연락을 시도하기 좋습니다.`:''])
+  .concat([ru.mo.length?`한 해 안에서 고른다면 ${ru.mo.map(m=>m+'월').join('·')} 무렵이 가장 낫습니다. 두 사람 다 마음이 누그러지는 달이라, 같은 말이라도 덜 날카롭게 가 닿습니다.`:''])
   .concat(dn.map(x=>`${x.y}년은 ${x.warn.join(', ')}라, 이 해의 연락은 서두르지 않는 편이 좋습니다.`)),
   (()=>{if(!up.length)return '';const cm=new Date().getMonth()+1,cy=new Date().getFullYear();let y=up[0].y,m=ru.mo.find(x=>y>cy||x>cm);if(!m&&ru.mo.length){const nx=up.find(x=>x.y>cy);if(nx){y=nx.y;m=ru.mo[0]}}return m?`${y}년 ${m}월 전후에 부담 없는 안부 한 번으로 시작해 보세요.`:`${y}년 안에 부담 없는 안부 한 번으로 시작해 보세요.`})(),
-  {line:{cap:'앞으로 5년, 다시 가까워질 흐름(자체 지표)',labels:yrs.map(x=>"’"+String(x.y).slice(2)),values:yrs.map(x=>x.s),hi:up.map(x=>yrs.indexOf(x)),lo:dn.map(x=>yrs.indexOf(x))}});
+  {table:{cap:'앞으로 3년 재회 흐름',head:['해','가능성','다시 닿는 신호','조심할 것'],rows:yrs.map(x=>[x.y+'년',(x.s>=70?'높음':x.s>=58?'보통':'낮음')+' · '+x.s,x.why.join(', ')||(x.pa===x.pb?'두 사람 다 '+PYW[x.pa]+' 해':me+'님은 '+PYW[x.pa]+' 해, '+you+'님은 '+PYW[x.pb]+' 해'),x.warn.join(', ')||'없음'])}});
  add('cause','헤어짐에 영향을 준 차이',neg.length?'두 사람 사이에는 부딪히기 쉬운 지점이 분명히 있었습니다.':'두 사람 사이에 큰 충돌 신호는 적어, 상황과 타이밍의 영향이 컸을 가능성이 큽니다.',
   neg.slice(0,3).map(x=>x[3]).concat([ma===mb?`두 사람 모두 ${TALK[ma]}이라 화해 방식은 같지만, 둘이 동시에 물러서면 대화가 길게 끊기기 쉽습니다.`:`${me}님은 ${TALK[ma]}이고, ${you}님은 ${TALK[mb]}입니다. 서운함을 푸는 속도가 달라 오해가 쌓였을 수 있습니다.`,
-   clash?'배우자 자리가 서로 충을 이뤄, 함께 지낼 때 생활 리듬과 공간을 쓰는 방식에서 마찰이 컸을 수 있습니다.':'',ctl?'일간이 서로 제어하는 관계라, 중요한 결정에서 서로의 기준이 부딪혔을 가능성이 큽니다.':'']));
+   clash?'같이 보내는 시간이 길어질수록 지쳤을 조합입니다. 쉬는 방식과 집을 쓰는 방식이 반대라, 특별한 사건이 없어도 피로가 쌓였을 수 있어요.':'',ctl?'중요한 결정에서 기준이 번번이 어긋났을 가능성이 큽니다. 돈, 이사, 가족 문제처럼 양보가 어려운 자리에서 "왜 저걸 이해 못 하지"가 반복됐을 거예요.':'']));
  add('change','다시 만난다면 달라져야 할 것','같은 이유로 다시 헤어지지 않으려면, 이번에는 방식을 바꾸는 것이 핵심입니다.',
   [ma!==mb?`${me}님은 ${you}님이 ${['바로','천천히','말로','공감받으며'][mb]} 마음을 푸는 사람이라는 것을 기억해 주세요.`:'',
    ctl?'중요한 결정은 한쪽이 정해 통보하지 말고, 각자 기준을 먼저 말한 뒤 함께 고르세요.':'작은 불만을 쌓아 두지 말고 그때그때 가볍게 꺼내는 규칙을 정하세요.',
@@ -1784,7 +1790,7 @@ function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name
    '다시 만나는 첫 몇 번은 지난 일을 따지기보다, 지금의 서로를 새로 알아 가는 자리로 만들어 주세요.'],
   '다시 만나기 전에, 헤어질 때 가장 아쉬웠던 점 하나와 이번에 바꿀 점 하나를 적어 보세요.');
  add('contact','연락하는 방법과 만나기 좋은 곳',FIRST[mb].split('.')[0]+'.',
-  [`첫 연락: ${FIRST[mb]}`,`처음 다시 만난다면 ${PLACE[need]}처럼 두 사람에게 부족한 ${EN[need]} 기운을 채우는 곳이 편안합니다. 오래 머무는 자리보다 짧게 걷거나 차 한잔하는 정도가 부담이 적습니다.`,
+  [`첫 연락: ${FIRST[mb]}`,`처음 다시 만난다면 ${J(PLACE[need],'이','가')} 두 사람에게 가장 편한 자리입니다. 마주 앉아 눈을 맞추는 자리보다 나란히 걷는 쪽이 말이 쉽게 나오고, 오래 머무는 것보다 짧게 끊고 헤어지는 편이 다음을 만듭니다.`,
    '답이 늦거나 짧다면 바로 다시 연락하지 말고, 상대가 대화를 이어 갈 여유를 남겨 두세요.']);
  add('letgo','마음을 정리하는 게 나은 신호','아래 신호가 겹친다면 재회보다 각자의 길을 응원하는 편이 서로에게 좋습니다.',
   ['상대가 연락을 원하지 않는다고 분명히 말했거나 답이 없다면, 그 뜻을 존중하는 것이 가장 우선입니다.',
@@ -1792,7 +1798,7 @@ function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name
    ru.score<70?`재회 흐름 점수가 ${ru.score}점으로 높지 않아, 이번 인연에서 배운 점을 다음 관계에 가져가는 것도 좋은 선택입니다.`:'']);
  add('table','점술별 궁합 한눈에 보기','다섯 점술의 기본 궁합 점수입니다.',[],'',{table:{cap:'점술별 궁합(기본 60점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
  add('limit','해석의 범위','재회 리포트는 두 사람의 출생 차트만 읽습니다.',['이 리포트는 상대방의 현재 마음이나 의사를 알 수 없습니다. 관계를 다시 시작할지는 두 사람의 실제 대화와 선택으로 정해집니다.',b.inp.notime||b.inp.place?.none?'상대의 출생 시각·출생지가 없는 항목은 참고값으로 계산했습니다.':'','점수와 시기는 전통 규칙을 수치로 옮긴 참고 지표입니다.']);
- return {title:`${me}님과 ${you}님의 재회 리포트`,summary:[S[0].lead,S[1].lead,S[3].lead,S[4].lead],sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'두 사람의 출생 차트로 재회 흐름을 읽은 재미용 리포트입니다. 상대의 마음을 예측하지 않습니다.',birthCharts:[a,b],version:'match-reunion-2026-11-05',body:''}}
+ return {title:`${me}님과 ${you}님의 재회 리포트`,summary:[S[0].lead,S[1].lead,S[3].lead,S[4].lead],sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'두 사람의 출생 차트로 재회 흐름을 읽은 재미용 리포트입니다. 상대의 마음을 예측하지 않습니다.',birthCharts:[a,b],version:'match-reunion-2026-11-07',body:''}}
 async function openCompatReport(btn,requestedKey=null){if(!COMPAT||!CH||(requestedKey&&requestedKey!==(COMPAT.mode==='reunion'?'reunion':'match'))){alert('상대방 정보를 입력하고 먼저 결과를 확인해 주세요.');return}const key=COMPAT.mode==='reunion'?'reunion':'match';const show=()=>{reportReturnFocus=btn;$('reportBody').innerHTML=approvedReportHTML(key==='reunion'?reunionReportData(CH,COMPAT.b,COMPAT.res,COMPAT.ru):compatReportData(CH,COMPAT.b,COMPAT.res),key,CH);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true})};
  if(accountUser?.isAdmin)return show();if(!accountUser)return needLogin();
  try{const ac=await accountAPI('/access');if(ac.isAdmin||ac.reports.includes(key)||ac.reports.includes('all'))return show()}catch(_){}showReportPurchase(key,btn)}
