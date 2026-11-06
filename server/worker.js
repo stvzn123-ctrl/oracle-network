@@ -49,7 +49,7 @@ function validProfile(v){
 async function member(req,env){const token=req.headers.get("Authorization")?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];if(!token)return null;return env.DB.prepare("SELECT users.id,users.kakao_id,users.nickname,users.profile,users.profile_updated FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token_hash=? AND sessions.expires>?").bind(await authHash(token),Date.now()).first()}
 async function authRoute(req,env,url,ctx){
   const path=url.pathname.replace(/\/+$/,"");
-  if(!path.startsWith('/auth/')&&path!=="/me"&&path!=="/profile")return null;
+  if(!path.startsWith('/auth/')&&path!=="/me"&&path!=="/profile"&&path!=="/partners")return null;
   if(req.method!=="GET"&&req.method!=="POST")return json(req,env,{error:"method"},405);
   const now=Date.now(),origin=req.headers.get('Origin');
   // 카카오 설정에서 연결을 끊은 회원은 서버의 세션과 출생 정보도 정리한다.
