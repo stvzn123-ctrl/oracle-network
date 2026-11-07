@@ -478,9 +478,10 @@ function traitDescription(ch){
  return `당신은 ${weak[dom]}이지만, ${strength[dom]} 같은 운명을 타고난 사람입니다.`;
 }
 function fateTraitsHTML(ch){
- const t=fateTraits(ch), axes=t.rows.map((a,i)=>({...a,order:i,gap:Math.abs(a.lCount-a.rCount)})).sort((a,b)=>b.gap-a.gap||a.order-b.order).slice(0,2),[x,y]=axes;
- const pos=a=>a.tie?50:a.side?73:27, selected=a=>a.tie?'균형':a.side?a.right:a.left;
- return `<figure class="trait-quadrant"><figcaption>${t.name}</figcaption><svg viewBox="0 0 360 300" role="img" aria-label="${x.name}: ${selected(x)}, ${y.name}: ${selected(y)}. 두 성향의 방향을 나타내는 사분면"><rect x="62" y="38" width="236" height="216" rx="16" class="quadrant-paper"/><path d="M180 38V254M62 146H298" class="quadrant-axis"/><text x="180" y="24" text-anchor="middle">${y.left}</text><text x="180" y="280" text-anchor="middle">${y.right}</text><text x="52" y="151" text-anchor="end">${x.left}</text><text x="308" y="151">${x.right}</text><circle cx="${62+236*pos(x)/100}" cy="${38+216*pos(y)/100}" r="9" class="quadrant-point"/></svg><p><b>X축 · ${x.name}</b> ${x.left} ↔ ${x.right}<br><b>Y축 · ${y.name}</b> ${y.left} ↔ ${y.right}</p><small>네 성향 중 양쪽 분류의 차이가 큰 두 축을 골랐어요. 동률이면 기존 순서를 따르며, 점은 강도나 확률이 아닌 방향을 나타내요.</small></figure>`;
+ const t=fateTraits(ch),axes=t.rows.map((a,i)=>({...a,order:i,gap:Math.abs(a.lCount-a.rCount)})).sort((a,b)=>b.gap-a.gap||a.order-b.order).slice(0,2),[x,y]=axes;
+ const positive=a=>a.side?a.right:a.left,negative=a=>a.side?a.left:a.right;
+ const xp=positive(x),xn=negative(x),yp=positive(y),yn=negative(y);
+ return `<figure class="trait-quadrant"><figcaption>${t.name}</figcaption><svg viewBox="0 0 360 300" role="img" aria-label="${x.name}: ${xp}, ${y.name}: ${yp}. 본인의 성향이 오른쪽과 위쪽에 오도록 축 이름을 배치한 사분면"><rect x="62" y="38" width="236" height="216" rx="16" class="quadrant-paper"/><path d="M180 38V254M62 146H298" class="quadrant-axis"/><text x="180" y="24" text-anchor="middle">${yp}</text><text x="180" y="280" text-anchor="middle">${yn}</text><text x="52" y="151" text-anchor="end">${xn}</text><text x="308" y="151">${xp}</text><circle cx="234" cy="92" r="9" class="quadrant-point"/></svg><p><b>X축 · ${x.name}</b> ${xn} ↔ ${xp}<br><b>Y축 · ${y.name}</b> ${yn} ↔ ${yp}</p><small>두드러진 두 성향을 골라 나의 성향이 오른쪽·위쪽에 오도록 축 이름을 배치했어요. 점의 위치는 고정이며, 성향의 강도·점수·우열을 뜻하지 않아요.${axes.some(a=>a.tie)?' 동률인 축은 두 성향이 균형을 이뤄요.':''}</small></figure>`;
 }
 function renderFateTraits(){const el=document.getElementById("fate-traits");if(el&&CH)el.innerHTML=fateTraitsHTML(CH)}
 
