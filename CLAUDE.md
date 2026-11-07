@@ -240,10 +240,11 @@
 - 카카오톡 등 인앱 브라우저는 `html.lite`: backdrop-filter와 배경 그림 애니메이션을 끈다. 배경 canvas는 모바일·인앱에서 노드 26개, 약 11fps, 화면이 숨겨지면 멈추고, 주소창 높이 변화로는 다시 만들지 않는다.
 - 로그인 흔적(localStorage oracle-session)이 있으면 `html.boot`로 `/me` 응답 전까지 랜딩을 숨긴다(최대 4초). 관리자 여부는 localStorage `oracle-admin`에 캐시.
 - 관리자 목록 API `/admin/users`는 100명 단위, 회원마다 `active`(승인된 리포트 키 배열)를 준다. worker 재배포 전에는 admin.html이 회원별 조회로 대신한다.
+- 2026-11-07: 월·일 입력에서 앞자리 0(09월) 허용(`clampNum`). 결과를 본 뒤(비로그인) 상단 로그인을 누르면 `#loginSaveDialog`가 떠서 출생 정보 저장 동의를 받는다. sessionStorage `oracle-pending`·`oracle-pending-run`·`oracle-save-intent`로 넘기고, 로그인 후 `restoreSavedResult`로 결과를 이어서 보여 주며 동의했으면 `/profile`에 저장한다. 좁은 화면(≤400px)에서 리포트 인연 프로필이 넘치지 않게 했다.
 
 ## 2026-11 캐릭터 리뉴얼
 - 이름은 **운명연구소**. 마스코트는 돋보기 든 흰 강아지(`img/mascot.webp`), 히어로(`--landing-art`)와 상단바 마크에 쓴다.
-- 테마는 크림 라이트(`--bg #FFF9F4`, 글자 `#4A352B`). 팔레트·대비·탭바 규칙은 `app.203cbf0d.css` **맨 끝 블록들**에서 앞의 `:root`를 덮어쓴다. 색을 바꿀 때는 그 끝 블록만 고친다.
+- 테마는 크림 라이트(`--bg #FFF9F4`, 글자 `#4A352B`). 팔레트·대비·탭바 규칙은 `app.a639f8a0.css` **맨 끝 블록들**에서 앞의 `:root`를 덮어쓴다. 색을 바꿀 때는 그 끝 블록만 고친다.
 - 금색을 글자색으로 쓸 때는 `--gold-ink`(#8A5A1E). `color:var(--gold)`는 쓰지 않는다(크림 위 대비 1.8:1).
 - 리포트 안내(`.report-cta`)만 진한 갈색으로 남겨 대비를 준다.
 - 글꼴: 제목·버튼 Jua, 본문 IBM Plex Sans KR(둘 다 상업적 이용 가능, Google Fonts).
@@ -254,3 +255,4 @@
 - 이름에 '사주'를 넣지 않는다. 다섯 점술(사주·서양 점성술·인도 점성술·수비학·마야력)을 함께 보는 서비스다.
 - 랜딩 CTA('내 운명 보러 가기')는 강아지 이미지 아래, `.landing-cta-under`에 둔다.
 - 분야 색(--money/--love/--work/--health)은 글자색으로도 쓰이므로 파스텔로 되돌리지 않는다. 금색 글자는 --gold-ink.
+- 생년월일 한 칸 입력 때문에 `clampNum`의 월·일 리스너는 더 이상 쓰이지 않는다(`#in-m`·`#in-d`는 hidden).
