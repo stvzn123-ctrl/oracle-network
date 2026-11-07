@@ -477,11 +477,11 @@ function traitDescription(ch){
  ];
  return `당신은 ${weak[dom]}이지만, ${strength[dom]} 같은 운명을 타고난 사람입니다.`;
 }
-function fateTraitsHTML(ch){const t=fateTraits(ch);
- return `<table class="trait-table"><caption>${t.name} · 네 가지 방향</caption><tbody>${t.rows.map(a=>{
-   const selected=a.tie?"균형":a.side?a.right:a.left;
-   return `<tr><th scope="row">${a.name}</th><td class="trait-end ${!a.tie&&a.side===0?"selected":""}">${a.left}</td><td class="trait-axis-cell"><span class="trait-axis" role="img" aria-label="${a.name}: ${selected} 성향"><i class="trait-dot" aria-hidden="true" style="--dot:${a.tie?50:a.side?75:25}%"></i></span></td><td class="trait-end ${!a.tie&&a.side===1?"selected":""}">${a.right}</td></tr>`
- }).join("")}</tbody></table>`}
+function fateTraitsHTML(ch){
+ const t=fateTraits(ch), axes=t.rows.map((a,i)=>({...a,order:i,gap:Math.abs(a.lCount-a.rCount)})).sort((a,b)=>b.gap-a.gap||a.order-b.order).slice(0,2),[x,y]=axes;
+ const pos=a=>a.tie?50:a.side?73:27, selected=a=>a.tie?'균형':a.side?a.right:a.left;
+ return `<figure class="trait-quadrant"><figcaption>${t.name}</figcaption><svg viewBox="0 0 360 300" role="img" aria-label="${x.name}: ${selected(x)}, ${y.name}: ${selected(y)}. 두 성향의 방향을 나타내는 사분면"><rect x="62" y="38" width="236" height="216" rx="16" class="quadrant-paper"/><path d="M180 38V254M62 146H298" class="quadrant-axis"/><text x="180" y="24" text-anchor="middle">${y.left}</text><text x="180" y="280" text-anchor="middle">${y.right}</text><text x="52" y="151" text-anchor="end">${x.left}</text><text x="308" y="151">${x.right}</text><circle cx="${62+236*pos(x)/100}" cy="${38+216*pos(y)/100}" r="9" class="quadrant-point"/></svg><p><b>X축 · ${x.name}</b> ${x.left} ↔ ${x.right}<br><b>Y축 · ${y.name}</b> ${y.left} ↔ ${y.right}</p><small>네 성향 중 양쪽 분류의 차이가 큰 두 축을 골랐어요. 동률이면 기존 순서를 따르며, 점은 강도나 확률이 아닌 방향을 나타내요.</small></figure>`;
+}
 function renderFateTraits(){const el=document.getElementById("fate-traits");if(el&&CH)el.innerHTML=fateTraitsHTML(CH)}
 
 function renderVerdict(){const all=R.flat();const idx=Math.round(all.reduce((a,b)=>a+b.mean,0)/all.length);
@@ -720,8 +720,8 @@ function resultIntroHTML(ch){const tags=reportTags(ch);
   const ag=tags.filter(t=>t.n>=2).slice(0,4);
   const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><small>${t.n}개 관점에서 함께 읽힌 성향이에요.</small></div></li>`).join("");
   return `<p class="res-lead">${mainDestinyIntroHTML(ch)}</p>
-  <h3 class="res-h">다섯 점술이 함께 짚은 것</h3><ul class="r-agree">${agl}</ul>
-  <h3 class="res-h">운명 성향</h3>${fateTraitsHTML(ch)}<p class="r-note">점은 성향의 방향을 보여줘요. 어느 쪽이 더 좋거나 강하다는 뜻은 아니에요.</p>
+  <h3 class="res-h">여러 운세에서 발견한 나의 매력</h3><ul class="r-agree">${agl}</ul>
+  <h3 class="res-h">나의 핵심 성향 두 가지</h3>${fateTraitsHTML(ch)}<p class="r-note">점은 성향의 방향을 보여줘요. 어느 쪽이 더 좋거나 강하다는 뜻은 아니에요.</p>
   <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${natalReadingHTML(ch)}</div>
   ${pastReadingHTML(ch)}` }
 function renderResult(){const ch=CH,name=ch.inp.name;
@@ -933,6 +933,7 @@ function checkForm(){const y=+$("in-y").value,m=+$("in-m").value,d=+$("in-d").va
   if(m<1||m>12)return "월은 1~12 사이로 입력해 주세요.";
   if(!$("cal-l").checked){const n=new Date(y,m,0).getDate();if(d<1||d>n)return `${m}월은 ${n}일까지 있어요.`}else if(d<1||d>30)return "음력 날짜는 1~30일 사이로 입력해 주세요.";
   if(!$("sx-m").checked&&!$("sx-f").checked)return "성별을 골라 주세요.";
+  if(!$("in-notime").checked && $("in-time").value && !/^([01]?\d|2[0-3]):[0-5]\d$/.test($("in-time").value))return "출생 시각은 00:00~23:59로 입력해 주세요. 예: 14:30";
   if(!$("in-time").value&&!$("in-notime").checked)return "출생 시각을 입력하거나 '시각을 몰라요'를 체크해 주세요.";
   if(place.unset&&!$("in-noplace").checked)return "출생지의 시·도를 고르거나 '출생지를 고르지 않을래요'를 체크해 주세요.";return ""}
 $("ask").addEventListener("submit",e=>{e.preventDefault();const ce=checkForm();if(ce){$("err").textContent=ce;return}const v=readForm();
@@ -1800,7 +1801,7 @@ function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name
  add('table','점술별 궁합 한눈에 보기','다섯 점술의 기본 궁합 점수입니다.',[],'',{table:{cap:'점술별 궁합(기본 70점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
  add('limit','해석의 범위','재회 리포트는 두 사람의 출생 차트만 읽습니다.',['이 리포트는 상대방의 현재 마음이나 의사를 알 수 없습니다. 관계를 다시 시작할지는 두 사람의 실제 대화와 선택으로 정해집니다.',b.inp.notime||b.inp.place?.none?'상대의 출생 시각·출생지가 없는 항목은 참고값으로 계산했습니다.':'','점수와 시기는 전통 규칙을 수치로 옮긴 참고 지표입니다.']);
  return {title:`${me}님과 ${you}님의 재회 리포트`,summary:[S[0].lead,S[1].lead,S[3].lead,S[4].lead],sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'두 사람의 출생 차트로 재회 흐름을 읽은 재미용 리포트입니다. 상대의 마음을 예측하지 않습니다.',birthCharts:[a,b],version:'match-reunion-2026-11-07',body:''}}
-async function openCompatReport(btn,requestedKey=null){if(!COMPAT||!CH||(requestedKey&&requestedKey!==(COMPAT.mode==='reunion'?'reunion':'match'))){alert('상대방 정보를 입력하고 먼저 결과를 확인해 주세요.');return}const key=COMPAT.mode==='reunion'?'reunion':'match';const show=()=>{reportReturnFocus=btn;$('reportBody').innerHTML=approvedReportHTML(key==='reunion'?reunionReportData(CH,COMPAT.b,COMPAT.res,COMPAT.ru):compatReportData(CH,COMPAT.b,COMPAT.res),key,CH);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true})};
+async function openCompatReport(btn,requestedKey=null){if(!requireSavedProfile())return;if(!COMPAT||!CH||(requestedKey&&requestedKey!==(COMPAT.mode==='reunion'?'reunion':'match'))){alert('상대방 정보를 입력하고 먼저 결과를 확인해 주세요.');return}const key=COMPAT.mode==='reunion'?'reunion':'match';const show=()=>{reportReturnFocus=btn;$('reportBody').innerHTML=approvedReportHTML(key==='reunion'?reunionReportData(CH,COMPAT.b,COMPAT.res,COMPAT.ru):compatReportData(CH,COMPAT.b,COMPAT.res),key,CH);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true})};
  if(accountUser?.isAdmin)return show();if(!accountUser)return needLogin();
  try{const ac=await accountAPI('/access');if(ac.isAdmin||ac.reports.includes(key)||ac.reports.includes('all'))return show()}catch(_){}showReportPurchase(key,btn)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cmp-open]');if(b)openCompatReport(b)});
@@ -2154,7 +2155,8 @@ const REPORT_TOPIC_ART={"relationship":{"src":"img/1b324dd084.jpg","alt":"나무
 let purchaseReportKey=null,purchaseTrigger=null;
 function showReportPurchase(key,trigger){purchaseReportKey=key;purchaseTrigger=trigger;const name=key==='comprehensive'?'종합':TOPICS.find(x=>x[0]===key)?.[1]||'나의 운명';$('purchaseTitle').textContent=name+' 리포트';$('purchasePrice').innerHTML=LAUNCH_PRICE(key==='comprehensive'?15900:3900);$('purchaseContents').replaceChildren();const items=key==='comprehensive'?['타고난 성향과 강점·주의점','연애·재물·직업의 개인별 풀이','앞으로 10년의 분야별 흐름']:TOPIC_REPORT_CONTENTS[key]||[];for(const t of items){const li=document.createElement('li');li.textContent=t;$('purchaseContents').append(li)}$('purchaseStatus').textContent='지금은 출시 기념으로 로그인만 하면 무료로 볼 수 있어요.';$('reportPurchase').showModal();}
 function needLogin(){if(confirm('리포트는 로그인한 뒤 볼 수 있어요.\n카카오로 로그인할까요?')){const b=$('accountLogin');if(b)b.click()}}
-async function requestReport(key,trigger){if(accountUser?.isAdmin||(FREE_LAUNCH&&accountUser)){if(key==='comprehensive')openReport();else openTopicReport(key,trigger);return}if(!accountUser){needLogin();return}try{const access=await accountAPI('/access');if(access.isAdmin||access.reports.includes(key)||access.reports.includes('all')){if($('reportPurchase').open)$('reportPurchase').close();await loadPrivateReport(key,trigger);return}showReportPurchase(key,trigger);}catch(e){showReportPurchase(key,trigger);$('purchaseStatus').textContent=e.message;}}
+function requireSavedProfile(){if(!accountUser){$('saveLogin').click();return false}if(!accountUser.profile){accountNotice('출생 정보를 입력하고 내 정보 저장을 눌러주세요.');document.body.classList.add('app-entered');$('askbox').open=true;document.getElementById('accountSheet')?.showModal();$('accountMember').open=true;return false}return true}
+async function requestReport(key,trigger){if(!requireSavedProfile())return;if(accountUser?.isAdmin||(FREE_LAUNCH&&accountUser)){if(key==='comprehensive')openReport();else openTopicReport(key,trigger);return}if(!accountUser){needLogin();return}try{const access=await accountAPI('/access');if(access.isAdmin||access.reports.includes(key)||access.reports.includes('all')){if($('reportPurchase').open)$('reportPurchase').close();await loadPrivateReport(key,trigger);return}showReportPurchase(key,trigger);}catch(e){showReportPurchase(key,trigger);$('purchaseStatus').textContent=e.message;}}
 /* Interpretation first; preserve the original technical statement as evidence. */
 function readingParts(value){
  const source=String(value||'').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').trim();
@@ -3255,7 +3257,7 @@ const yearRows=R.map((r,i)=>({y:horizonDate(HZ[i].off).y,score:D(r[ci].mean)}));
 const basis=[['사주','오행 개수 '+ch.cnt.join(' · '),'기질과 생활 습관의 자체 상징 해석'],['서양 점성술','태양 '+ZOD[sign(ch.sun)]+'자리','기존 성향 풀이와 관계 표현 방식'],['인도 점성술','달 낙샤트라 번호 '+(ch.nk+1),'기존 기간 계산을 사용한 흐름 참고'],['수비학','인생 수 '+ch.lp,'생일 숫자의 기존 계산값'],['마야력','탄생 숫자 '+ch.tone,'기존 탄생 달력 계산값']];
 return '<header class="r-cover"><h2>'+topicEsc(ch.inp.name||'당신')+'님의<br>'+topicEsc(name)+' 리포트</h2><p>현재 계산 결과로 구성한 리포트 미리보기 · 결제 없이 열람</p></header><section class="r-page"><h2>먼저 읽는 세 줄 요약</h2><ul>'+rows.slice(0,3).map(r=>'<li>'+topicEsc(r[1])+'</li>').join('')+'</ul>'+reportEditorial(k)+'</section><section class="r-page"><h2>내가 궁금했던 이야기</h2>'+rows.map((r,i)=>'<article class="r-answer"><h3>'+topicEsc(r[0])+'</h3><p><strong>'+topicEsc(r[1])+'</strong></p><p>'+topicEsc(['같은 강점도 지금 처한 환경에 따라 다르게 드러날 수 있어요. 현재의 선택지에서 이 성향을 편하게 쓸 수 있는 장면을 찾아보세요.','답을 서둘러 정하기보다 실제 경험과 조건을 함께 비교해보세요. 내게 맞았던 경험 하나를 떠올리면 판단 기준을 세우기 쉬워요.','풀이에서 마음에 남는 부분을 지금의 고민과 연결해보세요. 내가 바꿀 수 있는 행동을 작게 정해보면 방향을 구체화할 수 있어요.'][i%3])+'</p><p class="r-note">이렇게 해 보세요 · '+topicEsc(steps[i%3])+'</p></article>').join('')+'</section><section class="r-page"><h2>시기 한눈에 보기</h2><p>'+['금전','애정','직업·학업'][ci]+'의 기존 10년 흐름이에요. 사건의 발생일이나 성공 확률을 뜻하지 않아요.</p><div class="r-yearflow">'+yearRows.map(r=>'<div><b>'+r.y+'년</b><meter min="60" max="100" value="'+r.score+'">'+r.score+'</meter><span>'+r.score+'점</span></div>').join('')+'</div><p class="r-note">막대가 길수록 해당 분야의 자체 표시 점수가 높아요.</p></section><section class="r-page"><h2>조심할 점과 대처법</h2><p>'+topicEsc(['새 계획이 늘어나 마무리가 늦어질 수 있어요. 끝낼 일 하나부터 정해보세요.','마음이 앞서 결정을 서두를 수 있어요. 중요한 선택은 조건을 적고 다시 확인해보세요.','익숙한 방식을 오래 유지할 수 있어요. 작은 변화 하나부터 시험해보세요.','완벽한 기준 때문에 시작이 늦어질 수 있어요. 우선 끝낼 수 있는 크기로 줄여보세요.','생각이 길어 실행이 늦어질 수 있어요. 지금 확인할 질문 하나를 골라보세요.'][dom])+'</p><h3>오늘부터 할 일</h3><ol>'+steps.map(x=>'<li>'+x+'</li>').join('')+'</ol></section><section class="r-page"><h2>이렇게 풀었어요</h2><p>아래는 사용한 출생 차트의 기본값이에요. 개별 직업·외모·경제관 묘사와 행동 제안은 서비스의 자체 상징 해석이에요.</p>'+((ch.inp.notime||ch.inp.place?.none)?'<p class="r-note">출생 시각 또는 장소가 미상인 항목은 참고 계산이 포함될 수 있어요. 상승궁·출생 하우스가 확정된 정보로 읽지 마세요.</p>':'')+'<div class="r-basis-list">'+basis.map(r=>'<p><b>'+r[0]+'</b> · '+topicEsc(r[1])+'<br><small>'+r[2]+'</small></p>').join('')+'</div><p>표시 점수와 신호의 가중치는 자체 규칙이에요. 다섯 점술이 같은 결론을 내렸다는 수치는 별도로 만들지 않았어요.</p></section><p class="r-foot">다섯 점술의 규칙으로 계산한 재미용 해석이에요. 예측 정확성은 검증되지 않았어요. 중요한 결정은 실제 상황을 먼저 살펴 주세요.</p>';}
 function topicReportPage(ch,k){return approvedReportHTML(buildRichReport(ch,k),k,ch)}
-function openTopicReport(k,trigger){if(['match','reunion'].includes(k)){return openCompatReport(trigger,k)}if(!CH)return;if(!(FREE_LAUNCH&&accountUser)&&!accountUser?.isAdmin){requestReport(k,trigger);return}reportReturnFocus=trigger; $('reportBody').innerHTML=topicReportPage(CH,k);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true});}
+function openTopicReport(k,trigger){if(!requireSavedProfile())return;if(['match','reunion'].includes(k)){return openCompatReport(trigger,k)}if(!CH)return;if(!(FREE_LAUNCH&&accountUser)&&!accountUser?.isAdmin){requestReport(k,trigger);return}reportReturnFocus=trigger; $('reportBody').innerHTML=topicReportPage(CH,k);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true});}
 
 /* 리포트 이미지 자리: img/<key>.webp(없으면 .png)를 찾고, 없으면 빈 자리만 남긴다. ?slots=1이면 파일명을 보여준다. */
 const IMG_BASE="img/",DM_KEY=["gap","eul","byeong","jeong","mu","gi","gyeong","sin","im","gye"],EL_KEY=["wood","fire","earth","metal","water"],
@@ -3307,7 +3309,7 @@ function sajuCards(ch){try{const d=ch.stems.d,db=ch.brs.d,mb=ch.brs.m,tm=tenGod(
 const COMPASS='<div class="r-compass" aria-hidden="true"><span></span><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width=".7"/><path d="M24 4l3.2 16.8L44 24l-16.8 3.2L24 44l-3.2-16.8L4 24l16.8-3.2z" fill="currentColor" opacity=".9"/><path d="M24 11l1.8 11.2L37 24l-11.2 1.8L24 37l-1.8-11.2L11 24l11.2-1.8z" fill="#fbf6ec"/><circle cx="24" cy="24" r="2.2" fill="currentColor"/></svg><span></span></div>';
 function renderReport(){const ch=CH;$("reportBody").innerHTML=approvedReportHTML(buildRichReport(ch,"comprehensive"),"comprehensive",ch);
   $("reportBody").querySelectorAll(".rv3-toc a").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const t=document.getElementById(a.getAttribute("href").slice(1));if(t)t.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})}))}
-function openReport(){if(!CH)return;if(!(FREE_LAUNCH&&accountUser)&&!accountUser?.isAdmin){requestReport("comprehensive",$("reportOpen"));return}reportReturnFocus=null;renderReport();$("report").hidden=false;document.documentElement.classList.add("rep-lock");$("report").scrollTop=0;$("reportClose").focus({preventScroll:true})}
+function openReport(){if(!requireSavedProfile())return;if(!CH)return;if(!(FREE_LAUNCH&&accountUser)&&!accountUser?.isAdmin){requestReport("comprehensive",$("reportOpen"));return}reportReturnFocus=null;renderReport();$("report").hidden=false;document.documentElement.classList.add("rep-lock");$("report").scrollTop=0;$("reportClose").focus({preventScroll:true})}
 $('reportPurchaseClose').onclick=()=>$('reportPurchase').close();$('reportCheckout').onclick=()=>{$('purchaseStatus').textContent='온라인 결제 연결을 준비 중이에요. 지금은 관리자에게 결제 방법과 열람 승인을 문의해주세요. 결제나 청구는 발생하지 않아요.'};
 /* Local export of the currently opened, authorized report. Korean text is drawn
    with the loaded page fonts, so PDF viewers do not need external fonts. */
@@ -3398,7 +3400,7 @@ function renderHook(){const h=$("hook");if(h&&CH)h.innerHTML=reportHook(CH)}
 
 /* Share a fixed introduction and site URL only; never include birth input or personal results. */
 const SHARE_URL="https://stvzn123-ctrl.github.io/oracle-network/";
-const SHARE_TITLE="운명연구소 - 가장 정확한 운명 해설서";
+const SHARE_TITLE="운명탐정 - 가장 정확한 운명 해설서";
 function resultShareText(){return SHARE_TITLE+"\n"+SHARE_URL}
 
 /* 초대 링크 잠금: INVITE_API가 있으면 친구가 내 링크(?r=코드)로 들어와야 열린다. 비어 있으면 예전 방식(공유 완료·복사 후 열림). */
@@ -3407,9 +3409,9 @@ const INVITE_LOCK=""; /* 비우면 공유·복사만 해도 바로 열림. 초�
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
 function deviceId(){let d=lsGet("fate-dev");if(!d||!/^[a-z0-9-]{4,64}$/i.test(d)){d=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));lsSet("fate-dev",d)}return d}
 let invite=null;try{invite=JSON.parse(lsGet("fate-invite")||"null")}catch(_){}
-let graphUnlocked=false;
-try{graphUnlocked=lsGet("fate-unlocked")==="1"}catch(_){}
-function applyGraphLock(){
+let graphUnlocked=true;
+
+function applyGraphLock(){graphUnlocked=true;
   $("result-gate").classList.toggle("is-locked",!graphUnlocked);
   $("graph-content").inert=!graphUnlocked;
   $("graph-content").setAttribute("aria-hidden",String(!graphUnlocked));
@@ -3460,7 +3462,7 @@ async function systemShare(app){if(typeof navigator.share==="function"){try{awai
 let kakaoReady=null;
 function loadKakao(){if(kakaoReady)return kakaoReady;kakaoReady=new Promise((ok,no)=>{const sc=document.createElement("script");sc.src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.4/kakao.min.js";sc.crossOrigin="anonymous";sc.onload=()=>{try{if(!Kakao.isInitialized())Kakao.init(KAKAO_JS_KEY);ok()}catch(e){no(e)}};sc.onerror=no;document.head.appendChild(sc)}).catch(e=>{kakaoReady=null;throw e});return kakaoReady}
 async function shareTo(k){const url=shareLink(),text=SHARE_TITLE;
-  if(k==="kakao"){if(KAKAO_JS_KEY){try{await loadKakao();Kakao.Share.sendDefault({objectType:"feed",content:{title:"운명연구소",description:"가장 정확한 운명 해설서",imageUrl:SHARE_URL+"og.jpg",imageWidth:1200,imageHeight:630,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:"나의 운명 확인하기",link:{mobileWebUrl:url,webUrl:url}}]});afterShare();return}catch(_){}}return systemShare("카카오톡")}
+  if(k==="kakao"){if(KAKAO_JS_KEY){try{await loadKakao();Kakao.Share.sendDefault({objectType:"feed",content:{title:"운명탐정",description:"가장 정확한 운명 해설서",imageUrl:SHARE_URL+"og.jpg",imageWidth:1200,imageHeight:630,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:"나의 운명 확인하기",link:{mobileWebUrl:url,webUrl:url}}]});afterShare();return}catch(_){}}return systemShare("카카오톡")}
   if(k==="insta")return systemShare("인스타그램 DM이나 스토리");
   const href=k==="threads"?"https://www.threads.net/intent/post?text="+encodeURIComponent(text+"\n"+url):"https://x.com/intent/tweet?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(url);
   window.open(href,"_blank","noopener,noreferrer");afterShare()}
@@ -3595,7 +3597,7 @@ async function accountInit(){
     if(pending&&formVersion===startVersion&&runAfter){const ok=restoreSavedResult(pending);if(intent&&ok){try{await accountAPI('/profile',{profile:pending,consent:true});accountUser.profile=pending;$('profileConsent').checked=true;accountNotice('로그인했어요. 지금 본 출생 정보를 카카오 계정에 저장했어요.')}catch(e){accountNotice('로그인했어요. 출생 정보 저장은 실패했어요: '+(e.message||''))}}else accountNotice(ok?'로그인했어요. 보던 결과를 그대로 이어서 보여 드려요.':'로그인했어요.')}
     else if(pending&&formVersion===startVersion){profileFill(pending);accountStatus('로그인했어요. ‘나의 운명 확인하기’를 누르면 입력한 정보가 카카오 계정에 저장돼요.')}
     else if(user.profile&&formVersion===startVersion){const ready=restoreSavedResult(user.profile);accountStatus(ready?'저장한 정보로 운명 결과를 불러왔어요.':'저장된 정보를 확인해주세요.')}
-    else accountStatus(intent?'로그인했어요. 정보를 입력하고 ‘나의 운명 확인하기’를 누르면 저장돼요.':user.profile?'저장한 정보가 있어요. 오른쪽 위 내 정보에서 불러올 수 있어요.':'');
+    else accountStatus(intent?'로그인했어요. 정보를 입력하고 ‘나의 운명 확인하기’를 누르면 저장돼요.':user.profile?'저장한 정보가 있어요. 하단 내 정보에서 불러올 수 있어요.':'');
   }catch(e){const message=e instanceof TypeError?'로그인 서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.':(e.message||'내 정보를 불러오지 못했어요.');if(code||error)accountNotice(message);else accountStatus(message)}finally{accountPaint();document.documentElement.classList.remove('boot')}
 }
 $('loginSaveGo')?.addEventListener('click',()=>{try{const v=readForm();if(!v.err&&!checkForm()){sessionStorage.setItem('oracle-pending',JSON.stringify(v));sessionStorage.setItem('oracle-pending-run','1')}sessionStorage.setItem('oracle-save-intent',$('loginSaveAgree').checked?'1':'')}catch(_){}$('loginSaveDialog').close();window.__loginAsked=true;$('accountLogin').click()});

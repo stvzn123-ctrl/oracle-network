@@ -148,20 +148,20 @@ function rowEl(u){
   const b=document.createElement('div');b.className='u';b.dataset.id=u.id;
   const um=document.createElement('button');um.className='um';
   const n=document.createElement('span');n.className='n';
-  const nm=document.createElement('b');nm.textContent=u.nickname||'회원';
+  const nm=document.createElement('b');nm.textContent=u.name||u.profile?.name||u.nickname||'회원';
   const sm=document.createElement('small');sm.textContent=short(u.id)+(fmt(u.created)?' · '+fmt(u.created):'');
   n.append(nm,sm);um.append(n);
   if(u.profile_updated){const t=document.createElement('span');t.className='tag';t.textContent='정보';um.append(t)}
   const c=cache.get(u.id),gs=c?grantsOf(c.u):null;
   if(gs&&gs.size&&!gs.has('all')){const t=document.createElement('span');t.className='tag ok';t.textContent='승인 '+gs.size;um.append(t)}
-  const qa=document.createElement('button'),all=!!gs&&gs.has('all');qa.className='qa'+(all?' on':'');qa.dataset.qa='1';qa.setAttribute('role','checkbox');qa.setAttribute('aria-checked',all);qa.setAttribute('aria-label',(u.nickname||'회원')+' 전체 승인');
+  const qa=document.createElement('button'),all=!!gs&&gs.has('all');qa.className='qa'+(all?' on':'');qa.dataset.qa='1';qa.setAttribute('role','checkbox');qa.setAttribute('aria-checked',all);qa.setAttribute('aria-label',(u.name||u.profile?.name||u.nickname||'회원')+' 전체 승인');
   const bx=document.createElement('span');bx.className='box';bx.textContent='✓';const ql=document.createElement('span');ql.textContent='전체 승인';qa.append(bx,ql);b.append(um,qa);
   if(u.id===selected)b.classList.add('on');
   return b;
 }
 function renderList(){
   const q=$('q').value.trim().toLowerCase(),box=$('users');
-  const list=q?members.filter(u=>((u.nickname||'회원')+' '+u.id).toLowerCase().includes(q)):members;
+  const list=q?members.filter(u=>((u.name||u.profile?.name||u.nickname||'회원')+' '+u.id).toLowerCase().includes(q)):members;
   const frag=document.createDocumentFragment();
   for(const u of list.slice(0,300))frag.append(rowEl(u));
   box.replaceChildren(frag);
@@ -206,7 +206,7 @@ function paintGrants(u){
 }
 function paint(u,id){
   selected=id;$('none').hidden=true;$('detail').hidden=false;
-  $('name').textContent=u.nickname||'회원';$('sid').textContent=short(id);
+  $('name').textContent=u.name||u.profile?.name||u.nickname||'회원';$('sid').textContent=short(id);
   facts(u.profile);paintGrants(u);$('report').textContent='';
   document.body.classList.add('picked');
   $('users').querySelectorAll('.u').forEach(b=>b.classList.toggle('on',b.dataset.id===id));
