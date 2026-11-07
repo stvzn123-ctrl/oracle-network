@@ -11,8 +11,8 @@ const HOUSE=["","자신","재물","소통","가정","연애","일상·건강","�
 const NAK="아슈위니 바라니 크리티카 로히니 므리가시라 아르드라 푸나르바수 푸쉬야 아슐레샤 마가 푸르바팔구니 우타라팔구니 하스타 치트라 스와티 비샤카 아누라다 즈예슈타 물라 푸르바아샤다 우타라아샤다 슈라바나 다니슈타 샤타비샤 푸르바바드라 우타라바드라 레바티".split(" ");
 const DL=["Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury"],DY=[7,20,6,10,7,18,16,19,17];
 const PK={Sun:"태양",Moon:"달",Mars:"화성",Mercury:"수성",Jupiter:"목성",Venus:"금성",Saturn:"토성",Rahu:"라후",Ketu:"케투"};
-const M=[{k:"saju",n:"사주",c:"#e9c46a"},{k:"west",n:"서양 점성술",c:"#4fd1e8"},{k:"vedic",n:"인도 점성술",c:"#3dffb0"},{k:"num",n:"수비학",c:"#b49cff"},{k:"maya",n:"마야력",c:"#ff9a3c"}];
-const CATS=[{k:"money",n:"금전운",c:"#f2c45a"},{k:"love",n:"애정운",c:"#ff86b0"},{k:"work",n:"직업·학업운",c:"#52d6ff"},{k:"health",n:"건강운",c:"#48f0a6"}];
+const M=[{k:"saju",n:"사주",c:"#C08A2E"},{k:"west",n:"서양 점성술",c:"#2E8FAE"},{k:"vedic",n:"인도 점성술",c:"#1F7A95"},{k:"num",n:"수비학",c:"#7A64C8"},{k:"maya",n:"마야력",c:"#ff9a3c"}];
+const CATS=[{k:"money",n:"금전운",c:"#f2c45a"},{k:"love",n:"애정운",c:"#D2598A"},{k:"work",n:"직업·학업운",c:"#52d6ff"},{k:"health",n:"건강운",c:"#48f0a6"}];
 const HZ=[1,2,3,4,5,6,7,8,9,10].map(o=>({n:`${o}년 뒤`,off:o}));
 
 const LUNAR=[["1920-02-20",0,1179],["1921-02-08",0,2635],["1922-01-28",5,5707],["1923-02-16",0,1705],["1924-02-05",0,2772],["1925-01-24",4,5813],["1926-02-13",0,694],["1927-02-02",0,2395],["1928-01-23",2,2359],["1929-02-10",0,1175],["1930-01-30",6,3222],["1931-02-17",0,3658],["1932-02-06",0,3749],["1933-01-26",5,3497],["1934-02-14",0,1461],["1935-02-04",0,694],["1936-01-24",3,4782],["1937-02-11",0,2350],["1938-01-31",7,6445],["1939-02-19",0,3221],["1940-02-08",0,3402],["1941-01-27",6,6986],["1942-02-15",0,2921],["1943-02-05",0,1389],["1944-01-26",4,1371],["1945-02-13",0,605],["1946-02-02",0,2349],["1947-01-22",2,6443],["1948-02-10",0,2709],["1949-01-29",7,6805],["1950-02-17",0,2890],["1951-02-06",0,2901],["1952-01-27",5,2773],["1953-02-14",0,1243],["1954-02-04",0,603],["1955-01-24",3,4695],["1956-02-12",0,1323],["1957-01-31",8,5419],["1958-02-19",0,1685],["1959-02-08",0,1706],["1960-01-28",6,5546],["1961-02-15",0,2741],["1962-02-05",0,1206],["1963-01-25",4,5294],["1964-02-13",0,2647],["1965-02-02",0,1319],["1966-01-22",3,3366],["1967-02-09",0,3477],["1968-01-30",7,3413],["1969-02-17",0,1386],["1970-02-06",0,2477],["1971-01-27",5,2397],["1972-02-15",0,1198],["1973-02-03",0,2638],["1974-01-23",4,6733],["1975-02-11",0,3365],["1976-01-31",8,6825],["1977-02-18",0,2900],["1978-02-07",0,3434],["1979-01-28",6,4826],["1980-02-16",0,2395],["1981-02-05",0,1179],["1982-01-25",4,5275],["1983-02-13",0,2635],["1984-02-02",10,5707],["1985-02-20",0,1701],["1986-02-09",0,1748],["1987-01-29",6,5813],["1988-02-18",0,694],["1989-02-06",0,2395],["1990-01-27",5,2359],["1991-02-15",0,1175],["1992-02-04",0,1611],["1993-01-23",3,3402],["1994-02-10",0,3749],["1995-01-31",8,3497],["1996-02-19",0,1453],["1997-02-08",0,694],["1998-01-28",5,4718],["1999-02-16",0,2350],["2000-02-05",0,3222],["2001-01-24",4,7317],["2002-02-12",0,3402],["2003-02-01",0,3493],["2004-01-22",2,2901],["2005-02-09",0,1388],["2006-01-29",7,5467],["2007-02-18",0,605],["2008-02-07",0,2349],["2009-01-26",5,6443],["2010-02-14",0,2709],["2011-02-03",0,2890],["2012-01-23",3,5962],["2013-02-10",0,2901],["2014-01-31",9,2741],["2015-02-19",0,1210],["2016-02-08",0,2651],["2017-01-28",5,2647],["2018-02-16",0,1323],["2019-02-05",0,2709],["2020-01-25",4,5781],["2021-02-12",0,1706],["2022-02-01",0,2773],["2023-01-22",2,2741],["2024-02-10",0,1206],["2025-01-29",6,5294],["2026-02-17",0,2647]];
@@ -305,18 +305,18 @@ const reduceM=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const NS="http://www.w3.org/2000/svg";
 const E=(t,a,txt)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e};
 function poly(cx,cy,r,n,rot,step){let p=[];for(let i=0;i<n;i++){const a=(rot+i*360*(step||1)/n-90)*rad;p.push((cx+r*Math.cos(a)).toFixed(1)+","+(cy+r*Math.sin(a)).toFixed(1))}return p.join(" ")}
-function renderSigil(){const s=document.getElementById("sigil");s.innerHTML="";const cx=250,cy=250,P=(r,d)=>{const a=(d-90)*rad;return[cx+r*Math.cos(a),cy+r*Math.sin(a)]};const G="#3dffb0",Au="#e9c46a";
-  s.innerHTML=`<defs><radialGradient id="hg"><stop offset="0" stop-color="#3dffb0" stop-opacity=".35"/><stop offset=".5" stop-color="#3dffb0" stop-opacity=".06"/><stop offset="1" stop-color="#3dffb0" stop-opacity="0"/></radialGradient><filter id="gl"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="250" cy="250" r="240" fill="url(#hg)"/>`;
+function renderSigil(){const s=document.getElementById("sigil");s.innerHTML="";const cx=250,cy=250,P=(r,d)=>{const a=(d-90)*rad;return[cx+r*Math.cos(a),cy+r*Math.sin(a)]};const G="#1F7A95",Au="#C08A2E";
+  s.innerHTML=`<defs><radialGradient id="hg"><stop offset="0" stop-color="#1F7A95" stop-opacity=".35"/><stop offset=".5" stop-color="#1F7A95" stop-opacity=".06"/><stop offset="1" stop-color="#1F7A95" stop-opacity="0"/></radialGradient><filter id="gl"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="250" cy="250" r="240" fill="url(#hg)"/>`;
   const r1=E("g",{class:"r1",filter:"url(#gl)",stroke:G,fill:"none"});r1.append(E("circle",{cx,cy,r:236,"stroke-opacity":.7}),E("circle",{cx,cy,r:206,"stroke-opacity":.5}));
   for(let d=0;d<360;d+=3){const[x1,y1]=P(236,d),[x2,y2]=P(d%15?231:224,d);r1.append(E("line",{x1,y1,x2,y2,"stroke-opacity":.5}))}
   ZOD.forEach((z,i)=>{const[x,y]=P(220,i*30+15);r1.append(E("text",{x,y,fill:G,"fill-opacity":.55,stroke:"none","font-size":10,"font-family":"IBM Plex Sans KR,sans-serif","text-anchor":"middle","dominant-baseline":"middle",transform:`rotate(${i*30+15} ${x} ${y})`},z))});
-  const np=E("g",{class:"natalpts",stroke:"none"});[[CH.sun,Au],[CH.moon,"#cfeee6"],[CH.asc,"#4fd1e8"]].forEach(([d,c])=>{if(d==null)return;const[x,y]=P(206,d);np.append(E("circle",{cx:x,cy:y,r:3.2,fill:c}))});r1.append(np);s.append(r1);
+  const np=E("g",{class:"natalpts",stroke:"none"});[[CH.sun,Au],[CH.moon,"#cfeee6"],[CH.asc,"#2E8FAE"]].forEach(([d,c])=>{if(d==null)return;const[x,y]=P(206,d);np.append(E("circle",{cx:x,cy:y,r:3.2,fill:c}))});r1.append(np);s.append(r1);
   const mine=[CH.brs.y,CH.brs.m,CH.brs.d,CH.brs.h].filter(v=>v!=null);
   const r2=E("g",{class:"r2",filter:"url(#gl)",fill:"none",stroke:G});r2.append(E("polygon",{points:poly(cx,cy,190,12,0,5),"stroke-opacity":.35}),E("circle",{cx,cy,r:168,"stroke-opacity":.45,"stroke-dasharray":"1 5"}));
-  BR.split("").forEach((b,i)=>{const[x,y]=P(178,i*30);const on=mine.includes(i);r2.append(E("text",{x,y,fill:on?Au:G,"fill-opacity":on?.85:.45,stroke:"none","font-size":14,"font-family":"Nanum Myeongjo,serif","text-anchor":"middle","dominant-baseline":"middle"},b))});s.append(r2);
+  BR.split("").forEach((b,i)=>{const[x,y]=P(178,i*30);const on=mine.includes(i);r2.append(E("text",{x,y,fill:on?Au:G,"fill-opacity":on?.85:.45,stroke:"none","font-size":14,"font-family":"Jua,sans-serif","text-anchor":"middle","dominant-baseline":"middle"},b))});s.append(r2);
   const r3=E("g",{class:"r3",filter:"url(#gl)",fill:"none",stroke:G});r3.append(E("polygon",{points:poly(cx,cy,150,4,0),"stroke-opacity":.5}),E("polygon",{points:poly(cx,cy,150,4,45),"stroke-opacity":.5}),E("circle",{cx,cy,r:150,"stroke-opacity":.6}),E("circle",{cx,cy,r:106,"stroke-opacity":.5}));
   "☰☱☲☳☴☵☶☷".split("").forEach((g,i)=>{const[x,y]=P(128,i*45);r3.append(E("text",{x,y,fill:Au,"fill-opacity":.6,stroke:"none","font-size":13,"text-anchor":"middle","dominant-baseline":"middle"},g))});s.append(r3);
-  const c=E("g",{filter:"url(#gl)"});c.append(E("polygon",{points:poly(cx,cy,92,6,0,2),fill:"none",stroke:Au,"stroke-opacity":.5}),E("circle",{cx,cy,r:58,fill:"none",stroke:G,"stroke-opacity":.6}),E("text",{x:cx,y:cy+2,fill:G,"fill-opacity":.75,"font-size":34,"font-family":"Nanum Myeongjo,serif","text-anchor":"middle","dominant-baseline":"middle"},ST[CH.stems.d]));s.append(c)}
+  const c=E("g",{filter:"url(#gl)"});c.append(E("polygon",{points:poly(cx,cy,92,6,0,2),fill:"none",stroke:Au,"stroke-opacity":.5}),E("circle",{cx,cy,r:58,fill:"none",stroke:G,"stroke-opacity":.6}),E("text",{x:cx,y:cy+2,fill:G,"fill-opacity":.75,"font-size":34,"font-family":"Jua,sans-serif","text-anchor":"middle","dominant-baseline":"middle"},ST[CH.stems.d]));s.append(c)}
 
 
 const SHORT=["금전","애정","직업·학업","건강"];
@@ -353,7 +353,7 @@ function renderForecast(){const v=document.getElementById("viz"),y0=new Date().g
   v.querySelectorAll('.flow-point').forEach(b=>b.addEventListener('click',()=>{const ci=+b.dataset.c;sel[CATS[ci].k]=+b.dataset.h;renderTrend();renderCat(ci,true);focusCard(ci)}))}
 function focusCard(ci){const el=document.getElementById("card-"+CATS[ci].k);if(!el)return;el.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"center"});el.animate?.([{boxShadow:`0 0 0 transparent`},{boxShadow:`0 0 40px ${CATS[ci].c}66`},{boxShadow:`0 0 0 transparent`}],{duration:1100})}
 function legend(){}
-function ringSvg(v,c){const r=28,L=2*Math.PI*r;return `<svg class="ring" viewBox="0 0 68 68"><circle cx="34" cy="34" r="32" fill="none" stroke="${c}" stroke-opacity=".25" stroke-dasharray="1 3"/><circle cx="34" cy="34" r="${r}" fill="none" stroke="rgba(80,200,170,.15)" stroke-width="4"/><circle class="arc" cx="34" cy="34" r="${r}" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${(L*v/100).toFixed(1)} ${L.toFixed(1)}" transform="rotate(-90 34 34)" style="filter:drop-shadow(0 0 5px ${c})"/><text x="34" y="35" text-anchor="middle" dominant-baseline="middle" fill="#efe9df" font-family="Cinzel,serif" font-size="19" font-weight="700">${v}</text></svg>`}
+function ringSvg(v,c){const r=28,L=2*Math.PI*r;return `<svg class="ring" viewBox="0 0 68 68"><circle cx="34" cy="34" r="32" fill="none" stroke="${c}" stroke-opacity=".25" stroke-dasharray="1 3"/><circle cx="34" cy="34" r="${r}" fill="none" stroke="rgba(80,200,170,.15)" stroke-width="4"/><circle class="arc" cx="34" cy="34" r="${r}" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${(L*v/100).toFixed(1)} ${L.toFixed(1)}" transform="rotate(-90 34 34)" style="filter:drop-shadow(0 0 5px ${c})"/><text x="34" y="35" text-anchor="middle" dominant-baseline="middle" fill="#4A352B" font-family="Cinzel,serif" font-size="19" font-weight="700">${v}</text></svg>`}
 const openState={};
 function tier(v){return v>=80?0:v>=65?1:v>=50?2:v>=35?3:4}
 function decRange(d){const a=Math.floor(CH.birthYear+d*10+.5);return `${a}~${a+9}`}
@@ -752,7 +752,7 @@ function renderNet(){renderNetCtl();const r=R[netP][netC],cat=CATS[netC],hz=HZ[n
   let h=`<div class="why-head" style="--c:${cat.c}"><div><p class="wq">${hz.n}(${y}) ${cat.n}</p><p class="wa"><b>${D(r.mean)}점</b> · ${HEAD[cat.k][tier(r.mean)]}</p></div></div>
    <div class="why-top"><span class="lb">이 점수를 만든 가장 큰 이유</span>${top.map(f=>`<span class="reason ${f[1]>=0?"up":"down"}"><i style="background:${M[f[2]].c}"></i>${M[f[2]].n} · ${f[0]} <b>${f[1]>0?"+":""}${f[1]}</b></span>`).join("")}</div>
    <div class="wr axis"><span></span><span class="ax"><em>← 깎은 근거</em><em>올린 근거 →</em></span><span></span></div><div class="why">`;
-  r.v.forEach((x,i)=>{const m=M[i];h+=`<div class="wg"><div class="wo"><i style="background:${m.c}"></i><b>${m.n}</b><span class="ws" style="color:${x[0]>=50?"#3dffb0":"#ff5d73"}">${D(x[0])}점</span><span class="wc">${x[2]}</span></div>`;
+  r.v.forEach((x,i)=>{const m=M[i];h+=`<div class="wg"><div class="wo"><i style="background:${m.c}"></i><b>${m.n}</b><span class="ws" style="color:${x[0]>=50?"#1F7A95":"#ff5d73"}">${D(x[0])}점</span><span class="wc">${x[2]}</span></div>`;
     (x[3]||[]).forEach(f=>{const pct=Math.abs(f[1])/mx*50;h+=`<div class="wr"><span class="wl">${f[0]}</span><span class="wb"><i class="${f[1]>=0?"up":"down"}" style="width:${pct.toFixed(1)}%"></i></span><span class="wv ${f[1]>=0?"up":"down"}">${f[1]>0?"+":""}${f[1]}</span></div>`});
     h+=`</div>`});
   h+=`</div><p class="why-foot">다섯 점술의 점수를 종합해 <b>${D(r.mean)}</b>점이 됐어요. 막대 옆 숫자는 각 근거가 점수를 얼마나 밀고 당겼는지 나타내는 세기예요. 점술끼리 일치도는 ${r.agree}%입니다.</p>`;
@@ -929,6 +929,7 @@ function checkForm(){const y=+$("in-y").value,m=+$("in-m").value,d=+$("in-d").va
   if(!$("in-name").value.trim())return "이름을 입력해 주세요. 수비학 계산에 쓰여요.";
   if(!$("in-roman").value.trim()&&!romanize($("in-name").value))return "영문 이름을 입력해 주세요.";
   if(!y||!m||!d)return "생년월일을 모두 입력해 주세요.";
+  if(y<1920||y>new Date().getFullYear())return "태어난 해를 1920년부터 올해 사이로 입력해 주세요.";
   if(m<1||m>12)return "월은 1~12 사이로 입력해 주세요.";
   if(!$("cal-l").checked){const n=new Date(y,m,0).getDate();if(d<1||d>n)return `${m}월은 ${n}일까지 있어요.`}else if(d<1||d>30)return "음력 날짜는 1~30일 사이로 입력해 주세요.";
   if(!$("sx-m").checked&&!$("sx-f").checked)return "성별을 골라 주세요.";
@@ -1593,7 +1594,7 @@ const PYW={1:'새로운 시작을 꿈꾸는',2:'함께하는 시간을 원하는
 function compatScore(a,b){
  const me=a.inp.name||'나',you=b.inp.name||'상대';
  const SAN=x=>x%4,LIU=x=>(13-x)%12,el=s=>SE[s],gen=(x,y)=>(x+1)%5===y,ctl=(x,y)=>(x+2)%5===y,EN=['목','화','토','금','수'],SEL=['불','흙','공기','물'],COMP=[2,3,0,1];
- const sys=[];const S=(n,w)=>{const o={n,w,base:60,items:[]};sys.push(o);return (label,v,t)=>o.items.push([label,v,t])};
+ const sys=[];const S=(n,w)=>{const o={n,w,base:70,items:[]};sys.push(o);return (label,v,t)=>o.items.push([label,v,t])};
  // 사주
  let add=S('사주',.3);const ad=a.stems.d,bd=b.stems.d,ae=el(ad),be=el(bd);
  if((ad+5)%10===bd)add('일간 천간합',15,`이유를 설명하기 어려운 끌림이 있는 조합입니다. 말이 특별히 잘 통해서가 아니라, 같이 있으면 그냥 편하고 헤어진 뒤에 자꾸 생각나는 쪽이에요.`);
@@ -1643,8 +1644,8 @@ function compatScore(a,b){
  else if(a.msign%4===b.msign%4)add('같은 색 무리',8,`일을 처리하는 리듬이 같습니다. 같이 여행 계획을 세워도 스트레스가 적은 조합이에요.`);
  if(a.tone+b.tone===14)add('숫자 보완',6,`한 사람이 비어 있는 자리를 다른 사람이 정확히 채웁니다. 역할 분담이 의논 없이도 자연스럽게 됩니다.`);
  else if(a.tone===b.tone)add('같은 숫자',4,`일의 박자가 같습니다. 같이 바쁘고 같이 쉬어서 서로를 기다리는 시간이 적습니다.`);
- sys.forEach(o=>{o.score=Math.round(clamp(o.base+o.items.reduce((s,x)=>s+x[1],0),40,98))});
- const total=Math.round(clamp(sys.reduce((s,o)=>s+o.score*o.w,0),45,98));
+ sys.forEach(o=>{o.score=Math.round(clamp(o.base+o.items.reduce((s,x)=>s+(x[1]<0?x[1]*.4:x[1]*1.2),0),64,99))});
+ const total=Math.round(clamp(sys.reduce((s,o)=>s+o.score*o.w,0),72,99));
  return {total,sys}}
 const PKEY='oracle-partners';let PSRV=null;
 function partnerLocal(){try{const v=JSON.parse(localStorage.getItem(PKEY)||'[]');return Array.isArray(v)?v:[]}catch(_){return []}}
@@ -1689,12 +1690,12 @@ function compatSubmit(f,form){const mode=form.dataset.mode,RU=mode==='reunion',o
  const res=compatScore(CH,other);COMPAT={b:other,res,mode};const ru=RU?reunionCalc(CH,other,res):null;if(ru)COMPAT.ru=ru;
  if(f.partnerSave&&f.partnerSave.checked){partnerSave({name:name||('이름 없음 '+date.slice(2).replace(/-/g,'.')),roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,date,time:noT?'':f.partnerTime.value,notime:noT,pi:noP?null:+f.partnerPlace.value,score:RU?ru.score:res.total}).then(m=>{const n=form.querySelector('.cmp-save-msg');if(n)n.textContent=m})}
  if(RU){out.innerHTML=`<div class="cmp-score"><span>${topicEsc(J(label+(name?'님':''),'과','와'))}의 재회 흐름</span><b>${ru.score}<small>점</small></b><em>${ru.level}</em></div><p class="cmp-note">다시 연락하기 좋은 시기, 헤어짐에 영향을 준 차이, 다시 만나면 달라져야 할 점은 <b>재회 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" data-cmp-open>재회 리포트 보기 →</button><p class="cmp-priv cmp-save-msg" aria-live="polite"></p>`;return}
- const lv=res.total>=85?'아주 잘 맞는 편':res.total>=75?'잘 맞는 편':res.total>=65?'맞춰 가는 궁합':'서로 노력이 필요한 궁합';
+ const lv=res.total>=88?'아주 잘 맞는 편':res.total>=80?'잘 맞는 편':res.total>=74?'서로 편안한 궁합':'맞춰 갈수록 좋아지는 궁합';
  out.innerHTML=`<div class="cmp-score"><span>${topicEsc(J(label+(name?"님":""),"과","와"))} 나의 궁합</span><b>${res.total}<small>점</small></b><em>${lv}</em></div><p class="cmp-note">점수가 어떻게 나왔는지, 다섯 점술별 근거와 관계에서 맞춰 갈 점은 <b>궁합 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" data-cmp-open>궁합 리포트 보기 →</button><p class="cmp-priv cmp-save-msg" aria-live="polite"></p>`}
 function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'상대',tot=res.total,EN=['목','화','토','금','수'];
  const all=res.sys.flatMap(o=>o.items.map(x=>[o.n,...x])),pos=all.filter(x=>x[2]>0).sort((x,y)=>y[2]-x[2]),neg=all.filter(x=>x[2]<0).sort((x,y)=>x[2]-y[2]);
  const miss=[b.inp.notime&&'상대 출생 시각',b.inp.place&&b.inp.place.none&&'상대 출생지'].filter(Boolean);
- const lv=tot>=85?'서로를 자연스럽게 끌어당기는 궁합':tot>=75?'편안하게 잘 맞는 궁합':tot>=65?'맞춰 갈수록 단단해지는 궁합':'서로의 차이를 배우며 가까워지는 궁합';
+ const lv=tot>=88?'서로를 자연스럽게 끌어당기는 궁합':tot>=80?'편안하게 잘 맞는 궁합':tot>=74?'맞춰 갈수록 단단해지는 궁합':'서로의 차이가 서로를 키워 주는 궁합';
  /* 해마다의 관계 흐름: 두 사람의 애정 점수 + 두 사람 사이의 해마다 신호 */
  const y0=new Date().getFullYear(),love=(c,y)=>D(ORC.reduce((s,fn)=>s+fn(c,{y,frac:y+.5},1)[0],0)/ORC.length),LIU=x=>(13-x)%12;
  const yrs=[...Array(3)].map((_,i)=>{const y=y0+i,yb=mod(y-4,12),pa=pyOf(a,y),pb=pyOf(b,y),why=[],warn=[];let s=(love(a,y)+love(b,y))/2;
@@ -1741,7 +1742,7 @@ function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'�
    [1,5,7].includes(reduceNum(a.lp,false))===[1,5,7].includes(reduceNum(b.lp,false))?'삶에서 중요하게 여기는 것이 비슷해서, 장기 계획을 같이 세워도 중간에 어긋나지 않습니다.':'중요하게 여기는 것이 서로 다릅니다. 5년 뒤 어떻게 살고 싶은지를 한 번씩 말해 두지 않으면, 어느 순간 다른 방향을 보고 있게 됩니다.',
    up.length?`관계를 한 단계 진전시키기 좋은 때는 ${up.filter(x=>x.why.length).map(x=>x.y+'년').join(', ')||up[0].y+'년'}입니다.`:''],
   '1년에 한 번, 둘만의 관계 점검 날을 정해 고마운 점과 바라는 점을 나눠 보세요.');
- add('table','점술별 궁합 한눈에 보기','다섯 점술의 궁합 점수를 정리했습니다.',[],'',{table:{cap:'점술별 궁합(기본 60점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
+ add('table','점술별 궁합 한눈에 보기','다섯 점술의 궁합 점수를 정리했습니다.',[],'',{table:{cap:'점술별 궁합(기본 70점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
  add('limit','해석의 범위','궁합 점수와 시기는 전통 규칙을 수치로 옮긴 참고 지표입니다.',[miss.length?J(miss.join('·'),'이','가')+' 없어 해당 정보는 정오·대한민국 기준 참고값으로 계산했습니다.':'','관계의 실제 결과는 두 사람의 대화와 선택이 만듭니다. 이 리포트는 서로를 이해하는 질문으로 활용해 주세요.']);
  return {title:`${me}님과 ${you}님의 궁합 리포트`,summary:[S[0].lead,`가까워지는 해: ${up.map(x=>x.y+'년').join(', ')} · 느슨해지기 쉬운 해: ${dn.map(x=>x.y+'년').join(', ')}`,S[3].lead,neg.length?'맞춰 갈 점: '+neg[0][3]:S[1].lead],
   sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'다섯 점술의 전통 궁합 규칙을 자체 점수로 옮긴 재미용 리포트입니다. 관계의 실제 결과를 예측하지 않습니다.',birthCharts:[a,b],version:'match-2026-11-07',body:''}}
@@ -1796,7 +1797,7 @@ function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name
   ['상대가 연락을 원하지 않는다고 분명히 말했거나 답이 없다면, 그 뜻을 존중하는 것이 가장 우선입니다.',
    dn.length?`${dn.map(x=>x.y+'년').join('·')}처럼 정리와 새 출발의 기운이 강한 해에는 관계를 붙잡기보다 나를 돌보는 데 힘을 쓰는 편이 좋습니다.`:'',
    ru.score<70?`재회 흐름 점수가 ${ru.score}점으로 높지 않아, 이번 인연에서 배운 점을 다음 관계에 가져가는 것도 좋은 선택입니다.`:'']);
- add('table','점술별 궁합 한눈에 보기','다섯 점술의 기본 궁합 점수입니다.',[],'',{table:{cap:'점술별 궁합(기본 60점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
+ add('table','점술별 궁합 한눈에 보기','다섯 점술의 기본 궁합 점수입니다.',[],'',{table:{cap:'점술별 궁합(기본 70점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
  add('limit','해석의 범위','재회 리포트는 두 사람의 출생 차트만 읽습니다.',['이 리포트는 상대방의 현재 마음이나 의사를 알 수 없습니다. 관계를 다시 시작할지는 두 사람의 실제 대화와 선택으로 정해집니다.',b.inp.notime||b.inp.place?.none?'상대의 출생 시각·출생지가 없는 항목은 참고값으로 계산했습니다.':'','점수와 시기는 전통 규칙을 수치로 옮긴 참고 지표입니다.']);
  return {title:`${me}님과 ${you}님의 재회 리포트`,summary:[S[0].lead,S[1].lead,S[3].lead,S[4].lead],sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'두 사람의 출생 차트로 재회 흐름을 읽은 재미용 리포트입니다. 상대의 마음을 예측하지 않습니다.',birthCharts:[a,b],version:'match-reunion-2026-11-07',body:''}}
 async function openCompatReport(btn,requestedKey=null){if(!COMPAT||!CH||(requestedKey&&requestedKey!==(COMPAT.mode==='reunion'?'reunion':'match'))){alert('상대방 정보를 입력하고 먼저 결과를 확인해 주세요.');return}const key=COMPAT.mode==='reunion'?'reunion':'match';const show=()=>{reportReturnFocus=btn;$('reportBody').innerHTML=approvedReportHTML(key==='reunion'?reunionReportData(CH,COMPAT.b,COMPAT.res,COMPAT.ru):compatReportData(CH,COMPAT.b,COMPAT.res),key,CH);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true})};
@@ -2184,7 +2185,7 @@ function readingParts(value){
 }
 function readingInline(value){const p=readingParts(value),E=topicEsc;let basis=p.basis;
  if(p.main&&basis){for(const sentence of p.main.split(/(?<=[.!?。])\s+/).filter(Boolean)){basis=basis.replace(sentence,'')}basis=basis.replace(/(태양|달|금성|수성|화성)이\s+/g,'$1 ').replace(/에 있어(?=\s|$)/g,'').replace(/\s+/g,' ').trim()}
- return (p.main?'<span class="reading-meaning">'+destinyMeaningHTML(p.main)+'</span>':'')+(basis?'<span class="reading-evidence"> ('+E(basis)+')</span>':'')}
+ return (p.main?'<span class="reading-meaning">'+destinyMeaningHTML(p.main)+'</span>':'')+(basis?'<span class="reading-evidence"> — '+E(basis.replace(/[.。]\s*$/,''))+'</span>':'')}
 
 function readingParagraph(value,cls=''){return '<p'+(cls?' class="'+cls+'"':'')+'>'+readingInline(value)+'</p>'}
 function clarifyReading(root){if(!root)return;root.querySelectorAll('.r-prose p').forEach(p=>{p.innerHTML=readingInline(p.textContent)})}
@@ -2209,7 +2210,7 @@ function encounterData(ch){
  const months=best?(best.months||[]).slice(0,2).map(m=>m[0]+'월').join('·'):'';
  return {when:best?top.map(t=>t.y+'년').join('·')+(months?' 중 '+best.y+'년 '+months+' 전후':''):'현재 계산 범위에서는 두드러지는 만남 시기를 좁히기 어려워요.',where:MEET[element],how:['운동 수업이나 여행·행사에서 함께 참여하는 활동을 골라보세요. 활동이 끝난 뒤 다음 모임을 제안하며 대화를 이어가세요.','협업 프로젝트나 업무 관련 모임에서 반복해서 만날 기회를 만들어보세요. 함께 맡은 일을 계기로 자연스럽게 대화를 늘려보세요.','관심사가 같은 모임이나 지인의 소개를 활용해보세요. 온라인에서 대화가 잘 통한다면 공개된 장소에서 짧게 만나는 약속부터 잡아보세요.','전시·공연 모임에 참여하거나 지인에게 소규모 만남을 부탁해보세요. 함께 본 작품이나 좋아하는 취향을 주제로 대화를 시작해보세요.'][element],basis:best?best.sys.join('·')+'의 관계 시기 신호 · '+best.y+'년':'관계 시기 신호가 부족한 경우 특정 날짜를 정하지 않음'};
 }
-function encounterHTML(ch){const d=encounterData(ch),E=topicEsc,p=partnerProfile(ch),when=d.when.match(/(\d{4})년\s+(\d+)월/),timing=when?when[1]+'년 '+when[2]+'월':d.when;return '<section class="encounter-story"><h3>어디서 만나게 될까?</h3><p>'+E(p.meet)+'에서 인연을 만나기 좋은 흐름으로 읽혀요. '+(when?'특히 '+E(timing)+' 무렵에는 모임이나 소개 자리를 눈여겨보세요.':'')+'</p></section><dl class="encounter-guide"><div><dt>언제</dt><dd>'+E(d.when)+' <span class="reading-evidence">('+E(d.basis)+')</span></dd></div><div><dt>어디서</dt><dd>'+E(p.meet)+'</dd></div><div><dt>어떻게</dt><dd>'+E(d.how)+'</dd></div></dl>'}
+function encounterHTML(ch){const d=encounterData(ch),E=topicEsc,p=partnerProfile(ch),when=d.when.match(/(\d{4})년\s+(\d+)월/),timing=when?when[1]+'년 '+when[2]+'월':d.when;return '<section class="encounter-story"><h3>어디서 만나게 될까?</h3><p>'+E(p.meet)+'에서 인연을 만나기 좋은 흐름으로 읽혀요. '+(when?'특히 '+E(timing)+' 무렵에는 모임이나 소개 자리를 눈여겨보세요.':'')+'</p></section><dl class="encounter-guide"><div><dt>언제</dt><dd>'+E(d.when)+' <span class="reading-evidence">— '+E(d.basis)+'</span></dd></div><div><dt>어디서</dt><dd>'+E(p.meet)+'</dd></div><div><dt>어떻게</dt><dd>'+E(d.how)+'</dd></div></dl>'}
 
 
 function reportEditorialCopy(value){return String(value||'').replace("건강·법률·재정과 관련된 중요한 결정은 전문가의 조언과 실제 정보를 우선해야 합니다.",'')
@@ -2224,7 +2225,7 @@ function reportEditorialCopy(value){return String(value||'').replace("건강·�
 /* 2026-11-05 인연 프로필·재미 요소: 기존 차트 값만 읽는 재미용 분류(계산식 불변) */
 function partnerProfile(ch){const mE=SE[BMAIN[ch.brs.d]],tg=tenGod(ch.stems.d,BMAIN[ch.brs.d]),g=Math.floor(TG.indexOf(tg)/2),base=ch.asc!=null?sign(ch.asc):sign(ch.sun),h7=(base+6)%12,ven=sign(birthExtraLon('Venus',ch.jd)),vE=ven%4;
  const mbti=([1,3].includes(h7%4)?'I':'E')+([2,3].includes(mE)?'S':'N')+([1,2].includes(vE)?'T':'F')+(h7%3===2?'P':'J');
- const age='나보다 '+fitAgeGap(AGEGAP[tg]||'1~3살 차이',marryAge(ch));
+ const age='나보다 '+capGap(fitAgeGap(AGEGAP[tg]||'1~3살 차이',marryAge(ch)),ch.male);
  const job=[['교육·기획·디자인','성장하는 일을 하는'],['마케팅·방송·서비스','사람 앞에 서는 일을 하는'],['공공기관·부동산·운영','안정된 조직에서 일하는'],['금융·법률·IT','전문 기준이 분명한 일을 하는'],['연구·의료·해외 업무','깊이 파고드는 일을 하는']][mE];
  const vibe=['다정하고 성장 욕구가 큰','밝고 표현이 풍부한','듬직하고 현실적인','원칙이 분명하고 깔끔한','차분하고 생각이 깊은'][mE];
  const hobby=['산책·식물 가꾸기·독서','공연·여행·사진','맛집 탐방·요리·캠핑','운동·정리·전시 관람','음악·영화·물가 산책'][mE];
@@ -2232,6 +2233,10 @@ function partnerProfile(ch){const mE=SE[BMAIN[ch.brs.d]],tg=tenGod(ch.stems.d,BM
 function partnerFirstMeeting(ch){const p=partnerProfile(ch),d=encounterData(ch),m=d.when.match(/(\d{4})년\s+(\d+)월/);return p.meet+'에서 만날 가능성이 가장 커요.'+(m?' 특히 '+m[1]+'년 '+m[2]+'월 무렵의 모임·소개 자리를 눈여겨보세요.':' 시기는 '+d.when)}
 /* 결혼할 나이(한국 나이)에서 상대가 너무 어려지지 않게(만 22세 이상) 연하 폭을 줄이고, 연상 폭도 현실적으로 맞춘다. */
 function marryAge(ch){try{const r=sysScan(ch,'mate').filter(x=>x.S.length&&x.age>=20).sort((a,b)=>a.y-b.y)[0];if(r)return r.age}catch(_){}const now=new Date().getFullYear()-ch.Y+1;return Math.max(now,30)}
+/* 남성에게 연상, 여성에게 연하는 최대 3살로 제한 */
+function capGap(t,male){if(!(male?/연상/:/연하/).test(t))return t;const r=t.match(/(\d+)~(\d+)살/);
+ if(r){const b=Math.min(+r[2],3),a=Math.min(+r[1],b);return t.replace(r[0],(a===b?a:a+'~'+b)+'살')}
+ const o=t.match(/(\d+)살/);return o&&+o[1]>3?t.replace(o[0],'3살'):t}
 function fitAgeGap(t,ma){const m=t.match(/(\d+)~(\d+)살/),young=/연하/.test(t);if(!m)return t;let a=+m[1],b=+m[2];
  if(young){const cap=Math.max(0,ma-24);if(cap<1)return '동갑이거나 1~2살 연상';if(b>cap){b=cap;a=Math.max(1,Math.min(a,b-2))}if(a>=b)return '동갑이거나 1~'+b+'살 연하'}
  else if(/연상/.test(t)&&ma<=24&&b>5){b=5;a=Math.min(a,3)}
@@ -3312,7 +3317,7 @@ async function downloadReportPDF(){
  try{
   await Promise.race([document.fonts.ready,new Promise(resolve=>setTimeout(resolve,5000))]);
   const W=1240,H=1754,pad=92,bottom=H-95,width=W-pad*2,pages=[];let canvas,ctx,y;
-  const newPage=()=>{canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;ctx=canvas.getContext('2d');ctx.fillStyle='#fffdf8';ctx.fillRect(0,0,W,H);ctx.fillStyle='#6b6b65';ctx.font='18px sans-serif';ctx.fillText('운명 네트워크 · 나의 리포트',pad,45);y=100;pages.push(canvas)};
+  const newPage=()=>{canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;ctx=canvas.getContext('2d');ctx.fillStyle='#fffdf8';ctx.fillRect(0,0,W,H);ctx.fillStyle='#6b6b65';ctx.font='18px sans-serif';ctx.fillText('운명연구소 · 나의 리포트',pad,45);y=100;pages.push(canvas)};
   const room=h=>{if(y+h>bottom)newPage()};
   const text=(value,size=25,bold=false)=>{const source=String(value||'').replace(/\s+/g,' ').trim();if(!source)return;ctx.font=(bold?'700 ':'400 ')+size+'px "Noto Sans KR",sans-serif';const lineHeight=Math.ceil(size*1.65);let line='';for(const char of source){if(ctx.measureText(line+char).width>width&&line){room(lineHeight);ctx.font=(bold?'700 ':'400 ')+size+'px "Noto Sans KR",sans-serif';ctx.fillStyle='#252b2b';ctx.fillText(line,pad,y+size);y+=lineHeight;line=char}else line+=char}if(line){room(lineHeight);ctx.font=(bold?'700 ':'400 ')+size+'px "Noto Sans KR",sans-serif';ctx.fillStyle='#252b2b';ctx.fillText(line,pad,y+size);y+=lineHeight}y+=bold?17:12};
   const picture=async(source,maxHeight=490)=>{try{const img=new Image();img.src=source.currentSrc||source.src;await Promise.race([img.decode(),new Promise((_,reject)=>setTimeout(()=>reject(Error('이미지 로딩 지연')),5000))]);const ratio=Math.min(width/img.naturalWidth,maxHeight/img.naturalHeight,1),w=img.naturalWidth*ratio,h=img.naturalHeight*ratio;if(!w||!h)return;room(h+26);ctx.drawImage(img,pad+(width-w)/2,y,w,h);y+=h+26}catch(e){text(source.alt||'이미지',20)}};
@@ -3393,7 +3398,7 @@ function renderHook(){const h=$("hook");if(h&&CH)h.innerHTML=reportHook(CH)}
 
 /* Share a fixed introduction and site URL only; never include birth input or personal results. */
 const SHARE_URL="https://stvzn123-ctrl.github.io/oracle-network/";
-const SHARE_TITLE="오라클 네트워크 - 가장 정확한 운명 해설서";
+const SHARE_TITLE="운명연구소 - 가장 정확한 운명 해설서";
 function resultShareText(){return SHARE_TITLE+"\n"+SHARE_URL}
 
 /* 초대 링크 잠금: INVITE_API가 있으면 친구가 내 링크(?r=코드)로 들어와야 열린다. 비어 있으면 예전 방식(공유 완료·복사 후 열림). */
@@ -3455,7 +3460,7 @@ async function systemShare(app){if(typeof navigator.share==="function"){try{awai
 let kakaoReady=null;
 function loadKakao(){if(kakaoReady)return kakaoReady;kakaoReady=new Promise((ok,no)=>{const sc=document.createElement("script");sc.src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.4/kakao.min.js";sc.crossOrigin="anonymous";sc.onload=()=>{try{if(!Kakao.isInitialized())Kakao.init(KAKAO_JS_KEY);ok()}catch(e){no(e)}};sc.onerror=no;document.head.appendChild(sc)}).catch(e=>{kakaoReady=null;throw e});return kakaoReady}
 async function shareTo(k){const url=shareLink(),text=SHARE_TITLE;
-  if(k==="kakao"){if(KAKAO_JS_KEY){try{await loadKakao();Kakao.Share.sendDefault({objectType:"feed",content:{title:"오라클 네트워크",description:"가장 정확한 운명 해설서",imageUrl:SHARE_URL+"og.jpg",imageWidth:1200,imageHeight:630,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:"나의 운명 확인하기",link:{mobileWebUrl:url,webUrl:url}}]});afterShare();return}catch(_){}}return systemShare("카카오톡")}
+  if(k==="kakao"){if(KAKAO_JS_KEY){try{await loadKakao();Kakao.Share.sendDefault({objectType:"feed",content:{title:"운명연구소",description:"가장 정확한 운명 해설서",imageUrl:SHARE_URL+"og.jpg",imageWidth:1200,imageHeight:630,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:"나의 운명 확인하기",link:{mobileWebUrl:url,webUrl:url}}]});afterShare();return}catch(_){}}return systemShare("카카오톡")}
   if(k==="insta")return systemShare("인스타그램 DM이나 스토리");
   const href=k==="threads"?"https://www.threads.net/intent/post?text="+encodeURIComponent(text+"\n"+url):"https://x.com/intent/tweet?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(url);
   window.open(href,"_blank","noopener,noreferrer");afterShare()}
@@ -3480,7 +3485,7 @@ $("share-copy").addEventListener("click",async()=>{
 });
 $("share-native").addEventListener("click",async()=>{
   try{
-    await navigator.share({title:"운명 네트워크",text:$("share-preview").value});
+    await navigator.share({title:"운명연구소",text:$("share-preview").value});
     if(inviteMode()){$("share-status").textContent=SENT_MSG;return}
     if(INVITE_LOCK&&!graphUnlocked)return;
     unlockGraphs();
@@ -3603,3 +3608,42 @@ accountPaint();accountInit();
 
 document.getElementById('landingStart').addEventListener('click',()=>{document.body.classList.add('app-entered');if(document.body.classList.contains('fresh')){document.getElementById('askbox').open=true;document.getElementById('in-name').focus({preventScroll:true})}window.scrollTo({top:0,behavior:'instant'})});
 
+
+
+/* 하단 탭바(2026-11): 새 로직 없이 이미 있는 버튼을 대신 눌러 준다 */
+(function(){
+ const S=id=>document.getElementById(id);
+ const soft=()=>reduceM?'auto':'smooth';
+ const started=()=>document.body.classList.contains('app-entered');
+ document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-tabbar]');if(!b)return;
+  const k=b.dataset.tabbar;
+  document.querySelectorAll('[data-tabbar]').forEach(x=>x.setAttribute('aria-current',String(x===b)));
+  if(!started()){S('landingStart')?.click();return}
+  if(k==='home'){document.body.classList.remove('show-topics');S('tb-natal')?.click();
+   (S('result')||document.body).scrollIntoView({behavior:soft(),block:'start'});return}
+  if(k==='topics'){document.body.classList.add('show-topics');
+   const f=S('topicFold');if(f){f.open=true;f.scrollIntoView({behavior:soft(),block:'start'})}return}
+  if(k==='me'){const t=S('accountMember')&&!S('accountMember').hidden?S('accountMember'):S('accountLogin');
+   if(t){t.scrollIntoView({behavior:soft(),block:'center'});if(t===S('accountLogin'))t.focus({preventScroll:true})}}
+ });
+})();
+
+/* 생년월일은 8자리 한 칸으로 받고, 기존 연·월·일 입력칸에 그대로 넣어 준다 */
+(function(){
+ const S=id=>document.getElementById(id), box=S('in-ymd');if(!box)return;
+ const y=S('in-y'),m=S('in-m'),d=S('in-d');
+ const push=()=>{const t=box.value.replace(/\D/g,'').slice(0,8);
+  if(box.value!==t)box.value=t;
+  y.value=t.slice(0,4);
+  m.value=t.length>=6?String(+t.slice(4,6)||''):'';
+  d.value=t.length>=8?String(+t.slice(6,8)||''):'';
+  if(typeof fillDays==='function'&&t.length>=8)fillDays();
+  if(typeof updConv==='function')updConv()};
+ const pull=()=>{if(!y.value||!m.value||!d.value)return;
+  const t=String(y.value).padStart(4,'0')+String(m.value).padStart(2,'0')+String(d.value).padStart(2,'0');
+  if(box.value!==t)box.value=t};
+ box.addEventListener('input',push);
+ box.addEventListener('blur',push);
+ if(typeof updConv==='function'){const u=updConv;window.updConv=function(){const r=u.apply(this,arguments);pull();return r}}
+})();

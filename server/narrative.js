@@ -148,7 +148,7 @@ export function narrativeComprehensive(c) {
     lead: F(ONELINE[c.dom]),
     paras: [
       "다섯 가지 점술이 공통으로 말하는 건, " + c.common,
-      fill(SUM_YEAR, { cat: CAT_KO[c.bestCat], y: c.bestYear }) + (c.mateYears.length ? " 사랑에서는 " + c.mateYears[0].y + "년 무렵 인연의 기운이 뚜렷하게 들어와요." : ""),
+      fill(SUM_YEAR, { cat: CAT_KO[c.bestCat], y: c.bestYear }) + (c.mateYears.length ? " 사랑에서는 " + c.mateYears[0].y + "년 무렵 인연의 기운이 뚜렷하게 들어와요. 만나는 사람이 있다면 그 관계가 결실을 맺는 때예요." : ""),
       "이 리포트는 사주, 서양 점성술, 인도 점성술, 수비학, 마야력 다섯 가지로 {name}님을 함께 읽고, 여러 점술이 공통으로 가리키는 이야기를 중심으로 풀어 썼어요.".replace(/\{name\}/g, c.name)
     ],
     basis: c.basis.summary
@@ -171,7 +171,7 @@ export function narrativeComprehensive(c) {
     kind: "partner", title: "사랑과 인연",
     lead: "",
     paras: [F(LOVE[c.venusEl]), F(MATE[c.mateEl]), MEETP[c.descEl] + " " + mateWhen],
-    action: "이번 달에 평소 가지 않던 모임이나 자리에 한 번 나가 보세요. 인연은 늘 새로운 문 하나에서 시작돼요.",
+    action: "만나는 사람이 있다면 이번 달에 둘이 가 본 적 없는 곳에 함께 가 보세요. 혼자라면 평소 가지 않던 모임이나 자리에 한 번 나가 보세요.",
     basis: c.basis.partner
   });
 
@@ -270,8 +270,9 @@ const LOVE_DATE = [
 const LYEAR = [
   "{y}년, {age}살의 {name}님에게는 사람 복이 크게 들어와요. 새로운 인연이 시작되거나, 만나던 사람과의 관계가 한 단계 깊어지기 쉬운 해예요. 마음이 가는 사람이 있다면 이 해에 조금 더 용기를 내 보세요.",
   "{y}년({age}살)은 관계가 따뜻해지는 해예요. 소중한 사람과 함께하는 시간이 늘고, 오해가 있던 관계도 자연스럽게 풀리기 쉬워요. 연인이 있다면 미래를 이야기하기 좋은 시기예요.",
-  "{y}년({age}살)에는 뜻밖의 자리에서 마음이 움직일 수 있어요. 평소와 다른 모임이나 여행, 새로운 일을 시작한 곳에서 인연이 닿기 쉬우니, 이 해에는 초대를 거절하지 말고 한 번 더 나가 보세요."
+  "{y}년({age}살)에는 뜻밖의 자리에서 마음이 움직일 수 있어요. 평소와 다른 모임이나 여행, 새로운 일을 시작한 곳에서 인연이 닿기 쉬우니, 이 해에는 초대를 거절하지 말고 한 번 더 나가 보세요. 만나는 사람이 있다면 함께 평소 안 가 본 곳에 가 보기 좋은 해예요."
 ];
+const DATING_NOTE = "이미 만나는 사람이 있다면 새로운 사람이 들어온다는 뜻이 아니라, 지금 그 관계가 결실을 맺는 때로 읽어 주세요.";
 const LREST = "{y}년({age}살)은 사랑에서 조금 쉬어 가는 해예요. 인연이 없다는 뜻이 아니라, 나를 돌보고 내가 원하는 관계가 무엇인지 정리하기 좋은 시기라는 뜻이에요. 이 해에 마음을 잘 정리해 두면 그다음 만남이 훨씬 편안해져요.";
 
 export function narrativeRelation(c, key) {
@@ -292,7 +293,7 @@ export function narrativeRelation(c, key) {
     basis: c.basis.partner });
 
   out.push({ kind: "meet", title: "인연은 언제·어디서·어떻게 만날까요?", lead: "",
-    paras: [MEETP[c.descEl] + " 시기로 보면 " + when], basis: c.basis.meet });
+    paras: [MEETP[c.descEl] + " 시기로 보면 " + when + " " + DATING_NOTE], basis: c.basis.meet });
 
   const ys = c.loveYears.map((k, i) => ({ y: k.y, t: fill(LYEAR[i % 3], { name: c.name, y: k.y, age: k.age }) }));
   if (c.loveRest) ys.push({ y: c.loveRest.y, t: fill(LREST, { y: c.loveRest.y, age: c.loveRest.age }) });
@@ -303,7 +304,7 @@ export function narrativeRelation(c, key) {
     basis: c.basis.timing });
 
   out.push({ kind: "caution", title: "사랑에서 조심할 점", lead: "", paras: [F(LOVE_CARE[c.dom]), F(CLOSE_CARE[1])],
-    action: marry ? "결혼을 생각하는 사람과 '돈, 집, 가족, 혼자만의 시간'에 대해 한 번씩 이야기해 보세요. 미리 나눈 대화가 결혼 후의 다툼을 크게 줄여 줘요." : "이번 달에 평소 가지 않던 모임이나 자리에 한 번 나가 보세요. 인연은 늘 새로운 문 하나에서 시작돼요.",
+    action: marry ? "결혼을 생각하는 사람과 '돈, 집, 가족, 혼자만의 시간'에 대해 한 번씩 이야기해 보세요. 미리 나눈 대화가 결혼 후의 다툼을 크게 줄여 줘요." : "만나는 사람이 있다면 이번 달에 둘이 가 본 적 없는 곳에 함께 가 보세요. 혼자라면 평소 가지 않던 모임이나 자리에 한 번 나가 보세요.",
     basis: [] });
 
   out.push({ kind: "advice", title: F("{name}님에게 전하는 이야기"), lead: "",
