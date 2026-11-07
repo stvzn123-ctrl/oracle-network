@@ -240,3 +240,4 @@
 - 카카오톡 등 인앱 브라우저는 `html.lite`: backdrop-filter와 배경 그림 애니메이션을 끈다. 배경 canvas는 모바일·인앱에서 노드 26개, 약 11fps, 화면이 숨겨지면 멈추고, 주소창 높이 변화로는 다시 만들지 않는다.
 - 로그인 흔적(localStorage oracle-session)이 있으면 `html.boot`로 `/me` 응답 전까지 랜딩을 숨긴다(최대 4초). 관리자 여부는 localStorage `oracle-admin`에 캐시.
 - 관리자 목록 API `/admin/users`는 100명 단위, 회원마다 `active`(승인된 리포트 키 배열)를 준다. worker 재배포 전에는 admin.html이 회원별 조회로 대신한다.
+- 2026-11-07: 월·일 입력에서 앞자리 0(09월) 허용(`clampNum`). 결과를 본 뒤(비로그인) 상단 로그인을 누르면 `#loginSaveDialog`가 떠서 출생 정보 저장 동의를 받는다. sessionStorage `oracle-pending`·`oracle-pending-run`·`oracle-save-intent`로 넘기고, 로그인 후 `restoreSavedResult`로 결과를 이어서 보여 주며 동의했으면 `/profile`에 저장한다. 좁은 화면(≤400px)에서 리포트 인연 프로필이 넘치지 않게 했다.

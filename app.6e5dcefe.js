@@ -794,7 +794,7 @@ const $=id=>document.getElementById(id);
 const placeFromIdx=i=>{const p=PLACES[i];return {name:p[0],lat:p[1],lon:p[2],tz:p[3],kr:p[3]===9&&p[2]>124&&p[2]<132&&p[1]>33&&p[1]<39}};
 let place={name:"",unset:true,lat:36.5,lon:127.8,tz:9,kr:true};
 function dayMax(){return $("cal-l").checked?30:31}
-function clampNum(el,max){let t=el.value.replace(/\D/g,"").slice(0,2);if(t!==""&&+t>max)t=String(max);if(t==="0"||t==="00")t="1";if(el.value!==t)el.value=t}
+function clampNum(el,max){let t=el.value.replace(/\D/g,"").slice(0,2);if(t==="00")t="0";if(t!==""&&+t>max)t=String(max);if(el.value!==t)el.value=t}
 function fillDays(){const n=dayMax();$("in-d").max=n;if(+$("in-d").value>n)$("in-d").value=n}
 $("in-m").addEventListener("input",()=>{clampNum($("in-m"),12);updConv()});$("in-d").addEventListener("input",()=>{clampNum($("in-d"),dayMax());updConv()});
 function updConv(){const cal=$("cal-l").checked;$("dateLb").textContent=`생년월일 (${cal?"음력":"양력"})`;$("leapWrap").hidden=!cal;
@@ -2271,7 +2271,7 @@ function approvedReportHTML(data,key,sourceChart=null){
 
  data={...data,summary:(data.summary||[]).map(reportEditorialCopy).filter(Boolean),note:reportEditorialCopy(data.note),sections:data.sections?.map(s=>({...s,lead:s.lead==null?s.lead:reportEditorialCopy(s.lead),paragraphs:s.paragraphs?.map(reportEditorialCopy).filter(Boolean)}))};
  const E=topicEsc;
- if(!Array.isArray(data.sections))return '<section class="r-page"><h2>'+E(data.title)+'</h2><div class="private-report-text">'+E(data.body)+'</div></section>';
+ if(!Array.isArray(data.sections))return '<section class="r-page"><h2>'+E(data.title).replace(/(\S+·\S+)/g,'<span class="nowrap">$1</span>')+'</h2><div class="private-report-text">'+E(data.body)+'</div></section>';
  const v3=data.sections.some(s=>s.lead!=null),ch=sourceChart||reportChart(),comp=key==='comprehensive';
  const secs=data.sections.map(s=>["love","marry"].includes(key)&&s.kind==="meet"?{...s,question:"인연은 언제·어디서·어떻게 만날까요?"}:s),n2=i=>String(i+1).padStart(2,'0');
  if(key==="work"&&ch){const questions=[...(topicRowsV2(ch,"employment")||[]).slice(3),...(topicRowsV2(ch,"move")||[]).slice(3)];if(questions.length)secs.splice(1,0,{kind:"career-strategy",question:"취업·이직 준비와 시기",lead:"",paragraphs:questions.map(([q,a])=>q+" "+a)})}
@@ -2300,7 +2300,7 @@ function approvedReportHTML(data,key,sourceChart=null){
  const ymd=new Date().toLocaleDateString('ko-KR');
  const hasTiming=secs.some(s=>s.kind==='timing'||s.kind==='flow');
  const flowOld=!hasTiming&&Array.isArray(data.years)?'<section class="r-page rv3-ch"><header class="rv3-hd"><h2>앞으로 10년의 '+E(data.category)+' 흐름</h2></header><div class="r-yearflow">'+data.years.map(r=>'<div><b>'+E(r.year)+'년</b><meter min="60" max="100" value="'+Number(r.score)+'">'+Number(r.score)+'</meter><span>'+Number(r.score)+'점</span></div>').join('')+'</div><p class="r-note">점수는 확률이 아닌 자체 흐름 지표입니다.</p></section>':'';
- return '<header class="r-cover rv3-cover"><span class="eyebrow">ORACLE NETWORK / PERSONAL REPORT</span><span class="rv3-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 17.6 20.5 2.6 9.3h18.8L6.4 20.5z"/></svg></span><h2>'+E(data.title)+'</h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><dl class="r-cover-meta"><div><dt>발행일</dt><dd>'+ymd+'</dd></div></dl></header>'+
+ return '<header class="r-cover rv3-cover"><span class="eyebrow">ORACLE NETWORK / PERSONAL REPORT</span><span class="rv3-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 17.6 20.5 2.6 9.3h18.8L6.4 20.5z"/></svg></span><h2>'+E(data.title).replace(/(\S+·\S+)/g,'<span class="nowrap">$1</span>')+'</h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><dl class="r-cover-meta"><div><dt>발행일</dt><dd>'+ymd+'</dd></div></dl></header>'+
   '<section class="r-page rv3-ch rv3-intro"><aside class="report-reading-key"><b>리포트 읽는 법</b><p>먼저 쉬운 해석을 읽어주세요. 본문에 괄호로 덧붙인 내용은 해당 해석의 계산값이나 점술상 근거입니다.</p></aside><header class="rv3-hd"><span class="rv3-no">SUMMARY</span><h2>핵심 요약</h2></header><ol class="rv3-sum">'+(data.summary||[]).filter(x=>readingParts(x).main).map(x=>'<li>'+readingInline(x)+'</li>').join('')+'</ol></section><section class="r-page rv3-ch rv3-contents"><header class="rv3-hd"><span class="rv3-no">CONTENTS</span><h2>목차</h2></header>'+toc+'</section>'+
   secs.map(chapter).join('')+flowOld+(String(data.version||'').startsWith('match-')?'':(comp?comprehensiveOverviewHTML(data,ch):'')+reportScoreGuideHTML(data,key,ch))+
  '<template id="reportAppendixTemplate"><section class="r-page rv3-ch rv3-appendix" id="report-appendix"><header class="rv3-hd"><span class="rv3-no">APPENDIX</span><h2>'+ (Array.isArray(data.birthCharts)?'두 사람의 출생 정보와 전문 지표':'내 출생 정보와 전문 지표') +'</h2></header>'+(Array.isArray(data.birthCharts)?pairBirthAppendixHTML(data.birthCharts):'')+facts+(data.appendix?barsHTML(data.appendix.bars)+(data.appendix.tables||[]).map(dataTableHTML).join(''):'')+(!Array.isArray(data.birthCharts)&&ch?'<p class="birth-note">입력한 출생 정보로 계산한 별자리 천문도와 전통 달력이에요. 천체의 도수·하우스, 수비학 계산 과정, 마야 촐킨 출생 칸을 아래에서 확인할 수 있어요.</p>'+(ch?.inp.notime?'<p class="birth-note">출생 시각 미상: 현지 정오의 참고 위치예요. 상승궁·출생 하우스는 확정하지 않으며 달의 위치도 실제 시각에 따라 달라질 수 있어요.</p>':'')+chartHTML('west')+chartHTML('vedic')+chartHTML('numbers')+chartHTML('maya'):'')+'<div class="reading-sources">'+(data.summary||[]).filter(x=>!readingParts(x).main).map(x=>readingParagraph(x)).join('')+'</div>'+
@@ -3542,6 +3542,8 @@ function profileFill(v){
 $('ask').addEventListener('pointerdown',()=>{formVersion++});
 $('ask').addEventListener('input',()=>{formVersion++});$('ask').addEventListener('change',()=>{formVersion++});
 $('accountLogin').addEventListener('click',async()=>{
+  if(!accountUser&&typeof CH!=='undefined'&&CH&&!document.body.classList.contains('fresh')&&!window.__loginAsked){const d=$('loginSaveDialog');if(d){$('loginSaveAgree').checked=false;d.showModal();return}}
+  window.__loginAsked=false;
   if(accountBusy)return;accountBusy=true;$('accountLogin').disabled=true;accountNotice('카카오 로그인으로 이동하고 있어요…');
   try{
     const verifier=[...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,'0')).join('');
@@ -3583,15 +3585,18 @@ async function accountInit(){
     if(code){const verifier=readLoginProof();if(!verifier)throw new Error('로그인 연결 시간이 지났거나 브라우저가 변경됐어요. 현재 화면에서 다시 로그인해 주세요.');const data=await accountAPI('/auth/exchange',{code,verifier});clearLoginProof();accountToken=data.token;lsSet('oracle-session',accountToken)}
     if(!accountToken){const config=await accountAPI('/auth/config');if(!config.enabled){$('accountLogin').disabled=true;accountStatus('카카오 로그인 연결을 준비하고 있어요.');}return}
     let user;try{user=await accountAPI('/me')}catch(e1){if(!(e1 instanceof TypeError))throw e1;await new Promise(r=>setTimeout(r,1200));user=await accountAPI('/me')}accountUser=user;lsSet('oracle-admin',user.isAdmin?'1':'0');paintAccessAccount();if(code){accountNotice((user.nickname||'회원')+'님, 로그인했어요.');if(!user.profile){document.body.classList.add('app-entered');$('askbox').open=true}}
-    let pending=null,intent=false;try{pending=JSON.parse(sessionStorage.getItem('oracle-pending')||'null');intent=sessionStorage.getItem('oracle-save-intent')==='1';sessionStorage.removeItem('oracle-pending');sessionStorage.removeItem('oracle-save-intent')}catch(_){}
+    let pending=null,intent=false,runAfter=false;try{pending=JSON.parse(sessionStorage.getItem('oracle-pending')||'null');intent=sessionStorage.getItem('oracle-save-intent')==='1';runAfter=sessionStorage.getItem('oracle-pending-run')==='1';sessionStorage.removeItem('oracle-pending');sessionStorage.removeItem('oracle-save-intent');sessionStorage.removeItem('oracle-pending-run')}catch(_){}
     $('profileConsent').checked=intent||!!user.profile;
-    if(pending&&formVersion===startVersion){profileFill(pending);accountStatus('로그인했어요. ‘나의 운명 확인하기’를 누르면 입력한 정보가 카카오 계정에 저장돼요.')}
+    if(pending&&formVersion===startVersion&&runAfter){const ok=restoreSavedResult(pending);if(intent&&ok){try{await accountAPI('/profile',{profile:pending,consent:true});accountUser.profile=pending;$('profileConsent').checked=true;accountNotice('로그인했어요. 지금 본 출생 정보를 카카오 계정에 저장했어요.')}catch(e){accountNotice('로그인했어요. 출생 정보 저장은 실패했어요: '+(e.message||''))}}else accountNotice(ok?'로그인했어요. 보던 결과를 그대로 이어서 보여 드려요.':'로그인했어요.')}
+    else if(pending&&formVersion===startVersion){profileFill(pending);accountStatus('로그인했어요. ‘나의 운명 확인하기’를 누르면 입력한 정보가 카카오 계정에 저장돼요.')}
     else if(user.profile&&formVersion===startVersion){const ready=restoreSavedResult(user.profile);accountStatus(ready?'저장한 정보로 운명 결과를 불러왔어요.':'저장된 정보를 확인해주세요.')}
     else accountStatus(intent?'로그인했어요. 정보를 입력하고 ‘나의 운명 확인하기’를 누르면 저장돼요.':user.profile?'저장한 정보가 있어요. 오른쪽 위 내 정보에서 불러올 수 있어요.':'');
   }catch(e){const message=e instanceof TypeError?'로그인 서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.':(e.message||'내 정보를 불러오지 못했어요.');if(code||error)accountNotice(message);else accountStatus(message)}finally{accountPaint();document.documentElement.classList.remove('boot')}
 }
+$('loginSaveGo')?.addEventListener('click',()=>{try{const v=readForm();if(!v.err&&!checkForm()){sessionStorage.setItem('oracle-pending',JSON.stringify(v));sessionStorage.setItem('oracle-pending-run','1')}sessionStorage.setItem('oracle-save-intent',$('loginSaveAgree').checked?'1':'')}catch(_){}$('loginSaveDialog').close();window.__loginAsked=true;$('accountLogin').click()});
+$('loginSaveCancel')?.addEventListener('click',()=>$('loginSaveDialog').close());
 /* 카카오로 로그인하고 저장하기: 로그인으로 이동하는 동안 입력값을 이 탭에만 잠시 보관했다가 돌아오면 다시 채운다. */
-$('saveLogin').addEventListener('click',()=>{try{const v=readForm();if(!v.err&&!checkForm())sessionStorage.setItem('oracle-pending',JSON.stringify(v));sessionStorage.setItem('oracle-save-intent','1')}catch(_){}$('accountLogin').click()});
+$('saveLogin').addEventListener('click',()=>{try{const v=readForm();if(!v.err&&!checkForm()){sessionStorage.setItem('oracle-pending',JSON.stringify(v));if(typeof CH!=='undefined'&&CH&&!document.body.classList.contains('fresh'))sessionStorage.setItem('oracle-pending-run','1')}sessionStorage.setItem('oracle-save-intent','1')}catch(_){}window.__loginAsked=true;$('accountLogin').click()});
 $('ask').addEventListener('submit',async()=>{
   if(!accountUser||!$('profileConsent').checked||accountBusy||checkForm())return;const v=readForm();if(v.err)return;
   accountBusy=true;accountPaint();
