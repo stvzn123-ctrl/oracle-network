@@ -104,3 +104,19 @@ body.nav-account>.wrap,body.nav-account #landing{display:none!important}
 
 /* Profile editing is a dedicated form view; no old result/question panel underneath. */
 body.nav-edit #result{display:none!important}body.nav-edit .hero{display:block!important}body.nav-edit .lede{display:none!important}body.nav-edit .wrap{padding-top:16px!important}
+/* One type family and hierarchy across the service. */
+:root{--display:var(--body);--latin:var(--body);--type-page:26px;--type-section:18px;--type-subtitle:16px;--type-copy:15px;--type-meta:12px;--text-primary:var(--fg);--text-secondary:var(--ink2);--text-caption:var(--muted);--text-emphasis:var(--gold-ink)}
+body,button,input,select,textarea{font-family:var(--body)}
+h1,h2,h3,h4,h5,h6,.brandbar-title,.res-lead,.trait-quadrant figcaption{font-family:var(--body)!important;letter-spacing:-.02em}
+h1,h2,h3,h4,h5,h6{font-weight:600!important}
+#landing .landing-headline{font-family:var(--body)!important;font-weight:600!important}
+#brandbar .brandbar-brand{gap:9px!important}#brandbar .brandbar-mark{display:block!important;flex:none;width:36px!important;height:42px!important;background:url('img/mascot.webp') center/contain no-repeat!important}#brandbar .brandbar-title{font-size:18px!important;font-weight:600!important}
+#result .blk-h,#result .res-h,#result .act-h,#result .topic-intro h3,#result .topic-offer h4,#result .home-habits>.res-h,#result .home-places>.act-h,#result .report-cta h3{font:600 var(--type-section)/1.6 var(--body)!important;color:var(--text-emphasis)!important;letter-spacing:-.02em}
+#result .topic-answer h4,#result .home-habit-list b,#result .home-places h4,#result .spouse-preview h4,.saved-record h4{font:500 var(--type-subtitle)/1.65 var(--body)!important;color:var(--text-emphasis)!important}
+#result .r-prose p,#result .flow-prose p,#result .topic-answer p,#result .home-habit-reason,#result .td-prose,#result .td-adv p{font:400 var(--type-copy)/1.8 var(--body)!important;color:var(--text-primary)!important}
+#result .res-lead{font-weight:600!important;color:var(--text-primary)}#result .res-lead .destiny-strength{color:var(--text-emphasis)}
+#result :is(small,.fine,.r-note,.wk-hint,.td-date,.act-meta){font-family:var(--body)!important;font-size:var(--type-meta)!important;line-height:1.7;color:var(--text-caption)}
+#result .home-habit-list{margin:0;padding:0}#result .home-habit-list li{display:block!important;position:relative;padding:4px 0 10px!important;margin:0 0 8px!important;border:0!important;background:transparent!important}.home-habit-number{display:none}.home-habit-list .home-habit-reason{margin:6px 0!important}.home-habit-list small{margin-top:4px}
+#accountSheet.account-page h2{font:600 var(--type-page)/1.5 var(--body)!important}#accountSheet.account-page h3{font:600 var(--type-section)/1.6 var(--body)!important;color:var(--text-emphasis)}
+#report .r-page h2{font:600 24px/1.5 var(--body)!important}#report .r-page h3{font:600 var(--type-section)/1.6 var(--body)!important}#report .r-page h4{font:500 var(--type-subtitle)/1.6 var(--body)!important}#report .r-page p,#report .r-page li{font:400 var(--type-copy)/1.85 var(--body)!important}#report .r-page :is(b,strong){font-weight:600!important}
+.wk-scale{font:11px var(--body);fill:var(--muted)}.wk-v{font-family:var(--body)!important;font-weight:500}.wk-d{font-family:var(--body)!important;font-weight:400}.td-cats b{font-weight:600}

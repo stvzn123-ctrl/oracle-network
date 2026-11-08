@@ -1086,6 +1086,7 @@ const MHW=[null,[0,0,2,6],[8,0,2,0],[2,3,4,0],[0,4,0,4],[0,8,0,2],[0,-2,6,2],[0,
 const PDAY={1:"새로 시작",2:"협력",3:"표현",4:"정리",5:"변화",6:"돌봄",7:"성찰",8:"성과",9:"마무리"};
 const LUCKC=[["초록","#48c78e"],["빨강","#ff6b6b"],["노랑","#f2c45a"],["흰색","#f3efe6"],["남색","#4a6cf7"]],LUCKD=["동쪽","남쪽","가운데(집·사무실 중심)","서쪽","북쪽"];
 const WD="일월화수목금토";
+function smoothDailyScore(value){return Math.round(clamp(80+(value-80)*.5,0,100))}
 function dayFortune(ch,dt){const y=dt.getFullYear(),m=dt.getMonth()+1,d=dt.getDate();
   const J=jdn(y,m,d),di=mod(J+49,60),ds=di%10,db=di%12,dm=ch.stems.d,idx=[0,ch.male?1:2,3,4];
   const g=t=>Math.floor(TG.indexOf(t)/2),fav=t=>ch.goodG.includes(g(t));
@@ -1100,11 +1101,11 @@ function dayFortune(ch,dt){const y=dt.getFullYear(),m=dt.getMonth()+1,d=dt.getDa
   const py=pyOf(ch,y),pd=reduceNum(reduceNum(py+m,false)+reduceNum(d,false),false);NYW[pd].forEach((v,c)=>add((v-62)*.12,c));
   const kn=mod(J-584283,260),tone=(J-584283+3)%13+1,ks=(J-584283+19)%20,kb=mod(jdn(ch.Y,ch.Mo,ch.D)-584283,260);const my=[];
   if(kn===kb){add(6);my.push("마야 탄생일")}else if(ks===ch.msign){add(3);my.push("탄생 기호의 날")}if(tone===ch.tone&&kn!==kb){add(1.5)}
-  const sc=cat.map(v=>Math.round(clamp(71+v,60,98))),all=Math.round(sc.reduce((a,b)=>a+b,0)/4);
+  const rawSc=cat.map(v=>Math.round(clamp(71+v,60,98))),rawAll=Math.round(rawSc.reduce((a,b)=>a+b,0)/4),sc=rawSc.map(smoothDailyScore),all=Math.round(sc.reduce((a,b)=>a+b,0)/4);
   const F=[...new Set(ch.goodG.map(x=>(SE[dm]+x)%5))],le=F.includes(SE[ds])?SE[ds]:F.includes((SE[ds]+1)%5)?(SE[ds]+1)%5:F[(J)%F.length];
-  return {y,m,d,wd:WD[dt.getDay()],all,sc,tg,phrase:DAYTG[tg],pil:ST[ds]+BR[db],sj,ms,mh,ta,pd,tone,ks,my,le,best:sc.indexOf(Math.max(...sc))}}
+  return {y,m,d,wd:WD[dt.getDay()],all,sc,rawAll,rawSc,tg,phrase:DAYTG[tg],pil:ST[ds]+BR[db],sj,ms,mh,ta,pd,tone,ks,my,le,best:sc.indexOf(Math.max(...sc))}}
 function weekDays(){const t=new Date();t.setHours(12,0,0,0);const off=(t.getDay()+6)%7;return [...Array(7)].map((_,i)=>{const x=new Date(t);x.setDate(t.getDate()-off+i);return x})}
-function ringSvgD(v,size){const r=size/2-7,c=2*Math.PI*r,p=clamp((v-60)/40,0,1);return `<svg class="dring" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--gold)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${c*p} ${c}" transform="rotate(-90 ${size/2} ${size/2})"/></svg>`}
+function ringSvgD(v,size){const r=size/2-7,c=2*Math.PI*r,p=clamp(v/100,0,1);return `<svg class="dring" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--gold)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${c*p} ${c}" transform="rotate(-90 ${size/2} ${size/2})"/></svg>`}
 const IC={
  saju:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a4.5 4.5 0 0 1 0 9a4.5 4.5 0 0 0 0 9"/><circle cx="12" cy="7.5" r="1.2" class="f"/><circle cx="12" cy="16.5" r="1.2"/></svg>`,
  west:`<svg viewBox="0 0 24 24"><path d="M15 4a8 8 0 1 0 5 13a7 7 0 0 1-5-13z"/><path d="M6 5l.6 1.6L8 7l-1.4.4L6 9l-.6-1.6L4 7l1.4-.4z" class="f"/></svg>`,
@@ -1126,12 +1127,12 @@ const TODAY_ADV={
  정관:[["당신을 지켜보는 사람이 있다","성실함이 평가로 이어지는 날입니다. 맡은 일을 깔끔하게 마치세요."],["예의가 문을 연다","공식적인 자리·연락에 운이 따릅니다."],["틀보다 사람을 본다","규칙에 매여 융통성을 잃지 않도록 하세요."]],
  편인:[["직감을 믿어라","설명하기 어려운 느낌이 오늘은 맞을 가능성이 큽니다."],["혼자만의 시간이 답을 준다","조용히 생각을 정리하면 막힌 일이 풀립니다."],["걱정은 적어 두고 덮는다","생각이 꼬리를 물기 쉬운 날입니다. 종이에 적고 내려놓으세요."]],
  정인:[["도움을 받아도 괜찮다","주변의 조언과 지원이 들어오는 날입니다. 먼저 물어보세요."],["배움이 쌓이는 날","읽고 듣는 것이 오래 남습니다. 공부와 자격 준비에 좋습니다."],["기대기보다 스스로 한 걸음","도움을 기다리기보다 작은 것부터 직접 해 보세요."]]};
-function todayAdvice(f,isT=true){const b=TODAY_ADV[f.tg]||TODAY_ADV.비견,tier=f.all>=85?0:f.all>=72?1:2;let [h,t]=b[tier];
+function todayAdvice(f,isT=true){const b=TODAY_ADV[f.tg]||TODAY_ADV.비견,tier=(f.rawAll??f.all)>=85?0:(f.rawAll??f.all)>=72?1:2;let [h,t]=b[tier];
  if(f.my.includes("마야 탄생일"))t+=" 260일 만에 돌아온 나의 탄생일이라 새 결심을 세우기 좋습니다.";
  else if(f.sj.includes("귀인일"))t+=" 귀인일이라 도움을 청하면 응답이 옵니다.";
  else if(f.sj.includes("일지와 충"))t+=" 가까운 사람과 부딪히기 쉬우니 말을 아끼세요.";
  return `<div class="td-adv"><span>${isT?"오늘의 조언":"이날의 조언"}</span><b>“${h}”</b><p>${t}</p></div>`}
-function todayProse(f,isT){const day=isT?"오늘":f.wd+"요일",lo=f.sc.indexOf(Math.min(...f.sc)),lv=f.all>=85?"기운이 활짝 열린 날":f.all>=75?"무난하게 흘러가는 날":"속도를 늦추고 다지는 날";
+function todayProse(f,isT){const day=isT?"오늘":f.wd+"요일",lo=f.sc.indexOf(Math.min(...f.sc)),lv=(f.rawAll??f.all)>=85?"기운이 활짝 열린 날":(f.rawAll??f.all)>=75?"무난하게 흘러가는 날":"속도를 늦추고 다지는 날";
  const out=[`${day}은 ${f.all}점으로 ${lv}입니다.`,`사주로 보면 일진 ${f.pil}이 나에게 ${f.tg}이라 ${DAYTG[f.tg]}이고, ${SHORT[f.best]}운(${f.sc[f.best]}점)이 가장 밝은 반면 ${SHORT[lo]}운(${f.sc[lo]}점)은 한 번 더 살피는 편이 좋습니다.`,`달이 ${ZOD[f.ms]}자리를 지나 ${HOUSE[f.mh]} 쪽으로 마음이 쓰이고, 인도 점성술의 타라는 '${TARAM[f.ta]}'을 가리킵니다.`];
  if(f.sj.length)out.push(`${f.sj.join("·")}이 겹쳐 ${f.sj.includes("일지와 충")?"가까운 사람과의 말에 조심이 필요합니다.":"사람과의 인연이 좋게 작용합니다."}`);
  out.push(`수비학 개인일 ${f.pd}은 ${PDAY[f.pd]}의 흐름${f.my.length?"이고, 마야력으로는 "+f.my.join("·")+"이라 특별한 하루입니다":"입니다"}.`);return out.join(" ")}
@@ -1144,7 +1145,7 @@ function todayHTML(ch,dt){dt=dt||new Date();const isT=dt.toDateString()===new Da
   $("todayHead").innerHTML=`<div class="td-head"><div class="td-ring">${ringSvgD(f.all,112)}<b>${f.all}<small>점</small></b></div>
    <div><span class="td-date">${isT?"오늘":f.wd+"요일"} · ${f.m}월 ${f.d}일 (${f.wd})</span>${todayAdvice(f,isT)}<span class="td-best">가장 밝은 운: <b style="color:var(--${CATS[f.best].k})">${SHORT[f.best]}</b></span></div></div>`;
   return `<div class="today">
-  <ul class="td-cats">${CATS.map((c,ci)=>`<li><span>${SHORT[ci]}</span><i><em style="width:${(f.sc[ci]-55)/45*100}%;background:var(--${c.k})"></em></i><b>${f.sc[ci]}</b></li>`).join("")}</ul>
+  <ul class="td-cats">${CATS.map((c,ci)=>`<li><span>${SHORT[ci]}</span><i><em style="width:${f.sc[ci]}%;background:var(--${c.k})"></em></i><b>${f.sc[ci]}</b></li>`).join("")}</ul>
   <p class="td-prose">${todayProse(f,isT)}</p>
   <details><summary>오늘의 계산 근거 보기</summary>
   <table class="td-tbl"><thead><tr><th scope="col">점술</th><th scope="col">계산값</th><th scope="col">한 줄 풀이</th></tr></thead><tbody>${rows.map(([k,n,v,t])=>`<tr><th scope="row">${n}</th><td>${v}</td><td>${t}</td></tr>`).join("")}</tbody></table></details></div>`}
@@ -1155,9 +1156,10 @@ function weekHTML(ch){const ds=weekDays(),F=ds.map(d=>dayFortune(ch,d)),td=new D
   const hi=F.reduce((b,f,i)=>f.all>F[b].all?i:b,0),lo=F.reduce((b,f,i)=>f.all<F[b].all?i:b,0);
   const ca=[0,1,2,3].map(c=>F.reduce((a,f)=>a+f.sc[c],0)/7),bc=ca.indexOf(Math.max(...ca));
   const W=700,H=210,bw=56,gap=(W-40-bw*7)/6,y=v=>H-36-(v-55)/45*(H-70);
-  const vmin=Math.min(...F.map(f=>f.all))-4,vmax=Math.max(...F.map(f=>f.all))+4,yv=v=>H-44-(v-vmin)/Math.max(8,vmax-vmin)*(H-90);
+  const vmin=0,vmax=100,yv=v=>H-44-(v-vmin)/(vmax-vmin)*(H-90);
   const px=i=>40+i*(W-80)/6,pts=F.map((f,i)=>[px(i),yv(f.all)]),path=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
-  const bars=`<path d="${path}" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`+F.map((f,i)=>`<g class="wk-pt${i===ti?" sel now":""}" data-wkday="${i}" role="button" tabindex="0" aria-label="${"월화수목금토일"[i]}요일 ${f.all}점 자세히 보기"><circle cx="${pts[i][0]}" cy="${pts[i][1]}" r="26" fill="transparent"/><circle class="wk-dot" cx="${pts[i][0]}" cy="${pts[i][1]}" r="8"/><text x="${pts[i][0]}" y="${pts[i][1]-18}" text-anchor="middle" class="wk-v">${f.all}</text><text x="${pts[i][0]}" y="${H-10}" text-anchor="middle" class="wk-d">${"월화수목금토일"[i]}${i===ti?"·오늘":""}</text></g>`).join("");
+  const grid=[0,50,100].map(v=>`<path d="M40 ${yv(v)}H${W-40}" stroke="var(--line)" fill="none"/><text x="30" y="${yv(v)+4}" text-anchor="end" class="wk-scale">${v}</text>`).join("");
+  const bars=grid+`<path d="${path}" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`+F.map((f,i)=>`<g class="wk-pt${i===ti?" sel now":""}" data-wkday="${i}" role="button" tabindex="0" aria-label="${"월화수목금토일"[i]}요일 ${f.all}점 자세히 보기"><circle cx="${pts[i][0]}" cy="${pts[i][1]}" r="26" fill="transparent"/><circle class="wk-dot" cx="${pts[i][0]}" cy="${pts[i][1]}" r="8"/><text x="${pts[i][0]}" y="${pts[i][1]-18}" text-anchor="middle" class="wk-v">${f.all}</text><text x="${pts[i][0]}" y="${H-10}" text-anchor="middle" class="wk-d">${"월화수목금토일"[i]}${i===ti?"·오늘":""}</text></g>`).join("");
   return `<div class="week wk-line"><svg viewBox="0 0 ${W} ${H}" role="group" aria-label="이번 주 요일별 점수. 점을 누르면 그날 운세가 아래에 나옵니다">${bars}</svg><p class="wk-hint">점을 누르면 그날의 조언과 풀이가 아래에 나와요.</p>
   </div>`}
 /* 귀인·결혼: 다섯 점술의 신호를 해마다 모아, 가장 많은 점술이 겹치는 해와 그해의 달·날짜까지 짚는다(자체 규칙). */
