@@ -101,3 +101,6 @@ body.nav-account>.wrap,body.nav-account #landing{display:none!important}
 .account-page #accountMember{width:100%}.account-page .acct-pop{padding:0!important}.account-page #savedRecordsPanel{margin-top:24px}.account-page #savedRecordsPanel h3{font:500 18px/1.6 var(--body);color:var(--gold-ink);margin:24px 0 12px}
 .saved-record{padding:16px 0;margin:0 0 16px;border-top:1px solid var(--line)}.saved-record h4{font:500 16px/1.6 var(--body);margin:0 0 12px}.saved-record dl{display:grid;grid-template-columns:90px minmax(0,1fr);gap:8px 12px;font:400 14px/1.7 var(--body);margin:0 0 12px}.saved-record dt{color:var(--muted)}.saved-record dd{margin:0;overflow-wrap:anywhere}.saved-record button{font:500 14px var(--body);padding:10px 16px;min-height:40px;margin-right:8px;border:1px solid var(--line);border-radius:12px;background:var(--field);color:var(--fg)}
 #savedPartnersStatus,#savedPersonalRecord{font:400 14px/1.8 var(--body);color:var(--ink2)}
+
+/* Profile editing is a dedicated form view; no old result/question panel underneath. */
+body.nav-edit #result{display:none!important}body.nav-edit .hero{display:block!important}body.nav-edit .lede{display:none!important}body.nav-edit .wrap{padding-top:16px!important}

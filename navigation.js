@@ -36,7 +36,7 @@
  function select(key){nav.querySelectorAll('button').forEach(b=>{if(b.dataset.bottom===key)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')})}
  nav.addEventListener('click',e=>{
   const b=e.target.closest('[data-bottom]');if(!b)return;
-  const key=b.dataset.bottom;
+  const key=b.dataset.bottom;document.body.classList.remove('nav-edit');
   document.querySelectorAll('dialog[open]').forEach(d=>d.close());
   if(!document.getElementById('report').hidden)closeReport();
   document.body.classList.toggle('nav-account',key==='account');sheet.hidden=key!=='account';
@@ -65,8 +65,9 @@
  },true);
  document.addEventListener('click',e=>{if(e.target.closest('[data-complete-profile]'))document.getElementById('profileEdit').click()});
  document.getElementById('profileDeleteDialog').addEventListener('close',()=>{if(!document.getElementById('savedRecordsPanel').hidden)showSavedRecords()});
+ new MutationObserver(()=>{if(!document.getElementById('askbox').open)document.body.classList.remove('nav-edit')}).observe(document.getElementById('askbox'),{attributes:true,attributeFilter:['open']});
  document.getElementById('profileEdit').addEventListener('click',()=>{
-  sheet.hidden=true;document.body.classList.remove('nav-topics','nav-ask','nav-account');document.body.classList.add('app-entered');
+  sheet.hidden=true;document.body.classList.remove('nav-topics','nav-ask','nav-account');document.body.classList.add('app-entered','nav-edit');setTab('natal');
   document.getElementById('askbox').open=true;editSave.hidden=!accountUser;select('home');document.getElementById('in-name').focus();
  });
 })();

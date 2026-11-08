@@ -5,7 +5,7 @@
  const current=()=>{
   const dialog=Array.from(document.querySelectorAll('dialog[open]')).at(-1);
   const entered=document.body.classList.contains('app-entered');
-  const route=document.body.classList.contains('nav-account')?'account':document.body.classList.contains('nav-ask')?'ask':document.body.classList.contains('nav-topics')?'topics':entered?'home':'landing';
+  const route=document.body.classList.contains('nav-edit')?'edit':document.body.classList.contains('nav-account')?'account':document.body.classList.contains('nav-ask')?'ask':document.body.classList.contains('nav-topics')?'topics':entered?'home':'landing';
   const tab=Array.from(document.querySelectorAll('#result>.tabp, #result .tabp')).find(e=>!e.hidden)?.id.replace('tab-','')||'natal';
   return {route,entered,tab,dialog:dialog?.id||null,report:!report.hidden,saved:route==='account'&&!document.getElementById('savedRecordsPanel').hidden};
  };
@@ -29,11 +29,12 @@
   applying=true;clearTimeout(pending);const v=e.state.oracleNav;
   document.querySelectorAll('dialog[open]').forEach(d=>d.close());
   if(!report.hidden)closeReport();
-  if(v.route!=='landing')nav.querySelector(`[data-bottom="${v.route}"]`)?.click();
+  if(v.route==='edit')document.getElementById('profileEdit').click();
+  else if(v.route!=='landing')nav.querySelector(`[data-bottom="${v.route}"]`)?.click();
   document.body.classList.toggle('app-entered',v.entered);
   document.body.classList.toggle('nav-topics',v.route==='topics');
   document.body.classList.toggle('nav-ask',v.route==='ask');
-  document.body.classList.toggle('nav-account',v.route==='account');document.getElementById('accountSheet').hidden=v.route!=='account';
+  document.body.classList.toggle('nav-edit',v.route==='edit');document.body.classList.toggle('nav-account',v.route==='account');document.getElementById('accountSheet').hidden=v.route!=='account';
   if(v.route==='account'){document.getElementById('savedRecordsPanel').hidden=!v.saved;if(v.saved)document.getElementById('savedProfileView').click()}
   if(v.entered&&document.getElementById('tab-'+v.tab))setTab(v.tab);
   if(v.report&&report.querySelector('#reportBody')?.hasChildNodes()){report.hidden=false;document.documentElement.classList.add('rep-lock')}
