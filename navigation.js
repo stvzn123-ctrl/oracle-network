@@ -69,7 +69,7 @@
  },true);
  document.addEventListener('click',e=>{if(e.target.closest('[data-complete-profile]'))document.getElementById('profileEdit').click()});
  document.getElementById('profileDeleteDialog').addEventListener('close',()=>{if(!document.getElementById('savedRecordsPanel').hidden)showSavedRecords()});
- new MutationObserver(()=>{if(!askbox.open&&document.body.classList.contains('nav-edit')){leaveEditor();sheet.hidden=true;document.body.classList.remove('nav-account');select('home')}}).observe(askbox,{attributes:true,attributeFilter:['open']});
+ new MutationObserver(()=>{if(document.body.classList.contains('nav-edit'))select('account')}).observe(askbox,{attributes:true,attributeFilter:['open']});
  document.getElementById('profileEdit').addEventListener('click',()=>{
   document.querySelectorAll('dialog[open]').forEach(d=>d.close());if(!document.getElementById('report').hidden)closeReport();
   document.body.classList.remove('nav-topics','nav-ask');document.body.classList.add('app-entered','nav-account','nav-edit');sheet.hidden=false;editor.hidden=false;editor.append(askbox);

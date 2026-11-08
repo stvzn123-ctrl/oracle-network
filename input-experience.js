@@ -11,6 +11,7 @@ function formatBirthTime(value,complete=false){
  return hours+(minutes.length||separated?':'+minutes:'');
 }
 (()=>{
+ const help=document.getElementById('romanHelpToggle'),helpText=document.getElementById('romanHelpText');help.addEventListener('click',()=>{helpText.hidden=!helpText.hidden;help.setAttribute('aria-expanded',String(!helpText.hidden))});
  const time=document.getElementById('in-time');
  time.addEventListener('input',()=>{
   const old=time.value,caret=time.selectionStart??old.length,leftDigits=old.slice(0,caret).replace(/\D/g,'').length;
