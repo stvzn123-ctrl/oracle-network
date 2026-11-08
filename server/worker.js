@@ -102,6 +102,11 @@ async function authRoute(req,env,url,ctx){
     if(!ex&&cnt.n>=20)return json(req,env,{error:'partner_limit'},409);
     const id=ex?ex.id:[...crypto.getRandomValues(new Uint8Array(16))].map(x=>x.toString(16).padStart(2,'0')).join('');
     await env.DB.prepare('INSERT INTO partners(id,user_id,name,date,data,consent_at,updated) VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data,updated=excluded.updated,consent_at=excluded.consent_at').bind(id,user.id,v.name,v.date,JSON.stringify(v),now,now).run();return json(req,env,{ok:true,id})}
+  if(req.method==='POST'&&path==='/auth/withdraw'){
+    await questionTable(env);
+    await env.DB.batch([env.DB.prepare('DELETE FROM questions WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM partners WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM sessions WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM auth_grants WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM private_reports WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM report_entitlements WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM users WHERE id=?').bind(user.id)]);
+    return json(req,env,{ok:true});
+  }
   if(req.method==='POST'&&path==='/auth/logout'){const t=req.headers.get('Authorization').slice(7);await env.DB.prepare('DELETE FROM sessions WHERE token_hash=?').bind(await authHash(t)).run();return json(req,env,{ok:true})}
   return json(req,env,{error:'not_found'},404);
 }
