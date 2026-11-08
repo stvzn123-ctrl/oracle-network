@@ -126,3 +126,25 @@ h1,h2,h3,h4,h5,h6{font-weight:600!important}
 
 /* The editor belongs to the account tab, never the home result container. */
 body.nav-edit #accountMember,body.nav-edit #savedRecordsPanel,body.nav-edit #accountSheet>header,body.nav-edit #accountSheet>p,body.nav-edit #accountLogin{display:none!important}#accountEditor h3{font:600 22px/1.5 var(--body);color:var(--fg);margin:0 0 16px}#accountEditor .askbox{margin:0;width:100%}body.nav-edit>.wrap{display:none!important}
+/* Unified birth-information form, including the account-owned editor. */
+#askbox{border:1px solid var(--line)!important;border-radius:22px!important;background:rgba(255,253,249,.72)!important;box-shadow:inset 0 1px 0 #fff}
+#askbox>summary{padding:14px 18px!important;border-bottom:1px solid var(--line);font:500 14px/1.6 var(--body)}
+#ask{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:20px 14px!important;padding:20px!important;align-items:start}
+#ask>.f.s2{grid-column:auto!important;min-width:0}#ask>.f.full,#ask>.go{grid-column:1/-1!important}
+#ask .f>label:not(.chk),#ask .f>.lb{display:block;margin:0 0 8px!important;font:500 13px/1.5 var(--body);color:var(--fg)}
+#ask :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select){box-sizing:border-box;display:block;width:100%!important;min-width:0;height:48px!important;min-height:48px!important;padding:11px 12px!important;border:1px solid var(--line2)!important;border-radius:14px!important;background:var(--field)!important;color:var(--fg)!important;font:400 16px/1.5 var(--body)!important;letter-spacing:0!important;box-shadow:inset 0 1px 2px rgba(74,53,43,.025);outline:none}
+#ask input:focus-visible,#ask select:focus-visible{border-color:var(--accent-ink)!important;outline:2px solid rgba(31,122,149,.16)!important;outline-offset:2px!important}
+#ask input:disabled,#ask select:disabled{opacity:.5;background:rgba(235,227,215,.35)!important}
+#ask .seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;border:1px solid var(--line);border-radius:14px;background:rgba(235,227,215,.30);min-height:48px}
+#ask .seg label{margin:0!important;min-width:0;cursor:pointer}#ask .seg label>span{display:flex;align-items:center;justify-content:center;min-height:38px;padding:7px 8px!important;border:0;border-radius:10px;background:transparent;color:var(--ink2);font:500 14px/1.4 var(--body)}
+#ask .seg input:checked+span{background:rgba(255,251,243,.94)!important;color:var(--gold-ink)!important;box-shadow:0 2px 6px rgba(74,53,43,.055),inset 0 1px 0 #fff}
+#ask .fnote,#ask .conv{display:block;margin:8px 0 0!important;font:400 12px/1.65 var(--body);color:var(--muted)}#ask #romanNote{word-break:keep-all}#ask .sub:empty{display:none}
+#ask .birth-date-field,#ask .birth-time-field{grid-column:span 1!important;align-self:start}#ask .birth-time-field #in-time{font-variant-numeric:tabular-nums}#ask .birth-date-field .sub{margin-top:8px}
+#ask label.chk{display:flex;align-items:flex-start;gap:8px;margin:10px 0 0!important;padding:0!important;min-height:24px;font:400 12px/1.7 var(--body);color:var(--ink2)}#ask label.chk input{width:16px;height:16px;min-height:16px;flex:none;margin:2px 0 0;accent-color:var(--gold-ink)}#ask label.noplace{margin:0 0 12px!important;flex-wrap:wrap}
+#ask #placeBox{display:flex;flex-direction:column;gap:10px}#ask .psearch{width:100%}#ask .psel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0!important}#ask #placeNote{margin:0!important}
+#ask .placebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;margin:0;border-radius:14px;background:rgba(255,251,243,.6);border:1px solid var(--line)}#ask .placebar .pname{font-size:13px;flex:1;min-width:100px}#ask .placebar .coords{display:none}#ask #mapBtn{min-height:36px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--gold-ink);font:500 12px var(--body)}
+#ask .go{margin:4px 0 0!important;display:flex;flex-direction:column;gap:12px}#ask .go>button{width:100%;margin:0!important;min-height:48px!important;font:600 15px/1.5 var(--body)}#ask .save-opt{margin:0!important}#ask .account-note:empty{display:none}#ask .account-privacy{margin-top:12px}
+.kakao-data-notice{font:400 12px/1.75 var(--body);color:var(--muted);word-break:keep-all;margin:10px 0 16px;max-width:58ch}
+#accountLogin,#saveLogin,#loginSaveGo{font:600 14px/1.5 var(--body);min-height:46px;border:1px solid rgba(90,73,0,.08);border-radius:14px;padding:11px 16px;background:#fee500;color:#191919;cursor:pointer}
+#saveLogin{width:100%;margin-top:10px}#accountLogin{min-width:160px}.login-save-dialog{border-radius:22px;padding:24px;max-width:440px;background:var(--bg);color:var(--fg)}.login-save-dialog .kakao-data-notice{padding:12px 14px;border-radius:12px;background:var(--field);margin:12px 0 16px}
+@media(max-width:360px){#ask{padding:16px!important;gap:18px 10px!important}#ask :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select){padding-inline:10px!important}#ask .f>label:not(.chk),#ask .f>.lb{font-size:12px}}
