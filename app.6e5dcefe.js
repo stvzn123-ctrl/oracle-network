@@ -1156,9 +1156,9 @@ function weekHTML(ch){const ds=weekDays(),F=ds.map(d=>dayFortune(ch,d)),td=new D
   const hi=F.reduce((b,f,i)=>f.all>F[b].all?i:b,0),lo=F.reduce((b,f,i)=>f.all<F[b].all?i:b,0);
   const ca=[0,1,2,3].map(c=>F.reduce((a,f)=>a+f.sc[c],0)/7),bc=ca.indexOf(Math.max(...ca));
   const W=700,H=210,bw=56,gap=(W-40-bw*7)/6,y=v=>H-36-(v-55)/45*(H-70);
-  const vmin=0,vmax=100,yv=v=>H-44-(v-vmin)/(vmax-vmin)*(H-90);
+  const vmin=Math.max(0,Math.floor(Math.min(...F.map(f=>f.all))-3)),vmax=Math.min(100,Math.ceil(Math.max(...F.map(f=>f.all))+3)),yv=v=>H-44-(v-vmin)/Math.max(8,vmax-vmin)*(H-90);
   const px=i=>40+i*(W-80)/6,pts=F.map((f,i)=>[px(i),yv(f.all)]),path=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
-  const grid=[0,50,100].map(v=>`<path d="M40 ${yv(v)}H${W-40}" stroke="var(--line)" fill="none"/><text x="30" y="${yv(v)+4}" text-anchor="end" class="wk-scale">${v}</text>`).join("");
+  const grid=[vmin,Math.round((vmin+vmax)/2),vmax].map(v=>`<path d="M40 ${yv(v)}H${W-40}" stroke="var(--line)" fill="none"/><text x="30" y="${yv(v)+4}" text-anchor="end" class="wk-scale">${v}</text>`).join("");
   const bars=grid+`<path d="${path}" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`+F.map((f,i)=>`<g class="wk-pt${i===ti?" sel now":""}" data-wkday="${i}" role="button" tabindex="0" aria-label="${"월화수목금토일"[i]}요일 ${f.all}점 자세히 보기"><circle cx="${pts[i][0]}" cy="${pts[i][1]}" r="26" fill="transparent"/><circle class="wk-dot" cx="${pts[i][0]}" cy="${pts[i][1]}" r="8"/><text x="${pts[i][0]}" y="${pts[i][1]-18}" text-anchor="middle" class="wk-v">${f.all}</text><text x="${pts[i][0]}" y="${H-10}" text-anchor="middle" class="wk-d">${"월화수목금토일"[i]}${i===ti?"·오늘":""}</text></g>`).join("");
   return `<div class="week wk-line"><svg viewBox="0 0 ${W} ${H}" role="group" aria-label="이번 주 요일별 점수. 점을 누르면 그날 운세가 아래에 나옵니다">${bars}</svg><p class="wk-hint">점을 누르면 그날의 조언과 풀이가 아래에 나와요.</p>
   </div>`}

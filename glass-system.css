@@ -120,3 +120,6 @@ h1,h2,h3,h4,h5,h6{font-weight:600!important}
 #accountSheet.account-page h2{font:600 var(--type-page)/1.5 var(--body)!important}#accountSheet.account-page h3{font:600 var(--type-section)/1.6 var(--body)!important;color:var(--text-emphasis)}
 #report .r-page h2{font:600 24px/1.5 var(--body)!important}#report .r-page h3{font:600 var(--type-section)/1.6 var(--body)!important}#report .r-page h4{font:500 var(--type-subtitle)/1.6 var(--body)!important}#report .r-page p,#report .r-page li{font:400 var(--type-copy)/1.85 var(--body)!important}#report .r-page :is(b,strong){font-weight:600!important}
 .wk-scale{font:11px var(--body);fill:var(--muted)}.wk-v{font-family:var(--body)!important;font-weight:500}.wk-d{font-family:var(--body)!important;font-weight:400}.td-cats b{font-weight:600}
+
+/* Keep the weekly trend close to the daily summary. */
+#tab-today #todayHead{margin-bottom:0!important}#tab-today #todayHead+.blk{margin-top:16px!important;padding-top:0!important}#tab-today #weekTitle{margin:0 0 12px!important;padding-top:0!important}#tab-today .week{margin-top:0!important}
