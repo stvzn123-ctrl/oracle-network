@@ -3410,7 +3410,7 @@ function renderHook(){const h=$("hook");if(h&&CH)h.innerHTML=reportHook(CH)}
 
 /* Share a fixed introduction and site URL only; never include birth input or personal results. */
 const SHARE_URL="https://stvzn123-ctrl.github.io/oracle-network/";
-const SHARE_TITLE="운명탐정 - 가장 정확한 운명 해설서";
+const SHARE_TITLE="운명탐정 - 다섯 점술로 찾는 나의 운명";
 function resultShareText(){return SHARE_TITLE+"\n"+SHARE_URL}
 
 /* 초대 링크 잠금: INVITE_API가 있으면 친구가 내 링크(?r=코드)로 들어와야 열린다. 비어 있으면 예전 방식(공유 완료·복사 후 열림). */
@@ -3472,7 +3472,7 @@ async function systemShare(app){if(typeof navigator.share==="function"){try{awai
 let kakaoReady=null;
 function loadKakao(){if(kakaoReady)return kakaoReady;kakaoReady=new Promise((ok,no)=>{const sc=document.createElement("script");sc.src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.4/kakao.min.js";sc.crossOrigin="anonymous";sc.onload=()=>{try{if(!Kakao.isInitialized())Kakao.init(KAKAO_JS_KEY);ok()}catch(e){no(e)}};sc.onerror=no;document.head.appendChild(sc)}).catch(e=>{kakaoReady=null;throw e});return kakaoReady}
 async function shareTo(k){const url=shareLink(),text=SHARE_TITLE;
-  if(k==="kakao"){if(KAKAO_JS_KEY){try{await loadKakao();Kakao.Share.sendDefault({objectType:"feed",content:{title:"운명탐정",description:"가장 정확한 운명 해설서",imageUrl:SHARE_URL+"og.jpg",imageWidth:1200,imageHeight:630,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:"나의 운명 확인하기",link:{mobileWebUrl:url,webUrl:url}}]});afterShare();return}catch(_){}}return systemShare("카카오톡")}
+  if(k==="kakao"){if(KAKAO_JS_KEY){try{await loadKakao();Kakao.Share.sendDefault({objectType:"feed",content:{title:"운명탐정",description:"다섯 점술로 나의 성향과 연애·결혼·일과 돈의 흐름을 함께 살펴봐요.",imageUrl:SHARE_URL+"og-share-v2.png",imageWidth:1200,imageHeight:630,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:"나의 운명 확인하기",link:{mobileWebUrl:url,webUrl:url}}]});afterShare();return}catch(_){}}return systemShare("카카오톡")}
   if(k==="insta")return systemShare("인스타그램 DM이나 스토리");
   const href=k==="threads"?"https://www.threads.net/intent/post?text="+encodeURIComponent(text+"\n"+url):"https://x.com/intent/tweet?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(url);
   window.open(href,"_blank","noopener,noreferrer");afterShare()}

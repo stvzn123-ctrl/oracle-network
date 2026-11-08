@@ -7,26 +7,26 @@
 <script>try{if(localStorage.getItem("oracle-session"))document.documentElement.classList.add("boot");setTimeout(function(){document.documentElement.classList.remove("boot")},4000)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>운명탐정</title>
-<meta name="description" content="사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 한 번에 계산해 읽는 나의 운명">
+<meta name="description" content="다섯 점술을 하나로 모아, 나의 성향부터 연애·결혼·일과 돈의 흐름까지 함께 살펴봐요.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="운명탐정">
-<meta property="og:title" content="운명탐정 - 가장 정확한 운명 해설서">
-<meta property="og:description" content="사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 한 번에 계산해 읽는 나의 운명">
+<meta property="og:title" content="운명탐정 | 다섯 점술로 찾는 나의 운명">
+<meta property="og:description" content="다섯 점술을 하나로 모아, 나의 성향부터 연애·결혼·일과 돈의 흐름까지 함께 살펴봐요.">
 <meta property="og:url" content="https://stvzn123-ctrl.github.io/oracle-network/">
-<meta property="og:image" content="https://stvzn123-ctrl.github.io/oracle-network/og.jpg">
+<meta property="og:image" content="https://stvzn123-ctrl.github.io/oracle-network/og-share-v2.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="운명탐정 - 가장 정확한 운명 해설서">
+<meta property="og:image:alt" content="운명탐정 | 다섯 점술로 찾는 나의 운명">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="운명탐정 - 가장 정확한 운명 해설서">
-<meta name="twitter:description" content="사주, 서양 점성술, 인도 점성술, 수비학, 마야력을 한 번에 계산해 읽는 나의 운명">
-<meta name="twitter:image" content="https://stvzn123-ctrl.github.io/oracle-network/og.jpg">
+<meta name="twitter:title" content="운명탐정 | 다섯 점술로 찾는 나의 운명">
+<meta name="twitter:description" content="다섯 점술을 하나로 모아, 나의 성향부터 연애·결혼·일과 돈의 흐름까지 함께 살펴봐요.">
+<meta name="twitter:image" content="https://stvzn123-ctrl.github.io/oracle-network/og-share-v2.png">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap"></noscript>
 <link rel="stylesheet" href="app.a639f8a0.css">
 <link rel="stylesheet" href="companion.css?v=7">
-<link rel="stylesheet" href="glass-system.css?v=18">
+<link rel="stylesheet" href="glass-system.css?v=19">
 <style>html.lite *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}html.lite #oracle-dream img,html.lite #oracle-dream *{animation:none!important}</style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -102,7 +102,7 @@
   <div class="res-top">
     <h2 class="res-eyebrow" id="resTitle">당신의 운명</h2>
   </div>
-<div class="res-nav"><div class="res-tabs" role="tablist" aria-label="결과 보기"><button type="button" role="tab" id="tb-natal" aria-controls="tab-natal" aria-selected="false" data-tab="natal"  tabindex="-1">나의 운명</button><button type="button" role="tab" id="tb-flow" aria-controls="tab-flow" aria-selected="false" data-tab="flow"  tabindex="-1">앞으로 10년</button><button type="button" role="tab" id="tb-today" aria-controls="tab-today" aria-selected="false" data-tab="today"  tabindex="-1">이번 주</button></div><details class="topic-fold" id="topicFold"><summary class="topic-nav-title">무엇이 궁금하세요?</summary><div class="topic-fold-in"><div class="res-topics" role="tablist" aria-label="관심 주제"><button type="button" role="tab" id="tb-romance" aria-controls="tab-marry" aria-selected="false" data-tab="marry" data-romance="true" tabindex="-1"><span class="pose pose-heart topic-pose" aria-hidden="true"></span><strong>연애·결혼</strong><small>언제, 어떤 사람을 만날까요?</small></button><button type="button" role="tab" id="tb-money-group" aria-controls="tab-money" aria-selected="false" data-tab="money"  tabindex="-1"><span class="pose pose-money topic-pose" aria-hidden="true"></span><strong>재물·돈</strong><small>돈의 흐름이 좋아지는 때는?</small></button><button type="button" role="tab" id="tb-work-group" aria-controls="tab-work" aria-selected="false" data-tab="work" data-topic-group="work"  tabindex="-1"><span class="pose pose-lucky topic-pose" aria-hidden="true"></span><strong>직업</strong><small>나에게 맞는 일과 귀인은?</small></button><button type="button" role="tab" id="tb-study-group" aria-controls="tab-study" aria-selected="false" data-tab="study" data-topic-group="study"  tabindex="-1"><span class="pose pose-happy topic-pose" aria-hidden="true"></span><strong>학업·성취</strong><small>나에게 맞는 공부와 도전 시기는?</small></button></div><div class="romance-tabs" role="tablist" aria-label="연애·결혼 상세" hidden><button type="button" role="tab" id="tb-marry" aria-controls="tab-marry" aria-selected="false" data-tab="marry"  tabindex="-1">결혼</button><button type="button" role="tab" id="tb-love" aria-controls="tab-love" aria-selected="false" data-tab="love"  tabindex="-1">연애</button><button type="button" role="tab" id="tb-match" aria-controls="tab-match" aria-selected="false" data-tab="match"  tabindex="-1">궁합</button><button type="button" role="tab" id="tb-reunion" aria-controls="tab-reunion" aria-selected="false" data-tab="reunion"  tabindex="-1">재회</button></div></div></details></div>
+<div class="res-nav"><div class="res-tabs" role="tablist" aria-label="결과 보기"><button type="button" role="tab" id="tb-natal" aria-controls="tab-natal" aria-selected="false" data-tab="natal"  tabindex="-1">나의 운명</button><button type="button" role="tab" id="tb-flow" aria-controls="tab-flow" aria-selected="false" data-tab="flow"  tabindex="-1">앞으로 10년</button><button type="button" role="tab" id="tb-today" aria-controls="tab-today" aria-selected="false" data-tab="today"  tabindex="-1">이번 주</button></div><details class="topic-fold" id="topicFold"><summary class="topic-nav-title">무엇이 궁금하세요?</summary><div class="topic-fold-in"><div class="res-topics" role="tablist" aria-label="관심 주제"><button type="button" role="tab" id="tb-romance" aria-controls="tab-marry" aria-selected="false" data-tab="marry" data-romance="true" tabindex="-1"><span class="pose pose-heart topic-pose" aria-hidden="true"></span><strong>연애·결혼</strong></button><button type="button" role="tab" id="tb-money-group" aria-controls="tab-money" aria-selected="false" data-tab="money"  tabindex="-1"><span class="pose pose-money topic-pose" aria-hidden="true"></span><strong>재물·돈</strong></button><button type="button" role="tab" id="tb-work-group" aria-controls="tab-work" aria-selected="false" data-tab="work" data-topic-group="work"  tabindex="-1"><span class="pose pose-lucky topic-pose" aria-hidden="true"></span><strong>직업</strong></button><button type="button" role="tab" id="tb-study-group" aria-controls="tab-study" aria-selected="false" data-tab="study" data-topic-group="study"  tabindex="-1"><span class="pose pose-happy topic-pose" aria-hidden="true"></span><strong>학업·성취</strong></button></div><div class="romance-tabs" role="tablist" aria-label="연애·결혼 상세" hidden><button type="button" role="tab" id="tb-marry" aria-controls="tab-marry" aria-selected="false" data-tab="marry"  tabindex="-1">결혼</button><button type="button" role="tab" id="tb-love" aria-controls="tab-love" aria-selected="false" data-tab="love"  tabindex="-1">연애</button><button type="button" role="tab" id="tb-match" aria-controls="tab-match" aria-selected="false" data-tab="match"  tabindex="-1">궁합</button><button type="button" role="tab" id="tb-reunion" aria-controls="tab-reunion" aria-selected="false" data-tab="reunion"  tabindex="-1">재회</button></div></div></details></div>
   <div class="tabp" id="tab-today" role="tabpanel" aria-labelledby="tb-today">
     <div id="todayHead" class="today"></div>
     <section class="blk" aria-labelledby="weekTitle"><h3 class="blk-h" id="weekTitle">이번 주 운세</h3><div id="weekBox"></div>
@@ -173,7 +173,7 @@
 </template>
 
 <dialog id="reportPurchase" class="report-purchase"><button type="button" id="reportPurchaseClose" class="purchase-close" aria-label="리포트 안내 닫기">닫기 ×</button><span class="eyebrow">나의 운명 리포트</span><h2 id="purchaseTitle"></h2><p>이 리포트에서 볼 수 있어요</p><ul id="purchaseContents"></ul><div class="purchase-price"><span>리포트 가격</span><strong id="purchasePrice"></strong></div><p id="purchaseStatus" role="status">결제 확인 후 관리자가 승인하면 열람할 수 있어요.</p><button type="button" id="reportCheckout">결제하기</button><p class="fine">온라인 결제는 준비 중이며, 이 화면에서 결제되거나 청구되지 않아요.</p></dialog><section hidden id="accountSheet" class="account-sheet account-page" aria-labelledby="accountSheetTitle"><header><h2 id="accountSheetTitle">내 정보</h2></header><p>로그인과 저장한 정보, 계정 설정을 한곳에서 관리해요.</p><button type="button" id="accountLogin" class="kakao-login acct-login">카카오 로그인</button><div class="acct" id="accountMember" hidden><summary id="accountName" class="top-icon" aria-label="계정 메뉴" title="개인 설정"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></summary><div class="acct-pop"><p class="acct-hello" id="accountHello"></p><p id="accountIdLabel" class="fine"></p><button type="button" id="profileEdit">내 정보 수정</button><button type="button" id="savedProfileView">저장 정보 보기</button><a id="adminPageLink" class="acct-item" href="admin.html" hidden>관리자 페이지</a><button type="button" id="accountLogout">로그아웃</button><button type="button" id="accountWithdraw">탈퇴</button><p id="accountMenuStatus" role="status"></p><span hidden><button type="button" id="profileLoad"></button><button type="button" id="profileSave"></button></span></div></div><section id="savedRecordsPanel" hidden aria-labelledby="savedRecordsTitle"><h3 id="savedRecordsTitle">저장한 정보</h3><div id="savedPersonalRecord"></div><h3>궁합·재회에 저장한 상대</h3><p id="savedPartnersStatus" role="status"></p><div id="savedPartnerRecords"></div></section><div hidden><button type="button" id="profileDelete">내 출생 정보 삭제</button></div></section>
-<script src="app.6e5dcefe.js?v=18"></script>
+<script src="app.6e5dcefe.js?v=19"></script>
 
 <script>
 (function(){const $=id=>document.getElementById(id);

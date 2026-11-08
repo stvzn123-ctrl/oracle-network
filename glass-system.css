@@ -173,3 +173,8 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 .report-cover-pose{display:block;width:148px;margin:0 auto 18px}.report-chapter-pose{width:74px;float:right;margin:0 0 12px 16px}.rv3-ch:has(.report-chapter-pose){display:flow-root}
 @media(max-width:380px){#topicFold .topic-pose{width:50px}.report-cover-pose{width:126px}}
 @media print{.pose{break-inside:avoid}}
+
+#topicFold .res-topics>[role=tab]{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 12px!important;text-align:center;min-height:154px}
+#topicFold .res-topics .topic-pose{width:90px!important;float:none;margin:0!important}#topicFold .res-topics strong{display:block;margin:0!important;text-align:center;font-size:16px;line-height:1.4}
+/* Clip only the question mark in the source cell, leaving the face intact. */
+.question-pose{clip-path:polygon(0 0,68% 0,68% 27%,100% 27%,100% 100%,0 100%)}
