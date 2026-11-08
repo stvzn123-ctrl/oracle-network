@@ -6,7 +6,7 @@
   if(typeof accountPaint==='function')accountPaint();
   let el=document.getElementById('savedProfileSummary');
   if(!el){el=document.createElement('dl');el.id='savedProfileSummary';document.getElementById('savedProfileView').after(el)}
-  el.replaceChildren();el.hidden=true;document.getElementById('profileDelete').hidden=true;
+  el.replaceChildren();el.hidden=true;document.getElementById('profileDelete').hidden=false;
   const user=typeof accountUser==='undefined'?null:accountUser;
   let p=user?.profile;if(typeof p==='string'){try{p=JSON.parse(p)}catch{p=null}}
   const rows=p?[['이름',p.name],['생년월일',p.date],['출생 시각',p.notime?'시간 모름':p.time],['출생지',p.place?.name||'선택 안 함']]:[['안내',user?'저장된 출생 정보가 없어요. 정보 수정에서 입력한 뒤 저장해 주세요.':'카카오 로그인 후 저장한 정보를 확인할 수 있어요.']];
@@ -16,7 +16,8 @@
 
  const icons={ask:'<path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9H13a8.5 8.5 0 0 1 8 8v.5Z"/><path d="M8 11h8M8 14h5"/>',home:'<path d="m3 10 9-7 9 7v11H3z"/><path d="M9 21v-8h6v8"/>',topics:'<circle cx="12" cy="12" r="9"/><path d="M9.5 8.5a2.6 2.6 0 0 1 5 1c0 2-2.5 2-2.5 4M12 17h.01"/>',account:'<circle cx="12" cy="7" r="4"/><path d="M4 22c0-9 16-9 16 0"/>'};
  nav.querySelectorAll('button').forEach(b=>{const name={home:'홈',topics:'무엇이 궁금하세요',ask:'자유질문',account:'내 정보'}[b.dataset.bottom];b.setAttribute('aria-label',name);b.title=name;b.innerHTML='<svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+icons[b.dataset.bottom]+'</svg>'});
- document.getElementById('savedProfileView').onclick=()=>{const el=document.getElementById('savedProfileSummary');el.hidden=!el.hidden;document.getElementById('profileDelete').hidden=el.hidden};
+ document.getElementById('savedProfileView').onclick=()=>{if(accountUser?.profile){let p=accountUser.profile;if(typeof p==='string')p=JSON.parse(p);profileFill(p)}document.getElementById('profileEdit').click()};
+ const editSave=document.createElement('button');editSave.type='button';editSave.id='saveProfileEdits';editSave.textContent='수정 내용 저장';editSave.hidden=true;editSave.addEventListener('click',()=>document.getElementById('profileSave').click());document.querySelector('#ask .go').append(editSave);
  document.getElementById('accountWithdraw').onclick=async()=>{
   if(!confirm('탈퇴하면 저장한 출생 정보, 궁합 정보, 리포트와 열람 권한이 삭제됩니다. 탈퇴할까요?'))return;
   const b=document.getElementById('accountWithdraw'),status=document.getElementById('accountMenuStatus');b.disabled=true;
@@ -30,7 +31,9 @@
  nav.addEventListener('click',e=>{
   const b=e.target.closest('[data-bottom]');if(!b)return;
   const key=b.dataset.bottom;
-  if(key==='account'){paintProfile();if(!sheet.open)sheet.showModal();return}
+  document.querySelectorAll('dialog[open]').forEach(d=>d.close());
+  if(!document.getElementById('report').hidden)closeReport();
+  if(key==='account'){paintProfile();if(!sheet.open)sheet.show();return}
   document.body.classList.toggle('nav-topics',key==='topics');document.body.classList.toggle('nav-ask',key==='ask');select(key);
   if(key==='home'){
    if(typeof CH!=='undefined'&&CH){setTab('natal');document.body.classList.add('app-entered')}
@@ -56,6 +59,6 @@
  document.addEventListener('click',e=>{if(e.target.closest('[data-complete-profile]'))document.getElementById('profileEdit').click()});
  document.getElementById('profileEdit').addEventListener('click',()=>{
   sheet.close();document.body.classList.remove('nav-topics','nav-ask');document.body.classList.add('app-entered');
-  document.getElementById('askbox').open=true;select('home');document.getElementById('in-name').focus();
+  document.getElementById('askbox').open=true;editSave.hidden=!accountUser;select('home');document.getElementById('in-name').focus();
  });
 })();

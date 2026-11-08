@@ -723,8 +723,7 @@ function resultIntroHTML(ch){const tags=reportTags(ch);
   const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><small>5개 점술 중 ${t.n}개 점술이 같은 성향을 이야기해요.</small></div></li>`).join("");
   return `<p class="res-lead">${mainDestinyIntroHTML(ch)}</p>
   <h3 class="res-h">여러 운세에서 발견한 나의 매력</h3><ul class="r-agree">${agl}</ul>
-  <h3 class="res-h">타고난 기질과 선물</h3>${fateTraitsHTML(ch)}
-  <div class="r-prose">${natalReadingHTML(ch)}</div>
+  <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${natalReadingHTML(ch)}</div>${fateTraitsHTML(ch)}
   ${pastReadingHTML(ch)}` }
 function renderResult(){const ch=CH,name=ch.inp.name;
   const wn=$("whoName");wn.textContent=name||"당신의";$("whoSfx").textContent=name?"님의":"";wn.classList.toggle("noname",!name);

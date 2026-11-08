@@ -89,3 +89,8 @@ body.nav-ask #tab-ask{display:block!important}.nav-ask .question-chat{padding:24
 .trait-quadrant{margin-bottom:16px!important}.trait-quadrant svg text{font-size:12px}
 
 .home-habit-list .home-habit-reason{font:400 14px/1.7 var(--body);margin:6px 0!important;color:var(--ink2)}.home-places .feng-explorer{margin-top:16px}.home-places .cp-map{border-radius:16px}.home-places .cp-info,.home-places .cp-list{background:var(--field)}
+
+body.nav-topics .res-nav{margin-top:14px!important}
+#tab-natal .trait-quadrant{max-width:360px;width:100%;margin:16px auto 24px!important;padding:16px}.trait-quadrant svg{max-width:300px;margin:8px auto}.trait-quadrant figcaption{font-size:16px}
+.account-sheet:not(:modal){position:fixed;inset:0;max-height:calc(100svh - 120px);margin:auto;z-index:11000;box-shadow:0 16px 80px #4a352b33}.account-sheet:not(:modal)::backdrop{display:none}.bottom-nav,dialog .bottom-nav{z-index:12000}
+.account-sheet .acct-pop>span[hidden]{display:none!important}#saveProfileEdits{margin-top:12px;width:100%;min-height:46px;border:1px solid var(--line);border-radius:14px;background:var(--field);color:var(--fg);font:500 15px var(--body)}
