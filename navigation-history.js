@@ -34,7 +34,7 @@
   document.body.classList.toggle('app-entered',v.entered);
   document.body.classList.toggle('nav-topics',v.route==='topics');
   document.body.classList.toggle('nav-ask',v.route==='ask');
-  document.body.classList.toggle('nav-edit',v.route==='edit');document.body.classList.toggle('nav-account',v.route==='account');document.getElementById('accountSheet').hidden=v.route!=='account';
+  document.body.classList.toggle('nav-edit',v.route==='edit');document.body.classList.toggle('nav-account',v.route==='account'||v.route==='edit');document.getElementById('accountSheet').hidden=!['account','edit'].includes(v.route);
   if(v.route==='account'){document.getElementById('savedRecordsPanel').hidden=!v.saved;if(v.saved)document.getElementById('savedProfileView').click()}
   if(v.entered&&document.getElementById('tab-'+v.tab))setTab(v.tab);
   if(v.report&&report.querySelector('#reportBody')?.hasChildNodes()){report.hidden=false;document.documentElement.classList.add('rep-lock')}

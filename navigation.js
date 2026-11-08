@@ -2,6 +2,10 @@
 (()=>{
  const sheet=document.getElementById('accountSheet');
  const nav=document.querySelector('.bottom-nav');
+ const askbox=document.getElementById('askbox'),formAnchor=document.createComment('birth-form-home');askbox.before(formAnchor);
+ const editor=document.createElement('section');editor.id='accountEditor';editor.hidden=true;const editorTitle=document.createElement('h3');editorTitle.textContent='내 정보 수정';editor.append(editorTitle);sheet.append(editor);
+ function leaveEditor(){if(askbox.parentElement===editor)formAnchor.after(askbox);editor.hidden=true;document.body.classList.remove('nav-edit')}
+
  function paintProfile(){if(typeof accountPaint==='function')accountPaint()}
  async function showSavedRecords(){
   const panel=document.getElementById('savedRecordsPanel');panel.hidden=false;
@@ -36,7 +40,7 @@
  function select(key){nav.querySelectorAll('button').forEach(b=>{if(b.dataset.bottom===key)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')})}
  nav.addEventListener('click',e=>{
   const b=e.target.closest('[data-bottom]');if(!b)return;
-  const key=b.dataset.bottom;document.body.classList.remove('nav-edit');
+  const key=b.dataset.bottom;leaveEditor();
   document.querySelectorAll('dialog[open]').forEach(d=>d.close());
   if(!document.getElementById('report').hidden)closeReport();
   document.body.classList.toggle('nav-account',key==='account');sheet.hidden=key!=='account';
@@ -65,9 +69,11 @@
  },true);
  document.addEventListener('click',e=>{if(e.target.closest('[data-complete-profile]'))document.getElementById('profileEdit').click()});
  document.getElementById('profileDeleteDialog').addEventListener('close',()=>{if(!document.getElementById('savedRecordsPanel').hidden)showSavedRecords()});
- new MutationObserver(()=>{if(!document.getElementById('askbox').open)document.body.classList.remove('nav-edit')}).observe(document.getElementById('askbox'),{attributes:true,attributeFilter:['open']});
+ new MutationObserver(()=>{if(!askbox.open&&document.body.classList.contains('nav-edit')){leaveEditor();sheet.hidden=true;document.body.classList.remove('nav-account');select('home')}}).observe(askbox,{attributes:true,attributeFilter:['open']});
  document.getElementById('profileEdit').addEventListener('click',()=>{
-  sheet.hidden=true;document.body.classList.remove('nav-topics','nav-ask','nav-account');document.body.classList.add('app-entered','nav-edit');setTab('natal');
-  document.getElementById('askbox').open=true;editSave.hidden=!accountUser;select('home');document.getElementById('in-name').focus();
+  document.querySelectorAll('dialog[open]').forEach(d=>d.close());if(!document.getElementById('report').hidden)closeReport();
+  document.body.classList.remove('nav-topics','nav-ask');document.body.classList.add('app-entered','nav-account','nav-edit');sheet.hidden=false;editor.hidden=false;editor.append(askbox);
+  askbox.open=true;editSave.hidden=!accountUser;select('account');window.scrollTo({top:0,behavior:'instant'});document.getElementById('in-name').focus({preventScroll:true});
  });
+
 })();

@@ -123,3 +123,6 @@ h1,h2,h3,h4,h5,h6{font-weight:600!important}
 
 /* Keep the weekly trend close to the daily summary. */
 #tab-today #todayHead{margin-bottom:0!important}#tab-today #todayHead+.blk{margin-top:16px!important;padding-top:0!important}#tab-today #weekTitle{margin:0 0 12px!important;padding-top:0!important}#tab-today .week{margin-top:0!important}
+
+/* The editor belongs to the account tab, never the home result container. */
+body.nav-edit #accountMember,body.nav-edit #savedRecordsPanel,body.nav-edit #accountSheet>header,body.nav-edit #accountSheet>p,body.nav-edit #accountLogin{display:none!important}#accountEditor h3{font:600 22px/1.5 var(--body);color:var(--fg);margin:0 0 16px}#accountEditor .askbox{margin:0;width:100%}body.nav-edit>.wrap{display:none!important}
