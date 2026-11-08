@@ -30,7 +30,7 @@
   document.querySelectorAll('dialog[open]').forEach(d=>d.close());
   if(!report.hidden)closeReport();
   if(v.route==='edit')document.getElementById('profileEdit').click();
-  else if(v.route!=='landing')nav.querySelector(`[data-bottom="${v.route}"]`)?.click();
+  else nav.querySelector(`[data-bottom="${v.route==='landing'?'home':v.route}"]`)?.click();
   document.body.classList.toggle('app-entered',v.entered);
   document.body.classList.toggle('nav-topics',v.route==='topics');
   document.body.classList.toggle('nav-ask',v.route==='ask');
