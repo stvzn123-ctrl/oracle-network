@@ -3328,7 +3328,7 @@ async function downloadReportPDF(){
  try{
   await Promise.race([document.fonts.ready,new Promise(resolve=>setTimeout(resolve,5000))]);
   const W=1240,H=1754,pad=92,bottom=H-95,width=W-pad*2,pages=[];let canvas,ctx,y;
-  const newPage=()=>{canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;ctx=canvas.getContext('2d');ctx.fillStyle='#fffdf8';ctx.fillRect(0,0,W,H);ctx.fillStyle='#6b6b65';ctx.font='18px sans-serif';ctx.fillText('운명연구소 · 나의 리포트',pad,45);y=100;pages.push(canvas)};
+  const newPage=()=>{canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;ctx=canvas.getContext('2d');ctx.fillStyle='#fffdf8';ctx.fillRect(0,0,W,H);ctx.fillStyle='#6b6b65';ctx.font='18px sans-serif';ctx.fillText('운명 탐정 · 나의 리포트',pad,45);y=100;pages.push(canvas)};
   const room=h=>{if(y+h>bottom)newPage()};
   const text=(value,size=25,bold=false)=>{const source=String(value||'').replace(/\s+/g,' ').trim();if(!source)return;ctx.font=(bold?'700 ':'400 ')+size+'px "Noto Sans KR",sans-serif';const lineHeight=Math.ceil(size*1.65);let line='';for(const char of source){if(ctx.measureText(line+char).width>width&&line){room(lineHeight);ctx.font=(bold?'700 ':'400 ')+size+'px "Noto Sans KR",sans-serif';ctx.fillStyle='#252b2b';ctx.fillText(line,pad,y+size);y+=lineHeight;line=char}else line+=char}if(line){room(lineHeight);ctx.font=(bold?'700 ':'400 ')+size+'px "Noto Sans KR",sans-serif';ctx.fillStyle='#252b2b';ctx.fillText(line,pad,y+size);y+=lineHeight}y+=bold?17:12};
   const picture=async(source,maxHeight=490)=>{try{const img=new Image();img.src=source.currentSrc||source.src;await Promise.race([img.decode(),new Promise((_,reject)=>setTimeout(()=>reject(Error('이미지 로딩 지연')),5000))]);const ratio=Math.min(width/img.naturalWidth,maxHeight/img.naturalHeight,1),w=img.naturalWidth*ratio,h=img.naturalHeight*ratio;if(!w||!h)return;room(h+26);ctx.drawImage(img,pad+(width-w)/2,y,w,h);y+=h+26}catch(e){text(source.alt||'이미지',20)}};
@@ -3496,7 +3496,7 @@ $("share-copy").addEventListener("click",async()=>{
 });
 $("share-native").addEventListener("click",async()=>{
   try{
-    await navigator.share({title:"운명연구소",text:$("share-preview").value});
+    await navigator.share({title:"운명 탐정",text:$("share-preview").value});
     if(inviteMode()){$("share-status").textContent=SENT_MSG;return}
     if(INVITE_LOCK&&!graphUnlocked)return;
     unlockGraphs();
