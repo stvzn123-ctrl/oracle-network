@@ -71,3 +71,9 @@ body.nav-ask #tab-ask{display:block!important}.nav-ask .question-chat{padding:24
 #landing .landing-bottom{max-width:none;width:100%;margin:24px 0 0!important}#landing .landing-bottom button{width:100%}
 @media(min-width:760px){#landing .landing-shell{padding-block:40px}#landing .landing-story{gap:24px}#landing .landing-lead,#landing .landing-questions{font-size:16px}#landing .landing-mascot img{width:340px}}
 @media(max-width:380px){#landing .landing-shell{padding-inline:20px}#landing .landing-story{gap:16px}#landing .landing-mascot img{width:230px}}
+
+/* Tighten the result introduction and remove the legacy white trend wrapper. */
+.res-nav{margin-bottom:0!important}#tab-natal{margin-top:12px!important;padding-top:0!important}#tab-natal .res-intro{padding-top:0!important}#tab-natal .res-lead{margin-top:0!important}
+#tab-natal #result-gate,#tab-natal #graph-content,#tab-natal .blk.act,#tab-natal #actionBody,#tab-natal .act-v2,#tab-natal .act-hd{background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;border-radius:0!important}
+#tab-natal #result-gate{padding:0!important;margin-top:20px!important}#tab-natal .blk.act{padding:0!important;margin:0 0 20px!important}#tab-natal .act-hd{padding:0!important}.act-v2,.place-v2{margin-bottom:20px!important}
+.wrap{padding-bottom:8px!important}#result>.disclaimer{margin-top:16px!important;padding-top:12px!important}.site-legal{margin-top:12px!important;padding-top:16px!important;padding-bottom:calc(68px + env(safe-area-inset-bottom))!important}.site-legal nav{margin:8px 0!important;gap:0 14px}.site-legal button{min-height:30px;padding:4px 0}.site-legal p{margin-top:10px!important}body{padding-bottom:0!important}
