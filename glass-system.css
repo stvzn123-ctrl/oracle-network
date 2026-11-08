@@ -30,3 +30,14 @@ body.nav-ask #tab-ask{display:block!important}.nav-ask .question-chat{padding:24
 @media(prefers-reduced-transparency:reduce){:root{--glass-bg:#fffaf4}.bottom-nav,.top-icon,.res-tabs button,.res-topics button{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 @media(prefers-reduced-motion:reduce){button{transition:none!important;transform:none!important}}
 @media print{.bottom-nav{display:none!important}}
+/* Compact landing, clearly separated tabs, fewer dividers within a section. */
+#landing .landing-headline{font-size:clamp(17px,4.4vw,36px)!important;white-space:nowrap;max-width:none!important;letter-spacing:-.045em;line-height:1.45}
+.landing-title-accent{color:var(--accent-ink)}#landing .landing-grid{margin-top:20px!important;gap:16px}#landing .landing-lead{font-family:var(--body);line-height:1.8;margin:0 0 16px}#landing .landing-questions{font-family:var(--body);line-height:1.75;margin:0}#landing .landing-bottom{margin-top:20px!important}#landing .landing-shell{padding-top:28px}
+.res-nav{padding:10px!important}.res-tabs{background:#e9ded0!important;border:1px solid rgba(111,84,57,.12)!important;border-radius:15px!important;padding:4px!important;gap:4px!important}
+.res-tabs button{min-height:36px!important;height:auto;padding:8px 10px!important;line-height:1.25;font-size:14px!important;border-radius:11px!important;color:#645043!important}
+.res-tabs button[aria-selected=true]{background:#fffaf1!important;color:#825014!important;border-color:#fff!important;box-shadow:0 2px 7px #60452b16,inset 0 1px 0 #fff!important;font-weight:600}
+.wrap{gap:28px}.tabp{padding-block:4px 20px}.res-intro .res-lead{margin:12px 0 22px;line-height:1.7}.blk{margin-block:24px}
+#tab-natal .res-h,#tab-flow .blk-h{margin:24px 0 12px;padding-top:18px}.r-prose p,.flow-prose p{line-height:1.8!important;margin-bottom:16px!important}.r-agree{margin-bottom:24px}.r-agree li{padding:14px 0!important}.r-agree small{margin-top:5px}.trait-quadrant{margin-block:16px 24px;padding:20px}
+.past-reading .flow-prose p,#tab-flow .flow-prose p:has(>b){border-top:0!important;padding:8px 0 12px!important;margin-bottom:12px!important}.past-reading .flow-prose p>b:first-child,#tab-flow .flow-prose p>b:first-child{margin-bottom:10px!important}.past-reading .res-h{border-bottom:0!important}
+.action-box,.topic-offer{padding:20px}.report-cta{margin-block:28px;padding:24px 20px}.topic-intro{margin-bottom:16px!important}.topic-fold-in{gap:12px}
+@media(max-width:380px){.res-tabs button{font-size:13px!important;padding-inline:6px!important}#landing .landing-shell{padding-inline:18px}}

@@ -481,7 +481,7 @@ function fateTraitsHTML(ch){
  const t=fateTraits(ch),axes=t.rows.map((a,i)=>({...a,order:i,gap:Math.abs(a.lCount-a.rCount)})).sort((a,b)=>b.gap-a.gap||a.order-b.order).slice(0,2),[x,y]=axes;
  const positive=a=>a.side?a.right:a.left,negative=a=>a.side?a.left:a.right;
  const xp=positive(x),xn=negative(x),yp=positive(y),yn=negative(y);
- return `<figure class="trait-quadrant"><figcaption>${t.name}</figcaption><svg viewBox="0 0 360 300" role="img" aria-label="${x.name}: ${xp}, ${y.name}: ${yp}. 본인의 성향이 오른쪽과 위쪽에 오도록 축 이름을 배치한 사분면"><rect x="62" y="38" width="236" height="216" rx="16" class="quadrant-paper"/><path d="M180 38V254M62 146H298" class="quadrant-axis"/><text x="180" y="24" text-anchor="middle">${yp}</text><text x="180" y="280" text-anchor="middle">${yn}</text><text x="52" y="151" text-anchor="end">${xn}</text><text x="308" y="151">${xp}</text><circle cx="234" cy="92" r="9" class="quadrant-point"/></svg><p><b>X축 · ${x.name}</b> ${xn} ↔ ${xp}<br><b>Y축 · ${y.name}</b> ${yn} ↔ ${yp}</p><small>두드러진 두 성향을 골라 나의 성향이 오른쪽·위쪽에 오도록 축 이름을 배치했어요. 점의 위치는 고정이며, 성향의 강도·점수·우열을 뜻하지 않아요.${axes.some(a=>a.tie)?' 동률인 축은 두 성향이 균형을 이뤄요.':''}</small></figure>`;
+ return `<figure class="trait-quadrant"><figcaption>${t.name}</figcaption><svg viewBox="0 0 360 300" role="img" aria-label="${x.name}: ${xp}, ${y.name}: ${yp}. 본인의 성향이 오른쪽과 위쪽에 오도록 축 이름을 배치한 사분면"><rect x="62" y="38" width="236" height="216" rx="16" class="quadrant-paper"/><path d="M180 38V254M62 146H298" class="quadrant-axis"/><text x="180" y="24" text-anchor="middle">${yp}</text><text x="180" y="280" text-anchor="middle">${yn}</text><text x="52" y="151" text-anchor="end">${xn}</text><text x="308" y="151">${xp}</text><circle cx="234" cy="92" r="9" class="quadrant-point"/></svg><p><b>X축 · ${x.name}</b> ${xn} ↔ ${xp}<br><b>Y축 · ${y.name}</b> ${yn} ↔ ${yp}</p></figure>`;
 }
 function renderFateTraits(){const el=document.getElementById("fate-traits");if(el&&CH)el.innerHTML=fateTraitsHTML(CH)}
 
@@ -722,7 +722,7 @@ function resultIntroHTML(ch){const tags=reportTags(ch);
   const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><small>${t.n}개 관점에서 함께 읽힌 성향이에요.</small></div></li>`).join("");
   return `<p class="res-lead">${mainDestinyIntroHTML(ch)}</p>
   <h3 class="res-h">여러 운세에서 발견한 나의 매력</h3><ul class="r-agree">${agl}</ul>
-  <h3 class="res-h">나의 핵심 성향 두 가지</h3>${fateTraitsHTML(ch)}<p class="r-note">점은 성향의 방향을 보여줘요. 어느 쪽이 더 좋거나 강하다는 뜻은 아니에요.</p>
+  <h3 class="res-h">나의 핵심 성향 두 가지</h3>${fateTraitsHTML(ch)}
   <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${natalReadingHTML(ch)}</div>
   ${pastReadingHTML(ch)}` }
 function renderResult(){const ch=CH,name=ch.inp.name;
