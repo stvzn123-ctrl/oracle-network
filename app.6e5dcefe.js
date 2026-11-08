@@ -445,7 +445,7 @@ function natalGifts(ch){const g=[];const d=ch.stems.d;
 /* Own symbolic classification v1: five-element counts and Sun sign modality, never a psychological test.
    Ties choose the left label for a stable 16-type index and are explicitly marked balanced. */
 const FATE_AXES=[
- {name:"움직임",left:"개척",right:"탐색",l:[0,1],r:[2,4],about:["먼저 시도하며 길을 여는 편","살펴보고 방향을 잡는 편"]},
+ {name:"움직임",left:"먼저 행동",right:"충분히 살피기",l:[0,1],r:[2,4],about:["먼저 시도하며 길을 여는 편","살펴보고 방향을 잡는 편"]},
  {name:"관계",left:"교감",right:"자율",l:[1,2],r:[3,4],about:["사람과 마음을 나누는 편","자기 공간과 기준을 지키는 편"]},
  {name:"선택",left:"직관",right:"분석",l:[0,4],r:[2,3],about:["가능성과 흐름을 먼저 보는 편","근거와 구조부터 확인하는 편"]},
  {name:"지속",left:"몰입",right:"변화",l:[2,3],r:[0,1],about:["한 가지를 꾸준히 깊게 파는 편","새로운 시도와 전환을 즐기는 편"]}
@@ -481,7 +481,8 @@ function fateTraitsHTML(ch){
  const t=fateTraits(ch),axes=t.rows.map((a,i)=>({...a,order:i,gap:Math.abs(a.lCount-a.rCount)})).sort((a,b)=>b.gap-a.gap||a.order-b.order).slice(0,2),[x,y]=axes;
  const positive=a=>a.side?a.right:a.left,negative=a=>a.side?a.left:a.right;
  const xp=positive(x),xn=negative(x),yp=positive(y),yn=negative(y);
- return `<figure class="trait-quadrant"><figcaption>${t.name}</figcaption><svg viewBox="0 0 360 300" role="img" aria-label="${x.name}: ${xp}, ${y.name}: ${yp}. 본인의 성향이 오른쪽과 위쪽에 오도록 축 이름을 배치한 사분면"><rect x="62" y="38" width="236" height="216" rx="16" class="quadrant-paper"/><path d="M180 38V254M62 146H298" class="quadrant-axis"/><text x="180" y="24" text-anchor="middle">${yp}</text><text x="180" y="280" text-anchor="middle">${yn}</text><text x="52" y="151" text-anchor="end">${xn}</text><text x="308" y="151">${xp}</text><circle cx="234" cy="92" r="9" class="quadrant-point"/></svg></figure>`;
+ const axisLabel=(v,x,y,anchor)=>{const words=v.split(' ');return `<text x="${x}" y="${y}" text-anchor="${anchor}">${words.map((w,i)=>`<tspan x="${x}" dy="${i?14:0}">${w}</tspan>`).join('')}</text>`};
+ return `<figure class="trait-quadrant"><figcaption>${t.name}</figcaption><svg viewBox="0 0 360 300" role="img" aria-label="${x.name}: ${xp}, ${y.name}: ${yp}. 본인의 성향이 오른쪽과 위쪽에 오도록 축 이름을 배치한 사분면"><rect x="62" y="38" width="236" height="216" rx="16" class="quadrant-paper"/><path d="M180 38V254M62 146H298" class="quadrant-axis"/>${axisLabel(yp,180,16,'middle')}${axisLabel(yn,180,274,'middle')}${axisLabel(xn,52,144,'end')}${axisLabel(xp,308,144,'start')}<circle cx="234" cy="92" r="9" class="quadrant-point"/></svg></figure>`;
 }
 function renderFateTraits(){const el=document.getElementById("fate-traits");if(el&&CH)el.innerHTML=fateTraitsHTML(CH)}
 
@@ -719,11 +720,11 @@ function pastReadingHTML(ch){
 function mainDestinyIntroHTML(ch){const text=traitDescription(ch).replace('같은 운명을 타고난 사람입니다.','같은 면모를 지닌 사람이에요.'),m=text.match(/^당신은 (.+?이지만),\s*(.+?)(이에요\.)$/);return m?'당신은 '+topicEsc(m[1])+', <span class="destiny-strength">'+topicEsc(m[2])+'</span>'+topicEsc(m[3]):topicEsc(text)}
 function resultIntroHTML(ch){const tags=reportTags(ch);
   const ag=tags.filter(t=>t.n>=2).slice(0,4);
-  const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><small>${t.n}개 관점에서 함께 읽힌 성향이에요.</small></div></li>`).join("");
+  const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><small>5개 점술 중 ${t.n}개 점술이 같은 성향을 이야기해요.</small></div></li>`).join("");
   return `<p class="res-lead">${mainDestinyIntroHTML(ch)}</p>
   <h3 class="res-h">여러 운세에서 발견한 나의 매력</h3><ul class="r-agree">${agl}</ul>
-  <h3 class="res-h">나의 핵심 성향 두 가지</h3>${fateTraitsHTML(ch)}
-  <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${natalReadingHTML(ch)}</div>
+  <h3 class="res-h">타고난 기질과 선물</h3>${fateTraitsHTML(ch)}
+  <div class="r-prose">${natalReadingHTML(ch)}</div>
   ${pastReadingHTML(ch)}` }
 function renderResult(){const ch=CH,name=ch.inp.name;
   const wn=$("whoName");wn.textContent=name||"당신의";$("whoSfx").textContent=name?"님의":"";wn.classList.toggle("noname",!name);
@@ -1854,7 +1855,7 @@ function reportSummary(ch){const tags=reportTags(ch),b=bestCell(),d=ch.stems.d,d
   <h3>평생 흐름의 전환점</h3><div class="r-prose"><p>${lifeIntro(ch)}</p></div><ol class="r-tl">${tps}</ol>
   <h3>조심할 점</h3><div class="r-prose"><p>${weakText(ch,dom,miss)} <strong>${ELW[dom]}.</strong></p></div>
   <div class="r-advice"><span class="eyebrow">한 줄 조언</span><p>${ADVICE[tags[0].k].replace("{Y}",b.y)}</p></div>
-  <h3>개선법은 이렇게 골랐어요</h3>${actionRationale(ch)}`}
+  <h3>개선법은 이렇게 골랐어요</h3>${actionRationale(ch)}${actionGuideHTML(ch).split('<section class="place-v2"')[0]}`}
 
 function reportSaju(ch){const d=ch.stems.d,dom=ch.cnt.indexOf(Math.max(...ch.cnt));const miss=ch.cnt.map((v,i)=>v?null:ELK[i]).filter(Boolean);
   const cols=[[ch.stems.y,ch.brs.y],[ch.stems.m,ch.brs.m],[ch.stems.d,ch.brs.d],[ch.stems.h,ch.brs.h]];
@@ -2045,7 +2046,9 @@ const ACTPLAN=[
   fill:{t:'하루 10분, 화면 없이 쉬기',when:'저녁',min:10,steps:['휴대폰을 다른 방에 둔다','창가나 물가에서 걷거나 앉는다','떠오르는 생각을 붙잡지 않고 흘려보낸다']}}];
 function actWeekKey(){const d=new Date(),t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));t.setUTCDate(t.getUTCDate()+4-(t.getUTCDay()||7));const y0=new Date(Date.UTC(t.getUTCFullYear(),0,1));return 'oracle-act-'+t.getUTCFullYear()+'-'+Math.ceil(((t-y0)/864e5+1)/7)}
 function actChecked(){try{return JSON.parse(localStorage.getItem(actWeekKey())||'[]')}catch(_){return []}}
-function actionGuideHTML(ch){const p=actionProfile(ch),dom=p.dominant,sup=p.support,n=ch.cnt[sup],done=actChecked();
+function actionGuideHTML(ch,compact=false){
+ if(compact){const p=actionProfile(ch),items=[ACTPLAN[p.dominant].use,ACTPLAN[p.dominant].tame,ACTPLAN[p.support].fill];return `<section class="home-habits"><h3 class="res-h">운을 높이는 세 가지 습관</h3><ol class="home-habit-list">${items.map((a,i)=>`<li><span class="home-habit-number">0${i+1}</span><div><b>${topicEsc(a.t)}</b><small>${topicEsc(a.when)} · ${a.min}분</small></div></li>`).join('')}</ol></section><section class="home-places">${situationPlacesHTML(ch)}</section>`}
+const p=actionProfile(ch),dom=p.dominant,sup=p.support,n=ch.cnt[sup],done=actChecked();
  const items=[['강점 살리기',ACTPLAN[dom].use,`${ELK[dom]}(${EL[dom]}) 기운이 강한 당신의 장점을 하루 한 번 의식적으로 쓰는 습관이에요.`],['과한 성향 덜어 내기',ACTPLAN[dom].tame,`${ELK[dom]} 기운이 지나치면 생기기 쉬운 습관을 줄여 줘요.`],['부족한 기운 채우기',ACTPLAN[sup].fill,`${ELK[sup]}(${EL[sup]}) 기운이 ${n===0?'없어':'적어'} 이 습관이 균형을 잡아 줘요.`]];
  const bars=[0,1,2,3,4].map(i=>`<li class="${i===dom?'is-dom':i===sup?'is-sup':''}"><span>${ELK[i]}</span><i><b style="width:${Math.min(100,ch.cnt[i]/4*100)}%"></b></i><em>${ch.cnt[i]}</em></li>`).join('');
  return `<section class="act-v2" aria-labelledby="actTitle"><header class="act-hd"><h3 id="actTitle">당신의 운을 높이는 세 가지 습관</h3><p>${ELK[dom]} 기운이 가장 강하고(${ch.cnt[dom]}개), ${ELK[sup]} 기운이 ${n===0?'없어요':'적어요'}. 강점은 살리고, 과한 면은 덜고, 부족한 기운은 채우는 순서로 골랐어요.</p><ul class="act-el" aria-label="내 오행 분포">${bars}</ul></header>
@@ -2088,7 +2091,7 @@ document.addEventListener('pointerup',cpUp);document.addEventListener('pointerca
 document.addEventListener('click',e=>{if(cpMoved&&e.target.closest&&e.target.closest('.cp-map svg')&&Date.now()<fengSuppressClickUntil){e.stopPropagation();e.preventDefault()}},true);
 
 
-function renderActionGuide(){const el=document.getElementById('actionBody');if(el&&CH){el.querySelectorAll('.feng-map').forEach(svg=>fengObserver?.unobserve(svg));el.innerHTML=actionGuideHTML(CH);requestAnimationFrame(()=>el.querySelectorAll('.compact-places').forEach(cpApply))}}
+function renderActionGuide(){const el=document.getElementById('actionBody');if(el&&CH){el.querySelectorAll('.feng-map').forEach(svg=>fengObserver?.unobserve(svg));el.innerHTML=actionGuideHTML(CH,true);requestAnimationFrame(()=>el.querySelectorAll('.compact-places').forEach(cpApply))}}
 document.addEventListener('toggle',e=>{const panel=e.target;if(!panel.matches?.('details[data-main-places]')||!panel.open||!CH)return;const mount=panel.querySelector('[data-main-place-map]');if(!mount.children.length)mount.innerHTML=fengCompactPlacesHTML(CH);requestAnimationFrame(()=>fengInit(panel))},true);
 
 function reportTable(head,rows){return `<div class="r-tbl"><table><thead><tr>${head.map(h=>`<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
