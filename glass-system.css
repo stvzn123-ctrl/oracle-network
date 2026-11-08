@@ -164,9 +164,9 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 
 #reportAppendix{width:auto;gap:5px;padding-inline:10px;display:inline-flex;align-items:center;font-size:12px}
 
-/* Original transparent character sheet: each pose retains its original artwork. */
-.pose{display:inline-block;flex:none;width:100px;aspect-ratio:1;background-image:url('img/mascot-poses.png');background-repeat:no-repeat;background-size:300% 300%;background-position:0 0;pointer-events:none;vertical-align:middle;print-color-adjust:exact;-webkit-print-color-adjust:exact}
-.pose-detective{background-position:0 0}.pose-happy{background-position:50% 0}.pose-care{background-position:100% 0}.pose-heart{background-position:0 50%}.pose-money{background-position:50% 50%}.pose-note{background-position:100% 50%}.pose-lucky{background-position:50% 100%}.pose-rest{background-position:100% 100%}
+/* Hand-drawn poses share the detective's linework and ivory palette. */
+.pose{display:inline-block;flex:none;width:100px;aspect-ratio:1;background-image:url('img/mascot-poses-handdrawn.png');background-repeat:no-repeat;background-size:300% 300%;background-position:0 0;pointer-events:none;vertical-align:middle;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.pose-detective{background-image:url('img/mascot-poses.png');background-position:0 0}.pose-happy{background-position:50% 0}.pose-care{background-position:100% 0}.pose-heart{background-position:0 50%}.pose-money{background-position:50% 50%}.pose-note{background-position:100% 50%}.pose-lucky{background-position:50% 100%}.pose-rest{background-position:100% 100%}
 .landing-mascot>.pose{width:min(260px,68vw);height:auto;display:block;margin:auto}
 #topicFold .topic-pose{width:66px;float:right;margin:-4px -6px 2px 6px}#topicFold [role=tab]{overflow:hidden}#topicFold strong,#topicFold small{position:relative}
 .question-pose{width:92px;float:right;margin:0 0 12px 14px}.topic-intro:has(.question-pose){display:flow-root}
