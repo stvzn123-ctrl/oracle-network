@@ -5,9 +5,9 @@
  const current=()=>{
   const dialog=Array.from(document.querySelectorAll('dialog[open]')).at(-1);
   const entered=document.body.classList.contains('app-entered');
-  const route=document.body.classList.contains('nav-ask')?'ask':document.body.classList.contains('nav-topics')?'topics':entered?'home':'landing';
+  const route=document.body.classList.contains('nav-account')?'account':document.body.classList.contains('nav-ask')?'ask':document.body.classList.contains('nav-topics')?'topics':entered?'home':'landing';
   const tab=Array.from(document.querySelectorAll('#result>.tabp, #result .tabp')).find(e=>!e.hidden)?.id.replace('tab-','')||'natal';
-  return {route,entered,tab,dialog:dialog?.id||null,report:!report.hidden};
+  return {route,entered,tab,dialog:dialog?.id||null,report:!report.hidden,saved:route==='account'&&!document.getElementById('savedRecordsPanel').hidden};
  };
  const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
  function record(){if(applying)return;const view=current();if(!same(history.state?.oracleNav,view))history.pushState({...history.state,oracleNav:view},'',location.href)}
@@ -33,6 +33,8 @@
   document.body.classList.toggle('app-entered',v.entered);
   document.body.classList.toggle('nav-topics',v.route==='topics');
   document.body.classList.toggle('nav-ask',v.route==='ask');
+  document.body.classList.toggle('nav-account',v.route==='account');document.getElementById('accountSheet').hidden=v.route!=='account';
+  if(v.route==='account'){document.getElementById('savedRecordsPanel').hidden=!v.saved;if(v.saved)document.getElementById('savedProfileView').click()}
   if(v.entered&&document.getElementById('tab-'+v.tab))setTab(v.tab);
   if(v.report&&report.querySelector('#reportBody')?.hasChildNodes()){report.hidden=false;document.documentElement.classList.add('rep-lock')}
   if(v.dialog){const d=document.getElementById(v.dialog);if(d&&!d.open){if(v.dialog==='accountSheet')nav.querySelector('[data-bottom="account"]').click();else d.showModal()}}

@@ -90,7 +90,7 @@ async function authRoute(req,env,url,ctx){
   const user=await member(req,env);if(!user)return json(req,env,{error:'unauthorized'},401);
   if(req.method==='GET'&&path==='/me')return json(req,env,{nickname:user.nickname,profile:user.profile?JSON.parse(user.profile):null,updated:user.profile_updated,id:user.id,isAdmin:isAdmin(user,env)});
   if(req.method==='POST'&&path==='/profile'){
-    const b=await authBody(req);if(b.action==='delete'){await env.DB.batch([env.DB.prepare('UPDATE users SET profile=NULL,profile_updated=NULL,consent_at=NULL WHERE id=?').bind(user.id),env.DB.prepare('DELETE FROM partners WHERE user_id=?').bind(user.id)]);return json(req,env,{ok:true})}
+    const b=await authBody(req);if(b.action==='delete'){await env.DB.batch([env.DB.prepare('UPDATE users SET profile=NULL,profile_updated=NULL,consent_at=NULL WHERE id=?').bind(user.id)]);return json(req,env,{ok:true})}
     const profile=validProfile(b.profile);if(!profile||b.consent!==true)return json(req,env,{error:'invalid_profile'},400);
     await env.DB.prepare('UPDATE users SET profile=?,profile_updated=?,consent_at=? WHERE id=?').bind(JSON.stringify(profile),now,now,user.id).run();return json(req,env,{ok:true,updated:now});
   }
