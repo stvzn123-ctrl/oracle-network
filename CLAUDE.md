@@ -258,10 +258,11 @@
 - 생년월일 한 칸 입력 때문에 `clampNum`의 월·일 리스너는 더 이상 쓰이지 않는다(`#in-m`·`#in-d`는 hidden).
 
 ## 궁합 확장 (2026-11-09)
-- 궁합 탭 맨 위에 종류 버튼 3개(`CMP_KIND`, `cmpSetKind`): **연인·썸 / 친구 / 모임(3명 이상)**. `matchPanelHTML()`이 종류 버튼 + 초대 링크 상자 + `#cmpOne`(1:1 폼) + `#cmpGroup`(모임 폼)을 만든다. `compatScore`와 점수는 전혀 바뀌지 않는다.
+- 궁합 탭 맨 위에 종류 버튼 3개(`CMP_KIND`, `cmpSetKind`): **연인·썸 / 친구 / 모임(3명 이상)**. `matchPanelHTML()`이 종류 버튼 + `#cmpOne`(1:1 폼) + `#cmpGroup`(모임 폼)을 만든다. `compatScore`와 점수는 전혀 바뀌지 않는다.
 - **친구 궁합**은 같은 점수에 표현만 바꾼다. `friendify(v)`가 `FRIEND_WORDS`(결혼·동거·연애·데이트·설렘 등 → 우정 표현)로 문자열을 재귀 치환하고, `openCompatReport`에서 `COMPAT.kind==='friend'`일 때만 `compatReportData` 결과에 적용한다. `birthCharts`는 치환하지 않는다.
 - **모임 궁합**(`groupResult`): 참여자 모든 두 사람 조합을 `compatScore`로 재고 평균(`total`). 역할은 `groupRole` = 가장 많은 오행 + 신강/신약 → `GROUP_ROLE` 10종. 지속 점수 `keep` = 평균 + 띠 삼합·육합 쌍 ×2 − 띠 충 쌍 ×2 − (최고·최저 짝 차이 − 10)×0.4, 68~97. `years`로 '10년 넘게 / 5~10년쯤 / 3~5년쯤 / 계기가 있을 때마다'를 보여 준다. 3~8명. 리포트는 `groupReportData`(요약·역할·지속·주의할 점·범위)를 기존 `approvedReportHTML`로 그린다.
 - `compatFormHTML(mode)`에 `group` 모드 추가(제목 '모임에 사람 추가하기', 버튼 '모임에 추가'). `compatSubmit`은 `mode==='group'`이면 점수를 내지 않고 `GROUP`에 넣는다.
-- **카카오 친구 초대 링크**: `친구에게 공유하고 함께 보기` → `POST /pair`로 12자리 코드를 받아 `SHARE_URL?c=코드`를 시스템 공유/복사. 친구가 그 링크로 들어오면 코드를 sessionStorage `oracle-pair`에 넣고 주소창에서 지운다. **카카오 로그인 + 출생 정보 저장이 끝나야** `cmpPairBoot`가 `POST /pair/join` → `GET /pair`로 서로의 프로필을 받아 양쪽에서 궁합이 보인다. 궁합 계산은 서버가 아니라 각자의 브라우저가 한다. 내보내는 사람은 `친구가 들어왔는지 확인하기` 버튼으로 확인한다(자동 폴링 없음).
+- **카카오 친구 초대 링크**: 폼 제목(`상대방 정보로 궁합 보기` / `모임에 사람 추가하기`) 옆 `공유해서 입력 요청하기`(`.cmp-head` > `.cmp-askshare`, 재회 폼에는 없음) → `POST /pair`로 12자리 코드를 받아 `SHARE_URL?c=코드`를 시스템 공유/복사. 친구가 그 링크로 들어오면 코드를 sessionStorage `oracle-pair`에 넣고 주소창에서 지운다. **카카오 로그인 + 출생 정보 저장이 끝나야** `cmpPairBoot`가 `POST /pair/join` → `GET /pair`로 서로의 프로필을 받아 양쪽에서 궁합이 보인다. 궁합 계산은 서버가 아니라 각자의 브라우저가 한다. 내보내는 사람은 `친구가 들어왔는지 확인하기` 버튼으로 확인한다(자동 폴링 없음). 링크 결과는 버튼 아래 `.cmp-pair`에 그린다(1:1·모임 폼 두 곳에 있으므로 id가 아니라 눌린 버튼이 속한 `.cmp-form` 안에서 찾는다).
 - 서버: `pairs(code,owner_id,kind,created)` / `pair_members(code,user_id,joined)` 두 표와 `POST /pair`, `POST /pair/join`, `GET /pair?code=`. 모두 세션 필수 + 저장된 출생 정보 필수(`profile_required`), 멤버만 조회 가능. 1:1은 2명, group은 8명까지. 하루 링크 20개 제한. 탈퇴·관리자 삭제 때 같이 지운다. **worker를 다시 배포(`wrangler deploy`)해야 동작한다.**
 - 해석 톤: 요약·흐름은 긍정 표현으로 두고 부정 근거는 '주의할 점' 장에만 2개까지 넣는다(기존 '관계에서 맞춰 갈 점' → '주의할 점'). 흐름 표현에서 '버티는 해' 같은 말은 쓰지 않는다.
+- 저장 동의 체크박스는 '나의 정보를 카카오 계정에 저장하는 데 동의해요.' 한 줄만 둔다(항목 나열 `<small>` 삭제). 카카오 안내(`input-experience.js`의 `notice`, 로그인 창·로그인 버튼 아래 공통)는 '회원 구분용 식별값과 동의한 닉네임만 받아요. 저장한 정보는 언제든 삭제할 수 있어요.' 두 문장만.
