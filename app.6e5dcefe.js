@@ -1668,7 +1668,7 @@ document.addEventListener('click',e=>{const ld=e.target.closest('.cmp-load'),dl=
  [...el.partnerSex].forEach(r=>r.checked=r.value===p.sex);el.partnerDate.value=p.date;el.partnerTime.value=p.time||'';el.partnerNoTime.checked=!!p.notime;el.partnerTime.disabled=!!p.notime;
  el.partnerNoPlace.checked=p.pi==null;el.partnerPlace.disabled=p.pi==null;if(p.pi!=null)el.partnerPlace.value=String(p.pi);f.requestSubmit()});
 function compatFormHTML(mode='match'){const RU=mode==='reunion',GP=mode==='group',opts=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
- return `<section class="chart-form cmp-form"><h4>${GP?"모임에 사람 추가하기":RU?"상대방 정보로 재회 흐름 보기":"상대방 정보로 궁합 보기"}</h4><div class="cmp-saved">${partnerSavedHTML()}</div><form id="${GP?"group-form":RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate><div class="chart-fields">
+ return `<section class="chart-form cmp-form"><div class="cmp-head"><h4>${GP?"모임에 사람 추가하기":RU?"상대방 정보로 재회 흐름 보기":"상대방 정보로 궁합 보기"}</h4>${RU?"":'<button type="button" class="cmp-askshare" data-pmake>공유해서 입력 요청하기</button>'}</div>${RU?"":'<div class="cmp-pair"></div>'}<div class="cmp-saved">${partnerSavedHTML()}</div><form id="${GP?"group-form":RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate><div class="chart-fields">
  <label>상대 이름 <small>(선택)</small><input name="partnerName" maxlength="40" autocomplete="off" placeholder="홍길동 · 비워 두면 이름 없이 봐요"></label>
  <label>상대 영문 이름 <small>(선택)</small><input name="partnerRoman" maxlength="80" autocomplete="off" placeholder="자동 입력"></label>
  <p class="cmp-priv">이름을 넣지 않으면 이름으로 계산하는 수비학 영혼 수는 빼고, 생년월일로 보는 점술만으로 계산해요.</p>
@@ -3756,7 +3756,7 @@ const PAIRKEY='oracle-pair';
 function pairUrl(code){return SHARE_URL+'?c='+code}
 async function cmpMakeLink(btn){
  if(!requireSavedProfile())return;
- const out=document.getElementById('cmpPairBox');btn.disabled=true;
+ const out=btn.closest('.cmp-form').querySelector('.cmp-pair');btn.disabled=true;
  try{
   const d=await accountAPI('/pair',{kind:CMPKIND}),url=pairUrl(d.code);
   const text=(CMPKIND==='group'?'같이 모임 궁합 한번 볼래? 운명탐정에서 네 정보 넣으면 바로 나와.':'우리 궁합 한번 볼래? 운명탐정에서 네 정보 넣으면 바로 나와.')+'\n'+url;
@@ -3765,7 +3765,7 @@ async function cmpMakeLink(btn){
   if(!done&&navigator.clipboard){try{await navigator.clipboard.writeText(text);done=true}catch(_){}}
   out.innerHTML='<p class="cmp-note">'+(done?'링크를 보냈어요.':'아래 링크를 복사해 보내 주세요.')+' 친구가 이 링크로 들어와 <b>카카오 로그인 후 자기 출생 정보를 저장하면</b>, 두 사람의 궁합이 서로에게 보여요.</p>'+
    '<p class="cmp-link"><input type="text" readonly value="'+topicEsc(url)+'" aria-label="초대 링크"></p>'+
-   '<button type="button" class="cmp-open" data-pcheck="'+d.code+'">친구가 들어왔는지 확인하기</button><p class="cmp-priv" id="cmpPairMsg" aria-live="polite">내 출생 정보는 친구가 이 링크로 들어와 로그인했을 때만 보여요.</p>';
+   '<button type="button" class="cmp-open" data-pcheck="'+d.code+'">친구가 들어왔는지 확인하기</button><p class="cmp-priv cmp-pair-msg" aria-live="polite">내 출생 정보는 친구가 이 링크로 들어와 로그인했을 때만 보여요.</p>';
  }catch(e){out.innerHTML='<p class="cmp-priv">'+topicEsc(e.message||'링크를 만들지 못했어요. 잠시 뒤 다시 시도해 주세요.')+'</p>'}
  finally{btn.disabled=false}}
 
@@ -3799,16 +3799,13 @@ function cmpSetKind(k){
 function matchPanelHTML(){
  return '<div class="cmp-kind" role="group" aria-label="궁합 종류">'+Object.keys(CMP_KIND).map(k=>'<button type="button" data-ck="'+k+'" aria-pressed="'+(k===CMPKIND)+'">'+CMP_KIND[k]+'</button>').join('')+'</div>'+
   '<p class="cmp-kind-note" id="cmpKindNote">'+CMP_NOTE[CMPKIND]+'</p>'+
-  '<div class="cmp-invite"><button type="button" class="cmp-open" data-pmake>친구에게 공유하고 함께 보기 →</button>'+
-  '<p class="cmp-priv">친구가 링크로 들어와 카카오 로그인 후 자기 출생 정보를 저장하면, 두 사람의 궁합이 서로에게 보여요. 상대 정보를 직접 입력할 필요가 없어요.</p>'+
-  '<div id="cmpPairBox" class="cmp-pair"></div></div>'+
   '<div id="cmpOne"'+(CMPKIND==='group'?' hidden':'')+'>'+compatFormHTML('match')+'</div>'+
   '<div id="cmpGroup"'+(CMPKIND==='group'?'':' hidden')+'><section class="chart-form cmp-form"><h4>모임에 참여할 사람</h4><div id="cmpGroupList">'+groupListHTML()+'</div><div id="cmpGroupOut" class="chart-feedback" aria-live="polite"></div></section>'+compatFormHTML('group')+'</div>'}
 
 document.addEventListener('click',e=>{
  const k=e.target.closest('[data-ck]');if(k){cmpSetKind(k.dataset.ck);return}
  const mk=e.target.closest('[data-pmake]');if(mk){cmpMakeLink(mk);return}
- const pc=e.target.closest('[data-pcheck]');if(pc){const msg=document.getElementById('cmpPairMsg');pc.disabled=true;if(msg)msg.textContent='확인하고 있어요…';
+ const pc=e.target.closest('[data-pcheck]');if(pc){const msg=pc.parentNode.querySelector('.cmp-pair-msg');pc.disabled=true;if(msg)msg.textContent='확인하고 있어요…';
   cmpPairCheck(pc.dataset.pcheck,msg).catch(err=>{if(msg)msg.textContent=err.message||'확인하지 못했어요.'}).finally(()=>{pc.disabled=false});return}
  const gd=e.target.closest('[data-gdel]');if(gd){GROUP.splice(+gd.dataset.gdel,1);GROUPRES=null;groupRefresh();const o=document.getElementById('cmpGroupOut');if(o)o.innerHTML='';return}
  if(e.target.closest('[data-gcalc]')){groupRender();return}

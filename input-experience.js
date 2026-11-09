@@ -21,7 +21,7 @@ function formatBirthTime(value,complete=false){
  /* 비어 있으면 '예: 15:00' 힌트를 보여 주고, 칸에 들어오면 ':'를 미리 넣어 준다 */
  time.addEventListener('focus',()=>{if(!/\d/.test(time.value))time.value=':'});
  time.addEventListener('blur',()=>{time.value=/\d/.test(time.value)?formatBirthTime(time.value,true):''});
- const notice='카카오에서는 회원 구분용 식별값과 동의한 닉네임만 받아요. 이메일·전화번호·프로필 사진·현재 거주지는 요청하지 않아요.';
+ const notice='카카오에서는 회원 구분용 식별값과 동의한 닉네임만 받아요. 저장한 정보는 언제든 삭제할 수 있어요.';
  const nodes=[];
  ['accountLogin','saveLogin'].forEach(id=>{const button=document.getElementById(id);if(!button)return;const text=document.createElement('p');text.className='kakao-data-notice';text.id=id+'DataNotice';text.textContent=notice;button.after(text);button.setAttribute('aria-describedby',text.id);nodes.push([button,text])});
  const dialog=document.getElementById('loginSaveDialog');document.body.append(dialog);const text=document.createElement('p');text.className='kakao-data-notice';text.id='loginDataNotice';text.textContent=notice;dialog.querySelector('h2').after(text);document.getElementById('loginSaveGo').setAttribute('aria-describedby',text.id);
