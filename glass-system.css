@@ -193,3 +193,6 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 #brandbar .brandbar-mark{background-image:url('img/pose-white-detective.png')!important}
 
 .pose-note{clip-path:polygon(0 0,72% 0,72% 31%,100% 31%,100% 100%,0 100%)}
+
+/* Restore the original question mark while keeping the white-fur asset. */
+.question-pose,.pose-note{clip-path:none!important}
