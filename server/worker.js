@@ -50,7 +50,7 @@ function validProfile(v){
 async function member(req,env){const token=req.headers.get("Authorization")?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];if(!token)return null;return env.DB.prepare("SELECT users.id,users.kakao_id,users.nickname,users.profile,users.profile_updated FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token_hash=? AND sessions.expires>?").bind(await authHash(token),Date.now()).first()}
 async function authRoute(req,env,url,ctx){
   const path=url.pathname.replace(/\/+$/,"");
-  if(!path.startsWith('/auth/')&&path!=="/me"&&path!=="/profile"&&path!=="/partners")return null;
+  if(!path.startsWith('/auth/')&&path!=="/me"&&path!=="/profile"&&path!=="/partners"&&path!=="/pair"&&path!=="/pair/join")return null;
   if(req.method!=="GET"&&req.method!=="POST")return json(req,env,{error:"method"},405);
   const now=Date.now(),origin=req.headers.get('Origin');
   // 카카오 설정에서 연결을 끊은 회원은 서버의 세션과 출생 정보도 정리한다.
@@ -102,9 +102,42 @@ async function authRoute(req,env,url,ctx){
     if(!ex&&cnt.n>=20)return json(req,env,{error:'partner_limit'},409);
     const id=ex?ex.id:[...crypto.getRandomValues(new Uint8Array(16))].map(x=>x.toString(16).padStart(2,'0')).join('');
     await env.DB.prepare('INSERT INTO partners(id,user_id,name,date,data,consent_at,updated) VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data,updated=excluded.updated,consent_at=excluded.consent_at').bind(id,user.id,v.name,v.date,JSON.stringify(v),now,now).run();return json(req,env,{ok:true,id})}
+  /* 궁합 링크: 서버는 회원끼리 출생 정보를 주고받게만 하고, 궁합 계산은 브라우저가 한다. */
+  if(path==='/pair'||path==='/pair/join'){
+    await pairTables(env);
+    if(!user.profile)return json(req,env,{error:'profile_required'},409);
+    if(req.method==='POST'&&path==='/pair'){
+      const b=await authBody(req),kind=b.kind==='friend'?'friend':b.kind==='group'?'group':'love';
+      const n=await env.DB.prepare('SELECT COUNT(*) n FROM pairs WHERE owner_id=? AND created>?').bind(user.id,now-864e5).first();
+      if(n.n>=20)return json(req,env,{error:'pair_limit'},429);
+      const code=[...crypto.getRandomValues(new Uint8Array(6))].map(x=>x.toString(16).padStart(2,'0')).join('');
+      await env.DB.batch([env.DB.prepare('INSERT INTO pairs(code,owner_id,kind,created) VALUES(?,?,?,?)').bind(code,user.id,kind,now),
+        env.DB.prepare('INSERT INTO pair_members(code,user_id,joined) VALUES(?,?,?)').bind(code,user.id,now)]);
+      return json(req,env,{code,kind});
+    }
+    if(req.method==='POST'&&path==='/pair/join'){
+      const b=await authBody(req);if(typeof b.code!=='string'||!/^[a-f0-9]{12}$/.test(b.code))return json(req,env,{error:'input'},400);
+      const link=await env.DB.prepare('SELECT code,kind FROM pairs WHERE code=?').bind(b.code).first();
+      if(!link)return json(req,env,{error:'pair_not_found'},404);
+      const cnt=await env.DB.prepare('SELECT COUNT(*) n FROM pair_members WHERE code=?').bind(b.code).first();
+      const mine=await env.DB.prepare('SELECT 1 FROM pair_members WHERE code=? AND user_id=?').bind(b.code,user.id).first();
+      if(!mine&&cnt.n>=(link.kind==='group'?8:2))return json(req,env,{error:'pair_full'},409);
+      if(!mine)await env.DB.prepare('INSERT INTO pair_members(code,user_id,joined) VALUES(?,?,?)').bind(b.code,user.id,now).run();
+      return json(req,env,{ok:true,kind:link.kind});
+    }
+    if(req.method==='GET'&&path==='/pair'){
+      const code=url.searchParams.get('code')||'';if(!/^[a-f0-9]{12}$/.test(code))return json(req,env,{error:'input'},400);
+      const mine=await env.DB.prepare('SELECT 1 FROM pair_members WHERE code=? AND user_id=?').bind(code,user.id).first();
+      if(!mine)return json(req,env,{error:'forbidden'},403);
+      const link=await env.DB.prepare('SELECT kind FROM pairs WHERE code=?').bind(code).first();
+      const r=await env.DB.prepare('SELECT users.id,users.nickname,users.profile FROM pair_members JOIN users ON users.id=pair_members.user_id WHERE pair_members.code=? ORDER BY pair_members.joined').bind(code).all();
+      return json(req,env,{kind:link?link.kind:'love',members:r.results.filter(x=>x.profile).map(x=>({id:x.id,nickname:x.nickname,me:x.id===user.id,profile:JSON.parse(x.profile)}))});
+    }
+    return json(req,env,{error:'method'},405);
+  }
   if(req.method==='POST'&&path==='/auth/withdraw'){
-    await questionTable(env);
-    await env.DB.batch([env.DB.prepare('DELETE FROM questions WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM partners WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM sessions WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM auth_grants WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM private_reports WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM report_entitlements WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM users WHERE id=?').bind(user.id)]);
+    await questionTable(env);await pairTables(env);
+    await env.DB.batch([env.DB.prepare('DELETE FROM questions WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM pairs WHERE owner_id=?').bind(user.id),env.DB.prepare('DELETE FROM pair_members WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM partners WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM sessions WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM auth_grants WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM private_reports WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM report_entitlements WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM users WHERE id=?').bind(user.id)]);
     return json(req,env,{ok:true});
   }
   if(req.method==='POST'&&path==='/auth/logout'){const t=req.headers.get('Authorization').slice(7);await env.DB.prepare('DELETE FROM sessions WHERE token_hash=?').bind(await authHash(t)).run();return json(req,env,{ok:true})}
@@ -143,9 +176,10 @@ async function accessRoute(req,env,url){
   if(!target)return json(req,env,{error:'not_found'},404);
   let profile=null;try{profile=JSON.parse(target.profile||'null')}catch{}
   if(b.name!==(profile?.name||target.nickname||'회원'))return json(req,env,{error:'name_mismatch'},409);
-  await questionTable(env);
+  await questionTable(env);await pairTables(env);
   await env.DB.batch([
-   ...['questions','partners','sessions','auth_grants','private_reports','report_entitlements'].map(t=>env.DB.prepare('DELETE FROM '+t+' WHERE user_id=?').bind(b.userId)),
+   ...['questions','partners','sessions','auth_grants','private_reports','report_entitlements','pair_members'].map(t=>env.DB.prepare('DELETE FROM '+t+' WHERE user_id=?').bind(b.userId)),
+   env.DB.prepare('DELETE FROM pairs WHERE owner_id=?').bind(b.userId),
    env.DB.prepare('DELETE FROM users WHERE id=?').bind(b.userId),
    env.DB.prepare('INSERT INTO admin_audit(actor_id,target_id,action,report_key,created) VALUES(?,?,?,?,?)').bind(user.id,b.userId,'delete_member',null,Date.now())
   ]);
@@ -1403,6 +1437,10 @@ CH=buildChart(profile);compute();return buildRichReport(CH,key);}
 
 /* 자유질문: 저장만 한다(알림 없음). 운영자가 관리자 페이지에서 하루 한 번 확인해 이메일로 답한다. 표는 처음 요청 때 자동 생성. */
 let questionTableReady=false;
+let pairTablesReady=false;
+async function pairTables(env){if(pairTablesReady)return;await env.DB.batch([
+  env.DB.prepare("CREATE TABLE IF NOT EXISTS pairs(code TEXT PRIMARY KEY,owner_id TEXT NOT NULL,kind TEXT NOT NULL DEFAULT 'love',created INTEGER NOT NULL)"),
+  env.DB.prepare('CREATE TABLE IF NOT EXISTS pair_members(code TEXT NOT NULL,user_id TEXT NOT NULL,joined INTEGER NOT NULL,PRIMARY KEY(code,user_id))')]);pairTablesReady=true}
 async function questionTable(env){if(questionTableReady)return;await env.DB.prepare("CREATE TABLE IF NOT EXISTS questions(id INTEGER PRIMARY KEY AUTOINCREMENT,user_id TEXT,email TEXT NOT NULL,question TEXT NOT NULL,sig TEXT,created INTEGER NOT NULL,done_at INTEGER)").run();questionTableReady=true}
 async function questionRoute(req,env,url,ctx){
   const path=url.pathname.replace(/\/+$/,"");

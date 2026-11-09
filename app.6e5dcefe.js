@@ -1667,8 +1667,8 @@ document.addEventListener('click',e=>{const ld=e.target.closest('.cmp-load'),dl=
  const p=l[+ld.dataset.pi],f=ld.closest('.cmp-form')?.querySelector('form');if(!p||!f)return;const el=f.elements;el.partnerName.value=/^이름 없음/.test(p.name)?'':p.name;el.partnerRoman.value=p.roman;el.partnerRoman.dataset.edited='1';
  [...el.partnerSex].forEach(r=>r.checked=r.value===p.sex);el.partnerDate.value=p.date;el.partnerTime.value=p.time||'';el.partnerNoTime.checked=!!p.notime;el.partnerTime.disabled=!!p.notime;
  el.partnerNoPlace.checked=p.pi==null;el.partnerPlace.disabled=p.pi==null;if(p.pi!=null)el.partnerPlace.value=String(p.pi);f.requestSubmit()});
-function compatFormHTML(mode='match'){const RU=mode==='reunion',opts=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
- return `<section class="chart-form cmp-form"><h4>${RU?"상대방 정보로 재회 흐름 보기":"상대방 정보로 궁합 보기"}</h4><div class="cmp-saved">${partnerSavedHTML()}</div><form id="${RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate><div class="chart-fields">
+function compatFormHTML(mode='match'){const RU=mode==='reunion',GP=mode==='group',opts=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
+ return `<section class="chart-form cmp-form"><h4>${GP?"모임에 사람 추가하기":RU?"상대방 정보로 재회 흐름 보기":"상대방 정보로 궁합 보기"}</h4><div class="cmp-saved">${partnerSavedHTML()}</div><form id="${GP?"group-form":RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate><div class="chart-fields">
  <label>상대 이름 <small>(선택)</small><input name="partnerName" maxlength="40" autocomplete="off" placeholder="홍길동 · 비워 두면 이름 없이 봐요"></label>
  <label>상대 영문 이름 <small>(선택)</small><input name="partnerRoman" maxlength="80" autocomplete="off" placeholder="자동 입력"></label>
  <p class="cmp-priv">이름을 넣지 않으면 이름으로 계산하는 수비학 영혼 수는 빼고, 생년월일로 보는 점술만으로 계산해요.</p>
@@ -1676,7 +1676,7 @@ function compatFormHTML(mode='match'){const RU=mode==='reunion',opts=PLACES.map(
  <label>상대 생년월일 (양력)<input name="partnerDate" type="date" min="1920-01-01" required></label>
  <label>출생 시각<input name="partnerTime" type="time"></label><label class="chk"><input type="checkbox" name="partnerNoTime">출생 시각을 선택하지 않을래요</label>
  <label>출생지<select name="partnerPlace">${opts}</select></label><label class="chk"><input type="checkbox" name="partnerNoPlace">출생지를 선택하지 않을래요</label>
- <label class="chk"><input type="checkbox" name="partnerSave"><span class="cmp-save-lb">${accountUser?"상대방의 동의를 받았고, 내 계정에 저장할게요":"이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)"}</span></label><p class="cmp-priv">상대방의 이름과 생년월일은 그 사람의 개인정보예요. 상대방이 동의한 경우에만 저장하고, 필요 없으면 언제든 삭제해 주세요. 이름 대신 별명을 써도 돼요.</p></div><button type="submit">${RU?"재회 흐름 보기":"궁합 보기"}</button><div class="chart-feedback cmp-result" aria-live="polite"></div></form></section>`}
+ <label class="chk"><input type="checkbox" name="partnerSave"><span class="cmp-save-lb">${accountUser?"상대방의 동의를 받았고, 내 계정에 저장할게요":"이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)"}</span></label><p class="cmp-priv">상대방의 이름과 생년월일은 그 사람의 개인정보예요. 상대방이 동의한 경우에만 저장하고, 필요 없으면 언제든 삭제해 주세요. 이름 대신 별명을 써도 돼요.</p></div><button type="submit">${GP?"모임에 추가":RU?"재회 흐름 보기":"궁합 보기"}</button><div class="chart-feedback cmp-result" aria-live="polite"></div></form></section>`}
 document.addEventListener('input',e=>{const f=e.target.form;if(!f||!f.dataset.mode)return;if(e.target.name!=='partnerSave'){const o=f.querySelector('.cmp-result');if(o&&o.innerHTML){o.innerHTML='';COMPAT=null}}
  if(e.target.name==='partnerName'&&!f.partnerRoman.dataset.edited){f.partnerRoman.value=romanize(e.target.value)||''}
  if(e.target.name==='partnerRoman')f.partnerRoman.dataset.edited=e.target.value?'1':''});
@@ -1692,11 +1692,11 @@ function compatSubmit(f,form){const mode=form.dataset.mode,RU=mode==='reunion',o
  const place=noP?{none:true,name:'출생지 미상',lon:127.5,lat:37.5,tz:9,kr:true}:{name:P[0],lat:P[1],lon:P[2],tz:P[3],kr:PLACES.indexOf(P)<26};
  const inp={name:label,roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,cal:'s',date,time:noT?'12:00':f.partnerTime.value,notime:noT,place};
  let other;try{other=buildChart(inp)}catch(err){out.textContent='상대의 출생 정보를 계산하지 못했어요. 입력값을 확인해 주세요.';return}
- const res=compatScore(CH,other);COMPAT={b:other,res,mode};const ru=RU?reunionCalc(CH,other,res):null;if(ru)COMPAT.ru=ru;
+ if(mode==='group'){if(GROUP.length>=7){out.textContent='모임은 8명까지 넣을 수 있어요.';return}GROUP.push(other);GROUPRES=null;groupRefresh();out.textContent=(other.inp.name||'참여자')+'님을 모임에 넣었어요.';form.reset();f.partnerRoman.dataset.edited='';return}
+ const res=compatScore(CH,other);COMPAT={b:other,res,mode,kind:CMPKIND};const ru=RU?reunionCalc(CH,other,res):null;if(ru)COMPAT.ru=ru;
  if(f.partnerSave&&f.partnerSave.checked){partnerSave({name:name||('이름 없음 '+date.slice(2).replace(/-/g,'.')),roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,date,time:noT?'':f.partnerTime.value,notime:noT,pi:noP?null:+f.partnerPlace.value,score:RU?ru.score:res.total}).then(m=>{const n=form.querySelector('.cmp-save-msg');if(n)n.textContent=m})}
  if(RU){out.innerHTML=`<div class="cmp-score"><span>${topicEsc(J(label+(name?'님':''),'과','와'))}의 재회 흐름</span><b>${ru.score}<small>점</small></b><em>${ru.level}</em></div><p class="cmp-note">다시 연락하기 좋은 시기, 헤어짐에 영향을 준 차이, 다시 만나면 달라져야 할 점은 <b>재회 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" data-cmp-open>재회 리포트 보기 →</button><p class="cmp-priv cmp-save-msg" aria-live="polite"></p>`;return}
- const lv=res.total>=88?'아주 잘 맞는 편':res.total>=80?'잘 맞는 편':res.total>=74?'서로 편안한 궁합':'맞춰 갈수록 좋아지는 궁합';
- out.innerHTML=`<div class="cmp-score"><span>${topicEsc(J(label+(name?"님":""),"과","와"))} 나의 궁합</span><b>${res.total}<small>점</small></b><em>${lv}</em></div><p class="cmp-note">점수가 어떻게 나왔는지, 다섯 점술별 근거와 관계에서 맞춰 갈 점은 <b>궁합 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" data-cmp-open>궁합 리포트 보기 →</button><p class="cmp-priv cmp-save-msg" aria-live="polite"></p>`}
+ cmpShowOne(label+(name?'님':''))}
 function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'상대',tot=res.total,EN=['목','화','토','금','수'];
  const all=res.sys.flatMap(o=>o.items.map(x=>[o.n,...x])),pos=all.filter(x=>x[2]>0).sort((x,y)=>y[2]-x[2]),neg=all.filter(x=>x[2]<0).sort((x,y)=>x[2]-y[2]);
  const miss=[b.inp.notime&&'상대 출생 시각',b.inp.place&&b.inp.place.none&&'상대 출생지'].filter(Boolean);
@@ -1724,15 +1724,15 @@ function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'�
   [pos.length?'잘 맞는 점: '+pos.slice(0,3).map(x=>x[3]).join(' '):'',
    `관계 속 역할을 보면 ${roleTxt}입니다.`,
    `앞으로 3년만 보면 ${up[0].y}년이 가장 가까워지기 쉬운 해이고, ${dn.length?dn[0].y+'년에는 거리가 생기기 쉽습니다':'세 해 모두 큰 기복은 없습니다'}.`]);
- add('advice','관계에서 맞춰 갈 점',neg.length?'서로 다른 점을 먼저 알고 있으면 다툼이 훨씬 짧아집니다.':'큰 충돌 신호는 적지만, 편안함에 기대 표현을 줄이지 않는 것이 중요합니다.',
-  (neg.length?neg.slice(0,3).map(x=>x[3]):[]).concat([ma===mb?`대화 방식: 두 사람 모두 ${TALK[ma]}. 푸는 방식이 같아 화해가 빠른 편이지만, 둘이 동시에 물러서면 대화가 길게 끊길 수 있으니 먼저 손을 내미는 순서를 정해 두세요.`:`대화 방식: ${me}님은 ${TALK[ma]}. 반면 ${you}님은 ${TALK[mb]}. 다툰 날에는 이 차이를 기억해 두세요.`,
+ add('advice','주의할 점',neg.length?'한두 가지만 미리 알아 두면 다툼이 훨씬 짧아집니다.':'큰 충돌 신호는 적지만, 편안함에 기대 표현을 줄이지 않는 것이 중요합니다.',
+  (neg.length?neg.slice(0,2).map(x=>x[3]):[]).concat([ma===mb?`대화 방식: 두 사람 모두 ${TALK[ma]}. 푸는 방식이 같아 화해가 빠른 편이지만, 둘이 동시에 물러서면 대화가 길게 끊길 수 있으니 먼저 손을 내미는 순서를 정해 두세요.`:`대화 방식: ${me}님은 ${TALK[ma]}. 반면 ${you}님은 ${TALK[mb]}. 다툰 날에는 이 차이를 기억해 두세요.`,
    SE[dmA]!==SE[dmB]&&((eA+2)%5===eB||(eB+2)%5===eA)?'중요한 결정(돈·이사·가족 행사)은 한쪽이 정해서 통보하기보다, 각자 기준을 먼저 말하고 함께 고르는 방식이 맞습니다.':'중요한 결정은 비교적 쉽게 합의하는 편이라, 오히려 사소한 생활 습관에서 쌓이는 불만을 그때그때 꺼내는 것이 좋습니다.']),
   '다툰 뒤에는 "누가 맞았나"보다 "다음엔 어떻게 할까"를 한 문장으로 정해 두세요.');
  add('flow','앞으로 3년, 관계는 어떻게 흐를까',`${up[0].y}년이 두 사람에게 가장 좋은 해입니다.`,
-  yrs.map((x,i)=>{const tone=x.s>=70?'좋은 해':x.s>=58?'무난한 해':'버티는 해';
+  yrs.map((x,i)=>{const tone=x.s>=70?'가장 좋은 해':x.s>=58?'편안하게 흐르는 해':'천천히 가는 해';
    const body=x.s>=70?['미뤄 둔 이야기를 꺼내기 좋습니다. 같이 살기, 양가 인사, 긴 여행처럼 한 단계 넘어가는 일을 이 해에 올려 두세요.','둘만의 큰 결정을 내리기 좋은 해입니다. 이 해에 미루면 다음 기회는 한참 뒤에 봐야 합니다.'][i%2]
-    :x.s>=58?['큰일은 없지만 가만히 둬서 좋아지지도 않는 해입니다. 둘만의 약속 하나를 정해 지키는 것만으로 충분합니다.','조용히 흐르는 해입니다. 기념일이나 짧은 여행처럼 작은 이벤트를 일부러 끼워 넣어야 관계가 식지 않습니다.','특별한 사건 없이 지나가는 해입니다. 이럴 때 쌓인 사소한 서운함이 다음 해에 터지니, 그때그때 말로 꺼내 두세요.'][i%3]
-    :['연락과 만남이 눈에 띄게 줄어듭니다. 바쁜 쪽이 짧게라도 먼저 연락하는 쪽으로 규칙을 정해 두세요.','서로에게 쓸 에너지가 적은 해입니다. 많이 바라지 말고, 서로를 놓지 않는 것만 목표로 두세요.'][i%2];
+    :x.s>=58?['조용히 좋은 해입니다. 둘만의 약속 하나를 정해 지키는 것만으로 충분합니다.','조용히 흐르는 해입니다. 기념일이나 짧은 여행처럼 작은 이벤트를 일부러 끼워 넣어야 관계가 식지 않습니다.','특별한 사건 없이 지나가는 해입니다. 이럴 때 쌓인 사소한 서운함이 다음 해에 터지니, 그때그때 말로 꺼내 두세요.'][i%3]
+    :['각자의 일이 바빠지는 해라, 짧게라도 먼저 연락하는 쪽으로 규칙을 정해 두면 오히려 더 단단해집니다.','서로 각자의 자리를 지키는 해입니다. 크게 바라지 않고 곁에 있어 주는 것만으로 충분한 때예요.'][i%2];
    const sig=x.why.length?x.why.join(', ')+'. ':x.warn.length?x.warn.join(', ')+'. ':'';
    const mind=x.pa===x.pb?`두 사람 모두 ${PYW[x.pa]} 해라 마음이 같은 곳을 봅니다.`:[`${me}님은 ${PYW[x.pa]} 해, ${you}님은 ${PYW[x.pb]} 해입니다. 원하는 게 다른 해라, 각자 뭘 바라는지 한 번씩 말로 해 두세요.`,`이 해 ${me}님은 ${PYW[x.pa]} 쪽이고, ${you}님은 ${PYW[x.pb]} 쪽입니다. 상대가 내 속도를 안 맞춰 준다고 느끼기 쉽지만 서로 보는 곳이 다를 뿐입니다.`,`${me}님은 ${PYW[x.pa]} 해인데 ${you}님은 ${PYW[x.pb]} 해입니다. 누가 양보하는 게 아니라, 각자 하고 싶은 걸 하면서 만나는 날만 지키는 쪽이 맞습니다.`][i%3];
    return `${x.y}년 · ${tone} — ${sig}${body} ${mind}`}),
@@ -1749,7 +1749,7 @@ function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'�
   '1년에 한 번, 둘만의 관계 점검 날을 정해 고마운 점과 바라는 점을 나눠 보세요.');
  add('table','점술별 궁합 한눈에 보기','다섯 점술의 궁합 점수를 정리했습니다.',[],'',{table:{cap:'점술별 궁합(기본 70점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
  add('limit','해석의 범위','궁합 점수와 시기는 전통 규칙을 수치로 옮긴 참고 지표입니다.',[miss.length?J(miss.join('·'),'이','가')+' 없어 해당 정보는 정오·대한민국 기준 참고값으로 계산했습니다.':'','관계의 실제 결과는 두 사람의 대화와 선택이 만듭니다. 이 리포트는 서로를 이해하는 질문으로 활용해 주세요.']);
- return {title:`${me}님과 ${you}님의 궁합 리포트`,summary:[S[0].lead,`가까워지는 해: ${up.map(x=>x.y+'년').join(', ')} · 느슨해지기 쉬운 해: ${dn.map(x=>x.y+'년').join(', ')}`,S[3].lead,neg.length?'맞춰 갈 점: '+neg[0][3]:S[1].lead],
+ return {title:`${me}님과 ${you}님의 궁합 리포트`,summary:[S[0].lead,`가까워지는 해: ${up.map(x=>x.y+'년').join(', ')} · 느슨해지기 쉬운 해: ${dn.map(x=>x.y+'년').join(', ')}`,S[3].lead,neg.length?'주의할 점: '+neg[0][3]:S[1].lead],
   sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'다섯 점술의 전통 궁합 규칙을 자체 점수로 옮긴 재미용 리포트입니다. 관계의 실제 결과를 예측하지 않습니다.',birthCharts:[a,b],version:'match-2026-11-07',body:''}}
 const sTxt=i=>ST[i]+'('+'갑을병정무기경신임계'[i]+')';
 /* 재회(2026-11-07): 궁합 점수 + 앞으로 3년의 재연결 신호(배우자 자리 합·충, 개인년 2·6·9, 두 사람의 애정 흐름) */
@@ -1805,14 +1805,14 @@ function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name
  add('table','점술별 궁합 한눈에 보기','다섯 점술의 기본 궁합 점수입니다.',[],'',{table:{cap:'점술별 궁합(기본 70점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
  add('limit','해석의 범위','재회 리포트는 두 사람의 출생 차트만 읽습니다.',['이 리포트는 상대방의 현재 마음이나 의사를 알 수 없습니다. 관계를 다시 시작할지는 두 사람의 실제 대화와 선택으로 정해집니다.',b.inp.notime||b.inp.place?.none?'상대의 출생 시각·출생지가 없는 항목은 참고값으로 계산했습니다.':'','점수와 시기는 전통 규칙을 수치로 옮긴 참고 지표입니다.']);
  return {title:`${me}님과 ${you}님의 재회 리포트`,summary:[S[0].lead,S[1].lead,S[3].lead,S[4].lead],sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'두 사람의 출생 차트로 재회 흐름을 읽은 재미용 리포트입니다. 상대의 마음을 예측하지 않습니다.',birthCharts:[a,b],version:'match-reunion-2026-11-07',body:''}}
-async function openCompatReport(btn,requestedKey=null){if(!requireSavedProfile())return;if(!COMPAT||!CH||(requestedKey&&requestedKey!==(COMPAT.mode==='reunion'?'reunion':'match'))){alert('상대방 정보를 입력하고 먼저 결과를 확인해 주세요.');return}const key=COMPAT.mode==='reunion'?'reunion':'match';const show=()=>{reportReturnFocus=btn;$('reportBody').innerHTML=approvedReportHTML(key==='reunion'?reunionReportData(CH,COMPAT.b,COMPAT.res,COMPAT.ru):compatReportData(CH,COMPAT.b,COMPAT.res),key,CH);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true})};
+async function openCompatReport(btn,requestedKey=null){if(!requireSavedProfile())return;if(!COMPAT||!CH||(requestedKey&&requestedKey!==(COMPAT.mode==='reunion'?'reunion':'match'))){alert('상대방 정보를 입력하고 먼저 결과를 확인해 주세요.');return}const key=COMPAT.mode==='reunion'?'reunion':'match';const show=()=>{reportReturnFocus=btn;$('reportBody').innerHTML=approvedReportHTML(key==='reunion'?reunionReportData(CH,COMPAT.b,COMPAT.res,COMPAT.ru):(COMPAT.kind==='friend'?friendify(compatReportData(CH,COMPAT.b,COMPAT.res)):compatReportData(CH,COMPAT.b,COMPAT.res)),key,CH);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true})};
  if(accountUser?.isAdmin)return show();if(!accountUser)return needLogin();
  try{const ac=await accountAPI('/access');if(ac.isAdmin||ac.reports.includes(key)||ac.reports.includes('all'))return show()}catch(_){}showReportPurchase(key,btn)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cmp-open]');if(b)openCompatReport(b)});
 
 function careerTopicHTML(ch){const base=topicRowsV2(ch,'employment')||topicAnswerRowsBase(ch,'work'),move=topicRowsV2(ch,'move')||[],rows=base.concat(move.slice(3));return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">직업</span><h3>나에게 맞는 일과 다음 기회</h3></header>'+answerCards(rows)+topicReportHTML('work')+'</section>'}
 
-function topicHTML(ch,k){if(k==="work")return careerTopicHTML(ch);if(SUBTOPIC_COPY[k])return subtopicHTML(ch,k);if(k==='study')return studyTopicHTML(ch);if(k==='ask')return freeQuestionHTML();const t=topicData(ch,k),name=TOPICS.find(x=>x[0]===k)[1],g=TOPIC_GUIDES[k];if(k==='marry'||k==='love')return '<section class="blk blk-first topic">'+spousePreviewHTML(ch,k)+'<header class="topic-intro spouse-answer-heading"><h3>'+(k==='love'?'나의 연애·인연, 한눈에 보기':'나의 배우자, 한눈에 보기')+'</h3></header>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';if(k==='reunion')return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">재회</span><h3>우리, 다시 이어질 수 있을까?</h3><p>두 사람의 출생 차트를 나란히 읽어 다시 연락하기 좋은 시기, 헤어짐에 영향을 준 차이, 다시 만난다면 달라져야 할 점을 알려드려요.</p></header>'+compatFormHTML('reunion')+'</section>';if(k==='match')return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">궁합</span><h3>우리 둘은 어떤 점에서 잘 맞을까?</h3><p>사주·서양 점성술·인도 점성술·수비학·마야력을 나란히 읽어 궁합을 평가하고, 관계를 좋게 만들기 위한 방법을 알려드려요.</p></header>'+compatFormHTML()+'</section>';return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+name+'</span><h3>'+g.title+'</h3><p>'+g.intro+'</p></header>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';}
+function topicHTML(ch,k){if(k==="work")return careerTopicHTML(ch);if(SUBTOPIC_COPY[k])return subtopicHTML(ch,k);if(k==='study')return studyTopicHTML(ch);if(k==='ask')return freeQuestionHTML();const t=topicData(ch,k),name=TOPICS.find(x=>x[0]===k)[1],g=TOPIC_GUIDES[k];if(k==='marry'||k==='love')return '<section class="blk blk-first topic">'+spousePreviewHTML(ch,k)+'<header class="topic-intro spouse-answer-heading"><h3>'+(k==='love'?'나의 연애·인연, 한눈에 보기':'나의 배우자, 한눈에 보기')+'</h3></header>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';if(k==='reunion')return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">재회</span><h3>우리, 다시 이어질 수 있을까?</h3><p>두 사람의 출생 차트를 나란히 읽어 다시 연락하기 좋은 시기, 헤어짐에 영향을 준 차이, 다시 만난다면 달라져야 할 점을 알려드려요.</p></header>'+compatFormHTML('reunion')+'</section>';if(k==='match')return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">궁합</span><h3>우리 둘은 어떤 점에서 잘 맞을까?</h3><p>사주·서양 점성술·인도 점성술·수비학·마야력을 나란히 읽어 궁합을 평가하고, 관계를 좋게 만들기 위한 방법을 알려드려요.</p></header>'+matchPanelHTML()+'</section>';return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+name+'</span><h3>'+g.title+'</h3><p>'+g.intro+'</p></header>'+answerCards(topicAnswerRows(ch,k))+topicReportHTML(k)+'</section>';}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-question-example]');if(!b)return;const input=$('chart-question');if(input){input.value=b.dataset.questionExample;input.focus()}});
 document.addEventListener('submit',e=>{if(e.target.id==='free-question-form'){e.preventDefault();if(!CH)return;const q=e.target.elements.question.value.trim();if(q.length<2){$('free-question-result').textContent='궁금한 내용을 두 글자 이상 적어주세요.';return}if(!e.target.elements.email.checkValidity()){$('free-question-result').textContent='답변 받을 이메일을 정확히 적어주세요.';return}const out=$('free-question-result'),btn=e.target.querySelector('button[type=submit]');if(q.length>1000){out.textContent='질문은 1000자까지 적을 수 있어요.';return}btn.disabled=true;out.textContent='보내는 중…';fetch(INVITE_API+'/question',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},accountToken?{Authorization:'Bearer '+accountToken}:{}),body:JSON.stringify({question:q,email:e.target.elements.email.value.trim()})}).then(r=>{if(r.status===429)throw Error('오늘은 질문을 더 보낼 수 없어요. 내일 다시 시도해 주세요.');if(!r.ok)throw Error('질문을 보내지 못했어요. 잠시 후 다시 시도해 주세요.');out.textContent='질문이 접수됐어요. 검토한 뒤 순차적으로 리포트를 작성해 이메일로 보내드릴게요.';e.target.elements.question.value=''}).catch(err=>{out.textContent=err.message}).finally(()=>{btn.disabled=false});}
  if(e.target.dataset&&e.target.dataset.mode){e.preventDefault();if(!CH)return;compatSubmit(e.target.elements,e.target)}
@@ -3608,7 +3608,7 @@ async function accountInit(){
     else if(pending&&formVersion===startVersion){profileFill(pending);accountStatus('로그인했어요. ‘나의 운명 확인하기’를 누르면 입력한 정보가 카카오 계정에 저장돼요.')}
     else if(user.profile&&formVersion===startVersion){const ready=restoreSavedResult(user.profile);accountStatus(ready?'저장한 정보로 운명 결과를 불러왔어요.':'저장된 정보를 확인해주세요.')}
     else accountStatus(intent?'로그인했어요. 정보를 입력하고 ‘나의 운명 확인하기’를 누르면 저장돼요.':user.profile?'저장한 정보가 있어요. 하단 내 정보에서 불러올 수 있어요.':'');
-  }catch(e){const message=e instanceof TypeError?'로그인 서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.':(e.message||'내 정보를 불러오지 못했어요.');if(code||error)accountNotice(message);else accountStatus(message)}finally{accountPaint();document.documentElement.classList.remove('boot')}
+  }catch(e){const message=e instanceof TypeError?'로그인 서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.':(e.message||'내 정보를 불러오지 못했어요.');if(code||error)accountNotice(message);else accountStatus(message)}finally{accountPaint();document.documentElement.classList.remove('boot');try{cmpPairBoot()}catch(_){}}
 }
 $('loginSaveGo')?.addEventListener('click',()=>{try{const v=readForm();if(!v.err&&!checkForm()){sessionStorage.setItem('oracle-pending',JSON.stringify(v));sessionStorage.setItem('oracle-pending-run','1')}sessionStorage.setItem('oracle-save-intent',$('loginSaveAgree').checked?'1':'')}catch(_){}$('loginSaveDialog').close();window.__loginAsked=true;$('accountLogin').click()});
 $('loginSaveCancel')?.addEventListener('click',()=>$('loginSaveDialog').close());
@@ -3664,3 +3664,177 @@ document.getElementById('landingStart').addEventListener('click',()=>{document.b
  box.addEventListener('blur',push);
  if(typeof updConv==='function'){const u=updConv;window.updConv=function(){const r=u.apply(this,arguments);pull();return r}}
 })();
+
+/* ===== 궁합 확장 (2026-11-09): 친구 궁합 · 모임 궁합 · 카카오 친구 초대 링크 =====
+   점수 계산(compatScore)은 그대로 쓰고, 종류에 따라 표현과 묶는 방식만 바꾼다. */
+const CMP_KIND={love:'연인·썸',friend:'친구',group:'모임(3명 이상)'};
+const CMP_NOTE={love:'두 사람의 다섯 점술을 나란히 읽어 잘 맞는 점을 먼저 보여 드려요.',
+ friend:'연애가 아닌 우정으로 읽어요. 점수 계산은 같고, 해석만 친구 사이에 맞춰 바뀌어요.',
+ group:'나를 포함해 3~8명까지 넣을 수 있어요. 모임에서 각자 맡게 되는 역할과, 이 모임이 얼마나 갈지를 봐요.'};
+let CMPKIND='love',GROUP=[],GROUPRES=null;
+
+/* 연애 표현을 우정 표현으로 바꾼다. 긴 말부터 먼저 치환해야 짧은 말에 먹히지 않는다. */
+const FRIEND_WORDS=[[/결혼이나 동거를 생각한다면/g,'오래 보는 사이가 되려면'],[/결혼·동거/g,'긴 동행'],[/결혼이나 동거/g,'오래 가는 사이'],[/같이 살기, 양가 인사, 긴 여행처럼/g,'같이 여행 가기, 서로의 친구 소개처럼'],[/양가 인사/g,'서로의 사람들 소개'],[/같이 살기 전에/g,'같이 오래 지내려면'],[/함께 살/g,'오래 함께할'],[/같이 살/g,'오래 볼'],[/동거/g,'긴 동행'],[/결혼/g,'오랜 우정'],[/연애/g,'우정'],[/연인/g,'친구'],[/데이트/g,'만남'],[/애정/g,'친밀감'],[/사랑받고 있다고/g,'소중하게 여겨진다고'],[/설렘이 큰/g,'반가움이 큰'],[/설렘/g,'반가움'],[/설레는/g,'마음이 가는'],[/끌림/g,'호감'],[/기념일/g,'기념할 만한 날'],[/집안일 분담/g,'역할 분담'],[/커플/g,'단짝'],[/두 사람의 궁합/g,'두 사람의 우정 궁합']];
+function friendify(v){
+ if(typeof v==='string')return FRIEND_WORDS.reduce((t,p)=>t.replace(p[0],p[1]),v);
+ if(Array.isArray(v))return v.map(friendify);
+ if(v&&typeof v==='object'&&!(v instanceof Date)&&!v.inp){const o={};for(const k in v)o[k]=k==='birthCharts'?v[k]:friendify(v[k]);return o}
+ return v}
+
+/* 모임에서 맡는 역할: 가장 많은 오행 + 신강/신약만 읽는다(기존 차트 값). */
+const GROUP_ROLE=[
+ [['판을 벌이는 사람','새 모임과 새 계획을 가장 먼저 꺼내요. 이 사람이 빠지면 약속이 잘 안 잡혀요.'],['조용히 판을 넓히는 사람','먼저 나서지는 않지만, 이 사람이 데려온 사람으로 모임이 넓어져요.']],
+ [['분위기를 띄우는 사람','자리가 가라앉을 때 온도를 올려 줘요. 사진이 제일 많이 남는 것도 이 사람 덕이에요.'],['웃음을 받아 주는 사람','크게 떠들지 않아도 리액션이 좋아서, 이 사람 앞에서 다들 말이 많아져요.']],
+ [['모임을 지키는 사람','연락과 총무를 맡게 돼요. 이 사람이 있어서 모임이 흩어지지 않아요.'],['자리를 지켜 주는 사람','바쁠 때도 꼭 나와요. 말보다 출석으로 모임을 붙잡는 쪽이에요.']],
+ [['정리하고 결정하는 사람','말이 길어질 때 결론을 내 줘요. 장소와 날짜가 이 사람 손에서 정해져요.'],['기준을 잡아 주는 사람','조용히 선을 그어 줘요. 덕분에 모임이 애매하게 흐르지 않아요.']],
+ [['이야기를 들어 주는 사람','각자의 사정을 가장 잘 알아요. 어려운 이야기가 이 사람에게 먼저 가요.'],['사이를 이어 주는 사람','서로 서먹한 사람들 사이를 자연스럽게 메워 줘요.']]];
+function groupRole(ch){const dom=ch.cnt.indexOf(Math.max(...ch.cnt));return GROUP_ROLE[dom][ch.strong?0:1]}
+
+/* 모임 궁합: 모든 두 사람 조합을 기존 compatScore로 재고 평균을 낸다. */
+function groupResult(list){
+ const SAN=x=>x%4,LIU=x=>(13-x)%12,pairs=[];
+ for(let i=0;i<list.length;i++)for(let j=i+1;j<list.length;j++){
+  const r=compatScore(list[i],list[j]);pairs.push({i,j,total:r.total,res:r})}
+ const avg=pairs.reduce((s,p)=>s+p.total,0)/pairs.length;
+ const best=pairs.slice().sort((a,b)=>b.total-a.total)[0],worst=pairs.slice().sort((a,b)=>a.total-b.total)[0];
+ let tie=0,clash=0;
+ for(let i=0;i<list.length;i++)for(let j=i+1;j<list.length;j++){
+  const a=list[i].brs.y,b=list[j].brs.y;
+  if((SAN(a)===SAN(b)&&a!==b)||LIU(a)===b)tie++;else if(mod(a-b,12)===6)clash++}
+ const spread=best.total-worst.total;
+ const keep=Math.round(clamp(avg+tie*2-clash*2-Math.max(0,spread-10)*.4,68,97));
+ const years=keep>=88?'10년 넘게':keep>=82?'5~10년쯤':keep>=75?'3~5년쯤':'계기가 있을 때마다';
+ const level=keep>=88?'오래 남을 모임':keep>=82?'길게 이어질 모임':keep>=75?'한동안 잘 굴러갈 모임':'계기가 있을 때 다시 모이는 모임';
+ const total=Math.round(clamp(avg,72,99));
+ return {pairs,total,keep,level,years,best,worst,tie,clash,spread,roles:list.map(groupRole)}}
+
+function groupName(ch,i){return ch.inp.name||(i===0?'나':'참여자 '+(i+1))}
+function groupListHTML(){
+ const all=[CH,...GROUP];
+ return '<ul class="cmp-group-list">'+all.map((c,i)=>'<li><b>'+topicEsc(groupName(c,i))+'</b><small>'+topicEsc(c.inp.date)+(i===0?' · 나':'')+'</small>'+(i?'<button type="button" class="cmp-del" data-gdel="'+(i-1)+'" aria-label="'+topicEsc(groupName(c,i))+' 빼기">빼기</button>':'')+'</li>').join('')+'</ul>'+
+  '<p class="cmp-priv">'+(all.length<3?'모임 궁합은 3명부터 볼 수 있어요. '+(3-all.length)+'명 더 넣어 주세요.':'지금 '+all.length+'명이에요. 8명까지 넣을 수 있어요.')+'</p>'+
+  '<button type="button" class="cmp-open" data-gcalc'+(all.length<3?' disabled':'')+'>모임 궁합 보기 →</button>'}
+function groupRefresh(){const b=document.getElementById('cmpGroupList');if(b)b.innerHTML=groupListHTML()}
+
+function groupRender(){
+ const all=[CH,...GROUP],r=GROUPRES=groupResult(all),out=document.getElementById('cmpGroupOut');if(!out)return;
+ out.innerHTML='<div class="cmp-score"><span>'+all.length+'명의 모임 궁합</span><b>'+r.total+'<small>점</small></b><em>'+r.level+'</em></div>'+
+  '<ul class="cmp-roles">'+all.map((c,i)=>'<li><b>'+topicEsc(groupName(c,i))+'</b> · '+topicEsc(r.roles[i][0])+'<small>'+topicEsc(r.roles[i][1])+'</small></li>').join('')+'</ul>'+
+  '<p class="cmp-note">이 모임은 <b>'+r.years+'</b> 이어지기 쉬워요. 가장 잘 붙는 두 사람은 '+topicEsc(groupName(all[r.best.i],r.best.i))+'·'+topicEsc(groupName(all[r.best.j],r.best.j))+'('+r.best.total+'점)이에요.</p>'+
+  '<button type="button" class="cmp-open" data-gopen>모임 리포트 보기 →</button>';
+ out.scrollIntoView({behavior:soft(),block:'nearest'})}
+
+function groupReportData(list,r){
+ const nm=list.map((c,i)=>groupName(c,i)),n=list.length;
+ const S=[],add=(kind,q,lead,paras,action,extra)=>S.push(Object.assign({id:'group-c'+(S.length+1),kind,question:q,lead,basis:[],paragraphs:paras.filter(Boolean),action:action||''},extra||{}));
+ const bestN=nm[r.best.i]+'·'+nm[r.best.j],worstN=nm[r.worst.i]+'·'+nm[r.worst.j];
+ add('summary','이 모임은 어떤 모임인가',n+'명의 모임 궁합은 '+r.total+'점, '+r.level+'입니다.',
+  ['서로를 가장 잘 받쳐 주는 짝은 '+bestN+'('+r.best.total+'점)입니다. 모임이 어색해질 때 이 두 사람이 먼저 말을 꺼내면 자리가 쉽게 풀립니다.',
+   r.tie?'띠로 보면 서로 끌어 주는 조합이 '+r.tie+'쌍 있습니다. 이 모임이 한 번 모이면 쉽게 흩어지지 않는 이유예요.':'띠로 묶이는 조합은 두드러지지 않지만, 그만큼 각자의 색이 분명해서 역할이 겹치지 않습니다.',
+   '모임의 평균 궁합은 '+r.total+'점이고, 가장 높은 짝과 낮은 짝의 차이는 '+r.spread+'점입니다.'+(r.spread<=8?' 편차가 작아 누가 빠져도 분위기가 크게 달라지지 않습니다.':' 편차가 있는 만큼, 자리를 만들 때 사람 조합을 한 번 생각해 두면 훨씬 편안해집니다.')],
+  '다음 모임에서 각자의 역할을 한 번 소리 내어 맞춰 보세요. 그것만으로 모임이 한결 편해집니다.');
+ add('role','모임에서 각자의 자리','사람마다 모임에서 자연스럽게 맡게 되는 자리가 다릅니다.',
+  list.map((c,i)=>nm[i]+' · '+r.roles[i][0]+' — '+r.roles[i][1]),
+  '역할이 겹치는 사람이 있다면, 한 사람은 한 발 물러나 주는 쪽이 모임에 좋습니다.',
+  {table:{cap:'모임에서의 역할',head:['이름','역할','한 줄'],rows:list.map((c,i)=>[nm[i],r.roles[i][0],r.roles[i][1]])}});
+ add('flow','이 모임은 얼마나 갈까','지금 흐름이면 '+r.years+' 이어지기 쉬운 모임입니다.',
+  ['모임 지속 점수는 '+r.keep+'점입니다. 서로의 궁합 평균, 띠로 끌어 주는 조합 '+r.tie+'쌍'+(r.clash?', 기준이 엇갈리는 조합 '+r.clash+'쌍':'')+'을 함께 본 값입니다.',
+   r.keep>=82?'특별히 애쓰지 않아도 모임이 유지되는 편입니다. 대신 정해진 자리가 없으면 자연스럽게 뜸해지니, 1년에 한 번 고정된 날을 정해 두면 훨씬 오래 갑니다.':'모임의 수명은 모이는 계기에 달려 있습니다. 정기적인 날짜를 하나 정해 두면 지속 점수보다 훨씬 오래 갑니다.'],
+  '다음 모임 날짜를 오늘 자리에서 정해 두세요. 모임을 가장 오래 가게 하는 건 궁합이 아니라 잡혀 있는 약속입니다.',
+  {table:{cap:'두 사람씩 본 궁합',head:['두 사람','점수'],rows:r.pairs.slice().sort((a,b)=>b.total-a.total).map(p=>[nm[p.i]+' · '+nm[p.j],p.total+'점'])}});
+ add('advice','주의할 점','한 가지만 미리 알아 두면 모임이 훨씬 오래 갑니다.',
+  [worstN+' 사이는 '+r.worst.total+'점으로 이 모임에서 가장 조율이 필요합니다. 둘만 남는 자리를 자주 만들기보다, 다른 사람이 함께 있는 자리가 서로 편합니다.',
+   r.clash?'기준이 엇갈리는 조합이 '+r.clash+'쌍 있습니다. 돈 쓰는 선과 약속 시간처럼 사소한 데서 먼저 부딪히니, 회비와 시간은 처음에 글로 정해 두세요.':'큰 충돌 신호는 없습니다. 다만 편한 모임일수록 한 사람에게 연락과 준비가 몰리기 쉬우니, 총무 역할은 돌아가며 맡으세요.'],
+  '모임의 돈과 날짜는 말이 아니라 글로 남기세요.');
+ add('limit','해석의 범위','모임 궁합은 두 사람씩의 전통 궁합 규칙을 평균 낸 참고 지표입니다.',
+  ['지속 점수는 사람 사이의 조합만 본 값이고, 실제로 모임을 이어 가는 건 잡아 두는 약속과 각자의 사정입니다.','출생 시각이나 출생지를 넣지 않은 사람은 정오·대한민국 기준 참고값으로 계산했습니다.'],'');
+ return {title:n+'명의 모임 궁합 리포트',summary:[S[0].lead,'모임 지속: '+r.years+' ('+r.keep+'점)','가장 잘 맞는 짝: '+bestN+' '+r.best.total+'점',S[3].paragraphs[0]],
+  sections:S,years:[],category:'애정',note:'다섯 점술의 전통 궁합 규칙을 자체 점수로 옮긴 재미용 리포트입니다. 모임의 실제 결과를 예측하지 않습니다.',birthCharts:list,version:'group-2026-11-09',body:''}}
+
+/* ===== 카카오 친구 초대 링크: 친구가 로그인하고 내 정보를 저장하면 서로의 궁합이 보인다 ===== */
+const PAIRKEY='oracle-pair';
+function pairUrl(code){return SHARE_URL+'?c='+code}
+async function cmpMakeLink(btn){
+ if(!requireSavedProfile())return;
+ const out=document.getElementById('cmpPairBox');btn.disabled=true;
+ try{
+  const d=await accountAPI('/pair',{kind:CMPKIND}),url=pairUrl(d.code);
+  const text=(CMPKIND==='group'?'같이 모임 궁합 한번 볼래? 운명탐정에서 네 정보 넣으면 바로 나와.':'우리 궁합 한번 볼래? 운명탐정에서 네 정보 넣으면 바로 나와.')+'\n'+url;
+  let done=false;
+  if(navigator.share){try{await navigator.share({title:SHARE_TITLE,text});done=true}catch(_){}}
+  if(!done&&navigator.clipboard){try{await navigator.clipboard.writeText(text);done=true}catch(_){}}
+  out.innerHTML='<p class="cmp-note">'+(done?'링크를 보냈어요.':'아래 링크를 복사해 보내 주세요.')+' 친구가 이 링크로 들어와 <b>카카오 로그인 후 자기 출생 정보를 저장하면</b>, 두 사람의 궁합이 서로에게 보여요.</p>'+
+   '<p class="cmp-link"><input type="text" readonly value="'+topicEsc(url)+'" aria-label="초대 링크"></p>'+
+   '<button type="button" class="cmp-open" data-pcheck="'+d.code+'">친구가 들어왔는지 확인하기</button><p class="cmp-priv" id="cmpPairMsg" aria-live="polite">내 출생 정보는 친구가 이 링크로 들어와 로그인했을 때만 보여요.</p>';
+ }catch(e){out.innerHTML='<p class="cmp-priv">'+topicEsc(e.message||'링크를 만들지 못했어요. 잠시 뒤 다시 시도해 주세요.')+'</p>'}
+ finally{btn.disabled=false}}
+
+function pairChart(m,i){const p=typeof m.profile==='string'?JSON.parse(m.profile):m.profile;
+ return buildChart(Object.assign({},p,{name:p.name||m.nickname||('참여자 '+(i+1))}))}
+
+async function cmpPairCheck(code,msgEl){
+ const d=await accountAPI('/pair?code='+encodeURIComponent(code));
+ const others=(d.members||[]).filter(m=>!m.me);
+ if(!others.length){if(msgEl)msgEl.textContent='아직 친구가 들어오지 않았어요. 친구가 로그인하고 내 정보를 저장하면 여기에 바로 보여요.';return false}
+ const kind=d.kind==='group'?'group':d.kind==='friend'?'friend':'love';
+ if(kind==='group'){GROUP=others.map(pairChart);cmpSetKind('group');groupRefresh();groupRender()}
+ else{const other=pairChart(others[0],1);COMPAT={b:other,res:compatScore(CH,other),mode:'match',kind};cmpSetKind(kind);cmpShowOne((other.inp.name||'친구')+'님')}
+ return true}
+
+function cmpShowOne(label){
+ const res=COMPAT.res,out=document.querySelector('#cmpOne .cmp-result');if(!out)return;
+ const lv=res.total>=88?'아주 잘 맞는 편':res.total>=80?'잘 맞는 편':res.total>=74?'서로 편안한 사이':'맞춰 갈수록 좋아지는 사이';
+ out.innerHTML='<div class="cmp-score"><span>'+topicEsc(J(label,'과','와'))+' 나의 '+(COMPAT.kind==='friend'?'우정 ':'')+'궁합</span><b>'+res.total+'<small>점</small></b><em>'+lv+'</em></div>'+
+  '<p class="cmp-note">잘 맞는 점과 다섯 점술별 근거는 <b>'+(COMPAT.kind==='friend'?'우정':'궁합')+' 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" data-cmp-open>리포트 보기 →</button>';
+ out.scrollIntoView({behavior:soft(),block:'nearest'})}
+
+function cmpSetKind(k){
+ CMPKIND=k;
+ document.querySelectorAll('[data-ck]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ck===k)));
+ const note=document.getElementById('cmpKindNote');if(note)note.textContent=CMP_NOTE[k];
+ const one=document.getElementById('cmpOne'),g=document.getElementById('cmpGroup');
+ if(one)one.hidden=k==='group';if(g)g.hidden=k!=='group';
+ if(k==='group')groupRefresh()}
+
+function matchPanelHTML(){
+ return '<div class="cmp-kind" role="group" aria-label="궁합 종류">'+Object.keys(CMP_KIND).map(k=>'<button type="button" data-ck="'+k+'" aria-pressed="'+(k===CMPKIND)+'">'+CMP_KIND[k]+'</button>').join('')+'</div>'+
+  '<p class="cmp-kind-note" id="cmpKindNote">'+CMP_NOTE[CMPKIND]+'</p>'+
+  '<div class="cmp-invite"><button type="button" class="cmp-open" data-pmake>친구에게 공유하고 함께 보기 →</button>'+
+  '<p class="cmp-priv">친구가 링크로 들어와 카카오 로그인 후 자기 출생 정보를 저장하면, 두 사람의 궁합이 서로에게 보여요. 상대 정보를 직접 입력할 필요가 없어요.</p>'+
+  '<div id="cmpPairBox" class="cmp-pair"></div></div>'+
+  '<div id="cmpOne"'+(CMPKIND==='group'?' hidden':'')+'>'+compatFormHTML('match')+'</div>'+
+  '<div id="cmpGroup"'+(CMPKIND==='group'?'':' hidden')+'><section class="chart-form cmp-form"><h4>모임에 참여할 사람</h4><div id="cmpGroupList">'+groupListHTML()+'</div><div id="cmpGroupOut" class="chart-feedback" aria-live="polite"></div></section>'+compatFormHTML('group')+'</div>'}
+
+document.addEventListener('click',e=>{
+ const k=e.target.closest('[data-ck]');if(k){cmpSetKind(k.dataset.ck);return}
+ const mk=e.target.closest('[data-pmake]');if(mk){cmpMakeLink(mk);return}
+ const pc=e.target.closest('[data-pcheck]');if(pc){const msg=document.getElementById('cmpPairMsg');pc.disabled=true;if(msg)msg.textContent='확인하고 있어요…';
+  cmpPairCheck(pc.dataset.pcheck,msg).catch(err=>{if(msg)msg.textContent=err.message||'확인하지 못했어요.'}).finally(()=>{pc.disabled=false});return}
+ const gd=e.target.closest('[data-gdel]');if(gd){GROUP.splice(+gd.dataset.gdel,1);GROUPRES=null;groupRefresh();const o=document.getElementById('cmpGroupOut');if(o)o.innerHTML='';return}
+ if(e.target.closest('[data-gcalc]')){groupRender();return}
+ if(e.target.closest('[data-gopen]')){
+  if(!GROUPRES)groupRender();if(!GROUPRES)return;
+  reportReturnFocus=e.target;
+  document.getElementById('reportBody').innerHTML=approvedReportHTML(groupReportData([CH,...GROUP],GROUPRES),'match',CH);
+  document.getElementById('report').hidden=false;document.documentElement.classList.add('rep-lock');
+  document.getElementById('report').scrollTop=0;document.getElementById('reportClose').focus({preventScroll:true});return}
+});
+
+/* 링크로 들어온 친구: 주소창에서 코드를 지우고, 로그인·정보 저장이 끝나면 합류시킨다. */
+(function(){try{
+ const u=new URL(location.href),c=u.searchParams.get('c');
+ if(c&&/^[a-f0-9]{12}$/.test(c)){sessionStorage.setItem(PAIRKEY,c);u.searchParams.delete('c');history.replaceState(null,'',u.pathname+u.search+u.hash)}
+}catch(_){}})();
+
+async function cmpPairBoot(){
+ let code='';try{code=sessionStorage.getItem(PAIRKEY)||''}catch(_){}
+ if(!code)return;
+ if(!accountUser){accountNotice('친구가 보낸 궁합 링크예요. 카카오로 로그인하고 내 출생 정보를 저장하면 두 사람의 궁합이 서로에게 보여요.');return}
+ if(!accountUser.profile){accountNotice('궁합 링크로 들어왔어요. 출생 정보를 입력하고 ‘내 정보 저장’을 누르면 친구와의 궁합이 바로 나와요.');return}
+ try{
+  await accountAPI('/pair/join',{code});
+  try{sessionStorage.removeItem(PAIRKEY)}catch(_){}
+  if(!CH)return;
+  setTab('match');
+  if(await cmpPairCheck(code,null))accountNotice('친구와의 궁합이 준비됐어요. 궁합 탭에서 확인해 주세요.');
+ }catch(e){accountNotice('궁합 링크를 여는 데 실패했어요. 잠시 뒤 다시 시도해 주세요.')}}
