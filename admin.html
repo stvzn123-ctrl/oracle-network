@@ -126,6 +126,8 @@ body:not(.picked) #detailCard{display:none}
 <div class="empty" id="gate"><p id="gateMsg">권한 확인 중…</p></div>
 <div id="toast" hidden role="status" aria-live="polite"></div>
 <dialog id="qDlg" style="max-width:760px;width:94vw;max-height:86vh;background:var(--panel,#0d1622);color:inherit;border:1px solid #2a3a4f;border-radius:14px;padding:18px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="margin:0;font-size:18px">자유질문</h2><button id="qClose">닫기</button></div><div id="qList" style="margin-top:12px"></div></dialog>
+<dialog id="memberDeleteDialog" aria-labelledby="memberDeleteTitle" style="max-width:440px;width:calc(100% - 40px);padding:24px;border:1px solid #c9bcb0;border-radius:20px;background:var(--panel,#fff8f0);color:inherit">
+<form id="memberDeleteForm"><h2 id="memberDeleteTitle">회원 삭제 확인</h2><p id="memberDeleteMessage"></p><p>계정과 저장 정보·질문·리포트를 영구 삭제해요. 복구할 수 없어요.</p><label for="memberDeleteName">회원 이름을 그대로 입력해 주세요.</label><input id="memberDeleteName" autocomplete="off" required style="display:block;width:100%;box-sizing:border-box;margin:12px 0;padding:12px"><label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" id="memberDeleteAgree" required>영구 삭제와 복구 불가를 확인했습니다.</label><p id="memberDeleteError" role="alert"></p><div style="display:flex;gap:10px;margin-top:20px"><button type="button" id="memberDeleteCancel">취소</button><button type="submit" id="memberDeleteSubmit" disabled style="color:#cf5260">영구 삭제</button></div></form></dialog>
 <script>
 const API='https://oracle-api.stvzn123.workers.dev';
 const KEYS={comprehensive:'종합',money:'재물·돈',love:'연애·인연',marry:'결혼·배우자',reunion:'재회',match:'궁합',work:'직업',study:'학업·성취'};
@@ -228,21 +230,34 @@ $('back').onclick=()=>{document.body.classList.remove('picked');window.scrollTo(
 $('copy').onclick=async()=>{try{await navigator.clipboard.writeText(selected);toast('계정 ID를 복사했어요.')}catch{prompt('계정 ID',selected)}};
 
 
+
+let pendingMemberDelete=null,deletingMember=false;
+function syncMemberDelete(){ $('memberDeleteSubmit').disabled=deletingMember||!pendingMemberDelete||$('memberDeleteName').value!==pendingMemberDelete.name||!$('memberDeleteAgree').checked }
+$('memberDeleteName').addEventListener('input',syncMemberDelete);
+$('memberDeleteAgree').addEventListener('change',syncMemberDelete);
+$('memberDeleteCancel').onclick=()=>{if(!deletingMember)$('memberDeleteDialog').close()};
+$('memberDeleteDialog').addEventListener('cancel',e=>{if(deletingMember)e.preventDefault()});
+$('memberDeleteDialog').addEventListener('close',()=>{pendingMemberDelete=null});
 $('deleteMember').onclick=async()=>{
  if(!selected)return;
- const id=selected;
+ const id=selected;$('deleteMember').disabled=true;
  try{
   const u=await api('/admin/user?id='+encodeURIComponent(id));
-  const name=u.profile?.name||u.nickname||'회원';
-  const typed=prompt(name+' 회원을 삭제하려면 이름을 그대로 입력하세요. 모든 저장 정보와 리포트가 영구 삭제됩니다.');
-  if(typed===null)return;
-  if(typed!==name){toast('이름이 일치하지 않아요.',true);return}
-  if(!confirm(name+' 회원의 계정과 모든 저장 정보를 영구 삭제할까요? 복구할 수 없어요.'))return;
-  $('deleteMember').disabled=true;
-  await api('/admin/delete-user',{userId:id,name:typed,confirm:'DELETE'});
-  ++seq;cache.delete(id);selected=null;$('detail').hidden=true;$('none').hidden=false;document.body.classList.remove('picked');
-  toast('회원을 삭제했어요.');await loadAll(true);
+  pendingMemberDelete={id,name:u.profile?.name||u.nickname||'회원'};
+  $('memberDeleteForm').reset();$('memberDeleteError').textContent='';
+  $('memberDeleteMessage').textContent=pendingMemberDelete.name+' 회원을 삭제합니다.';
+  syncMemberDelete();$('memberDeleteDialog').showModal();$('memberDeleteName').focus();
  }catch(e){toast(e.message,true)}finally{$('deleteMember').disabled=false}
+};
+$('memberDeleteForm').onsubmit=async e=>{
+ e.preventDefault();if(deletingMember||!pendingMemberDelete||$('memberDeleteName').value!==pendingMemberDelete.name||!$('memberDeleteAgree').checked)return;
+ const {id,name}=pendingMemberDelete;deletingMember=true;syncMemberDelete();$('memberDeleteCancel').disabled=true;
+ try{
+  await api('/admin/delete-user',{userId:id,name,confirm:'DELETE'});
+  ++seq;cache.delete(id);selected=null;$('detail').hidden=true;$('none').hidden=false;document.body.classList.remove('picked');
+  $('memberDeleteDialog').close();toast('회원을 삭제했어요.');await loadAll(true);
+ }catch(e){$('memberDeleteError').textContent=e.message}
+ finally{deletingMember=false;$('memberDeleteCancel').disabled=false;syncMemberDelete()}
 };
 /* ---------- 권한 토글 ---------- */
 async function quickAll(id,btn){
