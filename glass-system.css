@@ -178,3 +178,18 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 #topicFold .res-topics .topic-pose{width:90px!important;float:none;margin:0!important}#topicFold .res-topics strong{display:block;margin:0!important;text-align:center;font-size:16px;line-height:1.4}
 /* Clip only the question mark in the source cell, leaving the face intact. */
 .question-pose{clip-path:polygon(0 0,68% 0,68% 27%,100% 27%,100% 100%,0 100%)}
+
+/* Isolated white-fur poses prevent neighboring sprite fragments at small sizes. */
+.pose{background-size:contain;background-position:center}
+.pose-detective{background-image:url('img/pose-white-detective.png');background-position:center}
+.pose-happy{background-image:url('img/pose-white-happy.png');background-position:center}
+.pose-care{background-image:url('img/pose-white-care.png');background-position:center}
+.pose-heart{background-image:url('img/pose-white-heart.png');background-position:center}
+.pose-money{background-image:url('img/pose-white-money.png');background-position:center}
+.pose-note{background-image:url('img/pose-white-note.png');background-position:center}
+.pose-tired{background-image:url('img/pose-white-tired.png');background-position:center}
+.pose-lucky{background-image:url('img/pose-white-lucky.png');background-position:center}
+.pose-rest{background-image:url('img/pose-white-rest.png');background-position:center}
+#brandbar .brandbar-mark{background-image:url('img/pose-white-detective.png')!important}
+
+.pose-note{clip-path:polygon(0 0,72% 0,72% 31%,100% 31%,100% 100%,0 100%)}
