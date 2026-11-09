@@ -41,10 +41,8 @@
  };
  const goalNames={natal:'전체 흐름',marry:'연애',money:'돈',work:'직업'};
  let pending=null;try{const stored=sessionStorage.getItem('oracle-entry-goal');if(Object.hasOwn(goalNames,stored))pending=stored}catch(_){}
- const landing=document.querySelector('.landing-bottom');
- landing.insertAdjacentHTML('beforebegin','<section class="entry-goals" aria-labelledby="entryGoalTitle"><h2 id="entryGoalTitle">지금 무엇이 가장 궁금하세요?</h2><div role="group" aria-label="먼저 볼 고민">'+Object.entries(goalNames).map(([key,name])=>'<button type="button" data-entry-goal="'+key+'" aria-pressed="'+(pending===key)+'">'+name+'</button>').join('')+'</div><p id="entryGoalStatus">고민을 고르고 내 정보를 입력하면 해당 결과로 바로 안내해요.</p></section>'+compareHTML());
- const goals=document.querySelector('.entry-goals');
- document.querySelector('.landing-story').before(goals);goals.after(landing);
+ const entryForm=$('ask');
+ entryForm.insertAdjacentHTML('afterbegin','<section class="entry-goals f full" aria-labelledby="entryGoalTitle"><h2 id="entryGoalTitle">어떤 고민부터 볼까요?</h2><div role="group" aria-label="먼저 볼 고민">'+Object.entries(goalNames).map(([key,name])=>'<button type="button" data-entry-goal="'+key+'" aria-pressed="'+(pending===key)+'">'+name+'</button>').join('')+'</div><p id="entryGoalStatus">고민을 고르고 정보를 입력하면 해당 결과부터 보여드려요. 선택하지 않아도 이용할 수 있어요.</p></section>');
  function route(key){
   if(key==='natal')document.querySelector('[data-bottom="home"]').click();
   else {document.querySelector('[data-bottom="topics"]').click();setTab(key);}
@@ -54,8 +52,7 @@
   const button=event.target.closest('[data-entry-goal]');if(!button)return;
   pending=button.dataset.entryGoal;try{sessionStorage.setItem('oracle-entry-goal',pending)}catch(_){}
   document.querySelectorAll('[data-entry-goal]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
-  $('entryGoalStatus').textContent=goalNames[pending]+' 고민을 선택했어요. 아래 버튼으로 내 정보를 입력해 주세요.';
-  $('landingStart').textContent=goalNames[pending]+(CH?' 결과 바로보기':' 고민으로 시작하기');
+  $('entryGoalStatus').textContent=goalNames[pending]+' 고민을 선택했어요. 정보를 입력하면 해당 결과부터 보여드려요.';
  });
  function takeGoal(){const target=pending;pending=null;try{sessionStorage.removeItem('oracle-entry-goal')}catch(_){}return target}
  $('landingStart').addEventListener('click',()=>{if(CH&&pending)route(takeGoal())});
