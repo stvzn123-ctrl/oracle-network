@@ -1,0 +1,62 @@
+/* Relationship context changes interpretation, never birth-chart scores. */
+(() => {
+  const OPTIONS = {married:'결혼', dating:'연애 중', crush:'썸·호감', single:'혼자임', private:'고르고 싶지 않음'};
+  const normalize = value => Object.hasOwn(OPTIONS,value) ? value : 'private';
+  const storageKey = () => accountUser ? 'oracle-relationship-v1:'+accountUser.id : null;
+  function savedRelationship(){try{return normalize(localStorage.getItem(storageKey()))}catch(_){return 'private'}}
+  function context(ch){return normalize(ch?.inp?.relationship ?? (accountUser ? savedRelationship() : 'private'))}
+  const originalRead=readForm, originalFill=fillForm, originalAPI=accountAPI;
+  readForm=function(){return {...originalRead(),relationship:normalize($('in-relationship').value)}};
+  fillForm=function(value){originalFill(value);$('in-relationship').value=normalize(value.relationship ?? (accountUser?savedRelationship():'private'))};
+  accountAPI=async function(path,body){
+    const key=storageKey();const result=await originalAPI(path,body);
+    if(key&&path==='/profile')try{if(body?.profile)localStorage.setItem(key,normalize(body.profile.relationship));else localStorage.removeItem(key)}catch(_){}
+    return result;
+  };
+  const COPY={
+    married:{title:'함께하는 사랑과 결혼 생활',question:'우리 사랑이 더 단단해질 시기는?',answer:'새로운 상대를 찾는 시기 대신, 배우자와 신뢰를 쌓고 함께 세운 계획을 구체화할 흐름을 살펴봐요.',action:'생활비·가사·휴식 중 한 가지를 골라 서로 원하는 분담을 이야기해 보세요.',next:'함께 세울 다음 계획',detail:'여행이나 이사처럼 공동 계획이 있다면 예산과 역할을 먼저 맞춰보세요. 결실은 결혼을 새로 하는 일이 아니라 현재 관계가 더 안정되는 과정으로 읽어요.'},
+    dating:{title:'지금 사랑의 발전과 결실',question:'지금 사랑이 결실을 맺을 시기는?',answer:'다른 사람을 만날 시기 대신, 지금 만나는 사람과 관계를 깊게 하고 미래 계획을 이야기할 흐름을 살펴봐요.',action:'서로 생각하는 관계의 다음 단계를 묻고, 결혼·동거·장거리 등 실제 조건을 함께 확인해 보세요.',next:'우리 관계의 다음 단계',detail:'관계를 진전시키고 싶다면 두 사람의 의사와 준비를 먼저 확인해 보세요. 현재 상대와의 궁합은 상대의 출생 정보를 함께 넣었을 때 별도로 살펴볼 수 있어요.'},
+    crush:{title:'설렘에서 관계로 이어지는 사랑',question:'호감이 관계로 발전할 흐름은?',answer:'새로운 상대를 예고하기보다, 지금의 호감을 확인하고 대화와 만남을 자연스럽게 넓힐 흐름을 살펴봐요.',action:'부담 없는 만남을 한 번 제안하고 상대가 편하게 응답할 여지를 주세요.',next:'서로의 마음을 확인하는 과정',detail:'상대의 반응과 경계를 존중하며 연락과 만남이 서로 이어지는지 살펴보세요. 내 차트만으로 상대의 마음이나 관계의 성사를 단정하지 않아요.'},
+    single:{title:'새로운 만남과 사랑의 시작',question:'새로운 인연을 만날 흐름은?',answer:'새로운 사람을 알아가고 내게 맞는 관계를 시작할 흐름을 살펴봐요.',action:'내가 편안한 모임이나 활동 하나를 정하고 새로운 대화를 시작해 보세요.',next:'내게 맞는 만남 준비',detail:'만남의 기회와 함께 내가 원하는 관계의 기준을 정리해 보세요. 연애를 서두르기보다 대화와 실제 경험으로 잘 맞는지 확인하는 과정이 중요해요.'},
+    private:{title:'사랑과 관계의 흐름',question:'사랑과 관계에서 주목할 시기는?',answer:'현재 관계 상태를 가정하지 않고, 애정을 표현하고 관계를 돌보는 흐름을 중심으로 읽어요.',action:'지금 나에게 중요한 관계에서 고마운 점과 바라는 점을 하나씩 정리해 보세요.',next:'나에게 맞는 관계의 방향',detail:'새로운 만남을 원하는지, 현재 관계를 깊게 하고 싶은지에 따라 같은 흐름을 다르게 활용할 수 있어요. 원하면 내 정보에서 관계 상태를 바꿀 수 있어요.'}
+  };
+  function rows(ch){
+    const c=COPY[context(ch)];
+    return [[c.question,c.answer],['사랑을 표현하는 나의 방식',LOVE_STYLE[sign(birthExtraLon('Venus',ch.jd))%4]+' 방식이 차트에 나타나요. 현재 상황에 맞게 표현의 속도와 방식을 조율해 보세요.'],[c.next,c.detail],['지금 해 볼 일',c.action]];
+  }
+  const originalOffer=topicReportHTML;
+  topicReportHTML=function(key){
+    if(!['love','marry'].includes(key)||!CH)return originalOffer(key);
+    const c=COPY[context(CH)];
+    return '<section class="topic-offer"><h4>'+c.title+' 리포트</h4><ul><li>'+c.question+'</li><li>나의 관계 성향과 표현 방식</li><li>'+c.next+'</li><li>지금 실천할 대화와 행동</li></ul><div class="topic-offer-action"><strong>'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</strong><button type="button" data-buy="'+key+'">나의 리포트 보기</button></div><p class="buy-msg" aria-live="polite"></p></section>';
+  };
+  const oldTopic=topicHTML;
+  topicHTML=function(ch,key){
+    if(!['love','marry'].includes(key))return oldTopic(ch,key);
+    const c=COPY[context(ch)];
+    return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+topicEsc(OPTIONS[context(ch)])+'</span><h3>'+c.title+'</h3></header>'+answerCards(rows(ch))+topicReportHTML(key)+'</section>';
+  };
+  const originalRich=buildRichReport;
+  buildRichReport=function(ch,key){
+    const data=originalRich(ch,key),state=context(ch),c=COPY[state];
+    if(!['love','marry','comprehensive'].includes(key))return data;
+    const section={kind:'relationship-context',question:c.question,lead:c.answer,paragraphs:[c.detail,c.action],basis:[],action:''};
+    if(key==='comprehensive'){
+      data.summary=(data.summary||[]).map(text=>/연애|결혼|배우자/.test(text)?c.answer:text);
+      data.sections=data.sections.map(s=>/연애|결혼|배우자/.test(s.question||'')?{...section,id:s.id}:s);
+      data.sections.unshift({...section,question:'현재 상황에 맞춰 읽는 사랑'});
+      return data;
+    }
+    if(state==='single'){data.sections.unshift(section);return data}
+    const years=(typeof RY!=='undefined'?RY:[]).map((r,i)=>({year:horizonDate(i+1).y,score:D(r[1].mean)}));
+    const peak=[...years].sort((a,b)=>b.score-a.score)[0];
+    const timing=peak?peak.year+'년은 앞으로 10년의 애정 흐름에서 주목할 해예요. '+c.answer:c.answer;
+    return {...data,title:(ch.inp.name||'당신')+'님의 '+c.title+' 리포트',body:'',relationshipContext:true,summary:[c.answer,rows(ch)[1][1],c.action],years,
+      sections:[section,{kind:'relationship-style',question:'나의 관계 성향과 표현 방식',lead:rows(ch)[1][1],paragraphs:[traitDescription(ch)],basis:[]},
+      {kind:'relationship-timing',question:c.question,lead:timing,paragraphs:['표시된 해는 기존 차트의 애정 점수를 비교한 흐름이에요. 관계 상태를 선택해도 계산 점수는 바뀌지 않으며, 현재 상황에 맞춰 그 의미를 읽어요.'],basis:[]},
+      {kind:'relationship-next',question:c.next,lead:c.detail,paragraphs:[c.action],basis:[]},
+      ...data.sections.filter(s=>['caution','weak','care'].includes(s.kind))],note:''};
+  };
+  // Restored profiles from the current API may not yet include this optional field.
+  if(accountUser?.profile)$('in-relationship').value=context(CH);
+})();

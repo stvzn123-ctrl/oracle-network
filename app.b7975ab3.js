@@ -2166,6 +2166,7 @@ let purchaseReportKey=null,purchaseTrigger=null;
 // Launch trials are per signed-in account, product, and browser. Store only a digest of inputs.
 function launchTrialSlot(key){return 'oracle-launch-trial-v1:'+accountUser.id+':'+key}
 function launchTrialIdentity(value){
+ if(value&&typeof value==='object'){value=JSON.parse(JSON.stringify(value));const omit=v=>{if(v&&typeof v==='object'){delete v.relationship;Object.values(v).forEach(omit)}};omit(value)}
  const stable=v=>v&&typeof v==='object'?(Array.isArray(v)?v.map(stable):Object.fromEntries(Object.keys(v).sort().map(k=>[k,stable(v[k])]))):v;
  const text=JSON.stringify(stable(value));let a=2166136261,b=5381;
  for(let i=0;i<text.length;i++){a=Math.imul(a^text.charCodeAt(i),16777619);b=Math.imul(b,33)^text.charCodeAt(i)}
@@ -2320,7 +2321,7 @@ function approvedReportHTML(data,key,sourceChart=null){
  if(key==="study"&&ch){const young=new Date().getFullYear()-ch.Y<30;secs.unshift({kind:"study-plan",question:young?"공부·진학·시험 준비":"배움과 경력 성장",lead:"",paragraphs:[young?"공부와 진학, 대입·수능 등 시험 준비를 하나의 학업 흐름으로 읽습니다. 현재 목표에 맞춰 기초 학습·기출 풀이·복습을 이어가 보세요. 자격 준비나 새로운 공부에도 같은 강점을 활용할 수 있습니다.":"직무에 필요한 학습과 자격 준비, 새로운 분야의 배움을 함께 읽습니다. 실제로 필요한 역량 하나를 정하고 학습·실습·결과물 순서로 성취를 쌓아보세요."]})}
 
  if(['love','marry'].includes(key)){const at=secs.findIndex(s=>s.kind==='partner');if(at>=0){const src=secs.splice(at,1)[0],partner={...src,question:'나와 잘 맞는 연인과 함께하는 삶',paragraphs:[],answer:''},detail={kind:'partner-detail',question:key==='marry'?'배우자를 이렇게 읽었어요':'인연을 이렇게 읽었어요',lead:'',paragraphs:(src.paragraphs||[]).filter(p=>!/얼굴 일러스트는/.test(p))};secs.unshift(partner,detail)}}
- if(ch&&!String(data.version||'').startsWith('match-')){const li=secs.findIndex(s=>s.kind==='limit');const fs={kind:'fun',question:''+({marry:'결혼',love:'연애',reunion:'재회',match:'궁합',money:'재물',invest:'재물',property:'재물',business:'재물',work:'직업',employment:'직업',move:'직업',study:'공부',exam:'공부',cert:'공부'}[key]||'나의 운명'),lead:'',paragraphs:[]};if(li>=0)secs.splice(li,0,fs);else secs.push(fs)}
+ if(ch&&!data.relationshipContext&&!String(data.version||'').startsWith('match-')){const li=secs.findIndex(s=>s.kind==='limit');const fs={kind:'fun',question:''+({marry:'결혼',love:'연애',reunion:'재회',match:'궁합',money:'재물',invest:'재물',property:'재물',business:'재물',work:'직업',employment:'직업',move:'직업',study:'공부',exam:'공부',cert:'공부'}[key]||'나의 운명'),lead:'',paragraphs:[]};if(li>=0)secs.splice(li,0,fs);else secs.push(fs)}
  let bodies=null;const charts={west:()=>{bodies=bodies||birthBodies(ch);return birthWest(ch,bodies)},vedic:()=>{bodies=bodies||birthBodies(ch);return birthVedic(ch,bodies)},numbers:()=>birthNumerology(ch),maya:()=>birthMaya(ch)};
  const chartHTML=k=>{if(!ch||!charts[k])return '';try{return '<div class="birth-atlas rv3-chart">'+charts[k]()+'</div>'}catch(e){return ''}};
  const dataTableHTML=t=>t&&Array.isArray(t.rows)&&t.rows.length?'<div class="rv3-tw"><table class="rv3-table"><caption>'+E(t.cap||'')+'</caption><thead><tr>'+t.head.map(h=>'<th scope="col">'+E(h)+'</th>').join('')+'</tr></thead><tbody>'+t.rows.map(r=>'<tr>'+r.map((c,i)=>i?'<td>'+E(c)+'</td>':'<th scope="row">'+E(c)+'</th>').join('')+'</tr>').join('')+'</tbody></table></div>':'';
