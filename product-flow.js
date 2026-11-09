@@ -43,6 +43,8 @@
  let pending=null;try{const stored=sessionStorage.getItem('oracle-entry-goal');if(Object.hasOwn(goalNames,stored))pending=stored}catch(_){}
  const landing=document.querySelector('.landing-bottom');
  landing.insertAdjacentHTML('beforebegin','<section class="entry-goals" aria-labelledby="entryGoalTitle"><h2 id="entryGoalTitle">지금 무엇이 가장 궁금하세요?</h2><div role="group" aria-label="먼저 볼 고민">'+Object.entries(goalNames).map(([key,name])=>'<button type="button" data-entry-goal="'+key+'" aria-pressed="'+(pending===key)+'">'+name+'</button>').join('')+'</div><p id="entryGoalStatus">고민을 고르고 내 정보를 입력하면 해당 결과로 바로 안내해요.</p></section>'+compareHTML());
+ const goals=document.querySelector('.entry-goals');
+ document.querySelector('.landing-story').before(goals);goals.after(landing);
  function route(key){
   if(key==='natal')document.querySelector('[data-bottom="home"]').click();
   else {document.querySelector('[data-bottom="topics"]').click();setTab(key);}

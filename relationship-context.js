@@ -20,9 +20,16 @@
     single:{title:'새로운 만남과 사랑의 시작',question:'새로운 인연을 만날 흐름은?',answer:'새로운 사람을 알아가고 내게 맞는 관계를 시작할 흐름을 살펴봐요.',action:'내가 편안한 모임이나 활동 하나를 정하고 새로운 대화를 시작해 보세요.',next:'내게 맞는 만남 준비',detail:'만남의 기회와 함께 내가 원하는 관계의 기준을 정리해 보세요. 연애를 서두르기보다 대화와 실제 경험으로 잘 맞는지 확인하는 과정이 중요해요.'},
     private:{title:'사랑과 관계의 흐름',question:'사랑과 관계에서 주목할 시기는?',answer:'현재 관계 상태를 가정하지 않고, 애정을 표현하고 관계를 돌보는 흐름을 중심으로 읽어요.',action:'지금 나에게 중요한 관계에서 고마운 점과 바라는 점을 하나씩 정리해 보세요.',next:'나에게 맞는 관계의 방향',detail:'새로운 만남을 원하는지, 현재 관계를 깊게 하고 싶은지에 따라 같은 흐름을 다르게 활용할 수 있어요. 원하면 내 정보에서 관계 상태를 바꿀 수 있어요.'}
   };
+  function flowTiming(ch){
+    const c=COPY[context(ch)];
+    if(context(ch)==='single')return partnerFirstMeeting(ch)+' '+c.answer;
+    const years=(typeof RY!=='undefined'&&RY?RY:[]).map((r,i)=>({year:horizonDate(i+1).y,score:D(r[1].mean)}));
+    const peak=years.sort((a,b)=>b.score-a.score)[0];
+    return peak?peak.year+'년은 앞으로 10년의 애정 흐름에서 주목할 해예요. '+c.answer:c.answer;
+  }
   function rows(ch){
     const c=COPY[context(ch)];
-    return [[c.question,c.answer],['사랑을 표현하는 나의 방식',LOVE_STYLE[sign(birthExtraLon('Venus',ch.jd))%4]+' 방식이 차트에 나타나요. 현재 상황에 맞게 표현의 속도와 방식을 조율해 보세요.'],[c.next,c.detail],['지금 해 볼 일',c.action]];
+    return [[c.question,flowTiming(ch)],['사랑을 표현하는 나의 방식',LOVE_STYLE[sign(birthExtraLon('Venus',ch.jd))%4]+' 방식이 차트에 나타나요. 현재 상황에 맞게 표현의 속도와 방식을 조율해 보세요.'],[c.next,c.detail],['지금 해 볼 일',c.action]];
   }
   const originalOffer=topicReportHTML;
   topicReportHTML=function(key){
@@ -48,9 +55,8 @@
       return data;
     }
     if(state==='single'){data.sections.unshift(section);return data}
-    const years=(typeof RY!=='undefined'?RY:[]).map((r,i)=>({year:horizonDate(i+1).y,score:D(r[1].mean)}));
-    const peak=[...years].sort((a,b)=>b.score-a.score)[0];
-    const timing=peak?peak.year+'년은 앞으로 10년의 애정 흐름에서 주목할 해예요. '+c.answer:c.answer;
+    const years=(typeof RY!=='undefined'&&RY?RY:[]).map((r,i)=>({year:horizonDate(i+1).y,score:D(r[1].mean)}));
+    const timing=flowTiming(ch);
     return {...data,title:(ch.inp.name||'당신')+'님의 '+c.title+' 리포트',body:'',relationshipContext:true,summary:[c.answer,rows(ch)[1][1],c.action],years,
       sections:[section,{kind:'relationship-style',question:'나의 관계 성향과 표현 방식',lead:rows(ch)[1][1],paragraphs:[traitDescription(ch)],basis:[]},
       {kind:'relationship-timing',question:c.question,lead:timing,paragraphs:['표시된 해는 기존 차트의 애정 점수를 비교한 흐름이에요. 관계 상태를 선택해도 계산 점수는 바뀌지 않으며, 현재 상황에 맞춰 그 의미를 읽어요.'],basis:[]},
