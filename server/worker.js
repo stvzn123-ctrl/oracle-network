@@ -134,6 +134,23 @@ async function accessRoute(req,env,url){
  }
  if(!path.startsWith('/admin/'))return json(req,env,{error:'not_found'},404);
  if(!admin)return json(req,env,{error:'forbidden'},403);
+
+ if(path==='/admin/delete-user'&&req.method==='POST'){
+  const b=await authBody(req);
+  if(!/^[a-f0-9]{64}$/.test(b.userId||'')||b.confirm!=='DELETE')return json(req,env,{error:'input'},400);
+  if(isAdmin({id:b.userId},env))return json(req,env,{error:'protected_admin'},409);
+  const target=await env.DB.prepare('SELECT id,nickname,profile FROM users WHERE id=?').bind(b.userId).first();
+  if(!target)return json(req,env,{error:'not_found'},404);
+  let profile=null;try{profile=JSON.parse(target.profile||'null')}catch{}
+  if(b.name!==(profile?.name||target.nickname||'회원'))return json(req,env,{error:'name_mismatch'},409);
+  await questionTable(env);
+  await env.DB.batch([
+   ...['questions','partners','sessions','auth_grants','private_reports','report_entitlements'].map(t=>env.DB.prepare('DELETE FROM '+t+' WHERE user_id=?').bind(b.userId)),
+   env.DB.prepare('DELETE FROM users WHERE id=?').bind(b.userId),
+   env.DB.prepare('INSERT INTO admin_audit(actor_id,target_id,action,report_key,created) VALUES(?,?,?,?,?)').bind(user.id,b.userId,'delete_member',null,Date.now())
+  ]);
+  return json(req,env,{ok:true});
+ }
  if(path==='/admin/preview'&&req.method==='GET'){const id=url.searchParams.get('userId'),key=url.searchParams.get('key');if(!REPORT_KEYS.includes(key)||! /^[a-f0-9]{64}$/.test(id||''))return json(req,env,{error:'input'},400);const target=await env.DB.prepare('SELECT profile FROM users WHERE id=?').bind(id).first();if(!target?.profile)return json(req,env,{error:'profile_required'},409);await env.DB.prepare('INSERT INTO admin_audit(actor_id,target_id,action,report_key,created) VALUES(?,?,?,?,?)').bind(user.id,id,'preview_report',key,Date.now()).run();return json(req,env,generateApprovedReport(JSON.parse(target.profile),key));}
  if(path==='/admin/users'&&req.method==='GET'){
   const offset=Math.max(0,Math.min(100000,Number(url.searchParams.get('offset'))||0));const rows=await env.DB.prepare('SELECT u.id,u.nickname,u.profile,u.profile_updated,u.created,(SELECT group_concat(e.report_key) FROM report_entitlements e WHERE e.user_id=u.id AND e.revoked_at IS NULL) AS active FROM users u ORDER BY u.created DESC LIMIT 100 OFFSET ?').bind(offset).all();for(const r of rows.results){try{r.name=JSON.parse(r.profile||'null')?.name||r.nickname}catch(_){r.name=r.nickname}delete r.profile;r.active=r.active?String(r.active).split(','):[];}return json(req,env,{users:rows.results,nextOffset:rows.results.length===100?offset+100:null});

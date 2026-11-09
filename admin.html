@@ -119,6 +119,7 @@ body:not(.picked) #detailCard{display:none}
     <div class="row"><select id="rk" aria-label="리포트 선택"></select><button class="primary" id="preview">미리보기</button></div>
     <div id="report" role="status"></div>
    </div>
+   <div class="sec"><h3>회원 삭제</h3><p class="help">회원 계정과 저장한 출생 정보·상대 정보·질문·리포트·이용 권한을 영구 삭제하고 로그아웃시켜요. 관리자 계정은 삭제할 수 없어요. 법령상 보존 의무나 진행 중인 결제가 있는지 먼저 확인하세요. 다시 로그인하면 신규 가입할 수 있어요.</p><button id="deleteMember" style="color:#cf5260">회원 삭제</button></div>
   </div>
  </section>
 </div>
@@ -140,7 +141,7 @@ function toast(t,err){const el=$('toast');el.textContent=t;el.hidden=false;el.cl
 async function api(path,body){
   const r=await fetch(API+path,{method:body===undefined?'GET':'POST',headers:{Authorization:'Bearer '+token,...(body===undefined?{}:{'Content-Type':'application/json'})},body:body===undefined?undefined:JSON.stringify(body),cache:'no-store',signal:AbortSignal.timeout(20000)});
   let d={};try{d=await r.json()}catch{if(r.ok)throw Error('서버 응답을 읽지 못했어요.')}
-  if(!r.ok)throw Error(r.status===401?'사이트에서 먼저 카카오 로그인해 주세요.':r.status===403?'관리자 계정만 접근할 수 있어요.':d.error==='revoke_all_first'?'먼저 ‘전체’ 승인을 회수해 주세요.':d.error==='profile_required'?'저장된 출생 정보가 없어요.':'요청을 처리하지 못했어요. 잠시 뒤 다시 시도해 주세요.');
+  if(!r.ok)throw Error(r.status===401?'사이트에서 먼저 카카오 로그인해 주세요.':r.status===403?'관리자 계정만 접근할 수 있어요.':d.error==='protected_admin'?'관리자 계정은 삭제할 수 없어요.':d.error==='name_mismatch'?'회원 정보가 변경됐어요. 다시 선택해 주세요.':d.error==='revoke_all_first'?'먼저 ‘전체’ 승인을 회수해 주세요.':d.error==='profile_required'?'저장된 출생 정보가 없어요.':'요청을 처리하지 못했어요. 잠시 뒤 다시 시도해 주세요.');
   return d;
 }
 
@@ -226,6 +227,23 @@ async function open(id){
 $('back').onclick=()=>{document.body.classList.remove('picked');window.scrollTo(0,0)};
 $('copy').onclick=async()=>{try{await navigator.clipboard.writeText(selected);toast('계정 ID를 복사했어요.')}catch{prompt('계정 ID',selected)}};
 
+
+$('deleteMember').onclick=async()=>{
+ if(!selected)return;
+ const id=selected;
+ try{
+  const u=await api('/admin/user?id='+encodeURIComponent(id));
+  const name=u.profile?.name||u.nickname||'회원';
+  const typed=prompt(name+' 회원을 삭제하려면 이름을 그대로 입력하세요. 모든 저장 정보와 리포트가 영구 삭제됩니다.');
+  if(typed===null)return;
+  if(typed!==name){toast('이름이 일치하지 않아요.',true);return}
+  if(!confirm(name+' 회원의 계정과 모든 저장 정보를 영구 삭제할까요? 복구할 수 없어요.'))return;
+  $('deleteMember').disabled=true;
+  await api('/admin/delete-user',{userId:id,name:typed,confirm:'DELETE'});
+  ++seq;cache.delete(id);selected=null;$('detail').hidden=true;$('none').hidden=false;document.body.classList.remove('picked');
+  toast('회원을 삭제했어요.');await loadAll(true);
+ }catch(e){toast(e.message,true)}finally{$('deleteMember').disabled=false}
+};
 /* ---------- 권한 토글 ---------- */
 async function quickAll(id,btn){
   let c=cache.get(id);btn.classList.add('busy');
