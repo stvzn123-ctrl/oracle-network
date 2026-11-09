@@ -41,7 +41,7 @@
   topicHTML=function(ch,key){
     if(!['love','marry'].includes(key))return oldTopic(ch,key);
     const c=COPY[context(ch)];
-    return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+topicEsc(OPTIONS[context(ch)])+'</span><h3>'+c.title+'</h3></header>'+answerCards(rows(ch))+topicReportHTML(key)+'</section>';
+    return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+topicEsc(OPTIONS[context(ch)])+'</span><h3>'+c.title+'</h3></header>'+spousePreviewHTML(ch,key)+answerCards(rows(ch))+topicReportHTML(key)+'</section>';
   };
   const originalRich=buildRichReport;
   buildRichReport=function(ch,key){
@@ -58,7 +58,7 @@
     const years=(typeof RY!=='undefined'&&RY?RY:[]).map((r,i)=>({year:horizonDate(i+1).y,score:D(r[1].mean)}));
     const timing=flowTiming(ch);
     return {...data,title:(ch.inp.name||'당신')+'님의 '+c.title+' 리포트',body:'',relationshipContext:true,summary:[c.answer,rows(ch)[1][1],c.action],years,
-      sections:[section,{kind:'relationship-style',question:'나의 관계 성향과 표현 방식',lead:rows(ch)[1][1],paragraphs:[traitDescription(ch)],basis:[]},
+      sections:[section,{kind:'partner',question:'예측되는 연인의 모습',lead:'출생 차트의 상징으로 살펴본 연인의 모습과 분위기예요.',paragraphs:['현재 관계 상태와 별개로, 차트에서 읽은 연인의 외형과 분위기를 함께 보여드려요.'],basis:[]},{kind:'relationship-style',question:'나의 관계 성향과 표현 방식',lead:rows(ch)[1][1],paragraphs:[traitDescription(ch)],basis:[]},
       {kind:'relationship-timing',question:c.question,lead:timing,paragraphs:['표시된 해는 기존 차트의 애정 점수를 비교한 흐름이에요. 관계 상태를 선택해도 계산 점수는 바뀌지 않으며, 현재 상황에 맞춰 그 의미를 읽어요.'],basis:[]},
       {kind:'relationship-next',question:c.next,lead:c.detail,paragraphs:[c.action],basis:[]},
       ...data.sections.filter(s=>['caution','weak','care'].includes(s.kind))],note:''};
