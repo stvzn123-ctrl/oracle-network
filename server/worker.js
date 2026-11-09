@@ -1104,7 +1104,7 @@ function turningPoints(ch){const na=nowAge(),y0=new Date().getFullYear(),lim=Mat
 function buildRichReport(ch,key){
  /* 2026-11 리포트 엔진 v3: 계산된 출생 지표 → 전통 해석 → 나에게 의미 → 실천 순서로 쓴다.
     계산식(buildChart·enrich·oracles·compute)은 읽기만 하고 바꾸지 않는다. index.html과 server/worker.js에 같은 코드가 들어간다. */
- const NAMES={comprehensive:'종합',money:'재물·돈',work:'직업',study:'학업·성취',love:'연애·인연',marry:'결혼·배우자',reunion:'재회',match:'궁합',employment:'취업',move:'이직',invest:'투자',property:'부동산',business:'사업',exam:'대입·수능',cert:'자격증'};
+ const NAMES={comprehensive:'종합',money:'재물·돈',work:'직업',study:'학업·성취',love:'연인',marry:'연인',reunion:'재회',match:'궁합',employment:'취업',move:'이직',invest:'투자',property:'부동산',business:'사업',exam:'대입·수능',cert:'자격증'};
  if(!NAMES[key])key='comprehensive';
  const now=new Date(),y0=now.getFullYear(),fy=y0+(now.getMonth()+.5)/12;
  const STK='갑을병정무기경신임계',BRK='자축인묘진사오미신유술해',ANI='쥐 소 호랑이 토끼 용 뱀 말 양 원숭이 닭 개 돼지'.split(' ');
