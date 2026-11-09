@@ -141,7 +141,7 @@ async function accessRoute(req,env,url){
  if(path==='/admin/user'&&req.method==='GET'){
   const id=url.searchParams.get('id');if(typeof id!=='string'||! /^[a-f0-9]{64}$/.test(id))return json(req,env,{error:'input'},400);
   const target=await env.DB.prepare('SELECT id,nickname,profile,profile_updated,created FROM users WHERE id=?').bind(id).first();if(!target)return json(req,env,{error:'not_found'},404);
-  const grants=await env.DB.prepare('SELECT report_key,granted_at,revoked_at FROM report_entitlements WHERE user_id=?').bind(id).all();await env.DB.prepare('INSERT INTO admin_audit(actor_id,target_id,action,report_key,created) VALUES(?,?,?,?,?)').bind(user.id,id,'view_profile',null,Date.now()).run();return json(req,env,{...target,profile:target.profile?JSON.parse(target.profile):null,grants:grants.results});
+  const grants=await env.DB.prepare('SELECT report_key,granted_at,revoked_at FROM report_entitlements WHERE user_id=?').bind(id).all();await env.DB.prepare('INSERT INTO admin_audit(actor_id,target_id,action,report_key,created) VALUES(?,?,?,?,?)').bind(user.id,id,'view_profile',null,Date.now()).run();const savedPartners=await env.DB.prepare('SELECT id,data,updated FROM partners WHERE user_id=? ORDER BY updated DESC LIMIT 20').bind(id).all();return json(req,env,{...target,profile:target.profile?JSON.parse(target.profile):null,grants:grants.results,partners:savedPartners.results.map(p=>({id:p.id,...JSON.parse(p.data),updated:p.updated}))});
  }
  if(req.method==='POST'&&(path==='/admin/permission'||path==='/admin/report')){
   const raw=await req.text();if(raw.length>150000)return json(req,env,{error:'input'},400);let b;try{b=JSON.parse(raw)}catch{return json(req,env,{error:'input'},400)}
@@ -1405,8 +1405,8 @@ async function questionRoute(req,env,url,ctx){
   if(!user)return json(req,env,{error:"unauthorized"},401);
   if(!isAdmin(user,env))return json(req,env,{error:"forbidden"},403);
   if(path==="/admin/questions"&&req.method==="GET"){
-    const rows=await env.DB.prepare("SELECT q.id,q.email,q.question,q.created,q.done_at,u.nickname,u.profile FROM questions q LEFT JOIN users u ON u.id=q.user_id ORDER BY q.created DESC LIMIT 200").all();
-    return json(req,env,{questions:rows.results.map(r=>({...r,profile:r.profile?JSON.parse(r.profile):null}))});
+    const rows=await env.DB.prepare("SELECT q.id,q.user_id,q.email,q.question,q.created,q.done_at,u.nickname,u.profile,(SELECT json_group_array(json_object('data',p.data,'updated',p.updated)) FROM partners p WHERE p.user_id=q.user_id) AS saved_partners FROM questions q LEFT JOIN users u ON u.id=q.user_id ORDER BY q.created DESC LIMIT 200").all();
+    return json(req,env,{questions:rows.results.map(({saved_partners,...r})=>({...r,profile:r.profile?JSON.parse(r.profile):null,partners:JSON.parse(saved_partners||'[]').map(p=>({...JSON.parse(p.data),updated:p.updated}))}))});
   }
   if(path==="/admin/question"&&req.method==="POST"){
     const b=await req.json().catch(()=>({}));if(!Number.isInteger(b.id))return json(req,env,{error:"input"},400);
