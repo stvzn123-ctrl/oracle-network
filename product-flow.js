@@ -42,7 +42,6 @@
  const goalNames={natal:'전체 흐름',marry:'연애',money:'돈',work:'직업'};
  let pending=null;try{const stored=sessionStorage.getItem('oracle-entry-goal');if(Object.hasOwn(goalNames,stored))pending=stored}catch(_){}
  const entryForm=$('ask');
- entryForm.insertAdjacentHTML('afterbegin','<section class="entry-goals f full" aria-labelledby="entryGoalTitle"><h2 id="entryGoalTitle">어떤 고민부터 볼까요?</h2><div role="group" aria-label="먼저 볼 고민">'+Object.entries(goalNames).map(([key,name])=>'<button type="button" data-entry-goal="'+key+'" aria-pressed="'+(pending===key)+'">'+name+'</button>').join('')+'</div><p id="entryGoalStatus">고민을 고르고 정보를 입력하면 해당 결과부터 보여드려요. 선택하지 않아도 이용할 수 있어요.</p></section>');
  function route(key){
   if(key==='natal')document.querySelector('[data-bottom="home"]').click();
   else {document.querySelector('[data-bottom="topics"]').click();setTab(key);}

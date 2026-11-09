@@ -69,7 +69,6 @@
       <div class="f s2"><label for="in-name">이름</label><input id="in-name" autocomplete="off" placeholder="홍길동" required></div>
       <div class="f s2"><div class="roman-label-row"><label for="in-roman">영문 이름</label><button type="button" id="romanHelpToggle" aria-label="영문 이름 입력 안내" aria-expanded="false" aria-controls="romanHelpText">ⓘ</button></div><p id="romanHelpText" class="roman-help" hidden>대소문자와 띄어쓰기는 계산에 영향을 주지 않아요.</p><input id="in-roman" autocomplete="off" placeholder="영문 이름 (예: Hong Gildong)"><small class="fnote" id="romanNote"></small></div>
       <div class="f s2"><span class="lb">성별 (사주 대운)</span><div class="seg"><label><input type="radio" name="sex" value="m" id="sx-m"><span>남</span></label><label><input type="radio" name="sex" value="f" id="sx-f"><span>여</span></label></div></div>
-      <div class="f full"><label for="in-relationship">현재 관계 상태 <small>(선택)</small></label><select id="in-relationship" aria-describedby="relationshipHelp"><option value="private">고르고 싶지 않음</option><option value="married">결혼</option><option value="dating">연애 중</option><option value="crush">썸·호감</option><option value="single">혼자임</option></select><small id="relationshipHelp" class="fnote">현재 상황을 알려주시면 새로운 만남, 관계의 발전, 사랑의 결실 등 상황에 맞는 풀이를 제공해요. 선택하지 않아도 이용할 수 있어요.</small></div>
       <div class="f s2"><span class="lb">달력</span><div class="seg"><label><input type="radio" name="cal" value="s" id="cal-s" checked><span>양력</span></label><label><input type="radio" name="cal" value="l" id="cal-l"><span>음력</span></label></div></div>
       <div class="f s2 wm birth-date-field"><span class="lb" id="dateLb">생년월일 (양력)</span><div class="ymd ymd1"><input id="in-ymd" type="text" inputmode="numeric" autocomplete="bday" maxlength="8" placeholder="예: 19981122" aria-label="생년월일 8자리, 예: 19960514"><input id="in-y" type="hidden"><input id="in-m" type="hidden"><input id="in-d" type="hidden"></div>
         <div class="sub"><label class="chk" id="leapWrap" hidden><input type="checkbox" id="in-leap">윤달</label><span class="conv" id="conv"></span></div></div>
@@ -84,6 +83,7 @@
           <div class="mapwrap"><svg id="map" role="img" aria-label="출생지 선택 지도"></svg><div class="maptip" id="mapTip" hidden></div></div>
           <div class="mapfoot"><div class="quick" id="quick"></div><label class="tz" for="in-tz">UTC<input id="in-tz" type="number" step="0.25" min="-12" max="14" value="9"></label><button type="button" class="done" id="mapDone">완료</button></div>
         </div></div></div>
+      <div class="f full"><label for="in-relationship">현재 관계 상태 <small>(선택)</small></label><select id="in-relationship" aria-describedby="relationshipHelp"><option value="private">고르고 싶지 않음</option><option value="married">결혼</option><option value="dating">연애 중</option><option value="crush">썸·호감</option><option value="single">혼자에요</option></select><small id="relationshipHelp" class="fnote">현재 상황을 알려주시면 새로운 만남, 관계의 발전, 사랑의 결실 등 상황에 맞는 풀이를 제공해요. 선택하지 않아도 이용할 수 있어요.</small></div>
       <div class="go"><button type="submit">내 운명 보기</button>
         <div class="save-opt">
           <div class="save-guest" id="saveGuest"><span>로그인하지 않으면 입력한 정보는 저장되지 않아요.</span><button type="button" id="saveLogin" class="kakao-login kakao-mini">카카오로 로그인하고 저장하기</button></div>
@@ -175,7 +175,7 @@
 
 <dialog id="reportPurchase" class="report-purchase"><button type="button" id="reportPurchaseClose" class="purchase-close" aria-label="리포트 안내 닫기">닫기 ×</button><span class="eyebrow">나의 운명 리포트</span><h2 id="purchaseTitle"></h2><p>이 리포트에서 볼 수 있어요</p><ul id="purchaseContents"></ul><div class="purchase-price"><span>리포트 가격</span><strong id="purchasePrice"></strong></div><p id="purchaseStatus" role="status">출시 기념으로 상품별 첫 1회 무료로 볼 수 있어요.</p><button type="button" id="reportCheckout">추가 이용 안내</button><p class="fine">온라인 결제는 준비 중이며, 이 화면에서 결제되거나 청구되지 않아요.</p></dialog><section hidden id="accountSheet" class="account-sheet account-page" aria-labelledby="accountSheetTitle"><header><h2 id="accountSheetTitle">내 정보</h2></header><p>로그인과 저장한 정보, 계정 설정을 한곳에서 관리해요.</p><button type="button" id="accountLogin" class="kakao-login acct-login">카카오 로그인</button><div class="acct" id="accountMember" hidden><summary id="accountName" class="top-icon" aria-label="계정 메뉴" title="개인 설정"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></summary><div class="acct-pop"><p class="acct-hello" id="accountHello"></p><p id="accountIdLabel" class="fine"></p><button type="button" id="profileEdit">내 정보 수정</button><button type="button" id="savedProfileView">저장 정보 보기</button><a id="adminPageLink" class="acct-item" href="admin.html" hidden>관리자 페이지</a><button type="button" id="accountLogout">로그아웃</button><button type="button" id="accountWithdraw">탈퇴</button><p id="accountMenuStatus" role="status"></p><span hidden><button type="button" id="profileLoad"></button><button type="button" id="profileSave"></button></span></div></div><section id="savedRecordsPanel" hidden aria-labelledby="savedRecordsTitle"><h3 id="savedRecordsTitle">저장한 정보</h3><div id="savedPersonalRecord"></div><h3>궁합·재회에 저장한 상대</h3><p id="savedPartnersStatus" role="status"></p><div id="savedPartnerRecords"></div></section><div hidden><button type="button" id="profileDelete">내 출생 정보 삭제</button></div></section>
 <script src="app.b7975ab3.js?v=30"></script>
-<script src="relationship-context.js?v=3"></script>
+<script src="relationship-context.js?v=4"></script>
 
 <script>
 (function(){const $=id=>document.getElementById(id);
@@ -215,7 +215,7 @@ $("brandbar").addEventListener("keydown",e=>{if(e.target!==e.currentTarget)retur
 
 <script src="navigation-history.js?v=5"></script>
 
-<script src="input-experience.js?v=4"></script>
+<script src="input-experience.js?v=5"></script>
 
 
-<script src="product-flow.js?v=3"></script>
+<script src="product-flow.js?v=4"></script>
