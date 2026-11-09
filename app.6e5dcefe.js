@@ -1689,7 +1689,7 @@ function compatSubmit(f,form){const mode=form.dataset.mode,RU=mode==='reunion',o
  const roman=name?(f.partnerRoman.value.trim()||romanize(name)||''):f.partnerRoman.value.trim();if(name&&!/[a-z]/i.test(roman)){out.textContent='영문 이름을 입력하거나, 이름 칸을 비워 주세요.';return}
  const label=name||'상대';
  const noT=f.partnerNoTime.checked||!f.partnerTime.value,noP=f.partnerNoPlace.checked,P=PLACES[+f.partnerPlace.value]||PLACES[0];
- const place=noP?{none:true,name:'출생지 미상',lon:127.5,lat:37.5,tz:9,kr:true}:{name:P[0],lat:P[1],lon:P[2],tz:P[3],kr:PLACES.indexOf(P)<26};
+ const place=!noP&&f.partnerPlace.value==='shared'&&form.dataset.sharedPlace?JSON.parse(form.dataset.sharedPlace):noP?{none:true,name:'출생지 미상',lon:127.5,lat:37.5,tz:9,kr:true}:{name:P[0],lat:P[1],lon:P[2],tz:P[3],kr:PLACES.indexOf(P)<26};
  const inp={name:label,roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,cal:'s',date,time:noT?'12:00':f.partnerTime.value,notime:noT,place};
  let other;try{other=buildChart(inp)}catch(err){out.textContent='상대의 출생 정보를 계산하지 못했어요. 입력값을 확인해 주세요.';return}
  if(mode==='group'){if(GROUP.length>=7){out.textContent='모임은 8명까지 넣을 수 있어요.';return}GROUP.push(other);GROUPRES=null;groupRefresh();out.textContent=(other.inp.name||'참여자')+'님을 모임에 넣었어요.';form.reset();f.partnerRoman.dataset.edited='';return}
@@ -3573,7 +3573,7 @@ $('profileSave').addEventListener('click',async()=>{
   if(accountBusy||!accountUser)return;const err=checkForm();if(err){$('err').textContent=err;accountStatus(err);return}
   const v=readForm();if(v.err){accountStatus(v.err);return}if(!$('profileConsent').checked){accountStatus('출생 정보 저장 안내에 동의해 주세요.');return}
   accountBusy=true;accountPaint();accountStatus('내 정보를 저장하고 있어요…');
-  try{await accountAPI('/profile',{profile:v,consent:true});accountUser.profile=v;accountStatus('내 정보를 저장했어요. 다음 로그인 때 자동으로 채워져요.')}catch(e){accountStatus(e.message)}finally{accountBusy=false;accountPaint()}
+  try{await accountAPI('/profile',{profile:v,consent:true});accountUser.profile=v;await cmpPairBoot();accountStatus('내 정보를 저장했어요. 다음 로그인 때 자동으로 채워져요.')}catch(e){accountStatus(e.message)}finally{accountBusy=false;accountPaint()}
 });
 function restoreSavedResult(profile){
  profileFill(profile);
@@ -3754,20 +3754,28 @@ function groupReportData(list,r){
 /* ===== 카카오 친구 초대 링크: 친구가 로그인하고 내 정보를 저장하면 서로의 궁합이 보인다 ===== */
 const PAIRKEY='oracle-pair';
 function pairUrl(code){return SHARE_URL+'?c='+code}
+
+let cmpWatchTimer=null,cmpWatching=false;
+function cmpRemember(code){try{localStorage.setItem('oracle-pair-request',JSON.stringify({code,userId:accountUser.id,created:Date.now()}))}catch(_){}}
+function cmpWatch(code){clearInterval(cmpWatchTimer);let busy=false;const check=async()=>{if(busy||document.hidden||!accountUser||!CH||cmpWatching)return;busy=true;cmpWatching=true;try{if(await cmpPairCheck(code,document.querySelector('[data-pcheck="'+code+'"]')?.parentNode.querySelector('.cmp-pair-msg'))){clearInterval(cmpWatchTimer);cmpWatchTimer=null;try{localStorage.removeItem('oracle-pair-request')}catch(_){}}}catch(_){}finally{busy=false;cmpWatching=false}};cmpWatchTimer=setInterval(check,5000);check()}
 async function cmpMakeLink(btn){
  if(!requireSavedProfile())return;
  const out=btn.closest('.cmp-form').querySelector('.cmp-pair');btn.disabled=true;
  try{
   const d=await accountAPI('/pair',{kind:CMPKIND}),url=pairUrl(d.code);
-  const text=(CMPKIND==='group'?'같이 모임 궁합 한번 볼래? 운명탐정에서 네 정보 넣으면 바로 나와.':'우리 궁합 한번 볼래? 운명탐정에서 네 정보 넣으면 바로 나와.')+'\n'+url;
-  let done=false;
-  if(navigator.share){try{await navigator.share({title:SHARE_TITLE,text});done=true}catch(_){}}
-  if(!done&&navigator.clipboard){try{await navigator.clipboard.writeText(text);done=true}catch(_){}}
-  out.innerHTML='<p class="cmp-note">'+(done?'링크를 보냈어요.':'아래 링크를 복사해 보내 주세요.')+' 친구가 이 링크로 들어와 <b>카카오 로그인 후 자기 출생 정보를 저장하면</b>, 두 사람의 궁합이 서로에게 보여요.</p>'+
-   '<p class="cmp-link"><input type="text" readonly value="'+topicEsc(url)+'" aria-label="초대 링크"></p>'+
-   '<button type="button" class="cmp-open" data-pcheck="'+d.code+'">친구가 들어왔는지 확인하기</button><p class="cmp-priv cmp-pair-msg" aria-live="polite">내 출생 정보는 친구가 이 링크로 들어와 로그인했을 때만 보여요.</p>';
- }catch(e){out.innerHTML='<p class="cmp-priv">'+topicEsc(e.message||'링크를 만들지 못했어요. 잠시 뒤 다시 시도해 주세요.')+'</p>'}
- finally{btn.disabled=false}}
+  out.innerHTML='<p class="cmp-note">아래 링크를 상대방에게 보내주세요. 상대방이 카카오 로그인 후 출생 정보를 저장하면 이 화면에 자동으로 입력돼요. 참여하면 서로의 출생 정보와 궁합이 공유돼요.</p><p class="cmp-link"><input type="text" readonly value="'+topicEsc(url)+'" aria-label="입력 요청 링크"></p><button type="button" data-pcopy>링크 복사</button> <button type="button" data-pcheck="'+d.code+'">입력 확인하기</button><p class="cmp-priv cmp-pair-msg" aria-live="polite">상대방의 입력을 기다리고 있어요…</p>';
+  out.querySelector('[data-pcopy]').onclick=async()=>{const field=out.querySelector('input');try{await navigator.clipboard.writeText(url);out.querySelector('.cmp-pair-msg').textContent='링크를 복사했어요. 상대방에게 보내주세요.'}catch(_){field.focus();field.select();out.querySelector('.cmp-pair-msg').textContent='링크를 선택했어요. 직접 복사해 주세요.'}};
+  cmpRemember(d.code);cmpWatch(d.code);
+ }catch(e){out.innerHTML='<p class="cmp-priv">'+topicEsc(e.message||'링크를 만들지 못했어요.')+'</p>'}finally{btn.disabled=false}
+}
+function cmpFillShared(profile){
+ const form=document.querySelector('#cmpOne #compatibility-form');if(!form)return;
+ const el=form.elements;el.partnerName.value=profile.name||'';el.partnerRoman.value=profile.roman||'';el.partnerRoman.dataset.edited='1';
+ [...el.partnerSex].forEach(r=>r.checked=r.value===profile.sex);el.partnerDate.value=profile.date||'';el.partnerTime.value=profile.notime?'':profile.time||'';el.partnerNoTime.checked=!!profile.notime;el.partnerTime.disabled=!!profile.notime;
+ el.partnerNoPlace.checked=!!profile.place?.none;el.partnerPlace.disabled=!!profile.place?.none;
+ if(profile.place&&!profile.place.none){let opt=el.partnerPlace.querySelector('option[value="shared"]');if(!opt){opt=document.createElement('option');opt.value='shared';el.partnerPlace.append(opt)}opt.textContent=profile.place.name||'상대방이 입력한 출생지';el.partnerPlace.value='shared';form.dataset.sharedPlace=JSON.stringify(profile.place)}
+ el.partnerSave.checked=false;
+}
 
 function pairChart(m,i){const p=typeof m.profile==='string'?JSON.parse(m.profile):m.profile;
  return buildChart(Object.assign({},p,{name:p.name||m.nickname||('참여자 '+(i+1))}))}
@@ -3778,7 +3786,7 @@ async function cmpPairCheck(code,msgEl){
  if(!others.length){if(msgEl)msgEl.textContent='아직 친구가 들어오지 않았어요. 친구가 로그인하고 내 정보를 저장하면 여기에 바로 보여요.';return false}
  const kind=d.kind==='group'?'group':d.kind==='friend'?'friend':'love';
  if(kind==='group'){GROUP=others.map(pairChart);cmpSetKind('group');groupRefresh();groupRender()}
- else{const other=pairChart(others[0],1);COMPAT={b:other,res:compatScore(CH,other),mode:'match',kind};cmpSetKind(kind);cmpShowOne((other.inp.name||'친구')+'님')}
+ else{const other=pairChart(others[0],1);COMPAT={b:other,res:compatScore(CH,other),mode:'match',kind};cmpSetKind(kind);cmpFillShared(other.inp);cmpShowOne((other.inp.name||'친구')+'님')}
  return true}
 
 function cmpShowOne(label){
@@ -3825,7 +3833,7 @@ document.addEventListener('click',e=>{
 
 async function cmpPairBoot(){
  let code='';try{code=sessionStorage.getItem(PAIRKEY)||''}catch(_){}
- if(!code)return;
+ if(!code){try{const pending=JSON.parse(localStorage.getItem('oracle-pair-request')||'null');if(pending&&pending.userId===accountUser?.id&&Date.now()-pending.created<7*864e5)cmpWatch(pending.code)}catch(_){}return}
  if(!accountUser){accountNotice('친구가 보낸 궁합 링크예요. 카카오로 로그인하고 내 출생 정보를 저장하면 두 사람의 궁합이 서로에게 보여요.');return}
  if(!accountUser.profile){accountNotice('궁합 링크로 들어왔어요. 출생 정보를 입력하고 ‘내 정보 저장’을 누르면 친구와의 궁합이 바로 나와요.');return}
  try{
