@@ -1665,7 +1665,7 @@ function partnerRefresh(){document.querySelectorAll('.cmp-saved').forEach(el=>el
 document.addEventListener('click',e=>{const ld=e.target.closest('.cmp-load'),dl=e.target.closest('.cmp-del');if(!ld&&!dl)return;const l=partnerList();
  if(dl){const p=l[+dl.dataset.pd];if(p&&confirm(p.name+'님의 정보를 삭제할까요?'))partnerDelete(+dl.dataset.pd);return}
  const p=l[+ld.dataset.pi],f=ld.closest('.cmp-form')?.querySelector('form');if(!p||!f)return;const el=f.elements;el.partnerName.value=/^이름 없음/.test(p.name)?'':p.name;el.partnerRoman.value=p.roman;el.partnerRoman.dataset.edited='1';
- [...el.partnerSex].forEach(r=>r.checked=r.value===p.sex);el.partnerDate.value=p.date;el.partnerTime.value=p.time||'';el.partnerNoTime.checked=!!p.notime;el.partnerTime.disabled=!!p.notime;
+ [...el.partnerSex].forEach(r=>r.checked=r.value===p.sex);el.partnerDate.value=String(p.date).replace(/\D/g,'');el.partnerTime.value=p.time||'';el.partnerNoTime.checked=!!p.notime;el.partnerTime.disabled=!!p.notime;
  el.partnerNoPlace.checked=p.pi==null;el.partnerPlace.disabled=p.pi==null;if(p.pi!=null)el.partnerPlace.value=String(p.pi);f.requestSubmit()});
 function compatFormHTML(mode='match'){const RU=mode==='reunion',GP=mode==='group',opts=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
  return `<section class="chart-form cmp-form"><div class="cmp-head"><h4>${GP?"모임에 사람 추가하기":RU?"상대방 정보로 재회 흐름 보기":"상대방 정보로 궁합 보기"}</h4>${RU?"":'<button type="button" class="cmp-askshare" data-pmake>공유해서 입력 요청하기</button>'}</div>${RU?"":'<div class="cmp-pair"></div>'}<div class="cmp-saved">${partnerSavedHTML()}</div><form id="${GP?"group-form":RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate><div class="chart-fields">
@@ -1673,28 +1673,29 @@ function compatFormHTML(mode='match'){const RU=mode==='reunion',GP=mode==='group
  <label>상대 영문 이름 <small>(선택)</small><input name="partnerRoman" maxlength="80" autocomplete="off" placeholder="자동 입력"></label>
  <p class="cmp-priv">이름을 넣지 않으면 이름으로 계산하는 수비학 영혼 수는 빼고, 생년월일로 보는 점술만으로 계산해요.</p>
  <div class="cmp-seg"><span>성별</span><label><input type="radio" name="partnerSex" value="m" checked>남</label><label><input type="radio" name="partnerSex" value="f">여</label></div>
- <label>상대 생년월일 (양력)<input name="partnerDate" type="date" min="1920-01-01" required></label>
- <label>출생 시각<input name="partnerTime" type="time"></label><label class="chk"><input type="checkbox" name="partnerNoTime">출생 시각을 선택하지 않을래요</label>
+ <label>상대 생년월일 (양력)<input name="partnerDate" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="예: 19981122" required></label>
+ <label>출생 시각 (24시간제)<input name="partnerTime" type="text" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="예: 15:00"></label><label class="chk"><input type="checkbox" name="partnerNoTime">시각을 몰라요</label>
  <label>출생지<select name="partnerPlace">${opts}</select></label><label class="chk"><input type="checkbox" name="partnerNoPlace">출생지를 선택하지 않을래요</label>
  <label class="chk"><input type="checkbox" name="partnerSave"><span class="cmp-save-lb">${accountUser?"상대방의 동의를 받았고, 내 계정에 저장할게요":"이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)"}</span></label><p class="cmp-priv">상대방의 이름과 생년월일은 그 사람의 개인정보예요. 상대방이 동의한 경우에만 저장하고, 필요 없으면 언제든 삭제해 주세요. 이름 대신 별명을 써도 돼요.</p></div><button type="submit">${GP?"모임에 추가":RU?"재회 흐름 보기":"궁합 보기"}</button><div class="chart-feedback cmp-result" aria-live="polite"></div></form></section>`}
-document.addEventListener('input',e=>{const f=e.target.form;if(!f||!f.dataset.mode)return;if(e.target.name!=='partnerSave'){const o=f.querySelector('.cmp-result');if(o&&o.innerHTML){o.innerHTML='';COMPAT=null}}
+document.addEventListener('input',e=>{const f=e.target.form;if(!f||!f.dataset.mode)return;if(e.target.name==='partnerDate')e.target.value=e.target.value.replace(/\D/g,'').slice(0,8);if(e.target.name==='partnerTime')e.target.value=formatBirthTime(e.target.value);if(e.target.name!=='partnerSave'){const o=f.querySelector('.cmp-result');if(o&&o.innerHTML){o.innerHTML='';COMPAT=null}}
  if(e.target.name==='partnerName'&&!f.partnerRoman.dataset.edited){f.partnerRoman.value=romanize(e.target.value)||''}
  if(e.target.name==='partnerRoman')f.partnerRoman.dataset.edited=e.target.value?'1':''});
 document.addEventListener('change',e=>{const f=e.target.form;if(!f||!f.dataset.mode)return;
  if(e.target.name==='partnerNoTime')f.partnerTime.disabled=e.target.checked;if(e.target.name==='partnerNoPlace')f.partnerPlace.disabled=e.target.checked});
-function compatSubmit(f,form){const mode=form.dataset.mode,RU=mode==='reunion',out=form.querySelector('.cmp-result'),date=f.partnerDate.value,[y,m,d]=date.split('-').map(Number),check=new Date(Date.UTC(y,m-1,d));
+function compatSubmit(f,form){const mode=form.dataset.mode,RU=mode==='reunion',out=form.querySelector('.cmp-result'),dg=f.partnerDate.value.replace(/\D/g,''),date=dg.length===8?dg.slice(0,4)+'-'+dg.slice(4,6)+'-'+dg.slice(6):'',[y,m,d]=date.split('-').map(Number),check=new Date(Date.UTC(y,m-1,d));
  const future=date>new Date().toLocaleDateString('sv-SE');const name=f.partnerName.value.trim();
  if(!date||y<1920||future||check.getUTCFullYear()!==y||check.getUTCMonth()!==m-1||check.getUTCDate()!==d){out.textContent='1920년 이후의 실제 생년월일을 입력해 주세요.';return}
  if(CH&&date===CH.inp.date&&(!name||name===String(CH.inp.name||'').trim())){out.textContent='내 정보와 같은 정보는 입력할 수 없어요. 상대방의 정보를 입력해 주세요.';COMPAT=null;return}
  const roman=name?(f.partnerRoman.value.trim()||romanize(name)||''):f.partnerRoman.value.trim();if(name&&!/[a-z]/i.test(roman)){out.textContent='영문 이름을 입력하거나, 이름 칸을 비워 주세요.';return}
  const label=name||'상대';
- const noT=f.partnerNoTime.checked||!f.partnerTime.value,noP=f.partnerNoPlace.checked,P=PLACES[+f.partnerPlace.value]||PLACES[0];
+ const tv=formatBirthTime(f.partnerTime.value,true);if(!f.partnerNoTime.checked&&tv&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(tv)){out.textContent='출생 시각은 00:00~23:59로 입력해 주세요. 예: 14:30';return}
+ const noT=f.partnerNoTime.checked||!tv,noP=f.partnerNoPlace.checked,P=PLACES[+f.partnerPlace.value]||PLACES[0];
  const place=!noP&&f.partnerPlace.value==='shared'&&form.dataset.sharedPlace?JSON.parse(form.dataset.sharedPlace):noP?{none:true,name:'출생지 미상',lon:127.5,lat:37.5,tz:9,kr:true}:{name:P[0],lat:P[1],lon:P[2],tz:P[3],kr:PLACES.indexOf(P)<26};
- const inp={name:label,roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,cal:'s',date,time:noT?'12:00':f.partnerTime.value,notime:noT,place};
+ const inp={name:label,roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,cal:'s',date,time:noT?'12:00':tv,notime:noT,place};
  let other;try{other=buildChart(inp)}catch(err){out.textContent='상대의 출생 정보를 계산하지 못했어요. 입력값을 확인해 주세요.';return}
  if(mode==='group'){if(GROUP.length>=7){out.textContent='모임은 8명까지 넣을 수 있어요.';return}GROUP.push(other);GROUPRES=null;groupRefresh();out.textContent=(other.inp.name||'참여자')+'님을 모임에 넣었어요.';form.reset();f.partnerRoman.dataset.edited='';return}
  const res=compatScore(CH,other);COMPAT={b:other,res,mode,kind:CMPKIND};const ru=RU?reunionCalc(CH,other,res):null;if(ru)COMPAT.ru=ru;
- if(f.partnerSave&&f.partnerSave.checked){partnerSave({name:name||('이름 없음 '+date.slice(2).replace(/-/g,'.')),roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,date,time:noT?'':f.partnerTime.value,notime:noT,pi:noP?null:+f.partnerPlace.value,score:RU?ru.score:res.total}).then(m=>{const n=form.querySelector('.cmp-save-msg');if(n)n.textContent=m})}
+ if(f.partnerSave&&f.partnerSave.checked){partnerSave({name:name||('이름 없음 '+date.slice(2).replace(/-/g,'.')),roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,date,time:noT?'':tv,notime:noT,pi:noP?null:+f.partnerPlace.value,score:RU?ru.score:res.total}).then(m=>{const n=form.querySelector('.cmp-save-msg');if(n)n.textContent=m})}
  if(RU){out.innerHTML=`<div class="cmp-score"><span>${topicEsc(J(label+(name?'님':''),'과','와'))}의 재회 흐름</span><b>${ru.score}<small>점</small></b><em>${ru.level}</em></div><p class="cmp-note">다시 연락하기 좋은 시기, 헤어짐에 영향을 준 차이, 다시 만나면 달라져야 할 점은 <b>재회 리포트</b>에서 확인해 주세요.</p><button type="button" class="cmp-open" data-cmp-open>재회 리포트 보기 →</button><p class="cmp-priv cmp-save-msg" aria-live="polite"></p>`;return}
  cmpShowOne(label+(name?'님':''))}
 function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'상대',tot=res.total,EN=['목','화','토','금','수'];
@@ -3843,3 +3844,18 @@ async function cmpPairBoot(){
   setTab('match');
   if(await cmpPairCheck(code,null))accountNotice('친구와의 궁합이 준비됐어요. 궁합 탭에서 확인해 주세요.');
  }catch(e){accountNotice('궁합 링크를 여는 데 실패했어요. 잠시 뒤 다시 시도해 주세요.')}}
+
+/* 초대 링크로 들어온 비로그인 친구: 입력창을 바로 열고, 제출하면 카카오 로그인 안내를 띄운다. */
+(function(){try{
+ if(!sessionStorage.getItem(PAIRKEY)||localStorage.getItem('oracle-session'))return;
+ document.body.classList.add('app-entered');const ab=document.getElementById('askbox');if(ab)ab.open=true;
+ accountNotice('친구가 보낸 궁합 링크예요. 내 정보를 입력하면 카카오로 로그인한 뒤 두 사람의 궁합을 볼 수 있어요.');
+ document.addEventListener('submit',e=>{
+  if(e.target.id!=='ask'||localStorage.getItem('oracle-session'))return;
+  e.preventDefault();e.stopImmediatePropagation();
+  const err=checkForm();if(err){document.getElementById('err').textContent=err;return}
+  const d=document.getElementById('loginSaveDialog');
+  d.querySelector('h2').textContent='카카오로 로그인해야 궁합을 볼 수 있어요';
+  d.querySelector('p').textContent='입력한 정보를 카카오 계정에 저장하면, 친구와의 궁합이 바로 보여요.';
+  document.getElementById('loginSaveAgree').checked=true;d.showModal()},true);
+}catch(_){}})();
