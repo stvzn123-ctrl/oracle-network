@@ -3799,7 +3799,7 @@ function cmpShowOne(label){
 
 function cmpSetKind(k){
  CMPKIND=k;
- document.querySelectorAll('[data-ck]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ck===k)));
+ document.querySelectorAll('[data-ck]').forEach(b=>{const visible=b.dataset.ck===(k==='friend'?'friend':'love');b.hidden=!visible;b.style.display=visible?'':'none';b.setAttribute('aria-pressed',String(b.dataset.ck===k))});
  const note=document.getElementById('cmpKindNote');if(note)note.textContent=CMP_NOTE[k];
  const one=document.getElementById('cmpOne'),g=document.getElementById('cmpGroup');
  if(one)one.hidden=k==='group';if(g)g.hidden=k!=='group';
