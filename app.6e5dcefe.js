@@ -3472,7 +3472,7 @@ async function systemShare(app){if(typeof navigator.share==="function"){try{awai
 let kakaoReady=null;
 function loadKakao(){if(kakaoReady)return kakaoReady;kakaoReady=new Promise((ok,no)=>{const sc=document.createElement("script");sc.src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.4/kakao.min.js";sc.crossOrigin="anonymous";sc.onload=()=>{try{if(!Kakao.isInitialized())Kakao.init(KAKAO_JS_KEY);ok()}catch(e){no(e)}};sc.onerror=no;document.head.appendChild(sc)}).catch(e=>{kakaoReady=null;throw e});return kakaoReady}
 async function shareTo(k){const url=shareLink(),text=SHARE_TITLE;
-  if(k==="kakao"){if(KAKAO_JS_KEY){try{await loadKakao();Kakao.Share.sendDefault({objectType:"feed",content:{title:"운명탐정",description:"다섯 점술로 나의 성향과 연애·결혼·일과 돈의 흐름을 함께 살펴봐요.",imageUrl:SHARE_URL+"og-share-v3.png",imageWidth:1200,imageHeight:630,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:"나의 운명 확인하기",link:{mobileWebUrl:url,webUrl:url}}]});afterShare();return}catch(_){}}return systemShare("카카오톡")}
+  if(k==="kakao"){if(KAKAO_JS_KEY){try{await loadKakao();Kakao.Share.sendDefault({objectType:"feed",content:{title:"운명탐정",description:"다섯 점술로 나의 성향과 연애·결혼·일과 돈의 흐름을 함께 살펴봐요.",imageUrl:SHARE_URL+"og-share-v4.png",imageWidth:1200,imageHeight:630,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:"나의 운명 확인하기",link:{mobileWebUrl:url,webUrl:url}}]});afterShare();return}catch(_){}}return systemShare("카카오톡")}
   if(k==="insta")return systemShare("인스타그램 DM이나 스토리");
   const href=k==="threads"?"https://www.threads.net/intent/post?text="+encodeURIComponent(text+"\n"+url):"https://x.com/intent/tweet?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(url);
   window.open(href,"_blank","noopener,noreferrer");afterShare()}
