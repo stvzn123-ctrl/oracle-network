@@ -26,7 +26,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap"></noscript>
 <link rel="stylesheet" href="app.a639f8a0.css">
 <link rel="stylesheet" href="companion.css?v=7">
-<link rel="stylesheet" href="glass-system.css?v=20">
+<link rel="stylesheet" href="glass-system.css?v=22">
 <style>html.lite *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}html.lite #oracle-dream img,html.lite #oracle-dream *{animation:none!important}</style>
 
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -66,12 +66,12 @@
     <summary><span class="who-sum" id="whoSum"></span><span class="edit">정보 수정 <span class="chev">⌄</span></span></summary>
     <form class="ask" id="ask" novalidate>
       <div class="f s2"><label for="in-name">이름</label><input id="in-name" autocomplete="off" placeholder="홍길동" required></div>
-      <div class="f s2"><div class="roman-label-row"><label for="in-roman">영문 이름 <span class="opt">(자동 입력)</span></label><button type="button" id="romanHelpToggle" aria-label="영문 이름 입력 안내" aria-expanded="false" aria-controls="romanHelpText">ⓘ</button></div><p id="romanHelpText" class="roman-help" hidden>대소문자와 띄어쓰기는 계산에 영향을 주지 않아요.</p><input id="in-roman" autocomplete="off" placeholder="영문 이름 (예: Hong Gildong)"><small class="fnote" id="romanNote"></small></div>
+      <div class="f s2"><div class="roman-label-row"><label for="in-roman">영문 이름</label><button type="button" id="romanHelpToggle" aria-label="영문 이름 입력 안내" aria-expanded="false" aria-controls="romanHelpText">ⓘ</button></div><p id="romanHelpText" class="roman-help" hidden>대소문자와 띄어쓰기는 계산에 영향을 주지 않아요.</p><input id="in-roman" autocomplete="off" placeholder="영문 이름 (예: Hong Gildong)"><small class="fnote" id="romanNote"></small></div>
       <div class="f s2"><span class="lb">성별 (사주 대운)</span><div class="seg"><label><input type="radio" name="sex" value="m" id="sx-m"><span>남</span></label><label><input type="radio" name="sex" value="f" id="sx-f"><span>여</span></label></div></div>
       <div class="f s2"><span class="lb">달력</span><div class="seg"><label><input type="radio" name="cal" value="s" id="cal-s" checked><span>양력</span></label><label><input type="radio" name="cal" value="l" id="cal-l"><span>음력</span></label></div></div>
       <div class="f s2 wm birth-date-field"><span class="lb" id="dateLb">생년월일 (양력)</span><div class="ymd ymd1"><input id="in-ymd" type="text" inputmode="numeric" autocomplete="bday" maxlength="8" placeholder="예: 19981122" aria-label="생년월일 8자리, 예: 19960514"><input id="in-y" type="hidden"><input id="in-m" type="hidden"><input id="in-d" type="hidden"></div>
         <div class="sub"><label class="chk" id="leapWrap" hidden><input type="checkbox" id="in-leap">윤달</label><span class="conv" id="conv"></span></div></div>
-      <div class="f s2 birth-time-field"><label for="in-time">출생 시각 (24시간제)</label><input id="in-time" type="text" inputmode="numeric" autocomplete="off" placeholder="예: 1430" maxlength="5" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" aria-describedby="birth-time-help"><small id="birth-time-help" class="fnote">숫자 4자리 입력 · 시 00~23, 분 00~59</small><label class="chk"><input type="checkbox" id="in-notime">시각을 몰라요</label></div>
+      <div class="f s2 birth-time-field"><label for="in-time">출생 시각 (24시간제)</label><input id="in-time" type="text" inputmode="numeric" autocomplete="off" placeholder="예: 15:00" maxlength="5" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]"><label class="chk"><input type="checkbox" id="in-notime">시각을 몰라요</label></div>
       <div class="f full"><span class="lb">출생지</span>
         <label class="chk noplace"><input type="checkbox" id="in-noplace">출생지를 고르지 않을래요 <small>(대한민국 표준시로 계산)</small></label>
         <div id="placeBox"><div class="psearch"><input id="placeQ" type="text" autocomplete="off" placeholder="시·도, 도시·구·군 검색 (예: 경기도, 성남, 도쿄)" role="combobox" aria-expanded="false" aria-controls="placeList" aria-label="출생지 검색"><ul id="placeList" class="plist" role="listbox" hidden></ul></div>
@@ -89,7 +89,7 @@
           <p id="accountStatus" class="account-note" role="status" aria-live="polite"></p>
           <details class="account-privacy"><summary>로그인·정보 저장 안내</summary><p>운영: 트리웨이브 · 서비스: 운명탐정. 카카오에서는 회원 구분용 식별값과 동의한 닉네임만 받아요. 이메일·전화번호·프로필 사진·현재 거주지는 요청하지 않아요. 입력한 출생 정보는 ‘카카오 계정에 자동 저장’을 켜고 운명을 확인할 때 Cloudflare 서버에 저장하고, 다음 로그인 시 입력창에 불러와요. 궁합에서 ‘내 계정에 저장’을 체크하면 상대방의 이름·생년월일·출생 시각·출생지와 궁합 점수도 저장돼요(상대방 동의가 있는 경우에만 저장해 주세요). 저장 정보 보기에서 내 출생 정보와 상대 정보를 각각 삭제할 수 있고, 카카오 연결을 끊어도 모두 삭제돼요. 로그인은 이 브라우저에서 최대 7일 유지되며 공용 기기에서는 로그아웃해 주세요.</p></details>
         </div>
-        <small>운명 계산은 이 기기에서 진행해요.</small><span id="err" role="alert"></span></div>
+        <span id="err" role="alert"></span></div>
     </form>
     </details>
 
@@ -213,5 +213,5 @@ $("brandbar").addEventListener("keydown",e=>{if(e.target!==e.currentTarget)retur
 
 <script src="navigation-history.js?v=5"></script>
 
-<script src="input-experience.js?v=2"></script>
+<script src="input-experience.js?v=3"></script>
 

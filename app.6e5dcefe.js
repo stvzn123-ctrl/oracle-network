@@ -902,7 +902,7 @@ romanNote();
 function readForm(){const cal=$("cal-l").checked?"l":"s";const y=+$("in-y").value,m=+$("in-m").value,d=+$("in-d").value,leap=cal==="l"&&$("in-leap").checked;
   let sol={y,m,d};if(cal==="l"){const r=lunarToSolar(y,m,d,leap);if(r.err)return {err:r.err};sol=r}
   const date=`${sol.y}-${String(sol.m).padStart(2,"0")}-${String(sol.d).padStart(2,"0")}`;
-  return {name:$("in-name").value.trim(),roman:$("in-roman").value.trim()||romanize($("in-name").value),sex:$("sx-f").checked?"f":"m",cal,ly:y,lm:m,ld:d,leap,date,time:$("in-time").value||"12:00",notime:$("in-notime").checked,place:$("in-noplace").checked?{...NOPLACE}:{...place}}}
+  return {name:$("in-name").value.trim(),roman:$("in-roman").value.trim()||romanize($("in-name").value),sex:$("sx-f").checked?"f":"m",cal,ly:y,lm:m,ld:d,leap,date,time:($("in-time").value.replace(/^:$/,""))||"12:00",notime:$("in-notime").checked,place:$("in-noplace").checked?{...NOPLACE}:{...place}}}
 function fillForm(v){$("in-name").value=v.name||"";$("in-roman").value=v.roman||"";romanTouched=!!v.roman&&v.roman!==romanize(v.name);romanNote();$(v.sex==="f"?"sx-f":"sx-m").checked=true;
   const [sy,sm,sd]=v.date.split("-").map(Number);const isL=v.cal==="l";$(isL?"cal-l":"cal-s").checked=true;
   $("in-y").value=isL?v.ly:sy;$("in-m").value=isL?v.lm:sm;fillDays();$("in-d").value=isL?v.ld:sd;$("in-leap").checked=!!v.leap;updConv();
@@ -934,8 +934,8 @@ function checkForm(){const y=+$("in-y").value,m=+$("in-m").value,d=+$("in-d").va
   if(m<1||m>12)return "월은 1~12 사이로 입력해 주세요.";
   if(!$("cal-l").checked){const n=new Date(y,m,0).getDate();if(d<1||d>n)return `${m}월은 ${n}일까지 있어요.`}else if(d<1||d>30)return "음력 날짜는 1~30일 사이로 입력해 주세요.";
   if(!$("sx-m").checked&&!$("sx-f").checked)return "성별을 골라 주세요.";
-  if(!$("in-notime").checked && $("in-time").value && !/^([01]?\d|2[0-3]):[0-5]\d$/.test($("in-time").value))return "출생 시각은 00:00~23:59로 입력해 주세요. 예: 14:30";
-  if(!$("in-time").value&&!$("in-notime").checked)return "출생 시각을 입력하거나 '시각을 몰라요'를 체크해 주세요.";
+  if(!$("in-notime").checked && /\d/.test($("in-time").value) && !/^([01]?\d|2[0-3]):[0-5]\d$/.test($("in-time").value))return "출생 시각은 00:00~23:59로 입력해 주세요. 예: 14:30";
+  if(!/\d/.test($("in-time").value)&&!$("in-notime").checked)return "출생 시각을 입력하거나 '시각을 몰라요'를 체크해 주세요.";
   if(place.unset&&!$("in-noplace").checked)return "출생지의 시·도를 고르거나 '출생지를 고르지 않을래요'를 체크해 주세요.";return ""}
 $("ask").addEventListener("submit",e=>{e.preventDefault();const ce=checkForm();if(ce){$("err").textContent=ce;return}const v=readForm();
   if(v.err){$("err").textContent=v.err;return}

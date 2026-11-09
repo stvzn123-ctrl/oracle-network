@@ -196,3 +196,23 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 
 /* Restore the original question mark while keeping the white-fur asset. */
 .question-pose,.pose-note{clip-path:none!important}
+/* 입력 폼 가독성·높이 통일 (2026-11-09) */
+#ask .f>label:not(.chk),#ask .f>.lb,#ask .roman-label-row label{font:600 14px/1.5 var(--body)!important;color:var(--fg)!important;margin:0 0 8px!important}
+#ask :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select){min-height:52px;font-size:16px;color:var(--fg)}
+#ask :is(input,select)::placeholder{color:#a0907f;opacity:1}
+#ask .seg,#ask .seg label>span{min-height:52px!important}
+#ask .f{display:flex;flex-direction:column;align-items:stretch}
+#ask .f>.chk,#ask .f>.sub{margin-top:10px}
+#ask .fnote,#ask .roman-help,#ask .conv,.save-guest,.save-guest .kakao-mini,.kakao-data-notice,.account-note,.save-opt .account-privacy,.save-opt .account-privacy summary{font-size:13px!important;line-height:1.7!important}
+#ask .fnote,#ask .roman-help,.save-guest,.kakao-data-notice,.account-note{color:var(--muted)!important}
+.kakao-data-notice{margin:8px 0 0}
+.save-guest{gap:8px;margin-top:12px}
+
+/* 이름/영문 이름 줄 맞춤 + 생년월일 아래 빈 여백 제거 (2026-11-09) */
+#ask .roman-label-row{display:flex;align-items:center;gap:6px;min-height:21px;margin:0 0 8px}
+#ask .roman-label-row label{margin:0!important}
+#ask #romanHelpToggle{min-height:0!important;height:21px;width:21px;padding:0!important;font-size:16px;line-height:1;border-radius:50%}
+#ask .birth-date-field .sub{margin-top:0;min-height:0}
+#ask .conv:empty{display:none}
+#ask .birth-date-field .sub:not(:has(#leapWrap:not([hidden]))):has(.conv:empty){display:none}
+#ask{row-gap:16px}
