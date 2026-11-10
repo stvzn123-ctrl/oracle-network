@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://t1.kakaocdn.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.kakaocdn.net; connect-src 'self' https://oracle-api.stvzn123.workers.dev https://*.kakao.com; frame-src https://*.kakao.com; form-action 'self' https://*.kakao.com; base-uri 'none'; object-src 'none'">
 <meta name="color-scheme" content="dark light">
 <script>try{var H=document.documentElement,sb=/SamsungBrowser/i.test(navigator.userAgent),t=null;if(sb)H.classList.add("sbx");if(/KAKAOTALK|NAVER\(|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp/i.test(navigator.userAgent))H.classList.add("lite");try{t=localStorage.getItem("oracle-theme")}catch(e){}if(t==="dark"||(t!=="light"&&sb&&matchMedia("(prefers-color-scheme: dark)").matches))H.classList.add("rd")}catch(e){}</script>
-<script>try{if(localStorage.getItem("oracle-session"))document.documentElement.classList.add("boot");setTimeout(function(){document.documentElement.classList.remove("boot")},4000)}catch(e){}</script>
+<script>try{if(localStorage.getItem("oracle-session"))document.documentElement.classList.add("boot");setTimeout(function(){document.documentElement.classList.remove("boot")},3000)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>운명탐정</title>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#fff8ed"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="운명탐정"><link rel="apple-touch-icon" href="img/app-icon-180.png"><link rel="stylesheet" href="install-app.css?v=2">
@@ -32,6 +32,13 @@
 <link rel="stylesheet" href="product-flow.css?v=2">
 <style>html.lite *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}html.lite #oracle-dream img,html.lite #oracle-dream *{animation:none!important}</style>
 
+<style>#bootLoader{display:none}html.boot #bootLoader{display:flex;position:fixed;inset:0;z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#FFF9F4;color:#4A352B;font:600 15px/1.4 system-ui,sans-serif}
+#bootLoader .bl-ring{position:relative;width:132px;height:132px}
+#bootLoader .bl-ring::before{content:"";position:absolute;inset:0;border-radius:50%;border:5px solid #f1e3d3;border-top-color:#8A5A1E;border-right-color:#d9a85c;animation:blspin 1s linear infinite}
+#bootLoader img{position:absolute;inset:14px;width:104px;height:104px;object-fit:contain;animation:blbob 1.6s ease-in-out infinite}
+@keyframes blspin{to{transform:rotate(360deg)}}@keyframes blbob{50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){#bootLoader *,#bootLoader .bl-ring::before{animation-duration:3s}}</style>
+<div id="bootLoader" role="status" aria-live="polite"><div class="bl-ring"><img src="img/mascot.webp" alt="" fetchpriority="high"></div><span>운명을 불러오는 중이에요…</span></div>
 <canvas id="sky" aria-hidden="true"></canvas>
 <!-- Supplied artwork, compressed to WebP and embedded to keep a single HTML. -->
 <div id="oracle-dream" aria-hidden="true"><img src="img/7ae43de5a9.webp" alt="" decoding="async" fetchpriority="high" draggable="false"></div>
