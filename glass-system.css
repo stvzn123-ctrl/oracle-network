@@ -273,3 +273,6 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 #report .rv3-cover{position:relative}
 #report .rv3-date{position:absolute;top:14px;right:18px;margin:0;font:400 12px/1.4 var(--body);color:var(--muted);letter-spacing:.02em}
 @media print{#report .rv3-date{top:8px;right:10px}}
+
+/* 로그인 상태에서는 안내와 약관을 메뉴 안(로그아웃 아래)에 두고 별도 상자는 숨긴다 */
+.account-sheet:has(#accountMember:not([hidden])) .acct-guide-link{display:none}

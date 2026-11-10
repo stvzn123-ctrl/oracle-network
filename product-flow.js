@@ -29,11 +29,10 @@
  topicHTML=function(ch,key){const html=originalTopic(ch,key);return ['match','reunion','ask'].includes(key)?html:trimPreview(html,key)};
  moneyAllHTML=function(ch){return trimPreview(originalMoney(ch),'money')};
  const oldQuestion=freeQuestionHTML;
- const examples=['연애 중인데 결혼 이야기를 꺼내기 전에 무엇을 살펴보면 좋을까요?','지금 직장을 유지할지 이직을 준비할지 고민이에요. 어떤 기준으로 비교하면 좋을까요?','수입은 일정한데 저축이 잘 안 돼요. 제 성향에 맞는 관리 방법이 궁금해요.'];
  freeQuestionHTML=function(){
   const t=document.createElement('template');t.innerHTML=oldQuestion();
   const form=t.content.querySelector('#free-question-form');
-  form.insertAdjacentHTML('afterbegin','<fieldset class="question-examples"><legend>어떻게 물어볼지 막막하다면</legend>'+examples.map((text,i)=>'<button type="button" data-question-example="'+E(text)+'">'+['연애·결혼 질문','취업·이직 질문','돈 관리 질문'][i]+'</button>').join('')+'</fieldset><p class="question-help" id="questionHelp">현재 상황 → 고민하는 선택 → 알고 싶은 점 순서로 적어주세요. 실명·연락처 등 타인의 개인정보는 질문에 넣지 않아도 돼요.</p>');
+  form.insertAdjacentHTML('afterbegin','<p class="question-help" id="questionHelp">현재 상황 → 고민하는 선택 → 알고 싶은 점 순서로 적어주세요. 실명·연락처 등 타인의 개인정보는 질문에 넣지 않아도 돼요.</p>');
   const input=form.querySelector('textarea');input.placeholder='예: 연애 2년 차이고 결혼 이야기를 시작하려 해요. 서로 준비할 점과 관계의 흐름이 궁금해요.';input.setAttribute('aria-describedby','questionHelp');
   form.insertAdjacentHTML('beforeend','<p class="question-help">제출에 성공하면 접수 완료 메시지가 표시돼요. 답변은 입력한 이메일로 보내드려요. 이메일 주소를 한 번 더 확인해 주세요.</p>');
   return t.innerHTML;

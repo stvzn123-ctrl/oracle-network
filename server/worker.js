@@ -1,4 +1,4 @@
-// 운명연구소 공용 API (Cloudflare Worker + D1)
+// 운명탐정 공용 API (Cloudflare Worker + D1)
 // 초대 기록 및 카카오 로그인 회원의 명시적으로 저장한 출생 정보를 다룬다.
 import { narrativeComprehensive, narrativeRelation, narrativeMoney, narrativeWork, narrativeStudy, narrativeReunion, narrativeMatch } from "./narrative.js";
 const ORIGINS = ["https://stvzn123-ctrl.github.io"];

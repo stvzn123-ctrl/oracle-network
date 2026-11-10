@@ -80,3 +80,6 @@
  });
 
 })();
+
+/* renderAll()이 질문 탭 내용을 비우므로(로그인 정보가 늦게 도착할 때 등), 질문 화면을 보고 있으면 다시 채운다. */
+(()=>{const ra=renderAll;renderAll=function(){const r=ra.apply(this,arguments);if(document.body.classList.contains('nav-ask')){document.getElementById('tab-ask').innerHTML=freeQuestionHTML();setTab('ask')}return r}})();
