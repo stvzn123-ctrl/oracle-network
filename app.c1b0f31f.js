@@ -915,7 +915,7 @@ function run(v,animate){renderWho(v);CH=buildChart(v);compute();selDec=clamp(Mat
 function adminReview(){if(typeof accountUser!=='undefined'&&accountUser?.isAdmin){graphUnlocked=true;applyGraphLock();$('unlock-status').textContent='관리자 계정: 전체 결과를 확인할 수 있어요.'}}
 const TOPIC_GROUPS={"work":["work"],"study":["study"]};
 const TABS=["natal","flow","today","money","marry","love","reunion","work","match","study","employment","move","invest","property","business","exam","cert","ask"];
-function setTab(t,focus){const friend=t==="friend";if(friend)t="match";if(t==="love")t="marry";if(t==="match")CMPKIND=friend?(CMPKIND==="group"?"group":"friend"):"love";if(t==="employment"||t==="move")t="work";if(t==="exam"||t==="cert")t="study";t=TOPIC_GROUPS[t]?.[0]||t;{const fb=document.querySelector(`#topicFold [data-tab="${t}"]`);if(fb&&focus)document.getElementById("topicFold").open=true;}document.querySelectorAll("[data-subgroup]").forEach(el=>{el.hidden=!(TOPIC_GROUPS[el.dataset.subgroup]||[]).includes(t)});document.querySelectorAll(".res-nav [role=tab]").forEach(b=>{const on=b.dataset.topicGroup?TOPIC_GROUPS[b.dataset.topicGroup].includes(t):b.hasAttribute("data-romance")?["love","marry","reunion","match"].includes(t):b.dataset.tab===(friend?"friend":t);b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1;if(on){if(focus)b.focus();}});
+function setTab(t,focus){const friend=t==="friend";if(friend)t="match";if(t==="love")t="marry";if(t==="match")CMPKIND=friend?FRIENDKIND:"love";if(t==="employment"||t==="move")t="work";if(t==="exam"||t==="cert")t="study";t=TOPIC_GROUPS[t]?.[0]||t;{const fb=document.querySelector(`#topicFold [data-tab="${t}"]`);if(fb&&focus)document.getElementById("topicFold").open=true;}document.querySelectorAll("[data-subgroup]").forEach(el=>{el.hidden=!(TOPIC_GROUPS[el.dataset.subgroup]||[]).includes(t)});document.querySelectorAll(".res-nav [role=tab]").forEach(b=>{const on=b.dataset.topicGroup?TOPIC_GROUPS[b.dataset.topicGroup].includes(t):b.hasAttribute("data-romance")?["love","marry","reunion","match"].includes(t):b.dataset.tab===(friend?"friend":t);b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1;if(on){if(focus)b.focus();}});
   document.querySelector(".romance-tabs").hidden=!["love","marry","reunion","match"].includes(t);
   TABS.forEach(k=>{$("tab-"+k).hidden=k!==t});
   if(t==="match"){cmpSetKind(CMPKIND);const heading=$("tab-match").querySelector(".topic-intro h3");if(heading)heading.textContent=CMPKIND==="group"?"우리 모임은 얼마나 잘 어울릴까?":friend?"우리의 우정은 어떻게 잘 맞을까?":"우리 둘은 어떤 점에서 잘 맞을까?"}if(t==="match"||t==="reunion")setTimeout(partnerSync,0);if(CH&&TOPICS.some(x=>x[0]===t)&&!$("tab-"+t).innerHTML)$("tab-"+t).innerHTML=t==="money"?moneyAllHTML(CH):topicHTML(CH,t);if(t==="match"){cmpSetKind(CMPKIND);const heading=$("tab-match").querySelector(".topic-intro h3");if(heading)heading.textContent=CMPKIND==="group"?"우리 모임은 얼마나 잘 어울릴까?":friend?"우리의 우정은 어떻게 잘 맞을까?":"우리 둘은 어떤 점에서 잘 맞을까?"}if(t==="flow"&&CH){drawGraph=true;renderBig();setTimeout(()=>{drawGraph=false},0)}}
@@ -3699,7 +3699,7 @@ const CMP_KIND={love:'연인',friend:'우정(두 사람)',group:'모임(3명 이
 const CMP_NOTE={love:'두 사람의 다섯 점술을 나란히 읽어 잘 맞는 점을 먼저 보여 드려요.',
  friend:'연애가 아닌 우정으로 읽어요. 점수 계산은 같고, 해석만 친구 사이에 맞춰 바뀌어요.',
  group:'나를 포함해 3~8명까지 넣을 수 있어요. 모임에서 각자 맡게 되는 역할과, 이 모임이 얼마나 갈지를 봐요.'};
-let CMPKIND='love',GROUP=[],GROUPRES=null;
+let CMPKIND='love',FRIENDKIND='friend',GROUP=[],GROUPRES=null;
 
 /* 연애 표현을 우정 표현으로 바꾼다. 긴 말부터 먼저 치환해야 짧은 말에 먹히지 않는다. */
 const FRIEND_WORDS=[[/결혼이나 동거를 생각한다면/g,'오래 보는 사이가 되려면'],[/결혼·동거/g,'긴 동행'],[/결혼이나 동거/g,'오래 가는 사이'],[/같이 살기, 양가 인사, 긴 여행처럼/g,'같이 여행 가기, 서로의 친구 소개처럼'],[/양가 인사/g,'서로의 사람들 소개'],[/같이 살기 전에/g,'같이 오래 지내려면'],[/함께 살/g,'오래 함께할'],[/같이 살/g,'오래 볼'],[/동거/g,'긴 동행'],[/결혼/g,'오랜 우정'],[/연애/g,'우정'],[/연인/g,'친구'],[/데이트/g,'만남'],[/애정/g,'친밀감'],[/사랑받고 있다고/g,'소중하게 여겨진다고'],[/설렘이 큰/g,'반가움이 큰'],[/설렘/g,'반가움'],[/설레는/g,'마음이 가는'],[/끌림/g,'호감'],[/기념일/g,'기념할 만한 날'],[/집안일 분담/g,'역할 분담'],[/커플/g,'단짝'],[/두 사람의 궁합/g,'두 사람의 우정 궁합']];
@@ -3825,7 +3825,7 @@ function cmpShowOne(label){
  out.scrollIntoView({behavior:soft(),block:'nearest'})}
 
 function cmpSetKind(k){
- CMPKIND=k;
+ CMPKIND=k;if(k!=='love')FRIENDKIND=k;
  /* 궁합 탭(연인)은 종류 선택 없이 바로 폼, 우정 탭은 '우정 / 모임' 두 가지 */
  document.querySelectorAll('.cmp-kind').forEach(box=>{box.hidden=k==='love'});
  document.querySelectorAll('[data-ck]').forEach(b=>{const visible=b.dataset.ck!=='love';b.hidden=!visible;b.style.display=visible?'':'none';b.setAttribute('aria-pressed',String(b.dataset.ck===k))});

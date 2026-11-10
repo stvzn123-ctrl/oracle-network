@@ -16,7 +16,9 @@ function formatBirthTime(value,complete=false,autoColon=false){
  time.addEventListener('input',e=>{
   const old=time.value,caret=time.selectionStart??old.length,leftDigits=old.slice(0,caret).replace(/\D/g,'').length;
   const next=formatBirthTime(old,false,!String(e.inputType||'').startsWith('delete'));time.value=next;
-  let pos=leftDigits+(next.includes(':')&&leftDigits>2?1:0);time.setSelectionRange(Math.min(pos,next.length),Math.min(pos,next.length));
+  /* 시 두 자리를 다 쳤거나 커서가 이미 ':' 뒤에 있으면 커서를 ':' 뒤(분 자리)에 둔다 */
+  const afterColon=next.includes(':')&&(leftDigits>2||(leftDigits===2&&(old.slice(0,caret).includes(':')||!/\d/.test(old.slice(caret)))));
+  let pos=leftDigits+(afterColon?1:0);time.setSelectionRange(Math.min(pos,next.length),Math.min(pos,next.length));
  });
  /* 비어 있으면 '예: 15:00' 힌트만 보여 주고, 시를 두 자리 입력하면 ':'가 붙어 분으로 넘어간다 */
  time.addEventListener('blur',()=>{time.value=/\d/.test(time.value)?formatBirthTime(time.value,true):''});
