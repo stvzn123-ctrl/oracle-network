@@ -1504,7 +1504,7 @@ function topicRowsV2(ch,k){
    ['일이 가장 잘 풀리는 해는?',`${top.map(x=>`${x.y}년(${kage(x.y)}살, ${x.v}점)`).join('과 ')}이에요. 반대로 ${best[best.length-1].y}년(${best[best.length-1].v}점)은 무리한 확장보다 실력을 다지는 해예요.`],
    ['일터의 귀인은 언제, 누구일까?',gui?`${gui.y}년${gui.months.length?' '+gui.months.slice(0,2).map(m=>m[0]+'월').join('·'):''}에 ${J((lq.find(x=>x.k==='gui')||{}).a?.split(', ').slice(1).join(', ')||'도움을 줄 사람','이','가')} 나타나기 쉬워요.`:'꾸준한 교류에서 귀인이 생겨요.']];
   if(k==='employment')rows.push(['서류·면접에서 강조할 점은?',`${['새 일을 기획하고 시작한 경험','사람을 설득하고 분위기를 이끈 경험','맡은 일을 끝까지 꾸준히 해낸 경험','기준을 세워 정확하게 처리한 경험','자료를 깊게 분석해 답을 찾은 경험'][dom]}을 숫자와 함께 보여 주세요. 면접에서는 ${['먼저 결론을 말하는','밝게 웃으며 이야기를 이끄는','차분하고 믿음직한','논리적으로 근거를 대는','질문의 의도를 짚어 답하는'][dom]} 모습이 강점이에요.`],['지원하기 좋은 시기는?',`${top[0].y}년, 특히 ${[3,5,9,11,1][dom]}월 채용 시즌이 흐름과 잘 맞아요.`]);
-  if(k==='move')rows.push(['이직은 언제가 좋을까?',mv?`${mv.a.split(' · ').filter(x=>!/자격증/.test(x)).join(' · ')||mv.a}. ${mv.s}`:`${top[0].y}년이 가장 좋아요.`],['옮긴다면 어떤 곳으로?',`지금보다 ${['새 프로젝트가 많은 성장 조직','사람을 많이 만나는 대외 업무','안정된 큰 조직','역할과 기준이 분명한 전문 조직','혼자 깊게 파고들 수 있는 연구·분석 조직'][dom]}이 잘 맞아요.`]);
+  if(k==='move')rows.push(['이직은 언제가 좋을까?',mv?`${(mv.a.split(' · ').filter(x=>!/자격증/.test(x)).join(' · ')||mv.a).replace(/^이직 (?=\d)/,'이직은 ')}. ${mv.s}`:`${top[0].y}년이 가장 좋아요.`],['옮긴다면 어떤 곳으로?',`지금보다 ${['새 프로젝트가 많은 성장 조직','사람을 많이 만나는 대외 업무','안정된 큰 조직','역할과 기준이 분명한 전문 조직','혼자 깊게 파고들 수 있는 연구·분석 조직'][dom]}이 잘 맞아요.`]);
   return rows}
  if(k==='study'||k==='exam'||k==='cert'){const gi=ng[4],ss=ng[1],top=best.slice(0,2).sort((a,b)=>a.y-b.y),py=[0,1,2].map(i=>y0+i).filter(y=>[1,4,7].includes(pyOf(ch,y)));
   const rows=[['나에게 맞는 공부법은?',gi>ss?`개념을 먼저 깊게 이해하는 공부가 맞아요(인성 ${gi}개). 교재 한 권을 세 번 반복하고, 단원마다 핵심을 한 줄로 요약하세요.`:gi<ss?`직접 풀고 설명하며 익히는 공부가 맞아요(식상 ${ss}개). 강의보다 문제 풀이 비중을 6:4로 두고, 친구에게 설명해 보세요.`:'이해와 문제 풀이를 반반 섞는 공부가 맞아요. 개념 30분 뒤 바로 문제 30분을 붙이세요.'],
@@ -1724,21 +1724,24 @@ function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'�
  add('summary','두 사람의 궁합',`${me}님과 ${you}님의 궁합은 ${tot}점, ${lv}입니다.`,
   [pos.length?'잘 맞는 점: '+pos.slice(0,3).map(x=>x[3]).join(' '):'',
    `관계 속 역할을 보면 ${roleTxt}입니다.`,
-   `앞으로 3년만 보면 ${up[0].y}년이 가장 가까워지기 쉬운 해이고, ${dn.length?dn[0].y+'년에는 거리가 생기기 쉽습니다':'세 해 모두 큰 기복은 없습니다'}.`]);
+   `앞으로 3년만 보면 ${up[0].y}년이 가장 가까워지기 쉬운 해이고, ${dn.length&&dn[0].s<58?dn[0].y+'년에는 거리가 생기기 쉽습니다':dn.length&&dn[0].s<70?dn[0].y+'년은 비교적 잔잔하게 흐릅니다':'세 해 모두 큰 기복은 없습니다'}.`]);
  add('advice','주의할 점',neg.length?'한두 가지만 미리 알아 두면 다툼이 훨씬 짧아집니다.':'큰 충돌 신호는 적지만, 편안함에 기대 표현을 줄이지 않는 것이 중요합니다.',
   (neg.length?neg.slice(0,2).map(x=>x[3]):[]).concat([ma===mb?`대화 방식: 두 사람 모두 ${TALK[ma]}. 푸는 방식이 같아 화해가 빠른 편이지만, 둘이 동시에 물러서면 대화가 길게 끊길 수 있으니 먼저 손을 내미는 순서를 정해 두세요.`:`대화 방식: ${me}님은 ${TALK[ma]}. 반면 ${you}님은 ${TALK[mb]}. 다툰 날에는 이 차이를 기억해 두세요.`,
    SE[dmA]!==SE[dmB]&&((eA+2)%5===eB||(eB+2)%5===eA)?'중요한 결정(돈·이사·가족 행사)은 한쪽이 정해서 통보하기보다, 각자 기준을 먼저 말하고 함께 고르는 방식이 맞습니다.':'중요한 결정은 비교적 쉽게 합의하는 편이라, 오히려 사소한 생활 습관에서 쌓이는 불만을 그때그때 꺼내는 것이 좋습니다.']),
   '다툰 뒤에는 "누가 맞았나"보다 "다음엔 어떻게 할까"를 한 문장으로 정해 두세요.');
- add('flow','앞으로 3년, 관계는 어떻게 흐를까',`${up[0].y}년이 두 사람에게 가장 좋은 해입니다.`,
-  yrs.map((x,i)=>{const tone=x.s>=70?'가장 좋은 해':x.s>=58?'편안하게 흐르는 해':'천천히 가는 해';
-   const body=x.s>=70?['미뤄 둔 이야기를 꺼내기 좋습니다. 같이 살기, 양가 인사, 긴 여행처럼 한 단계 넘어가는 일을 이 해에 올려 두세요.','둘만의 큰 결정을 내리기 좋은 해입니다. 이 해에 미루면 다음 기회는 한참 뒤에 봐야 합니다.'][i%2]
-    :x.s>=58?['조용히 좋은 해입니다. 둘만의 약속 하나를 정해 지키는 것만으로 충분합니다.','조용히 흐르는 해입니다. 기념일이나 짧은 여행처럼 작은 이벤트를 일부러 끼워 넣어야 관계가 식지 않습니다.','특별한 사건 없이 지나가는 해입니다. 이럴 때 쌓인 사소한 서운함이 다음 해에 터지니, 그때그때 말로 꺼내 두세요.'][i%3]
-    :['각자의 일이 바빠지는 해라, 짧게라도 먼저 연락하는 쪽으로 규칙을 정해 두면 오히려 더 단단해집니다.','서로 각자의 자리를 지키는 해입니다. 크게 바라지 않고 곁에 있어 주는 것만으로 충분한 때예요.'][i%2];
-   const sig=x.why.length?x.why.join(', ')+'. ':x.warn.length?x.warn.join(', ')+'. ':'';
-   const mind=x.pa===x.pb?`두 사람 모두 ${PYW[x.pa]} 해라 마음이 같은 곳을 봅니다.`:[`${me}님은 ${PYW[x.pa]} 해, ${you}님은 ${PYW[x.pb]} 해입니다. 원하는 게 다른 해라, 각자 뭘 바라는지 한 번씩 말로 해 두세요.`,`이 해 ${me}님은 ${PYW[x.pa]} 쪽이고, ${you}님은 ${PYW[x.pb]} 쪽입니다. 상대가 내 속도를 안 맞춰 준다고 느끼기 쉽지만 서로 보는 곳이 다를 뿐입니다.`,`${me}님은 ${PYW[x.pa]} 해인데 ${you}님은 ${PYW[x.pb]} 해입니다. 누가 양보하는 게 아니라, 각자 하고 싶은 걸 하면서 만나는 날만 지키는 쪽이 맞습니다.`][i%3];
-   return `${x.y}년 · ${tone} — ${sig}${body} ${mind}`}),
-  `${up[0].y}년에는 여행이나 기념일처럼 둘만 아는 추억을 하나 만들어 두세요. 관계가 느슨해지는 해에 그 기억이 버팀목이 됩니다.`,
-  {table:{cap:'앞으로 3년 관계 흐름',head:['해','분위기','가까워지는 신호','조심할 것'],rows:yrs.map(x=>[x.y+'년',(x.s>=70?'좋음':x.s>=58?'보통':'주의')+' · '+x.s,x.why.join(', ')||(x.pa===x.pb?'두 사람 다 '+PYW[x.pa]+' 해':me+'님은 '+PYW[x.pa]+' 해, '+you+'님은 '+PYW[x.pb]+' 해'),x.warn.join(', ')||'없음'])}});
+ /* 2026-11-10: 분위기 라벨은 본문·표가 같은 함수(yearTone)를 쓴다. 가장 높은 해 하나만 '가장 가까워지는 해', 나머지는 점수대로. */
+ const yearTone=x=>x.y===up[0].y?{label:'가장 가까워지는 해',cell:'가장 좋음'}:x.s>=70?{label:'좋은 해',cell:'좋음'}:x.s>=58?{label:'잔잔한 해',cell:'보통'}:{label:'거리가 생기기 쉬운 해',cell:'주의'};
+ add('flow','앞으로 3년, 관계는 어떻게 흐를까',`앞으로 3년 중 ${up[0].y}년이 두 사람이 가장 가까워지기 쉬운 해입니다.`,
+  yrs.map((x,i)=>{const t=yearTone(x);
+   const body=x.y===up[0].y?'미뤄 둔 이야기를 꺼내기 가장 좋은 해입니다. 같이 살기, 양가 인사, 긴 여행처럼 한 단계 넘어가는 일을 이 해에 올려 두세요.'
+    :x.s>=70?['관계가 편안하게 깊어지는 해입니다. 둘만의 큰 결정을 내려도 무리가 없고, 함께한 시간이 믿음으로 쌓입니다.','서로에게 익숙해지면서도 설렘이 남아 있는 해입니다. 작은 여행이나 새로운 취미를 함께 시작하면 관계의 폭이 넓어집니다.'][i%2]
+    :x.s>=58?['조용히 흐르는 해입니다. 둘만의 약속 하나를 정해 지키는 것만으로 충분합니다.','특별한 사건 없이 지나가는 해입니다. 기념일이나 짧은 여행처럼 작은 이벤트를 일부러 끼워 넣으면 관계가 식지 않습니다.'][i%2]
+    :'각자의 일이 바빠져 연락이 뜸해지기 쉬운 해입니다. 짧게라도 먼저 연락하는 쪽으로 규칙을 정해 두면 오히려 더 단단해집니다.';
+   const sig=x.why.length?x.why.join(', ')+'. ':(x.warn.length&&x.s<58)?x.warn.join(', ')+'. ':'';
+   const mind=x.pa===x.pb?`두 사람 모두 ${PYW[x.pa]} 해라 마음이 같은 곳을 봅니다.`:x.s>=58?[`${me}님은 ${PYW[x.pa]} 해, ${you}님은 ${PYW[x.pb]} 해입니다. 바라는 것이 조금 다르니 각자 원하는 걸 한 번씩 말로 맞춰 두면 충분합니다.`,`이 해 ${me}님은 ${PYW[x.pa]} 쪽, ${you}님은 ${PYW[x.pb]} 쪽에 마음이 가 있습니다. 서로의 속도를 존중해 주면 오히려 각자의 시간이 관계에 힘이 됩니다.`,`${me}님은 ${PYW[x.pa]} 해이고 ${you}님은 ${PYW[x.pb]} 해입니다. 같은 곳을 보지 않아도 괜찮은 해라, 함께하는 날에는 서로의 한 해 이야기를 들어 주세요.`][i%3]:`${me}님은 ${PYW[x.pa]} 해, ${you}님은 ${PYW[x.pb]} 해입니다. 상대가 내 속도를 안 맞춰 준다고 느끼기 쉽지만 서로 보는 곳이 다를 뿐이니, 누가 양보할지보다 만나는 날을 지키는 데 마음을 쓰세요.`;
+   return `${x.y}년 · ${t.label} — ${sig}${body} ${mind}`}),
+  `${up[0].y}년에는 여행이나 기념일처럼 둘만 아는 추억을 하나 만들어 두세요. 잔잔하게 흐르는 해에 그 기억이 버팀목이 됩니다.`,
+  {table:{cap:'앞으로 3년 관계 흐름',head:['해','분위기','가까워지는 신호','조심할 것'],rows:yrs.map(x=>[x.y+'년',yearTone(x).cell+' · '+x.s,x.why.join(', ')||(x.pa===x.pb?'두 사람 다 '+PYW[x.pa]+' 해':me+'님은 '+PYW[x.pa]+' 해, '+you+'님은 '+PYW[x.pb]+' 해'),x.warn.join(', ')||'없음'])}});
  add('place','함께 가면 좋은 곳',`${PLACE[need][0]} 같은 곳이 두 사람에게 가장 잘 맞습니다.`,
   [`${PLACE[need][0]}: ${PLACE[need][1]}`,`${me}님의 태양은 ${SEL[sa]} 원소라 ${SUNPL[sa]} 쪽을, ${you}님은 ${SEL[sb]} 원소라 ${SUNPL[sb]} 쪽을 좋아합니다.${sa===sb?' 취향이 같아 데이트 계획이 쉽게 맞습니다.':' 번갈아 서로의 취향대로 계획하면 둘 다 만족합니다.'}`,
    `두 사람이 같이 있으면 ${['자꾸 새로운 일을 벌이는','금방 뜨거워지고 금방 지치는','한자리에 오래 머무르는','계획하고 따지는','생각만 많아지는'][rich]} 쪽으로 흐릅니다. 데이트가 비슷해진다고 느껴질 때는 일부러 반대 성격의 장소를 골라 보세요.`],
@@ -1750,7 +1753,7 @@ function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'�
   '1년에 한 번, 둘만의 관계 점검 날을 정해 고마운 점과 바라는 점을 나눠 보세요.');
  add('table','점술별 궁합 한눈에 보기','다섯 점술의 궁합 점수를 정리했습니다.',[],'',{table:{cap:'점술별 궁합(기본 70점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
  add('limit','해석의 범위','궁합 점수와 시기는 전통 규칙을 수치로 옮긴 참고 지표입니다.',[miss.length?J(miss.join('·'),'이','가')+' 없어 해당 정보는 정오·대한민국 기준 참고값으로 계산했습니다.':'','관계의 실제 결과는 두 사람의 대화와 선택이 만듭니다. 이 리포트는 서로를 이해하는 질문으로 활용해 주세요.']);
- return {title:`${me}님과 ${you}님의 궁합 리포트`,summary:[S[0].lead,`가까워지는 해: ${up.map(x=>x.y+'년').join(', ')} · 느슨해지기 쉬운 해: ${dn.map(x=>x.y+'년').join(', ')}`,S[3].lead,neg.length?'주의할 점: '+neg[0][3]:S[1].lead],
+ return {title:`${me}님과 ${you}님의 궁합 리포트`,summary:[S[0].lead,`가장 가까워지는 해: ${up.map(x=>x.y+'년').join(', ')}`+(dn.length&&dn[0].s<58?` · 거리가 생기기 쉬운 해: ${dn.map(x=>x.y+'년').join(', ')}`:dn.length&&dn[0].s<70?` · 잔잔하게 흐르는 해: ${dn.map(x=>x.y+'년').join(', ')}`:' · 세 해 모두 큰 기복 없이 흐릅니다'),S[3].lead,neg.length?'주의할 점: '+neg[0][3]:S[1].lead],
   sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'',birthCharts:[a,b],version:'match-2026-11-07',body:''}}
 const sTxt=i=>ST[i]+'('+'갑을병정무기경신임계'[i]+')';
 /* 재회(2026-11-07): 궁합 점수 + 앞으로 3년의 재연결 신호(배우자 자리 합·충, 개인년 2·6·9, 두 사람의 애정 흐름) */
@@ -1786,7 +1789,7 @@ function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name
   .concat([ru.mo.length?`한 해 안에서 고른다면 ${ru.mo.map(m=>m+'월').join('·')} 무렵이 가장 낫습니다. 두 사람 다 마음이 누그러지는 달이라, 같은 말이라도 덜 날카롭게 가 닿습니다.`:''])
   .concat(dn.map(x=>`${x.y}년은 ${x.warn.join(', ')}라, 이 해의 연락은 서두르지 않는 편이 좋습니다.`)),
   (()=>{if(!up.length)return '';const cm=new Date().getMonth()+1,cy=new Date().getFullYear();let y=up[0].y,m=ru.mo.find(x=>y>cy||x>cm);if(!m&&ru.mo.length){const nx=up.find(x=>x.y>cy);if(nx){y=nx.y;m=ru.mo[0]}}return m?`${y}년 ${m}월 전후에 부담 없는 안부 한 번으로 시작해 보세요.`:`${y}년 안에 부담 없는 안부 한 번으로 시작해 보세요.`})(),
-  {table:{cap:'앞으로 3년 재회 흐름',head:['해','가능성','다시 닿는 신호','조심할 것'],rows:yrs.map(x=>[x.y+'년',(x.s>=70?'높음':x.s>=58?'보통':'낮음')+' · '+x.s,x.why.join(', ')||(x.pa===x.pb?'두 사람 다 '+PYW[x.pa]+' 해':me+'님은 '+PYW[x.pa]+' 해, '+you+'님은 '+PYW[x.pb]+' 해'),x.warn.join(', ')||'없음'])}});
+  {table:{cap:'앞으로 3년 재회 흐름',head:['해','가능성','다시 닿는 신호','조심할 것'],rows:yrs.map(x=>[x.y+'년',(up.some(u=>u.y===x.y)?'높음':dn.some(d=>d.y===x.y)?'낮음':'보통')+' · '+x.s,x.why.join(', ')||(x.pa===x.pb?'두 사람 다 '+PYW[x.pa]+' 해':me+'님은 '+PYW[x.pa]+' 해, '+you+'님은 '+PYW[x.pb]+' 해'),x.warn.join(', ')||'없음'])}});
  add('cause','헤어짐에 영향을 준 차이',neg.length?'두 사람 사이에는 부딪히기 쉬운 지점이 분명히 있었습니다.':'두 사람 사이에 큰 충돌 신호는 적어, 상황과 타이밍의 영향이 컸을 가능성이 큽니다.',
   neg.slice(0,3).map(x=>x[3]).concat([ma===mb?`두 사람 모두 ${TALK[ma]}이라 화해 방식은 같지만, 둘이 동시에 물러서면 대화가 길게 끊기기 쉽습니다.`:`${me}님은 ${TALK[ma]}이고, ${you}님은 ${TALK[mb]}입니다. 서운함을 푸는 속도가 달라 오해가 쌓였을 수 있습니다.`,
    clash?'같이 보내는 시간이 길어질수록 지쳤을 조합입니다. 쉬는 방식과 집을 쓰는 방식이 반대라, 특별한 사건이 없어도 피로가 쌓였을 수 있어요.':'',ctl?'중요한 결정에서 기준이 번번이 어긋났을 가능성이 큽니다. 돈, 이사, 가족 문제처럼 양보가 어려운 자리에서 "왜 저걸 이해 못 하지"가 반복됐을 거예요.':'']));
@@ -2347,7 +2350,7 @@ function approvedReportHTML(data,key,sourceChart=null){
  const ymd=new Date().toLocaleDateString('ko-KR');
  const hasTiming=secs.some(s=>s.kind==='timing'||s.kind==='flow');
  const flowOld=!hasTiming&&Array.isArray(data.years)?'<section class="r-page rv3-ch"><header class="rv3-hd"><h2>앞으로 10년의 '+E(data.category)+' 흐름</h2></header><div class="r-yearflow">'+data.years.map(r=>'<div><b>'+E(r.year)+'년</b><meter min="60" max="100" value="'+Number(r.score)+'">'+Number(r.score)+'</meter><span>'+Number(r.score)+'점</span></div>').join('')+'</div><p class="r-note">점수는 확률이 아닌 자체 흐름 지표입니다.</p></section>':'';
- return '<header class="r-cover rv3-cover">'+mascotPoseHTML(reportPose,'report-cover-pose')+'<span class="eyebrow">운명 탐정 / 개인 리포트</span><span class="rv3-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 17.6 20.5 2.6 9.3h18.8L6.4 20.5z"/></svg></span><h2>'+E(data.title).replace(/(\S+·\S+)/g,'<span class="nowrap">$1</span>')+'</h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><dl class="r-cover-meta"><div><dt>발행일</dt><dd>'+ymd+'</dd></div></dl></header>'+
+ return '<header class="r-cover rv3-cover">'+mascotPoseHTML(reportPose,'report-cover-pose')+'<span class="eyebrow">운명 탐정 / 개인 리포트</span><span class="rv3-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 17.6 20.5 2.6 9.3h18.8L6.4 20.5z"/></svg></span><h2>'+E(data.title).replace(/(\S+·\S+)/g,'<span class="nowrap">$1</span>')+'</h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><span class="rv3-date">발행 '+ymd+'</span></header>'+
   '<section class="r-page rv3-ch rv3-intro"><aside class="report-reading-key"><b>리포트 읽는 법</b><p>해석을 먼저 읽고, 자세한 계산 방식과 전문 지표는 왼쪽 위 Appendix에서 확인하세요.</p></aside><header class="rv3-hd"><span class="rv3-no">SUMMARY</span><h2>핵심 요약</h2></header><ol class="rv3-sum">'+(data.summary||[]).filter(x=>readingParts(x).main).map(x=>'<li>'+destinyMeaningHTML(readingParts(x).main)+'</li>').join('')+'</ol></section><section class="r-page rv3-ch rv3-contents"><header class="rv3-hd"><span class="rv3-no">CONTENTS</span><h2>목차</h2></header>'+toc+'</section>'+
   secs.map(chapter).join('')+flowOld+(String(data.version||'').startsWith('match-')?'':(comp?comprehensiveOverviewHTML(data,ch):''))+
  '<template id="reportAppendixTemplate"><section class="r-page rv3-ch rv3-appendix" id="report-appendix"><header class="rv3-hd"><span class="rv3-no">APPENDIX</span><h2>'+ E((Array.isArray(data.birthCharts)?data.birthCharts.map(c=>c.inp?.name||'상대').join('·'):(ch?.inp.name||String(data.title||'나').split('님의')[0]))+'님의 출생정보와 전문 지표') +'</h2></header>'+(Array.isArray(data.birthCharts)?pairBirthAppendixHTML(data.birthCharts):'')+facts+(data.appendix?barsHTML(data.appendix.bars)+(data.appendix.tables||[]).map(dataTableHTML).join(''):'')+(!Array.isArray(data.birthCharts)&&ch?'<p class="birth-note">입력한 출생 정보로 계산한 별자리 천문도와 전통 달력이에요. 천체의 도수·하우스, 수비학 계산 과정, 마야 촐킨 출생 칸을 아래에서 확인할 수 있어요.</p>'+(ch?.inp.notime?'<p class="birth-note">출생 시각 미상: 현지 정오의 참고 위치예요. 상승궁·출생 하우스는 확정하지 않으며 달의 위치도 실제 시각에 따라 달라질 수 있어요.</p>':'')+chartHTML('west')+chartHTML('vedic')+chartHTML('numbers')+chartHTML('maya'):'')+'<div class="reading-sources">'+(data.summary||[]).filter(x=>readingParts(x).basis).map(x=>readingParagraph(readingParts(x).basis)).join('')+'</div>'+
@@ -3291,7 +3294,7 @@ function buildRichReport(ch,key){
  const summary=(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(sumOf).filter(Boolean);
  S.forEach(s=>{s.answer=s.paragraphs.join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
- return {title:(ch.inp.name||'당신')+'님의 '+NAMES[key]+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'chapters-2026-11-05-v3',
+ return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'chapters-2026-11-05-v3',
   body:S.map((r,i)=>(i+1)+'장 · '+r.question+'\n\n핵심: '+r.lead+(r.basis.length?'\n근거: '+r.basis.join(' / '):'')+'\n\n'+r.answer+(r.action?'\n\n실천 · '+r.action:'')).join('\n\n────────────────\n\n')+'\n\n'+note};
 }
 

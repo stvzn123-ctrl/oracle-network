@@ -49,7 +49,7 @@
   buildRichReport=function(ch,key){
     const data=originalRich(ch,key),state=context(ch),c=COPY[state];
     if(!['love','marry','comprehensive'].includes(key))return data;
-    const section={kind:'relationship-context',question:c.question,lead:c.answer,paragraphs:[c.detail,c.action],basis:[],action:c.action};
+    const section={kind:'relationship-context',question:c.question,lead:c.answer,paragraphs:[c.detail],basis:[],action:c.action};
     if(key==='comprehensive'){
       if(state!=='private'){const p=data.sections.find(s=>s.kind==='partner');if(p)p.paragraphs=[c.answer+' '+c.detail,...(p.paragraphs||[])]}
       return data;
@@ -58,13 +58,13 @@
     const sections=data.sections.map(s=>{
       if(s.kind==='partner'&&state==='married')return {...s,question:'배우자를 이렇게 읽었어요',lead:'함께하는 배우자를 차트의 상징으로 다시 읽어 본 모습이에요. '+(s.lead||'')};
       if(s.kind==='partner'&&taken)return {...s,question:'지금 곁에 있는 사람, 차트로 다시 읽기',lead:'현재 관계 상태와 별개로, 차트가 그리는 잘 맞는 상대의 모습이에요. 지금 곁의 사람과 겹치는 점을 찾아보세요. '+(s.lead||'')};
-      if(s.kind==='meet'&&taken)return {kind:'relationship-next',question:c.next,lead:c.detail,paragraphs:[c.action,'표시된 해는 차트의 애정 흐름을 비교한 것이고, 관계 상태를 골라도 계산 점수는 바뀌지 않아요. 지금 상황에 맞춰 그 의미를 읽어 주세요.'],basis:[],action:''};
+      if(s.kind==='meet'&&taken)return {kind:'relationship-next',question:c.next,lead:'',paragraphs:[(s.paragraphs||[]).find(p=>/시기로 보면/.test(p))||'','아래 10년 흐름에서 밝게 표시된 해는 차트의 애정 흐름을 비교한 것이에요. 관계 상태를 골라도 계산 점수는 바뀌지 않으니, 이미 만나는 사람이 있다면 새 인연이 아니라 지금 관계가 한 단계 깊어지는 때로 읽어 주세요.'],basis:s.basis||[],action:c.action};
       return s;
     });
     sections.unshift(section);
     const sumOf=s=>{const seen=[];[s.lead,...(s.paragraphs||[])].filter(Boolean).join(' ').split(/(?<=[.!?])\s+/).map(x=>x.trim()).filter(Boolean).forEach(x=>{if(seen.length<3&&!seen.includes(x))seen.push(x)});return seen.join(' ')};
-    const summary=[sumOf(section),...sections.filter(s=>['core','partner','timing','relationship-next'].includes(s.kind)).slice(0,4).map(sumOf)];
-    return {...data,title:(ch.inp.name||'당신')+'님의 '+(key==='marry'?'결혼 리포트 · '+c.title:c.title+' 리포트'),relationshipContext:true,summary,sections};
+    const summary=[sumOf(section),...sections.filter(s=>['core','partner','timing'].includes(s.kind)).slice(0,3).map(sumOf)];
+    return {...data,title:(ch.inp.name||'당신')+'님의 '+(key==='marry'?'결혼 운명':'연인 운명')+' 리포트',relationshipContext:true,summary,sections};
   };
   // Restored profiles from the current API may not yet include this optional field.
   if(accountUser?.profile)$('in-relationship').value=context(CH);
