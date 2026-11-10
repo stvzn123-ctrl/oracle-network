@@ -1770,45 +1770,78 @@ function reunionCalc(a,b,res){const y0=new Date().getFullYear(),LIU=x=>(13-x)%12
  const level=score>=82?'다시 이어질 여지가 큰 흐름':score>=74?'다시 이어질 여지가 있는 흐름':score>=66?'시간과 변화가 필요한 흐름':'각자의 새 출발이 자연스러운 흐름';
  const mo=[...new Set([LIU(a.brs.d),LIU(b.brs.d)])].map(x=>brMonth(x)).sort((x,z)=>x-z);
  return {score,level,yrs,best,mo}}
-function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name||'상대',EN=['목','화','토','금','수'];
+function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name||'상대';
+ /* 2026-11-11: 재회를 바라는 사람이 읽는다는 전제로 밝은 쪽으로 읽되, 쓴소리는 근거가 있는 2가지만 분명하게. 언제·어디서·어떻게·왜·누가 먼저를 구체적으로. 점수 계산(reunionCalc·compatScore)은 그대로. */
  const all=res.sys.flatMap(o=>o.items.map(x=>[o.n,...x])),pos=all.filter(x=>x[2]>0).sort((x,y)=>y[2]-x[2]),neg=all.filter(x=>x[2]<0).sort((x,y)=>x[2]-y[2]);
- const yrs=ru.yrs,up=yrs.filter(x=>x.why.length).sort((x,z)=>z.s-x.s).slice(0,2),dn=yrs.filter(x=>x.warn.length&&!x.why.length).slice(0,2);
- const ma=sign(a.moon)%4,mb=sign(b.moon)%4,eA=SE[a.stems.d],eB=SE[b.stems.d];
+ const yrs=ru.yrs,hiS=Math.max(...yrs.map(x=>x.s)),loS=Math.min(...yrs.map(x=>x.s)),lab=x=>x.s>=hiS-1?'높음':hiS-loS>=4&&x.s<=loS+1?'낮음':'보통';
+ const up=yrs.filter(x=>lab(x)==='높음').sort((x,z)=>z.s-x.s),dn=yrs.filter(x=>lab(x)==='낮음');
+ const ma=sign(a.moon)%4,mb=sign(b.moon)%4,eA=SE[a.stems.d],eB=SE[b.stems.d],y0=new Date().getFullYear();
  const TALK=['서운함은 바로 말하고 짧게 끝내는 편','시간을 두고 차분히 이야기할 때 마음이 풀리는 편','감정을 말로 정리해 들려줄 때 오해가 풀리는 편','먼저 공감받은 뒤에야 이유를 들을 수 있는 편'];
- const FIRST=['짧고 솔직한 한 줄(“잘 지냈어? 생각나서 연락했어”)이 가장 자연스럽습니다.','부담 없는 안부와 함께, 답장을 서두르지 않아도 된다는 여유를 남겨 두세요.','함께 나눴던 관심사나 소식(책·음악·장소)으로 대화를 여는 편이 좋습니다.','지난 일에 대한 미안함이나 고마움을 먼저 짧게 전하면 마음의 문이 열리기 쉽습니다.'];
+ const FIRST=['짧고 솔직한 한 줄("잘 지냈어? 문득 생각나서 연락했어")이 가장 자연스러워요.','부담 없는 안부와 함께 "답은 천천히 해도 돼"라는 여유를 남겨 두세요.','함께 좋아했던 책·음악·장소 이야기로 대화를 여는 편이 좋아요.','지난 일에 대한 미안함이나 고마움을 먼저 한 문장으로 전하면 마음의 문이 열리기 쉬워요.'];
+ const TIME=['저녁 7~9시처럼 하루를 마친 시간','주말 낮처럼 여유 있는 시간','평일 점심 무렵처럼 가볍게 답할 수 있는 시간','밤 9시 이후 조용한 시간'];
  const sum=[0,1,2,3,4].map(i=>a.cnt[i]+b.cnt[i]),need=sum.indexOf(Math.min(...sum));
  const PLACE=['나무가 많은 공원이나 산책로','밝은 카페나 낮 시간의 열린 공간','익숙한 동네의 조용한 식당','전시장이나 서점처럼 차분한 곳','강변·호숫가처럼 물이 보이는 곳'];
  const clash=mod(a.brs.d-b.brs.d,12)===6,ctl=(eA+2)%5===eB||(eB+2)%5===eA;
+ const catNow=c=>[0,1,2,3].map(k=>D(ORC.reduce((s,fn)=>s+fn(c,{y:y0,frac:y0+.5},k)[0],0)/ORC.length));
+ const bNow=catNow(b),aLove=catNow(a)[1],focus=bNow.indexOf(Math.max(...bNow)),pbNow=yrs[0].pb;
+ const NOWP={1:'새로운 일이나 환경에 마음이 쏠려 있어 지난 관계를 돌아볼 여유는 적을 수 있어요. 대신 "새로 시작하는" 분위기라 가볍고 밝은 연락에는 오히려 열려 있어요.',2:'사람과의 연결이 그리운 시기예요. 혼자 있는 시간이 길어지면 예전 사람을 자연스럽게 떠올리기 쉬워요.',3:'밖으로 나가 사람을 만나고 즐거운 일을 찾는 시기예요. 무거운 대화보다 가벼운 안부에 잘 반응해요.',4:'일과 생활을 다잡느라 바쁜 시기예요. 감정보다 현실 문제가 먼저라, 답이 늦어도 마음이 없다는 뜻은 아니에요.',5:'변화와 자유를 원하는 시기예요. 이사·이직·여행처럼 움직임이 많아 연락 타이밍이 자주 엇갈릴 수 있어요.',6:'가정과 책임을 생각하는 시기예요. 관계를 진지하게 돌아보는 해라, 다시 이야기할 문이 열려 있어요.',7:'혼자 생각할 시간이 필요한 시기예요. 지난 일을 조용히 곱씹고 있을 가능성이 커요.',8:'일과 성과에 집중하는 시기예요. 마음은 남아 있어도 표현할 여유가 부족할 수 있어요.',9:'지난 일을 정리하는 시기예요. 감정을 정리하는 중이라, 지금 붙잡기보다 다음 해를 기다리는 편이 결과가 좋아요.'};
+ const FOCUS=['돈과 생활','사람과 마음','일과 커리어','몸과 휴식'];
+ /* 언제: 가장 좋은 해의 좋은 달(둘의 마음이 누그러지는 달) 안에서 두 사람의 애정 흐름이 함께 높은 날 2개. 오늘 이후만. */
+ const tgt=up[0]||ru.best,today=new Date();today.setHours(12,0,0,0);
+ const monthsIn=(ru.mo.length?ru.mo:[1,2,3,4,5,6,7,8,9,10,11,12]).map(m=>new Date(tgt.y,m-1,15)).filter(d=>d.getFullYear()>today.getFullYear()||d.getMonth()>=today.getMonth());
+ const scanM=monthsIn.length?monthsIn:tgt.y===today.getFullYear()?[0,1].map(k=>new Date(tgt.y,today.getMonth()+k,15)).filter(d=>d.getFullYear()===tgt.y):[new Date(tgt.y,(ru.mo[0]||3)-1,15)],cand=[];
+ scanM.slice(0,2).forEach(m=>{for(let d=1;d<=28;d++){const dt=new Date(m.getFullYear(),m.getMonth(),d,12);if(dt<=today)continue;cand.push({dt,v:dayFortune(a,dt).sc[1]+dayFortune(b,dt).sc[1]})}});
+ const days=cand.sort((x,z)=>z.v-x.v||x.dt-z.dt).reduce((o,x)=>o.length<2&&o.every(y=>Math.abs(y.dt-x.dt)>=5*864e5)?o.concat([x]):o,[]).sort((x,z)=>x.dt-z.dt),WDK='일월화수목금토',dTx=x=>x.dt.getFullYear()+'년 '+(x.dt.getMonth()+1)+'월 '+x.dt.getDate()+'일('+WDK[x.dt.getDay()]+')';
+ const lv=(c,y)=>D(ORC.reduce((s,fn)=>s+fn(c,{y,frac:y+.5},1)[0],0)/ORC.length),aT=lv(a,tgt.y),bT=lv(b,tgt.y);
+ const whyTx=x=>x.why.length?x.why.join(', '):(x.pa===x.pb?'두 사람 다 '+PYW[x.pa]+' 해':me+'님은 '+PYW[x.pa]+' 해, '+you+'님은 '+PYW[x.pb]+' 해');
  const S=[];const add=(kind,q,lead,paras,action,extra)=>S.push(Object.assign({id:'reunion-c'+(S.length+1),kind,question:q,lead,basis:[],paragraphs:paras.filter(Boolean),action:action||''},extra||{}));
- add('summary','재회 흐름 한눈에 보기',`${me}님과 ${you}님의 재회 흐름은 ${ru.score}점, ${ru.level}입니다.`,
-  [`두 사람의 기본 궁합은 ${res.total}점이고, 앞으로 3년 중 흐름이 가장 좋은 해는 ${ru.best.y}년입니다.${up.length?'':' 다만 세 해 모두 다시 이어질 결정적인 신호는 약한 편이라, 시기보다 두 사람의 마음이 더 중요합니다.'}`,
+ const level=ru.score>=82?'다시 이어질 여지가 큰 흐름':ru.score>=74?'다시 이어질 여지가 있는 흐름':ru.score>=66?'시간을 두면 다시 가까워질 수 있는 흐름':'천천히 새로 쌓아 가야 하는 흐름';
+ add('summary','재회 흐름 한눈에 보기',`${me}님과 ${you}님의 재회 흐름은 ${ru.score}점, ${level}이에요.`,
+  [`두 사람의 기본 궁합은 ${res.total}점이고, 앞으로 3년 중 다시 닿기 가장 좋은 해는 ${tgt.y}년이에요.${days.length?' 가장 좋은 날은 '+days.map(dTx).join(', ')+'이에요.':''}`,
    pos.length?`다시 끌릴 수 있는 이유: ${pos.slice(0,2).map(x=>x[3]).join(' ')}`:'',
-   ru.score<66?'지금은 억지로 관계를 되돌리기보다, 각자의 시간을 보내며 마음이 정리되는지 지켜보는 편이 자연스러운 흐름입니다.':'']);
- add('timing','다시 연락하기 좋은 시기',up.length?`${up.map(x=>x.y+'년').join('과 ')}이 다시 연락해 보기 좋은 흐름입니다.`:'앞으로 3년 안에는 뚜렷한 재연결 신호가 약합니다.',
-  up.map(x=>`${x.y}년 — ${x.why.join(', ')}입니다. ${x.pa===2||x.pb===2?'오해를 풀고 대화를 다시 여는 데 마음이 쓰이는 해입니다.':'관계를 다시 돌아볼 여유가 생기는 해입니다.'}`)
-  .concat([ru.mo.length?`한 해 안에서 고른다면 ${ru.mo.map(m=>m+'월').join('·')} 무렵이 가장 낫습니다. 두 사람 다 마음이 누그러지는 달이라, 같은 말이라도 덜 날카롭게 가 닿습니다.`:''])
-  .concat(dn.map(x=>`${x.y}년은 ${x.warn.join(', ')}라, 이 해의 연락은 서두르지 않는 편이 좋습니다.`)),
-  (()=>{if(!up.length)return '';const cm=new Date().getMonth()+1,cy=new Date().getFullYear();let y=up[0].y,m=ru.mo.find(x=>y>cy||x>cm);if(!m&&ru.mo.length){const nx=up.find(x=>x.y>cy);if(nx){y=nx.y;m=ru.mo[0]}}return m?`${y}년 ${m}월 전후에 부담 없는 안부 한 번으로 시작해 보세요.`:`${y}년 안에 부담 없는 안부 한 번으로 시작해 보세요.`})(),
-  {table:{cap:'앞으로 3년 재회 흐름',head:['해','가능성','다시 닿는 신호','조심할 것'],rows:yrs.map(x=>[x.y+'년',(up.some(u=>u.y===x.y)?'높음':dn.some(d=>d.y===x.y)?'낮음':'보통')+' · '+x.s,x.why.join(', ')||(x.pa===x.pb?'두 사람 다 '+PYW[x.pa]+' 해':me+'님은 '+PYW[x.pa]+' 해, '+you+'님은 '+PYW[x.pb]+' 해'),x.warn.join(', ')||'없음'])}});
- add('cause','헤어짐에 영향을 준 차이',neg.length?'두 사람 사이에는 부딪히기 쉬운 지점이 분명히 있었습니다.':'두 사람 사이에 큰 충돌 신호는 적어, 상황과 타이밍의 영향이 컸을 가능성이 큽니다.',
-  neg.slice(0,3).map(x=>x[3]).concat([ma===mb?`두 사람 모두 ${TALK[ma]}이라 화해 방식은 같지만, 둘이 동시에 물러서면 대화가 길게 끊기기 쉽습니다.`:`${me}님은 ${TALK[ma]}이고, ${you}님은 ${TALK[mb]}입니다. 서운함을 푸는 속도가 달라 오해가 쌓였을 수 있습니다.`,
-   clash?'같이 보내는 시간이 길어질수록 지쳤을 조합입니다. 쉬는 방식과 집을 쓰는 방식이 반대라, 특별한 사건이 없어도 피로가 쌓였을 수 있어요.':'',ctl?'중요한 결정에서 기준이 번번이 어긋났을 가능성이 큽니다. 돈, 이사, 가족 문제처럼 양보가 어려운 자리에서 "왜 저걸 이해 못 하지"가 반복됐을 거예요.':'']));
- add('change','다시 만난다면 달라져야 할 것','같은 이유로 다시 헤어지지 않으려면, 이번에는 방식을 바꾸는 것이 핵심입니다.',
-  [ma!==mb?`${me}님은 ${you}님이 ${['바로','천천히','말로','공감받으며'][mb]} 마음을 푸는 사람이라는 것을 기억해 주세요.`:'',
-   ctl?'중요한 결정은 한쪽이 정해 통보하지 말고, 각자 기준을 먼저 말한 뒤 함께 고르세요.':'작은 불만을 쌓아 두지 말고 그때그때 가볍게 꺼내는 규칙을 정하세요.',
-   clash?'함께 있는 시간만큼 각자의 시간과 공간을 존중하는 약속을 처음부터 정해 두세요.':'',
-   '다시 만나는 첫 몇 번은 지난 일을 따지기보다, 지금의 서로를 새로 알아 가는 자리로 만들어 주세요.'],
+   ru.score<66?'지금 바로 되돌리기보다, 각자 달라진 모습으로 다시 만날 때 결과가 좋은 흐름이에요. 시간은 이 관계의 편이에요.':'']);
+ add('now',`지금 ${you}님은 어떤 마음일까`,`${you}님은 ${y0}년 지금 '${PYW[pbNow]}' 해를 지나고 있어요.`,
+  [NOWP[pbNow],
+   `올해 ${you}님 마음의 무게는 ${FOCUS[focus]} 쪽에 실려 있을 가능성이 커요. `+(focus===1?'관계에 대한 생각이 많은 해라, 진심을 담은 연락에 반응할 가능성이 높아요.':'그래서 연락이 오면 감정보다 현실 이야기가 먼저 나올 수 있어요. 답이 담담해도 실망하지 마세요.'),
+   `${you}님은 ${TALK[mb]}이에요. 이 방식에 맞춰 다가가면 같은 말도 훨씬 부드럽게 닿아요.`,
+   `[수비학] ${you}님의 ${y0}년 개인년 ${pbNow}. [다섯 점술] ${you}님의 올해 흐름 금전 ${bNow[0]}·애정 ${bNow[1]}·직업 ${bNow[2]}·건강 ${bNow[3]}점.`]);
+ add('timing','다시 연락하기 좋은 시기',`${(up.length?up:[tgt]).map(x=>x.y+'년').join('과 ')}에 다시 연락해 보는 흐름이 가장 좋아요.`,
+  up.map(x=>`${x.y}년 — ${whyTx(x)}라, 오해를 풀고 대화를 다시 열기 좋은 해예요.`)
+  .concat([ru.mo.length?`한 해 안에서 고른다면 ${ru.mo.map(m=>m+'월').join('·')} 무렵이 가장 나아요. 두 사람 다 마음이 누그러지는 달이라, 같은 말이라도 덜 날카롭게 가 닿아요.`:''])
+  .concat(dn.map(x=>`${x.y}년은 ${x.warn.join(', ')||'흐름이 잔잔한 해'}라, 이 해에는 서두르지 말고 안부 정도로만 이어 가세요.`)),
+  days.length?`${dTx(days[0])}에 부담 없는 안부 한 번으로 시작해 보세요.`:`${tgt.y}년 안에 부담 없는 안부 한 번으로 시작해 보세요.`,
+  {table:{cap:'앞으로 3년 재회 흐름',head:['해','가능성','다시 닿는 신호','조심할 것'],rows:yrs.map(x=>[x.y+'년',lab(x)+' · '+x.s,whyTx(x),x.warn.join(', ')||'없음'])}});
+ add('plan','재회 시나리오: 언제·어디서·어떻게',days.length?`가장 좋은 날은 ${dTx(days[0])}이에요.`:`${tgt.y}년이 가장 좋아요.`,
+  [`언제 — ${days.length?days.map(dTx).join('이나 ')+'이 가장 좋아요. 두 사람의 애정 흐름이 함께 올라가는 날이에요.':tgt.y+'년이 가장 좋아요.'} 시간은 ${TIME[mb]}이 ${you}님이 답하기 편해요.`,
+   `어디서 — 다시 만난다면 ${PLACE[need]}이 두 사람에게 가장 편한 자리예요. 마주 앉기보다 나란히 걷는 자리가 말이 쉽게 나오고, 오래 머무르기보다 1~2시간 안에 기분 좋게 헤어지는 편이 다음 약속을 만들어요.`,
+   `어떻게 — ${FIRST[mb]} 첫 연락에서 지난 일을 따지거나 "다시 만나자"를 먼저 꺼내지 말고, 안부와 근황만 나누세요.`,
+   `왜 그때인가 — ${tgt.y}년은 ${whyTx(tgt)}라 두 사람의 마음이 가장 가까워지는 해예요.${pos.length?' 그리고 '+pos[0][3]:''}`,
+   `누가 먼저 — ${aT>=bT?`${tgt.y}년에는 ${me}님 쪽 흐름(${aT}점)이 ${you}님(${bT}점)보다 밝아, ${me}님이 먼저 다가가는 편이 자연스러워요.`:`${tgt.y}년에는 ${you}님 쪽 흐름(${bT}점)이 더 밝아, ${you}님에게서 먼저 연락이 올 수도 있어요. 그 무렵 연락 창구를 열어 두고, 먼저 보내더라도 짧게 보내세요.`}`],
+  days.length>1?`${dTx(days[0])}과 ${dTx(days[1])}을 지금 달력에 표시해 두세요.`:'');
+ add('cause','헤어짐에 영향을 준 차이',neg.length?'두 사람 사이에는 맞춰 가야 할 지점이 있었어요.':'두 사람 사이에 큰 충돌 신호는 적어, 상황과 타이밍의 영향이 컸을 가능성이 커요.',
+  [ma===mb?`두 사람 모두 ${TALK[ma]}이라 화해 방식은 같지만, 둘이 동시에 물러서면 대화가 길게 끊기기 쉬워요.`:`${me}님은 ${TALK[ma]}이고, ${you}님은 ${TALK[mb]}이에요. 서운함을 푸는 속도가 달라 오해가 쌓였을 수 있어요.`]);
+ const bitter=[clash?'같이 지내는 방식(쉬는 법, 집을 쓰는 법)이 정반대예요. 다시 만나도 이 부분을 말로 정하지 않으면 3개월 안에 같은 이유로 지칠 가능성이 커요.':'',
+  ctl?'돈·이사·가족처럼 큰 결정을 한쪽이 정해 통보하는 일이 있었다면 그게 가장 큰 상처였을 거예요. 이번에는 반드시 먼저 묻고 함께 정하세요.':'',
+  ma!==mb?`${me}님이 답을 재촉할수록 ${you}님은 더 멀어지는 조합이에요. 답장이 늦어도 같은 말을 두 번 보내지 마세요.`:'',
+  neg.length?`점술로 보면 가장 크게 부딪힌 지점은 "${neg[0][1]}"이에요. 이 부분이 그대로라면 다시 만나도 같은 장면이 반복돼요.`:''].filter(Boolean).slice(0,2);
+ add('bitter','꼭 들어야 할 쓴소리',bitter.length?'다시 만나고 싶다면 이것만큼은 바꿔야 해요.':'두 사람의 차트에서 크게 걸리는 쓴소리는 없어요.',bitter.length?bitter:['지금 필요한 건 반성보다, 달라진 지금의 모습을 자연스럽게 보여 주는 거예요.'],
   '다시 만나기 전에, 헤어질 때 가장 아쉬웠던 점 하나와 이번에 바꿀 점 하나를 적어 보세요.');
- add('contact','연락하는 방법과 만나기 좋은 곳',FIRST[mb].split('.')[0]+'.',
-  [`첫 연락: ${FIRST[mb]}`,`처음 다시 만난다면 ${J(PLACE[need],'이','가')} 두 사람에게 가장 편한 자리입니다. 마주 앉아 눈을 맞추는 자리보다 나란히 걷는 쪽이 말이 쉽게 나오고, 오래 머무는 것보다 짧게 끊고 헤어지는 편이 다음을 만듭니다.`,
-   '답이 늦거나 짧다면 바로 다시 연락하지 말고, 상대가 대화를 이어 갈 여유를 남겨 두세요.']);
- add('letgo','마음을 정리하는 게 나은 신호','아래 신호가 겹친다면 재회보다 각자의 길을 응원하는 편이 서로에게 좋습니다.',
-  ['상대가 연락을 원하지 않는다고 분명히 말했거나 답이 없다면, 그 뜻을 존중하는 것이 가장 우선입니다.',
-   dn.length?`${dn.map(x=>x.y+'년').join('·')}처럼 정리와 새 출발의 기운이 강한 해에는 관계를 붙잡기보다 나를 돌보는 데 힘을 쓰는 편이 좋습니다.`:'',
-   ru.score<70?`재회 흐름 점수가 ${ru.score}점으로 높지 않아, 이번 인연에서 배운 점을 다음 관계에 가져가는 것도 좋은 선택입니다.`:'']);
- add('table','점술별 궁합 한눈에 보기','다섯 점술의 기본 궁합 점수입니다.',[],'',{table:{cap:'점술별 궁합(기본 70점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
- add('limit','해석의 범위','재회 리포트는 두 사람의 출생 차트만 읽습니다.',['이 리포트는 상대방의 현재 마음이나 의사를 알 수 없습니다. 관계를 다시 시작할지는 두 사람의 실제 대화와 선택으로 정해집니다.',b.inp.notime||b.inp.place?.none?'상대의 출생 시각·출생지가 없는 항목은 참고값으로 계산했습니다.':'','점수와 시기는 전통 규칙을 수치로 옮긴 참고 지표입니다.']);
- return {title:`${me}님과 ${you}님의 재회 리포트`,summary:[S[0].lead,S[1].lead,S[3].lead,S[4].lead],sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'',birthCharts:[a,b],version:'match-reunion-2026-11-07',body:''}}
+ add('contact','연락이 이어진 다음','답이 오면 두 번째 만남까지는 가볍게 이어 가세요.',
+  [ctl?'중요한 결정은 한쪽이 정해 통보하지 말고, 각자 기준을 먼저 말한 뒤 함께 고르세요.':'작은 불만을 쌓아 두지 말고 그때그때 가볍게 꺼내는 규칙을 정하세요.',
+   clash?'함께 있는 시간만큼 각자의 시간과 공간을 존중하는 약속을 처음부터 정해 두세요.':'',
+   '다시 만나는 첫 세 번은 지난 일을 따지기보다, 지금의 서로를 새로 알아 가는 자리로 만들어 주세요.',
+   '답이 늦거나 짧다면 바로 다시 연락하지 말고, 일주일쯤 여유를 둔 뒤 다른 주제로 한 번 더 건네 보세요.']);
+ const nextY=(up.find(x=>x.y>y0)||{y:tgt.y+1}).y;
+ add('letgo','잠시 멈추고 나를 챙겨야 할 신호','이런 신호가 보이면 붙잡기보다 한 템포 쉬어 갈 때예요. 멈춤이 끝은 아니에요.',
+  [dn.length?`${dn.map(x=>x.y+'년').join('·')}은 흐름이 잔잔한 해예요. 이 해에 두 번 연락했는데 두 번 다 사흘 넘게 답이 없다면, 그해는 쉬어 가고 ${nextY}년을 다시 노려 보세요.`:'',
+   [9,1].includes(pbNow)?`${you}님이 ${y0}년 '${PYW[pbNow]}' 해라, 지금 새 사람이나 새 일에 마음이 가 있다면 억지로 끌어당기기보다 ${y0+1}년을 기다리는 편이 결과가 좋아요.`:'',
+   clash?'다시 만나 한 달 안에 예전과 같은 주제(생활 방식)로 다툼이 반복되면, 방식을 바꾸지 않는 한 결과도 같다는 신호예요.':'',
+   `연락이 닿았는데 대화가 지난 일 따지기로만 흐르고 지금 이야기가 나오지 않는다면, 아직 때가 아니라는 뜻이에요. 그럴 땐 ${nextY}년 ${ru.mo[0]||3}월 무렵 다시 가볍게 안부를 건네 보세요.`,
+   aLove<70?`${me}님의 올해 애정 흐름(${aLove}점)이 잔잔한 편이라, 지금은 나를 단단히 하는 시간이 재회 가능성을 오히려 키워요.`:'']);
+ add('table','점술별 궁합 한눈에 보기','다섯 점술의 기본 궁합 점수예요.',[],'',{table:{cap:'점술별 궁합(기본 70점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
+ add('limit','해석의 범위','재회 리포트는 두 사람의 출생 차트만 읽어요.',['상대의 지금 마음은 출생 차트와 그해 흐름으로 추측한 것이에요. 실제 마음과 다를 수 있고, 관계를 다시 시작할지는 두 사람의 대화와 선택으로 정해져요.',b.inp.notime||b.inp.place?.none?'상대의 출생 시각·출생지가 없는 항목은 참고값으로 계산했어요.':'','점수와 날짜는 전통 규칙을 수치로 옮긴 재미용 참고 지표예요.']);
+ const L=k=>(S.find(s=>s.kind===k)||{}).lead;
+ return {title:`${me}님과 ${you}님의 재회 리포트`,summary:[L('summary'),L('now'),L('timing'),L('plan'),L('bitter')].filter(Boolean),sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.',birthCharts:[a,b],version:'match-reunion-2026-11-11',body:''}}
 async function openCompatReport(btn,requestedKey=null){if(!requireSavedProfile())return;if(!COMPAT||!CH||(requestedKey&&requestedKey!==(COMPAT.mode==='reunion'?'reunion':'match'))){alert('상대방 정보를 입력하고 먼저 결과를 확인해 주세요.');return}const key=COMPAT.mode==='reunion'?'reunion':'match';const show=()=>{reportReturnFocus=btn;$('reportBody').innerHTML=approvedReportHTML(key==='reunion'?reunionReportData(CH,COMPAT.b,COMPAT.res,COMPAT.ru):(COMPAT.kind==='friend'?friendify(compatReportData(CH,COMPAT.b,COMPAT.res)):compatReportData(CH,COMPAT.b,COMPAT.res)),key,CH);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true})};
  if(accountUser?.isAdmin)return show();if(!accountUser)return needLogin();
  try{const ac=await accountAPI('/access');if(ac.isAdmin||ac.reports.includes(key)||ac.reports.includes('all'))return show()}catch(_){}showLaunchReport(key,{me:CH.inp,partner:COMPAT.b.inp,kind:COMPAT.kind},btn,show)}
@@ -2327,20 +2360,20 @@ function approvedReportHTML(data,key,sourceChart=null){
  /* 2026-11-10: '나의 운명 캐릭터·행운의 색' 재미 분류(fun)는 모든 리포트에서 뺐다. */
  let bodies=null;const charts={west:()=>{bodies=bodies||birthBodies(ch);return birthWest(ch,bodies)},vedic:()=>{bodies=bodies||birthBodies(ch);return birthVedic(ch,bodies)},numbers:()=>birthNumerology(ch),maya:()=>birthMaya(ch)};
  const chartHTML=k=>{if(!ch||!charts[k])return '';try{return '<div class="birth-atlas rv3-chart">'+charts[k]()+'</div>'}catch(e){return ''}};
- const dataTableHTML=t=>t&&Array.isArray(t.rows)&&t.rows.length?'<div class="rv3-tw"><table class="rv3-table"><caption>'+E(t.cap||'')+'</caption><thead><tr>'+t.head.map(h=>'<th scope="col">'+E(h)+'</th>').join('')+'</tr></thead><tbody>'+t.rows.map(r=>'<tr>'+r.map((c,i)=>i?'<td>'+E(c)+'</td>':'<th scope="row">'+E(c)+'</th>').join('')+'</tr>').join('')+'</tbody></table></div>':'';
- const tableHTML=t=>{const chart=annualScoreChart(t);return chart?chart+'<details class="annual-values"><summary>연도별 수치와 읽는 법</summary>'+dataTableHTML(t)+'</details>':dataTableHTML(t)};
+ const dataTableHTML=t=>t&&Array.isArray(t.rows)&&t.rows.length?'<div class="rv3-tw"><table class="rv3-table"><caption>'+E(t.cap||'')+'</caption><thead><tr>'+t.head.map(h=>'<th scope="col">'+E(h)+'</th>').join('')+'</tr></thead><tbody>'+t.rows.map(r=>'<tr>'+r.map((c,i)=>i?'<td'+(String(c).length<=9?' class="nw"':'')+'>'+E(c)+'</td>':'<th scope="row">'+E(c)+'</th>').join('')+'</tr>').join('')+'</tbody></table></div>':'';
+ const tableHTML=t=>{const chart=annualScoreChart(t);if(!chart)return dataTableHTML(t);/* 2026-11-11: 그래프 아래 숫자 표 대신 분야마다 좋은 해·조심할 해 한 줄 */const num=v=>parseFloat(String(v)),yr=r=>String(r[0]).match(/\d{4}/)[0];const lines=(t.head||[]).map((h,i)=>{if(!i||!t.rows.every(r=>!isNaN(num(r[i]))))return '';const v=t.rows.map(r=>num(r[i])),hi=t.rows[v.indexOf(Math.max(...v))],lo=t.rows[v.indexOf(Math.min(...v))];return '<li><b>'+E(h==='점수'?'흐름':h)+'</b> 좋은 해 '+yr(hi)+'년 · 조심할 해 '+yr(lo)+'년</li>'}).join('');return chart+(lines?'<ul class="rv3-yearnote">'+lines+'</ul>':'')};
   const barsHTML=b=>b&&Array.isArray(b.items)?'<figure class="rv3-bars"><figcaption>'+E(b.cap||'')+'</figcaption>'+b.items.map(x=>'<div><span>'+E(x.label)+'</span><i><b style="width:'+Math.round(100*Number(x.value)/Math.max(1,Number(x.max)||1))+'%"></b></i><em>'+Number(x.value)+'</em></div>').join('')+'</figure>':'';
  const lineHTML=l=>{if(!l||!Array.isArray(l.values))return '';const W=340,H=170,L=28,Rr=10,T=18,B=24,v=l.values,mn=Math.min(...v)-3,mx=Math.max(...v)+3,x=i=>L+(W-L-Rr)*i/(v.length-1),y=n=>T+(mx-n)/Math.max(6,mx-mn)*(H-T-B);let g='';[mn,(mn+mx)/2,mx].forEach(n=>{g+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+y(n)+'" y2="'+y(n)+'" stroke="rgba(168,123,54,.25)"/>'});g+='<path d="'+v.map((n,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(n).toFixed(1)).join(' ')+'" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linejoin="round"/>';v.forEach((n,i)=>{const h=(l.hi||[]).includes(i),o=(l.lo||[]).includes(i);g+='<circle cx="'+x(i)+'" cy="'+y(n)+'" r="'+(h||o?5:3)+'" fill="'+(h?'#b04a6c':o?'#6f7584':'var(--gold)')+'"/>'+(h||o?'<text x="'+x(i)+'" y="'+(y(n)-9)+'" text-anchor="middle" font-size="10" fill="'+(h?'#b04a6c':'#6f7584')+'">'+(h?'가까움':'느슨')+'</text>':'')+'<text x="'+x(i)+'" y="'+(H-6)+'" text-anchor="middle" font-size="10" fill="#8a8174">'+E(l.labels[i])+'</text>'});return '<figure class="rv3-line"><figcaption>'+E(l.cap||'')+'</figcaption><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+E(l.cap||'')+'">'+g+'</svg></figure>'};
  const faceHTML=()=>{if(!ch||!['love','marry','comprehensive'].includes(key))return null;try{const f=spouseFaceProfile(ch);return '<figure class="rv3-face"><img loading="lazy" decoding="async" src="'+f.full+'" width="240" height="300" alt="차트의 상징으로 그린 참고용 인물 일러스트" loading="lazy" decoding="async"><figcaption>차트의 상징으로 그린 참고 일러스트예요</figcaption></figure>'}catch(e){return null}};
  const interpretationHTML=(p,cls='')=>'<p'+(cls?' class="'+cls+'"':'')+'><span class="reading-meaning">'+destinyMeaningHTML(readingParts(p).main)+'</span></p>';
- const paraHTML=s=>{const paras=(s.paragraphs||[s.answer]).filter(Boolean),meaning=paras.filter(p=>readingParts(p).main),evidence=paras.filter(p=>!readingParts(p).main);/* 2026-11-10 G8: 문단이 5개 이상이면 앞 3개만 펼치고 나머지는 접는다(인쇄 때는 printReport가 모두 펼친다). */const html=meaning.map(p=>interpretationHTML(p));return html.length>4?html.slice(0,3).join('')+'<details class="rv3-more"><summary>이어서 읽기 ('+(html.length-3)+'문단)</summary>'+html.slice(3).join('')+'</details>':html.join('')};
+ const paraHTML=s=>{const paras=(s.paragraphs||[s.answer]).filter(Boolean),meaning=paras.filter(p=>readingParts(p).main),evidence=paras.filter(p=>!readingParts(p).main);/* 2026-11-10 G8: 문단이 5개 이상이면 앞 3개만 펼치고 나머지는 접는다(인쇄 때는 printReport가 모두 펼친다). */return meaning.map(p=>interpretationHTML(p)).join('')};
  /* 마스코트는 리포트 한 권 안에서 같은 포즈를 두 번 쓰지 않는다. 표지 포즈를 먼저 쓴 것으로 치고, 인물 일러스트가 있는 장에는 넣지 않는다. */
  const usedPoses=new Set([reportPose]),POSE_POOL=['lucky','happy','note','money','heart','rest','care','detective'];
  const chapterPose=(s,i)=>{if(i%3!==0||s.kind==='partner'||(s.kind==='partner-detail'))return '';const want=/건강|휴식/.test(s.question)?'rest':/주의|조심/.test(s.question)?'care':/돈|재물|투자|사업/.test(s.question)?'money':/사랑|인연|결혼|연애/.test(s.question)?'heart':/공부|학업|시험|계산|방법/.test(s.question)?'note':'lucky';const pick=[want,...POSE_POOL].find(p=>!usedPoses.has(p));if(!pick)return '';usedPoses.add(pick);return mascotPoseHTML(pick,'report-chapter-pose')};
  const chapter=(s,i)=>{
   const face=s.kind==='partner'?faceHTML():null;
   const body=(["love","marry"].includes(key)&&s.kind==='meet'&&ch?encounterHTML(ch):paraHTML(s))+lineHTML(s.line)+tableHTML(s.table)+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
-  return '<section class="r-page rv3-ch" id="chapter-'+i+'"><header class="rv3-hd"><span class="rv3-no">'+(v3?'CHAPTER '+n2(i):(i+1)+'장')+'</span><h2>'+E(s.question)+'</h2></header>'+((s.basis||[]).some(Boolean)?'<p class="rv3-basis" aria-label="이 장의 계산 근거">'+s.basis.filter(Boolean).map(b=>'<span>'+E(b)+'</span>').join('')+'</p>':'')+chapterPose(s,i)+
+  return '<section class="r-page rv3-ch" id="chapter-'+i+'"><header class="rv3-hd"><span class="rv3-no">'+(v3?'CHAPTER '+n2(i):(i+1)+'장')+'</span><h2>'+E(s.question)+'</h2></header>'+((s.basis||[]).filter(b=>b&&!/^\d{4}년 .*\d+점$/.test(b)).length?'<p class="rv3-basis" aria-label="이 장의 계산 근거">'+s.basis.filter(b=>b&&!/^\d{4}년 .*\d+점$/.test(b)).slice(0,4).map(b=>'<span>'+E(b)+'</span>').join('')+'</p>':'')+chapterPose(s,i)+
    (s.lead&&readingParts(s.lead).main&&!(ch&&['love','marry'].includes(key)&&['meet','partner'].includes(s.kind))?interpretationHTML(s.lead,'rv3-lead'):'')+
 
    (face?'<div class="rv3-profile">'+face+'<div class="rv3-profile-tx">'+(ch?partnerProfileHTML(ch,key):'')+'</div></div>'+'<div class="partner-reading">'+body+'</div>'+(ch?partnerProfileHTML(ch,key,'rest'):''):body)+
@@ -3306,19 +3339,25 @@ function buildRichReport(ch,key){
   const t0=new Date();t0.setHours(12,0,0,0);const days=[];
   for(let i=1;i<=365;i++){const dt=new Date(t0);dt.setDate(t0.getDate()+i);const f=dayFortune(ch,dt);days.push({f,v:comp?f.all:f.sc[ci]})}
   const dTx=x=>x.f.m+'월 '+x.f.d+'일('+x.f.wd+')',good=days.slice(0,90).map((x,i)=>({...x,i})).sort((a,b)=>b.v-a.v||a.i-b.i).slice(0,5).sort((a,b)=>a.i-b.i);
-  const ACT=[['이번 달 수입과 지출을 한 장에 적고, 미뤄 둔 돈 문제 하나를 정리해 보세요.','고정 지출 하나를 줄이고, 큰 지출은 다음 달로 미뤄 보세요.'],
-   ['마음이 가는 사람에게 먼저 안부를 건네 보세요.','서운한 일은 쌓아 두지 말고 짧게 이야기해 보세요.'],
-   ['미뤄 둔 지원서·제안서 하나를 이번 달 안에 보내 보세요.','새 일을 벌이기보다 하던 일의 마무리를 챙겨 보세요.'],
-   ['일주일에 세 번, 20분 걷는 약속을 달력에 넣어 보세요.','잠드는 시간을 30분 앞당기는 것부터 시작해 보세요.']];
+  /* 2026-11-11: 달마다 할 일이 겹치지 않게 분야 × 밝음/잔잔함마다 6개씩 두고 차례로 고른다(시작 위치는 일간으로 사람마다 다르게). */
+  const ACTP=[[['이번 달 수입과 지출을 한 장에 적고, 미뤄 둔 돈 문제 하나를 정리해 보세요.','월급날 자동이체 저축액을 1만 원이라도 올려 보세요.','관심 있던 부업이나 판매 아이디어 하나를 작게 시험해 보세요.','연봉·단가 협상에 쓸 내 성과를 숫자 세 줄로 정리해 보세요.','적금이나 연금 상품 하나를 골라 조건을 비교해 보세요.','미뤄 둔 중고 판매나 환급 신청을 이번 달에 끝내 보세요.'],
+    ['고정 지출 하나를 줄이고, 큰 지출은 다음 달로 미뤄 보세요.','구독 서비스를 훑어보고 안 쓰는 것 하나를 해지해 보세요.','카드 한 장만 남기고 나머지는 이번 달 서랍에 넣어 두세요.','받을 돈과 갚을 돈을 목록으로 적고 한 건만 정리해 보세요.','장바구니에 담은 물건은 사흘 뒤에 다시 보고 사세요.','비상금 통장을 따로 만들고 이번 달 남은 돈을 옮겨 보세요.']],
+   [['마음이 가는 사람에게 먼저 안부를 건네 보세요.','소개나 모임 제안이 오면 이번 달만큼은 "좋아요"라고 답해 보세요.','연인이나 친구와 처음 가 보는 동네로 반나절 나들이를 가 보세요.','고마웠던 사람에게 짧은 손편지나 메시지를 보내 보세요.','새 취미 모임이나 원데이 클래스에 한 번 참여해 보세요.','함께 찍은 사진 한 장을 골라 상대에게 보내 보세요.'],
+    ['서운한 일은 쌓아 두지 말고 짧게 이야기해 보세요.','연락이 뜸한 관계는 재촉하지 말고 한 주 기다려 보세요.','혼자 보내는 저녁을 하루 정해 내 마음을 정리해 보세요.','다툼이 생기면 결론보다 "그때 내 기분"을 먼저 말해 보세요.','SNS를 덜 보고, 만나는 사람에게 더 집중해 보세요.','오래된 친구 한 명과 편한 식사 약속을 잡아 보세요.']],
+   [['미뤄 둔 지원서·제안서 하나를 이번 달 안에 보내 보세요.','회의에서 내 아이디어 하나를 먼저 꺼내 보세요.','관심 분야 사람 한 명에게 커피 한 잔을 청해 보세요.','이력서와 포트폴리오를 최근 성과로 고쳐 두세요.','새 자격증이나 강의 하나를 등록하고 시작일을 정해 보세요.','맡고 싶은 업무를 상사나 동료에게 한 문장으로 말해 보세요.'],
+    ['새 일을 벌이기보다 하던 일의 마무리를 챙겨 보세요.','할 일 목록에서 안 해도 되는 일 하나를 빼 보세요.','책상과 파일 폴더를 정리해 다음 달을 가볍게 시작해 보세요.','지난 석 달 동안 배운 것을 한 쪽에 정리해 보세요.','야근을 한 번 줄이고 그 시간을 잠에 써 보세요.','도움을 준 동료에게 고맙다고 한마디 건네 보세요.']],
+   [['일주일에 세 번, 20분 걷는 약속을 달력에 넣어 보세요.','미뤄 둔 건강검진이나 치과 예약을 이번 달에 잡아 보세요.','수영·요가·등산 중 하나를 한 번 체험해 보세요.','물을 하루 여섯 잔 마시는 것을 2주만 지켜 보세요.','주말 아침 한 번은 해 뜰 무렵 산책해 보세요.','하루 한 번 계단 오르기를 습관으로 만들어 보세요.'],
+    ['잠드는 시간을 30분 앞당기는 것부터 시작해 보세요.','잠들기 한 시간 전에는 휴대폰을 멀리 두어 보세요.','카페인은 오후 2시 이후로 줄여 보세요.','몸이 무거운 날은 쉬는 것도 계획이라 생각하고 하루 비워 두세요.','저녁에 10분 스트레칭이나 반신욕을 해 보세요.','과식한 다음 날은 한 끼를 가볍게 먹어 보세요.']]];
+  const actPtr={},pickAct=(c,u)=>{const k=c*2+(u?0:1);actPtr[k]=actPtr[k]??(d%6);return ACTP[c][u?0:1][actPtr[k]++%6]};
   const mAll=days.reduce((a,x)=>a+x.v,0)/days.length,MO=[];days.forEach(x=>{const k=x.f.y*12+x.f.m;let m=MO.find(o=>o.k===k);if(!m)MO.push(m={k,y:x.f.y,m:x.f.m,list:[]});m.list.push(x)});
-  const months=MO.slice(0,12).map(o=>{const av=o.list.reduce((a,x)=>a+x.v,0)/o.list.length,cs=[0,1,2,3].map(c=>o.list.reduce((a,x)=>a+x.f.sc[c],0)),c=comp?cs.indexOf(Math.max(...cs)):ci,b=o.list.reduce((a,x)=>x.v>a.v?x:a);return {...o,av,c,b,up:av>=mAll}});
+  const months=MO.slice(0,12).map(o=>{const av=o.list.reduce((a,x)=>a+x.v,0)/o.list.length,cs=[0,1,2,3].map(c=>o.list.reduce((a,x)=>a+x.f.sc[c],0)),c=comp?cs.indexOf(Math.max(...cs)):ci,b=o.list.reduce((a,x)=>x.v>a.v?x:a);return {...o,av,c,b,up:av>=mAll}});months.forEach(o=>o.act=pickAct(o.c,o.up));
   const mHi=months.reduce((a,b)=>b.av>a.av?b:a),mLo=months.reduce((a,b)=>b.av<a.av?b:a);
   put('calendar','앞으로 12개월 실천 달력',mHi.y+'년 '+mHi.m+'월이 가장 밝고, '+mLo.y+'년 '+mLo.m+'월은 쉬어 가기 좋은 달이에요.',['날마다 다섯 점술 점수의 달 평균','발행일 기준 계산'],
    ['가까운 90일 중 '+(comp?'흐름':CN[ci]+' 흐름')+'이 가장 좋은 날 다섯 번이에요. '+good.map(x=>dTx(x)+' '+x.v+'점').join(', ')+'.',
     '아래 표는 달마다 가장 좋은 날과 그달에 해 볼 일 한 가지예요. 밝은 달에는 시작하는 일을, 잔잔한 달에는 정리하는 일을 골랐어요.',
     '날짜 점수는 이 리포트를 발행한 날을 기준으로 계산했어요. 재미로 참고하고, 중요한 일정은 실제 상황에 맞춰 정해 주세요.'],
    '좋은 날 다섯 번('+good.map(dTx).join(', ')+')을 지금 휴대폰 달력에 넣어 두세요.',
-   {table:{cap:'앞으로 12개월 실천 달력',head:['달','좋은 날','이번 달 해 볼 일'],rows:months.map(o=>[o.y+'년 '+o.m+'월 · '+(o.up?'밝음':'잔잔함'),dTx(o.b),ACT[o.c][o.up?0:1]])}});
+   {table:{cap:'앞으로 12개월 실천 달력',head:['달','좋은 날','이번 달 해 볼 일'],rows:months.map((o,i)=>[(i===0||o.m===1?o.y+'년 ':'')+o.m+'월 · '+(o.up?'밝음':'잔잔'),o.b.f.d+'일('+o.b.f.wd+')',o.act])}});
   /* 2026-11-10 G3: 모두에게 같던 마무리 장·실천·재회 성찰을 나이대·신강/신약·오행·금성·십성과 달력 날짜로 조립한다. */
   const nm3=ch.inp.name||'당신',F3=t=>t.replace(/\{name\}/g,nm3),ac=key==='comprehensive'?3:ci,ka=kage(y0),band=ka<30?0:ka<45?1:ka<60?2:3,tg3=ng.indexOf(Math.max(...ng));
   const AGE=[['지금 시기의 돈은 크기보다 습관이 먼저예요. 지금 만든 저축 습관 하나가 몇 년 뒤의 선택지를 넓혀 줘요.','지금은 여러 사람을 만나며 나에게 맞는 사람을 알아 가는 시기예요. 서두르지 않아도 괜찮아요.','지금은 한 우물보다 여러 경험이 자산이 되는 시기예요. 해 본 일의 목록이 다음 기회의 지도가 돼요.','지금의 {name}님에게는 많이 시도해 보는 것 자체가 운을 키우는 일이에요.'],
@@ -3330,7 +3369,7 @@ function buildRichReport(ch,key){
   const CLOSE=['나무가 해마다 한 겹씩 나이테를 늘리듯, {name}님의 운도 꾸준히 자라요. 이 리포트가 그 길에 작은 이정표가 되면 좋겠어요.','{name}님이 가진 밝음은 주변까지 데우는 힘이에요. 이 리포트가 그 빛을 어디에 쓸지 고르는 데 도움이 되면 좋겠어요.','천천히 쌓은 것이 결국 오래 남는다는 걸 {name}님은 이미 알고 있어요. 이 리포트가 그 걸음에 든든한 지도가 되면 좋겠어요.','분명한 기준을 가진 {name}님에게 이 리포트가 언제 나아가고 언제 쉴지 정하는 작은 기준표가 되면 좋겠어요.','깊이 읽어 내는 {name}님이라면 이 리포트의 숫자 너머에 있는 흐름도 금방 알아챌 거예요. 그 흐름을 편안하게 타 보세요.'];
   const nb=months.find(o=>o.up)||mHi,nbD=dTx(nb.b),catTx=['돈','관계','일','새로운'][ac];
   S.filter(s=>s.kind==='advice').forEach(s=>{s.paragraphs=[F3(AGE[band][ac]),F3(STR[ch.strong?1:0][ac]),'가장 가까운 밝은 달은 '+nb.y+'년 '+nb.m+'월이고, 그달 가장 좋은 날은 '+nbD+'이에요. 그날을 '+catTx+' 일의 첫 단추를 끼우는 날로 써 보세요.',F3(CLOSE[maxEl])];
-   s.action=nbD+'을 달력에 표시해 두고, 그날 할 일로 "'+ACT[nb.c][0].replace(/\.$/,'')+'"를 적어 두세요.'});
+   s.action=nbD+'을 달력에 표시해 두고, 그날 할 일로 "'+nb.act.replace(/\.$/,'')+'"를 적어 두세요.'});
   if(key==='comprehensive'){const P=S.find(s=>s.kind==='partner'),C=S.find(s=>s.kind==='career');
    if(P)P.action=['이번 달에 둘이 가 본 적 없는 곳(처음 가는 동네나 공연)에 함께 가 보세요. 혼자라면 새로 시작하는 모임에 한 번 나가 보세요.','이번 달 한 번은 집밥이나 산책처럼 편안한 시간을 함께 보내 보세요. 혼자라면 오래 다닐 수 있는 취미 모임을 하나 골라 보세요.','이번 주에 대화 주제 하나를 정해 30분 이야기해 보세요. 혼자라면 강연이나 독서 모임처럼 말이 오가는 자리에 나가 보세요.','이번 달에 고마웠던 순간 하나를 짧은 편지로 건네 보세요. 혼자라면 마음이 편한 사람과의 약속을 하나 잡아 보세요.'][pl.venus%4];
    if(C)C.action=['혼자 끝낸 일 중 가장 잘한 것 세 가지를 적어 두세요. 내 영역을 맡을 때 그대로 소개 자료가 돼요.','지금 만든 결과물 하나를 사진이나 글로 남겨 포트폴리오 폴더를 시작해 보세요.','지난 1년 동안 만든 성과를 숫자(매출·절약·인원)로 세 줄 적어 두세요.','지금 맡은 역할과 책임을 한 줄로 정리하고, 다음에 맡고 싶은 역할도 한 줄 적어 보세요.','이번 달에 배울 것 하나를 정하고, 끝내는 날짜를 달력에 적어 두세요.'][tg3]}

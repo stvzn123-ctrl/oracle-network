@@ -2049,3 +2049,12 @@ body.show-topics .topic-fold{display:block}
 #report .rv3-more{margin:0 0 var(--rs-3,16px)}
 #report .rv3-more>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:14px;font-weight:600;color:var(--gold-ink,#8A5A1E)}
 @media print{#report .rv3-more>summary{display:none}}
+/* 2026-11-11: 표는 내용 길이에 맞춰 열 폭을 정하고(짧은 열은 좁게, 글이 긴 열은 넓게), 마스코트 그림 옆으로 표가 좁아지지 않게 한다. */
+#report .rv3-tw{clear:both}
+#report .r-page .rv3-tw .rv3-table{table-layout:auto}
+#report .r-page .rv3-tw .rv3-table td{min-width:4.5em}
+#report .r-page .rv3-tw .rv3-table tbody th{white-space:nowrap;width:1%}
+#report .r-page .rv3-tw .rv3-table td:last-child{width:auto;min-width:9em}
+#report .rv3-yearnote{list-style:none;margin:8px 0 var(--rs-3,16px);padding:0;font-size:14px;line-height:1.7}
+#report .rv3-yearnote b{display:inline-block;min-width:5.5em;color:var(--gold-ink,#8A5A1E)}
+#report .r-page .rv3-tw .rv3-table td.nw{white-space:nowrap;width:1%;min-width:0}
