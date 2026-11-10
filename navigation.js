@@ -67,7 +67,7 @@
    e.preventDefault();e.stopImmediatePropagation();document.body.classList.remove('nav-topics');document.getElementById('askbox').open=true;select('home');document.getElementById('err').textContent='생년월일 등 출생 정보를 입력하면 선택한 주제의 운세를 볼 수 있어요.';document.getElementById('in-name').focus();
   }
  },true);
- document.addEventListener('click',e=>{if(e.target.closest('[data-complete-profile]'))document.getElementById('profileEdit').click()});
+ document.addEventListener('click',e=>{if(e.target.closest('[data-complete-profile]'))document.getElementById('profileEdit').click();if(e.target.closest('[data-open-account]')){const b=nav.querySelector('[data-bottom="account"]');if(b)b.click()}});
  document.getElementById('profileDeleteDialog').addEventListener('close',()=>{if(!document.getElementById('savedRecordsPanel').hidden)showSavedRecords()});
  new MutationObserver(()=>{if(document.body.classList.contains('nav-edit')){if(!askbox.open)leaveEditor();select('account')}}).observe(askbox,{attributes:true,attributeFilter:['open']});
  document.getElementById('profileEdit').addEventListener('click',()=>{

@@ -16,8 +16,7 @@
  function scope(key){return catalog[aliases[key]||key]||catalog.comprehensive}
  function scopeHTML(key){const c=scope(key);return '<section class="product-scope"><h4>'+E(c.question)+'</h4><dl><dt>무료로 먼저 확인</dt><dd>'+E(c.free)+'</dd><dt>리포트에서 더 읽기</dt><dd>'+E(c.detail)+'</dd></dl><p>'+E(c.limit)+'</p></section>'}
  function compareHTML(){return '<details class="product-compare"><summary>종합·주제별·자유질문은 어떻게 다른가요?</summary><div class="product-table"><table><thead><tr><th>상품</th><th>답해 주는 질문과 범위</th><th>정상가</th></tr></thead><tbody>'+[['comprehensive',COMPREHENSIVE_REPORT_PRICE],['marry',TOPIC_REPORT_PRICE],['money',TOPIC_REPORT_PRICE],['work',TOPIC_REPORT_PRICE],['study',TOPIC_REPORT_PRICE],['match',TOPIC_REPORT_PRICE],['reunion',TOPIC_REPORT_PRICE],['group',TOPIC_REPORT_PRICE],['ask',FREE_QUESTION_PRICE]].map(([key,price])=>'<tr><th>'+catalog[key].name+'</th><td>'+catalog[key].question+'<br><small>'+catalog[key].detail+'</small></td><td>'+price.toLocaleString()+'원</td></tr>').join('')+'</tbody></table></div><p>종합과 주제별 리포트는 같은 차트를 사용해 일부 설명이 겹칠 수 있어요. 종합은 전체 방향, 주제별은 선택한 고민에 집중해요. 출시 기념 상품별 첫 1회는 무료예요.</p></details>'}
- const originalOffer=topicReportHTML;
- topicReportHTML=function(key){return scopeHTML(key)+originalOffer(key)};
+ /* 주제별 안내(scopeHTML)는 리포트 안내 문서로 옮겼고 결과 화면에는 붙이지 않는다. */
  // Short complete answers remain free; the offer names the added depth explicitly.
  function trimPreview(html,key){
   const template=document.createElement('template');template.innerHTML=html;
@@ -57,8 +56,27 @@
  $('landingStart').addEventListener('click',()=>{if(CH&&pending)route(takeGoal())});
  const originalRun=run;
  run=function(value,animate){originalRun(value,animate);if(pending)route(takeGoal())};
- const reportCTA=document.querySelector('.comprehensive-price');
- reportCTA.insertAdjacentHTML('beforebegin','<div class="report-value"><h4>짧은 결과에서 한 걸음 더</h4><p>결과 화면은 핵심 답을, 종합 리포트는 성향의 해석·분야별 흐름·전환점·실천 방법을 연결해 보여줘요.</p></div>'+scopeHTML('comprehensive')+compareHTML());
+/* 2026-11-10: 상품 설명·비교표는 메인에서 빼고 '내 정보 > 안내와 약관 > 리포트 안내'(policy-products)에 모은다. */
+ function productsGuideHTML(){
+  const rows=[['comprehensive',COMPREHENSIVE_REPORT_PRICE],['marry',TOPIC_REPORT_PRICE],['money',TOPIC_REPORT_PRICE],['work',TOPIC_REPORT_PRICE],['study',TOPIC_REPORT_PRICE],['match',TOPIC_REPORT_PRICE],['reunion',TOPIC_REPORT_PRICE],['group',TOPIC_REPORT_PRICE],['ask',FREE_QUESTION_PRICE]];
+  return '<p>운명탐정의 리포트는 모두 같은 출생 차트(사주·서양 점성술·인도 점성술·수비학·마야력)를 바탕으로 쓰여요. <b>종합</b>은 나 전체를 넓게, <b>주제별</b>은 고른 고민 하나를 깊게, <b>자유질문</b>은 내가 적은 상황을 사람이 검토해 이메일로 답해 드려요.</p>'
+   +'<h3>한눈에 비교</h3><div class="product-table"><table><thead><tr><th>상품</th><th>답해 주는 질문</th><th>정상가</th></tr></thead><tbody>'+rows.map(([key,price])=>'<tr><th>'+E(catalog[key].name)+'</th><td>'+E(catalog[key].question)+'</td><td>'+price.toLocaleString()+'원</td></tr>').join('')+'</tbody></table></div>'
+   +'<p>출시 기념으로 상품별 첫 1회는 무료예요. 같은 입력의 리포트는 다시 열어 볼 수 있어요.</p>'
+   +rows.map(([key])=>{const c=catalog[key];return '<h3>'+E(c.name)+'</h3><dl class="product-dl"><dt>무료로 먼저 확인</dt><dd>'+E(c.free)+'</dd><dt>리포트에서 더 읽기</dt><dd>'+E(c.detail)+'</dd><dt>범위</dt><dd>'+E(c.limit)+'</dd></dl>'}).join('')
+   +'<p>종합과 주제별 리포트는 같은 차트를 쓰기 때문에 일부 설명이 겹칠 수 있어요. 해석은 전통 규칙에 따른 상징 풀이이며, 미래를 보장하거나 예측하지 않아요.</p>';
+ }
+ const productsTpl=document.getElementById('policy-products');if(productsTpl)productsTpl.innerHTML=productsGuideHTML();
+ /* 종합 리포트 안내: 실제 리포트 장 제목과 첫 문장을 보여 주고 바로 아래에 '종합 리포트 보기' 버튼이 오게 한다. */
+ function renderReportCTA(){
+  const list=document.getElementById('rcPreview');if(!list||typeof CH==='undefined'||!CH)return;
+  let data;try{data=buildRichReport(CH,'comprehensive')}catch(_){return}
+  const items=(data.sections||[]).filter(s=>!['limit','fun','relationship-context'].includes(s.kind)).slice(0,6).map(s=>{
+   const text=[s.lead,...(s.paragraphs||[])].filter(Boolean).map(x=>readingParts(x).main).filter(Boolean).join(' ').split(/(?<=[.!?])\s+/)[0]||'';
+   const short=text.length>72?text.slice(0,70).replace(/[,\s]+$/,'')+'…':text;
+   return '<li><b>'+E(s.question)+'</b><span>'+E(short)+'</span></li>'});
+  if(items.length>=3)list.innerHTML=items.join('');
+ }
+ const previousRenderAll=renderAll;renderAll=function(){previousRenderAll();renderReportCTA()};
  // Summary and body share the same section model, rather than separate generated claims.
  const previousRich=buildRichReport;
  buildRichReport=function(ch,key){
