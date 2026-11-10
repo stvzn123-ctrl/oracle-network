@@ -2058,3 +2058,12 @@ body.show-topics .topic-fold{display:block}
 #report .rv3-yearnote{list-style:none;margin:8px 0 var(--rs-3,16px);padding:0;font-size:14px;line-height:1.7}
 #report .rv3-yearnote b{display:inline-block;min-width:5.5em;color:var(--gold-ink,#8A5A1E)}
 #report .r-page .rv3-tw .rv3-table td.nw{white-space:nowrap;width:1%;min-width:0}
+/* 2026-11-11 b: 열 폭을 지정한 표(.fixed)는 고정 배치, 가로 스크롤 없이 칸 안에서 줄바꿈. 첫 칸의 '\n'은 줄바꿈으로. */
+#report .r-page .rv3-tw .rv3-table td,#report .r-page .rv3-tw .rv3-table td:last-child{min-width:0}
+#report .r-page .rv3-tw .rv3-table.fixed{table-layout:fixed;width:100%}
+#report .r-page .rv3-tw .rv3-table.fixed th,#report .r-page .rv3-tw .rv3-table.fixed td{width:auto;white-space:normal;word-break:keep-all;overflow-wrap:anywhere}
+#report .r-page .rv3-tw .rv3-table tbody th{white-space:pre-line}
+#report .r-page .rv3-tw .rv3-table.fixed td.nw{white-space:nowrap}
+#report .r-page .rv3-tw .rv3-table.fixed th,#report .r-page .rv3-tw .rv3-table.fixed td{padding:8px 5px}
+#report .r-page .rv3-tw .rv3-table.fixed tbody th{overflow-wrap:normal;word-break:keep-all}
+#report .r-page .rv3-tw .rv3-table.fixed tbody th{white-space:pre-line}

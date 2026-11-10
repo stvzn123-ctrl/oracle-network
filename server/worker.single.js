@@ -1988,13 +1988,13 @@ function buildRichReport(ch,key){
   const actPtr={},pickAct=(c,u)=>{const k=c*2+(u?0:1);actPtr[k]=actPtr[k]??(d%6);return ACTP[c][u?0:1][actPtr[k]++%6]};
   const mAll=days.reduce((a,x)=>a+x.v,0)/days.length,MO=[];days.forEach(x=>{const k=x.f.y*12+x.f.m;let m=MO.find(o=>o.k===k);if(!m)MO.push(m={k,y:x.f.y,m:x.f.m,list:[]});m.list.push(x)});
   const months=MO.slice(0,12).map(o=>{const av=o.list.reduce((a,x)=>a+x.v,0)/o.list.length,cs=[0,1,2,3].map(c=>o.list.reduce((a,x)=>a+x.f.sc[c],0)),c=comp?cs.indexOf(Math.max(...cs)):ci,b=o.list.reduce((a,x)=>x.v>a.v?x:a);return {...o,av,c,b,up:av>=mAll}});months.forEach(o=>o.act=pickAct(o.c,o.up));
-  const mHi=months.reduce((a,b)=>b.av>a.av?b:a),mLo=months.reduce((a,b)=>b.av<a.av?b:a);
+  const mHi=months.reduce((a,b)=>b.av>a.av?b:a),mLo=months.reduce((a,b)=>b.av<a.av?b:a),top3=months.slice().sort((a,b)=>b.av-a.av).slice(0,3).sort((a,b)=>a.k-b.k);
   put('calendar','앞으로 12개월 실천 달력',mHi.y+'년 '+mHi.m+'월이 가장 밝고, '+mLo.y+'년 '+mLo.m+'월은 쉬어 가기 좋은 달이에요.',['날마다 다섯 점술 점수의 달 평균','발행일 기준 계산'],
-   ['가까운 90일 중 '+(comp?'흐름':CN[ci]+' 흐름')+'이 가장 좋은 날 다섯 번이에요. '+good.map(x=>dTx(x)+' '+x.v+'점').join(', ')+'.',
-    '아래 표는 달마다 가장 좋은 날과 그달에 해 볼 일 한 가지예요. 밝은 달에는 시작하는 일을, 잔잔한 달에는 정리하는 일을 골랐어요.',
-    '날짜 점수는 이 리포트를 발행한 날을 기준으로 계산했어요. 재미로 참고하고, 중요한 일정은 실제 상황에 맞춰 정해 주세요.'],
-   '좋은 날 다섯 번('+good.map(dTx).join(', ')+')을 지금 휴대폰 달력에 넣어 두세요.',
-   {table:{cap:'앞으로 12개월 실천 달력',head:['달','좋은 날','이번 달 해 볼 일'],rows:months.map((o,i)=>[(i===0||o.m===1?o.y+'년 ':'')+o.m+'월 · '+(o.up?'밝음':'잔잔'),o.b.f.d+'일('+o.b.f.wd+')',o.act])}});
+   ['앞으로 12개월 중 '+(comp?'흐름':CN[ci]+' 흐름')+'이 가장 밝은 달 세 번은 '+top3.map(o=>o.y+'년 '+o.m+'월').join(', ')+'이에요.',
+    '아래 표는 달마다 해 볼 일 한 가지예요. 흐름이 밝은 달에는 시작하는 일을, 잔잔한 달에는 정리하는 일을 골랐어요.',
+    '달마다의 흐름은 이 리포트를 발행한 날을 기준으로 계산했어요. 재미로 참고하고, 중요한 일정은 실제 상황에 맞춰 정해 주세요.'],
+   top3.map(o=>o.y+'년 '+o.m+'월').join(', ')+'을 지금 휴대폰 달력에 표시해 두세요.',
+   {table:{cap:'앞으로 12개월 실천 달력',head:['달','이번 달 해 볼 일'],cols:['24%','76%'],rows:months.map((o,i)=>[(i===0||o.m===1?o.y+'년 ':'')+o.m+'월',o.act])}});
   /* 2026-11-10 G3: 모두에게 같던 마무리 장·실천·재회 성찰을 나이대·신강/신약·오행·금성·십성과 달력 날짜로 조립한다. */
   const nm3=ch.inp.name||'당신',F3=t=>t.replace(/\{name\}/g,nm3),ac=key==='comprehensive'?3:ci,ka=kage(y0),band=ka<30?0:ka<45?1:ka<60?2:3,tg3=ng.indexOf(Math.max(...ng));
   const AGE=[['지금 시기의 돈은 크기보다 습관이 먼저예요. 지금 만든 저축 습관 하나가 몇 년 뒤의 선택지를 넓혀 줘요.','지금은 여러 사람을 만나며 나에게 맞는 사람을 알아 가는 시기예요. 서두르지 않아도 괜찮아요.','지금은 한 우물보다 여러 경험이 자산이 되는 시기예요. 해 본 일의 목록이 다음 기회의 지도가 돼요.','지금의 {name}님에게는 많이 시도해 보는 것 자체가 운을 키우는 일이에요.'],
@@ -2004,9 +2004,9 @@ function buildRichReport(ch,key){
   const STR=[['좋은 사람과 환경을 만날 때 돈의 흐름도 커지는 편이에요. 믿을 만한 조언자 한 사람을 곁에 두면 큰 힘이 돼요.','섬세하게 마음을 읽는 사람이라, 나를 편안하게 해 주는 사람 곁에서 가장 빛나요. 내 마음을 먼저 챙겨 주세요.','좋은 팀과 선배를 만날 때 실력이 크게 자라요. 함께 일할 사람을 고르는 눈이 곧 운이에요.','섬세하고 받아들이는 힘이 큰 사람이에요. 좋은 사람과 환경을 고르는 것이 {name}님의 운을 키우는 가장 빠른 길이에요.'],
    ['스스로 밀고 나가는 힘이 큰 편이라, 기회가 보이면 혼자 결정하기 쉬워요. 큰돈이 걸린 일만큼은 한 사람에게 꼭 의견을 물어 보세요.','마음이 단단한 편이라 관계에서도 앞장서기 쉬워요. 가끔 상대의 속도에 맞춰 주는 것이 사랑을 오래 가게 해요.','혼자서도 끝까지 해내는 힘이 있어요. 그 힘을 팀과 나누면 맡는 일의 크기가 달라져요.','타고난 힘이 단단해서 스스로 길을 내는 사람이에요. 도움을 청하는 것도 그 힘의 일부라는 걸 기억해 주세요.']];
   const CLOSE=['나무가 해마다 한 겹씩 나이테를 늘리듯, {name}님의 운도 꾸준히 자라요. 이 리포트가 그 길에 작은 이정표가 되면 좋겠어요.','{name}님이 가진 밝음은 주변까지 데우는 힘이에요. 이 리포트가 그 빛을 어디에 쓸지 고르는 데 도움이 되면 좋겠어요.','천천히 쌓은 것이 결국 오래 남는다는 걸 {name}님은 이미 알고 있어요. 이 리포트가 그 걸음에 든든한 지도가 되면 좋겠어요.','분명한 기준을 가진 {name}님에게 이 리포트가 언제 나아가고 언제 쉴지 정하는 작은 기준표가 되면 좋겠어요.','깊이 읽어 내는 {name}님이라면 이 리포트의 숫자 너머에 있는 흐름도 금방 알아챌 거예요. 그 흐름을 편안하게 타 보세요.'];
-  const nb=months.find(o=>o.up)||mHi,nbD=dTx(nb.b),catTx=['돈','관계','일','새로운'][ac];
-  S.filter(s=>s.kind==='advice').forEach(s=>{s.paragraphs=[F3(AGE[band][ac]),F3(STR[ch.strong?1:0][ac]),'가장 가까운 밝은 달은 '+nb.y+'년 '+nb.m+'월이고, 그달 가장 좋은 날은 '+nbD+'이에요. 그날을 '+catTx+' 일의 첫 단추를 끼우는 날로 써 보세요.',F3(CLOSE[maxEl])];
-   s.action=nbD+'을 달력에 표시해 두고, 그날 할 일로 "'+nb.act.replace(/\.$/,'')+'"를 적어 두세요.'});
+  const nb=months.find(o=>o.up)||mHi,nbD=dTx(nb.b),catTx=['돈 관리','관계','일','새로운 일'][ac];
+  S.filter(s=>s.kind==='advice').forEach(s=>{s.paragraphs=[F3(AGE[band][ac]),F3(STR[ch.strong?1:0][ac]),'가장 가까운 밝은 달은 '+nb.y+'년 '+nb.m+'월이에요. 그달을 '+catTx+'의 첫 단추를 끼우는 달로 써 보세요.',F3(CLOSE[maxEl])];
+   s.action=nb.y+'년 '+nb.m+'월 달력 첫 장에 이렇게 적어 두세요. '+nb.act});
   if(key==='comprehensive'){const P=S.find(s=>s.kind==='partner'),C=S.find(s=>s.kind==='career');
    if(P)P.action=['이번 달에 둘이 가 본 적 없는 곳(처음 가는 동네나 공연)에 함께 가 보세요. 혼자라면 새로 시작하는 모임에 한 번 나가 보세요.','이번 달 한 번은 집밥이나 산책처럼 편안한 시간을 함께 보내 보세요. 혼자라면 오래 다닐 수 있는 취미 모임을 하나 골라 보세요.','이번 주에 대화 주제 하나를 정해 30분 이야기해 보세요. 혼자라면 강연이나 독서 모임처럼 말이 오가는 자리에 나가 보세요.','이번 달에 고마웠던 순간 하나를 짧은 편지로 건네 보세요. 혼자라면 마음이 편한 사람과의 약속을 하나 잡아 보세요.'][pl.venus%4];
    if(C)C.action=['혼자 끝낸 일 중 가장 잘한 것 세 가지를 적어 두세요. 내 영역을 맡을 때 그대로 소개 자료가 돼요.','지금 만든 결과물 하나를 사진이나 글로 남겨 포트폴리오 폴더를 시작해 보세요.','지난 1년 동안 만든 성과를 숫자(매출·절약·인원)로 세 줄 적어 두세요.','지금 맡은 역할과 책임을 한 줄로 정리하고, 다음에 맡고 싶은 역할도 한 줄 적어 보세요.','이번 달에 배울 것 하나를 정하고, 끝내는 날짜를 달력에 적어 두세요.'][tg3]}
