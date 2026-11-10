@@ -1958,7 +1958,10 @@ function buildRichReport(ch,key){
   S.forEach((s,i)=>s.id=key+'-'+(i+1));
  }
  if(key==='comprehensive'){const ORD=['summary','personality','partner','career','flow','systems','advice'];S.sort((x,y)=>ORD.indexOf(x.kind)-ORD.indexOf(y.kind));S.forEach((x,i)=>x.id=key+'-'+(i+1))}
- const summary=key==='comprehensive'?[S[0].lead].concat(S.slice(1,5).map(s=>String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0])).filter(Boolean):S.__sum;
+ /* 핵심 요약: 장마다 핵심 한 줄 + 이어지는 설명 두 문장(최대 3문장)으로, 한 줄짜리 요약이 되지 않게 한다. */
+ const sumOf=s=>{const seen=[];[s.lead,...(s.paragraphs||[])].filter(Boolean).join(' ').split(/(?<=[.!?])\s+/).map(x=>x.trim()).filter(x=>x&&!/^\[/.test(x)).forEach(x=>{if(seen.length<3&&!seen.includes(x))seen.push(x)});return seen.join(' ')};
+ const sumSecs=S.filter(s=>!['limit','fun','caution','weak','care'].includes(s.kind)&&(s.lead||(s.paragraphs||[]).length));
+ const summary=(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(sumOf).filter(Boolean);
  S.forEach(s=>{s.answer=s.paragraphs.join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
  return {title:(ch.inp.name||'당신')+'님의 '+NAMES[key]+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'chapters-2026-11-05-v3',

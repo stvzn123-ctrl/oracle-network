@@ -2283,7 +2283,7 @@ function compactPartnerAge(value){return String(value||'').replace(/나보다\s*
 
 function partnerProfileHTML(ch,key,part){let f=null;try{f=spouseFaceProfile(ch)}catch(_){}const p=partnerProfile(ch),E=topicEsc;
  if(part==='rest')return '<dl class="pp-list pp-rest">'+[['잘 어울리는 일',p.job[0]+' — '+p.job[1]+' 사람'],['좋아할 취미',p.hobby],['첫만남',partnerFirstMeeting(ch)],['연애 스타일',p.style+' 연애']].map(r=>'<div><dt>'+r[0]+'</dt><dd>'+E(r[1])+'</dd></div>').join('')+'</dl><p class="pp-note">MBTI·나이 차이는 도출된 차트 정보를 바탕으로 정리한 내용입니다.</p>';
- return '<div class="pp"><p class="pp-h">'+(key==='marry'?'배우자가 될 가능성이 높은 사람':'잘 맞는 연인이 될 가능성이 높은 사람')+'</p>'+(f&&f.features?'<div class="pp-chips">'+f.features.map(x=>'<span>'+E(x)+'</span>').join('')+'</div>':'')+'<div class="pp-facts"><div><small>예상 MBTI</small><b>'+p.mbti+'</b></div><div><small>예상 나이 차이</small><b>'+E(compactPartnerAge(p.age))+'</b></div></div><p class="pp-vibe">'+E(p.vibe)+' 사람</p></div>'}
+ return '<div class="pp"><p class="pp-h">'+(key==='marry'?'배우자가 될 가능성이 높은 사람':key==='comprehensive'?'인연이 될 가능성이 높은 사람':'잘 맞는 연인이 될 가능성이 높은 사람')+'</p>'+(f&&f.features?'<div class="pp-chips">'+f.features.map(x=>'<span>'+E(x)+'</span>').join('')+'</div>':'')+'<div class="pp-facts"><div><small>예상 MBTI</small><b>'+p.mbti+'</b></div><div><small>예상 나이 차이</small><b>'+E(compactPartnerAge(p.age))+'</b></div></div><p class="pp-vibe">'+E(p.vibe)+' 사람</p></div>'}
 function funItems(ch,key){const d=ch.stems.d,cnt=ch.cnt,dom=cnt.indexOf(Math.max(...cnt)),ng=natalGroups(ch),ven=sign(birthExtraLon('Venus',ch.jd)),pick=(arr,n)=>arr[((n%arr.length)+arr.length)%arr.length],seed=ch.Y+ch.Mo*31+ch.D*7+d;
  const COLOR=['초록','빨강','노랑','하양','검정·남색'][(dom+2)%5];
  if(key==='marry'){const p=partnerProfile(ch),rich=ng[2]+(cnt[2]>=2?1:0)+(cnt[3]>=2?1:0);
@@ -2320,24 +2320,27 @@ function approvedReportHTML(data,key,sourceChart=null){
  if(key==="work"&&ch){const questions=[...(topicRowsV2(ch,"employment")||[]).slice(3),...(topicRowsV2(ch,"move")||[]).slice(3)];if(questions.length)secs.splice(1,0,{kind:"career-strategy",question:"취업·이직 준비와 시기",lead:"",paragraphs:questions.map(([q,a])=>q+" "+a)})}
  if(key==="study"&&ch){const young=new Date().getFullYear()-ch.Y<30;secs.unshift({kind:"study-plan",question:young?"공부·진학·시험 준비":"배움과 경력 성장",lead:"",paragraphs:[young?"공부와 진학, 대입·수능 등 시험 준비를 하나의 학업 흐름으로 읽습니다. 현재 목표에 맞춰 기초 학습·기출 풀이·복습을 이어가 보세요. 자격 준비나 새로운 공부에도 같은 강점을 활용할 수 있습니다.":"직무에 필요한 학습과 자격 준비, 새로운 분야의 배움을 함께 읽습니다. 실제로 필요한 역량 하나를 정하고 학습·실습·결과물 순서로 성취를 쌓아보세요."]})}
 
- if(['love','marry'].includes(key)){const at=secs.findIndex(s=>s.kind==='partner');if(at>=0){const src=secs.splice(at,1)[0],partner={...src,question:'나와 잘 맞는 연인과 함께하는 삶',paragraphs:[],answer:''},detail={kind:'partner-detail',question:key==='marry'?'배우자를 이렇게 읽었어요':'인연을 이렇게 읽었어요',lead:'',paragraphs:(src.paragraphs||[]).filter(p=>!/얼굴 일러스트는/.test(p))};secs.unshift(partner,detail)}}
- if(ch&&!data.relationshipContext&&!String(data.version||'').startsWith('match-')){const li=secs.findIndex(s=>s.kind==='limit');const fs={kind:'fun',question:''+({marry:'결혼',love:'연애',reunion:'재회',match:'궁합',money:'재물',invest:'재물',property:'재물',business:'재물',work:'직업',employment:'직업',move:'직업',study:'공부',exam:'공부',cert:'공부'}[key]||'나의 운명'),lead:'',paragraphs:[]};if(li>=0)secs.splice(li,0,fs);else secs.push(fs)}
+ if(['love','marry'].includes(key)){const at=secs.findIndex(s=>s.kind==='partner');if(at>=0){const src=secs.splice(at,1)[0],detailParas=(src.paragraphs||[]).filter(p=>!/얼굴 일러스트는/.test(p)&&readingParts(p).main);const partner={...src,question:key==='marry'?'나와 함께할 배우자의 모습':'나와 잘 맞는 연인의 모습',paragraphs:detailParas.slice(0,1),answer:''},detail={kind:'partner-detail',question:key==='marry'?'배우자를 이렇게 읽었어요':'인연을 이렇게 읽었어요',lead:'',paragraphs:detailParas.slice(1)};const ctxAt=secs.findIndex(x=>x.kind==='relationship-context');const insertAt=ctxAt>=0?ctxAt+1:0;if(detail.paragraphs.length<2){partner.paragraphs=detailParas;detail.paragraphs=[]}secs.splice(insertAt,0,...(detail.paragraphs.length?[partner,detail]:[partner]))}}
+ /* 2026-11-10: '나의 운명 캐릭터·행운의 색' 재미 분류(fun)는 모든 리포트에서 뺐다. */
  let bodies=null;const charts={west:()=>{bodies=bodies||birthBodies(ch);return birthWest(ch,bodies)},vedic:()=>{bodies=bodies||birthBodies(ch);return birthVedic(ch,bodies)},numbers:()=>birthNumerology(ch),maya:()=>birthMaya(ch)};
  const chartHTML=k=>{if(!ch||!charts[k])return '';try{return '<div class="birth-atlas rv3-chart">'+charts[k]()+'</div>'}catch(e){return ''}};
  const dataTableHTML=t=>t&&Array.isArray(t.rows)&&t.rows.length?'<div class="rv3-tw"><table class="rv3-table"><caption>'+E(t.cap||'')+'</caption><thead><tr>'+t.head.map(h=>'<th scope="col">'+E(h)+'</th>').join('')+'</tr></thead><tbody>'+t.rows.map(r=>'<tr>'+r.map((c,i)=>i?'<td>'+E(c)+'</td>':'<th scope="row">'+E(c)+'</th>').join('')+'</tr>').join('')+'</tbody></table></div>':'';
  const tableHTML=t=>{const chart=annualScoreChart(t);return chart?chart+'<details class="annual-values"><summary>연도별 수치와 읽는 법</summary>'+dataTableHTML(t)+'</details>':dataTableHTML(t)};
   const barsHTML=b=>b&&Array.isArray(b.items)?'<figure class="rv3-bars"><figcaption>'+E(b.cap||'')+'</figcaption>'+b.items.map(x=>'<div><span>'+E(x.label)+'</span><i><b style="width:'+Math.round(100*Number(x.value)/Math.max(1,Number(x.max)||1))+'%"></b></i><em>'+Number(x.value)+'</em></div>').join('')+'</figure>':'';
  const lineHTML=l=>{if(!l||!Array.isArray(l.values))return '';const W=340,H=170,L=28,Rr=10,T=18,B=24,v=l.values,mn=Math.min(...v)-3,mx=Math.max(...v)+3,x=i=>L+(W-L-Rr)*i/(v.length-1),y=n=>T+(mx-n)/Math.max(6,mx-mn)*(H-T-B);let g='';[mn,(mn+mx)/2,mx].forEach(n=>{g+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+y(n)+'" y2="'+y(n)+'" stroke="rgba(168,123,54,.25)"/>'});g+='<path d="'+v.map((n,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(n).toFixed(1)).join(' ')+'" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linejoin="round"/>';v.forEach((n,i)=>{const h=(l.hi||[]).includes(i),o=(l.lo||[]).includes(i);g+='<circle cx="'+x(i)+'" cy="'+y(n)+'" r="'+(h||o?5:3)+'" fill="'+(h?'#b04a6c':o?'#6f7584':'var(--gold)')+'"/>'+(h||o?'<text x="'+x(i)+'" y="'+(y(n)-9)+'" text-anchor="middle" font-size="10" fill="'+(h?'#b04a6c':'#6f7584')+'">'+(h?'가까움':'느슨')+'</text>':'')+'<text x="'+x(i)+'" y="'+(H-6)+'" text-anchor="middle" font-size="10" fill="#8a8174">'+E(l.labels[i])+'</text>'});return '<figure class="rv3-line"><figcaption>'+E(l.cap||'')+'</figcaption><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+E(l.cap||'')+'">'+g+'</svg></figure>'};
- const faceHTML=()=>{if(!ch||!['love','marry','comprehensive'].includes(key))return null;try{const f=spouseFaceProfile(ch);return '<figure class="rv3-face"><img loading="lazy" decoding="async" src="'+f.full+'" width="240" height="300" alt="차트의 상징으로 그린 참고용 인물 일러스트" loading="lazy" decoding="async"><figcaption>정보에 맞는 일러스트 예시</figcaption></figure>'}catch(e){return null}};
+ const faceHTML=()=>{if(!ch||!['love','marry','comprehensive'].includes(key))return null;try{const f=spouseFaceProfile(ch);return '<figure class="rv3-face"><img loading="lazy" decoding="async" src="'+f.full+'" width="240" height="300" alt="차트의 상징으로 그린 참고용 인물 일러스트" loading="lazy" decoding="async"><figcaption>차트의 상징으로 그린 참고 일러스트예요</figcaption></figure>'}catch(e){return null}};
  const interpretationHTML=(p,cls='')=>'<p'+(cls?' class="'+cls+'"':'')+'><span class="reading-meaning">'+destinyMeaningHTML(readingParts(p).main)+'</span></p>';
  const paraHTML=s=>{const paras=(s.paragraphs||[s.answer]).filter(Boolean),meaning=paras.filter(p=>readingParts(p).main),evidence=paras.filter(p=>!readingParts(p).main);return meaning.map(p=>interpretationHTML(p)).join('')};
+ /* 마스코트는 리포트 한 권 안에서 같은 포즈를 두 번 쓰지 않는다. 표지 포즈를 먼저 쓴 것으로 치고, 인물 일러스트가 있는 장에는 넣지 않는다. */
+ const usedPoses=new Set([reportPose]),POSE_POOL=['lucky','happy','note','money','heart','rest','care','detective'];
+ const chapterPose=(s,i)=>{if(i%3!==0||s.kind==='partner'||(s.kind==='partner-detail'))return '';const want=/건강|휴식/.test(s.question)?'rest':/주의|조심/.test(s.question)?'care':/돈|재물|투자|사업/.test(s.question)?'money':/사랑|인연|결혼|연애/.test(s.question)?'heart':/공부|학업|시험|계산|방법/.test(s.question)?'note':'lucky';const pick=[want,...POSE_POOL].find(p=>!usedPoses.has(p));if(!pick)return '';usedPoses.add(pick);return mascotPoseHTML(pick,'report-chapter-pose')};
  const chapter=(s,i)=>{
   const face=s.kind==='partner'?faceHTML():null;
-  const body=(s.kind==='fun'&&ch?funHTML(ch,key):'')+(["love","marry"].includes(key)&&s.kind==='meet'&&ch?encounterHTML(ch):paraHTML(s))+lineHTML(s.line)+tableHTML(s.table)+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
-  return '<section class="r-page rv3-ch" id="chapter-'+i+'"><header class="rv3-hd"><span class="rv3-no">'+(v3?'CHAPTER '+n2(i):(i+1)+'장')+'</span><h2>'+E(s.question)+'</h2></header>'+(i%3===0?mascotPoseHTML(/건강|휴식/.test(s.question)?'rest':/주의|조심/.test(s.question)?'care':/돈|재물/.test(s.question)?'money':/사랑|인연|결혼/.test(s.question)?'heart':'lucky','report-chapter-pose'):'')+
+  const body=(["love","marry"].includes(key)&&s.kind==='meet'&&ch?encounterHTML(ch):paraHTML(s))+lineHTML(s.line)+tableHTML(s.table)+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
+  return '<section class="r-page rv3-ch" id="chapter-'+i+'"><header class="rv3-hd"><span class="rv3-no">'+(v3?'CHAPTER '+n2(i):(i+1)+'장')+'</span><h2>'+E(s.question)+'</h2></header>'+chapterPose(s,i)+
    (s.lead&&readingParts(s.lead).main&&!(ch&&['love','marry'].includes(key)&&['meet','partner'].includes(s.kind))?interpretationHTML(s.lead,'rv3-lead'):'')+
 
-   (face?'<div class="rv3-profile">'+face+'<div class="rv3-profile-tx">'+(ch&&['love','marry'].includes(key)?partnerProfileHTML(ch,key):'')+'</div></div>'+(ch&&['love','marry'].includes(key)?partnerProfileHTML(ch,key,'rest'):'')+'<div class="partner-reading">'+body+'</div>':body)+
+   (face?'<div class="rv3-profile">'+face+'<div class="rv3-profile-tx">'+(ch?partnerProfileHTML(ch,key):'')+'</div></div>'+'<div class="partner-reading">'+body+'</div>'+(ch?partnerProfileHTML(ch,key,'rest'):''):body)+
    ''+'</section>'};
  const facts=Array.isArray(data.facts)&&data.facts.length?'<div class="rv3-tw"><table class="rv3-table rv3-facts"><caption>계산된 출생 지표</caption><thead><tr><th scope="col">지표</th><th scope="col">값</th><th scope="col">전통적 의미</th></tr></thead><tbody>'+data.facts.map(f=>'<tr><th scope="row">'+E(f[0])+'</th><td>'+E(f[1])+'</td><td>'+E(f[2])+'</td></tr>').join('')+'</tbody></table></div>':'';
  const toc='<nav class="rv3-toc" aria-label="리포트 목차"><ol>'+secs.map((s,i)=>'<li><a href="#chapter-'+i+'"><b>'+(v3?n2(i):i+1)+'</b>'+E(s.question)+'</a></li>').join('')+'</ol></nav>';
@@ -3069,7 +3072,7 @@ function buildRichReport(ch,key){
     '점수는 다섯 점술의 규칙을 같은 기준으로 더한 자체 지표이며 확률이 아닙니다. 해마다의 상대적인 높낮이로 읽어 주세요.'],
    p.year+'년('+kage(p.year)+'살)이 가장 큰 기회의 해예요. '+(p.year-1)+'년 하반기까지 '+({0:'종잣돈과 지출 정리',1:'만남의 폭을 넓히는 모임·소개',2:'이력서·포트폴리오와 필요한 자격'}[k]||'필요한 준비')+'를 마쳐 두고, '+p.year+'년 상반기에 들어오는 제안과 기회를 놓치지 마세요.',{table:{cap:label+' 연도별 점수(60~100, 자체 지표)',head:['연도','점수','읽는 법'],rows:yearRows(a,k)}})};
  const limitSection=extra=>add('limit','해석의 범위와 읽는 법','이 리포트는 다섯 점술의 계산 규칙과 전통적 상징 해석을 결합한 결과입니다.',[],
-  [noteMissing,'사주 원국·별자리·낙샤트라·수비학 수·마야 기호는 생년월일시로 계산한 값입니다. ',extra||'',
+  [noteMissing,'사주 원국·별자리·낙샤트라·수비학 수·마야 기호는 생년월일시로 계산한 값입니다. 반면 그 값이 성격이나 시기와 어떻게 연결되는지는 각 전통의 상징 해석이며, 과학적으로 검증된 예측이 아닙니다.',extra||'',
    '점수와 시기는 결정을 대신하는 답이 아니라 자신을 돌아보는 질문으로 활용해 주세요. 건강·법률·재정과 관련된 중요한 결정은 전문가의 조언과 실제 정보를 우선해야 합니다.'],'');
 
  /* ---------- 공통 해석 블록 ---------- */
@@ -3282,9 +3285,12 @@ function buildRichReport(ch,key){
   S.forEach((s,i)=>s.id=key+'-'+(i+1));
  }
  if(key==='comprehensive'){const ORD=['summary','personality','partner','career','flow','systems','advice'];S.sort((x,y)=>ORD.indexOf(x.kind)-ORD.indexOf(y.kind));S.forEach((x,i)=>x.id=key+'-'+(i+1))}
- const summary=key==='comprehensive'?[S[0].lead].concat(S.slice(1,5).map(s=>String(s.paragraphs[0]||'').split(/(?<=[.!?])\s+/)[0])).filter(Boolean):S.__sum;
+ /* 핵심 요약: 장마다 핵심 한 줄 + 이어지는 설명 두 문장(최대 3문장)으로, 한 줄짜리 요약이 되지 않게 한다. */
+ const sumOf=s=>{const seen=[];[s.lead,...(s.paragraphs||[])].filter(Boolean).join(' ').split(/(?<=[.!?])\s+/).map(x=>x.trim()).filter(x=>x&&!/^\[/.test(x)).forEach(x=>{if(seen.length<3&&!seen.includes(x))seen.push(x)});return seen.join(' ')};
+ const sumSecs=S.filter(s=>!['limit','fun','caution','weak','care'].includes(s.kind)&&(s.lead||(s.paragraphs||[]).length));
+ const summary=(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(sumOf).filter(Boolean);
  S.forEach(s=>{s.answer=s.paragraphs.join('\n\n')});
- const note=(noteMissing?noteMissing+' ':'')+'';
+ const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
  return {title:(ch.inp.name||'당신')+'님의 '+NAMES[key]+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'chapters-2026-11-05-v3',
   body:S.map((r,i)=>(i+1)+'장 · '+r.question+'\n\n핵심: '+r.lead+(r.basis.length?'\n근거: '+r.basis.join(' / '):'')+'\n\n'+r.answer+(r.action?'\n\n실천 · '+r.action:'')).join('\n\n────────────────\n\n')+'\n\n'+note};
 }

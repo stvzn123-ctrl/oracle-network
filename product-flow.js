@@ -66,11 +66,12 @@
   if(['love','marry'].includes(key)&&ch.inp.relationship==='single'){
    const person=partnerProfile(ch),meeting=partnerFirstMeeting(ch);
    for(const section of data.sections){
-    if(section.kind==='meet'){section.lead=meeting;section.paragraphs=[meeting,'만남의 계기는 출생 금성의 상징으로, 시기는 기존 인연 흐름으로 읽어요.'];section.basis=['출생 금성의 만남 장소 상징','인연 흐름의 연도·월']}
-    if(section.kind==='partner'){section.lead=person.vibe+' 사람과의 관계를 살펴봐요.';section.paragraphs=[person.vibe+' 사람과 잘 맞는 흐름이에요.',person.job.join(' · '),meeting,'사랑의 표현 방식은 '+person.style+' 모습으로 읽어요.']}
+    /* 2026-11-10: 혼자일 때는 '인연을 만나는 계기' 장 앞에 첫 만남 시기·장소를 더하기만 하고, 인연의 모습 장은 원래의 풍부한 본문을 그대로 둔다. */
+    if(section.kind==='meet'){section.lead=meeting;section.paragraphs=[meeting,...(section.paragraphs||[]).filter(p=>p!==meeting)];section.basis=[...(section.basis||[]),'출생 금성의 만남 장소 상징','인연 흐름의 연도·월']}
+    if(section.kind==='partner'&&!(section.paragraphs||[]).length){section.lead=person.vibe+' 사람과의 관계를 살펴봐요.';section.paragraphs=[person.vibe+' 사람과 잘 맞는 흐름이에요.','사랑의 표현 방식은 '+person.style+' 모습으로 읽어요.']}
    }
   }
-  data.summary=[...new Set(data.sections.map(s=>s.lead).filter(Boolean))].slice(0,4);
+  /* 핵심 요약은 buildRichReport가 만든 2~3문장짜리를 그대로 쓴다(한 줄 lead만 모으던 덮어쓰기 제거, 2026-11-10). */
   for(const section of data.sections)section.answer=(section.paragraphs||[]).join('\n\n');
   data.body=data.sections.map(s=>s.question+'\n'+s.lead+'\n'+s.answer).join('\n\n');
   return data;

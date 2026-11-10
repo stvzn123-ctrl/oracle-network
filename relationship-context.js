@@ -44,24 +44,27 @@
     return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+topicEsc(OPTIONS[context(ch)])+'</span><h3>'+c.title+'</h3></header>'+spousePreviewHTML(ch,key)+answerCards(rows(ch))+topicReportHTML(key)+'</section>';
   };
   const originalRich=buildRichReport;
+  /* 2026-11-10: 관계 상태는 리포트를 통째로 바꾸지 않고, 기존의 풍부한 장(사랑할 때의 나·인연의 모습·시기·주의·제언)을 그대로 두고
+     앞에 '현재 상황에 맞춰 읽는 사랑' 장을 더한다. 결혼·연애 중·썸이면 '새 인연을 만나는 계기' 장은 상황에 맞는 '다음 단계' 장으로 바꾼다. */
   buildRichReport=function(ch,key){
     const data=originalRich(ch,key),state=context(ch),c=COPY[state];
     if(!['love','marry','comprehensive'].includes(key))return data;
-    const section={kind:'relationship-context',question:c.question,lead:c.answer,paragraphs:[c.detail,c.action],basis:[],action:''};
+    const section={kind:'relationship-context',question:c.question,lead:c.answer,paragraphs:[c.detail,c.action],basis:[],action:c.action};
     if(key==='comprehensive'){
-      data.summary=(data.summary||[]).map(text=>/연애|결혼|배우자/.test(text)?c.answer:text);
-      data.sections=data.sections.map(s=>/연애|결혼|배우자/.test(s.question||'')?{...section,id:s.id}:s);
-      data.sections.unshift({...section,question:'현재 상황에 맞춰 읽는 사랑'});
+      if(state!=='private'){const p=data.sections.find(s=>s.kind==='partner');if(p)p.paragraphs=[c.answer+' '+c.detail,...(p.paragraphs||[])]}
       return data;
     }
-    if(state==='single'){data.sections.unshift(section);return data}
-    const years=(typeof RY!=='undefined'&&RY?RY:[]).map((r,i)=>({year:horizonDate(i+1).y,score:D(r[1].mean)}));
-    const timing=flowTiming(ch);
-    return {...data,title:(ch.inp.name||'당신')+'님의 '+c.title+' 리포트',body:'',relationshipContext:true,summary:[c.answer,rows(ch)[1][1],c.action],years,
-      sections:[section,{kind:'partner',question:'예측되는 연인의 모습',lead:'출생 차트의 상징으로 살펴본 연인의 모습과 분위기예요.',paragraphs:['현재 관계 상태와 별개로, 차트에서 읽은 연인의 외형과 분위기를 함께 보여드려요.'],basis:[]},{kind:'relationship-style',question:'나의 관계 성향과 표현 방식',lead:rows(ch)[1][1],paragraphs:[traitDescription(ch)],basis:[]},
-      {kind:'relationship-timing',question:c.question,lead:timing,paragraphs:['표시된 해는 기존 차트의 애정 점수를 비교한 흐름이에요. 관계 상태를 선택해도 계산 점수는 바뀌지 않으며, 현재 상황에 맞춰 그 의미를 읽어요.'],basis:[]},
-      {kind:'relationship-next',question:c.next,lead:c.detail,paragraphs:[c.action],basis:[]},
-      ...data.sections.filter(s=>['caution','weak','care'].includes(s.kind))],note:''};
+    const taken=['married','dating','crush'].includes(state);
+    const sections=data.sections.map(s=>{
+      if(s.kind==='partner'&&state==='married')return {...s,question:'배우자를 이렇게 읽었어요',lead:'함께하는 배우자를 차트의 상징으로 다시 읽어 본 모습이에요. '+(s.lead||'')};
+      if(s.kind==='partner'&&taken)return {...s,question:'지금 곁에 있는 사람, 차트로 다시 읽기',lead:'현재 관계 상태와 별개로, 차트가 그리는 잘 맞는 상대의 모습이에요. 지금 곁의 사람과 겹치는 점을 찾아보세요. '+(s.lead||'')};
+      if(s.kind==='meet'&&taken)return {kind:'relationship-next',question:c.next,lead:c.detail,paragraphs:[c.action,'표시된 해는 차트의 애정 흐름을 비교한 것이고, 관계 상태를 골라도 계산 점수는 바뀌지 않아요. 지금 상황에 맞춰 그 의미를 읽어 주세요.'],basis:[],action:''};
+      return s;
+    });
+    sections.unshift(section);
+    const sumOf=s=>{const seen=[];[s.lead,...(s.paragraphs||[])].filter(Boolean).join(' ').split(/(?<=[.!?])\s+/).map(x=>x.trim()).filter(Boolean).forEach(x=>{if(seen.length<3&&!seen.includes(x))seen.push(x)});return seen.join(' ')};
+    const summary=[sumOf(section),...sections.filter(s=>['core','partner','timing','relationship-next'].includes(s.kind)).slice(0,4).map(sumOf)];
+    return {...data,title:(ch.inp.name||'당신')+'님의 '+(key==='marry'?'결혼 리포트 · '+c.title:c.title+' 리포트'),relationshipContext:true,summary,sections};
   };
   // Restored profiles from the current API may not yet include this optional field.
   if(accountUser?.profile)$('in-relationship').value=context(CH);
