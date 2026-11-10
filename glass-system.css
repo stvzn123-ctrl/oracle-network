@@ -181,16 +181,16 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 
 /* Isolated white-fur poses prevent neighboring sprite fragments at small sizes. */
 .pose{background-size:contain;background-position:center}
-.pose-detective{background-image:url('img/pose-white-detective.png');background-position:center}
-.pose-happy{background-image:url('img/pose-white-happy.png');background-position:center}
-.pose-care{background-image:url('img/pose-white-care.png');background-position:center}
-.pose-heart{background-image:url('img/pose-white-heart.png');background-position:center}
-.pose-money{background-image:url('img/pose-white-money.png');background-position:center}
-.pose-note{background-image:url('img/pose-white-note.png');background-position:center}
-.pose-tired{background-image:url('img/pose-white-tired.png');background-position:center}
-.pose-lucky{background-image:url('img/pose-white-lucky.png');background-position:center}
-.pose-rest{background-image:url('img/pose-white-rest.png');background-position:center}
-#brandbar .brandbar-mark{background-image:url('img/pose-white-detective.png')!important}
+.pose-detective{background-image:url('img/pose-white-detective.webp');background-position:center}
+.pose-happy{background-image:url('img/pose-white-happy.webp');background-position:center}
+.pose-care{background-image:url('img/pose-white-care.webp');background-position:center}
+.pose-heart{background-image:url('img/pose-white-heart.webp');background-position:center}
+.pose-money{background-image:url('img/pose-white-money.webp');background-position:center}
+.pose-note{background-image:url('img/pose-white-note.webp');background-position:center}
+.pose-tired{background-image:url('img/pose-white-tired.webp');background-position:center}
+.pose-lucky{background-image:url('img/pose-white-lucky.webp');background-position:center}
+.pose-rest{background-image:url('img/pose-white-rest.webp');background-position:center}
+#brandbar .brandbar-mark{background-image:url('img/pose-white-detective.webp')!important}
 
 .pose-note{clip-path:polygon(0 0,72% 0,72% 31%,100% 31%,100% 100%,0 100%)}
 

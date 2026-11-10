@@ -3558,7 +3558,7 @@ fillDays();showPlace();syncSel();
 try{localStorage.removeItem("fate-input")}catch(_){}
 $("askbox").open=true;document.body.classList.add("fresh");$("whoSum").innerHTML="<span>입력해 주세요</span>";
 /* 카카오 로그인 + 명시적으로 저장한 내 출생 정보. 현재 거주지는 수집하지 않는다. */
-let accountToken=lsGet('oracle-session')||'',accountUser=null,accountBusy=false,formVersion=0;
+let accountToken=lsGet('oracle-session')||'',accountUser=null,accountBusy=false,formVersion=0,accountChecking=!!accountToken;
 const accountStatus=text=>{$('accountStatus').textContent=text};
 function accountNotice(text){accountStatus(text);$('authFeedbackText').textContent=text;$('authFeedback').hidden=!text}
 $('authFeedbackClose').addEventListener('click',()=>{$('authFeedback').hidden=true});
@@ -3577,9 +3577,11 @@ function readLoginProof(){
  clearLoginProof();return null;
 }
 function accountPaint(){
-  $('accountLogin').hidden=!!accountUser;$('accountMember').hidden=!accountUser;
-  paintAccessAccount();$('accountHello').textContent=accountUser?(accountUser.nickname||'회원')+'님':'';
-  $('saveGuest').hidden=!!accountUser;$('saveMember').hidden=!accountUser;
+  /* 새로고침 직후 토큰이 있으면 서버 확인 전에도 로그인 상태로 그린다(로그아웃 깜빡임 방지). */
+  const member=!!accountUser||(!!accountToken&&accountChecking),nick=accountUser?accountUser.nickname:lsGet('oracle-nick');
+  $('accountLogin').hidden=member;$('accountMember').hidden=!member;
+  paintAccessAccount();$('accountHello').textContent=member?(nick||'회원')+'님':'';
+  $('saveGuest').hidden=member;$('saveMember').hidden=!member;
   $('profileLoad').disabled=!accountUser?.profile||accountBusy;$('profileDelete').disabled=!accountUser?.profile||accountBusy;
   $('profileSave').disabled=accountBusy;$('accountLogout').disabled=accountBusy;
 }
@@ -3587,7 +3589,7 @@ async function accountAPI(path,body){
   const headers={};if(accountToken)headers.Authorization='Bearer '+accountToken;if(body!==undefined)headers['Content-Type']='application/json';
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),15000);
   let r;try{r=await fetch(INVITE_API+path,{method:body===undefined?'GET':'POST',headers,body:body===undefined?undefined:JSON.stringify(body),cache:'no-store',signal:controller.signal})}finally{clearTimeout(timeout)}
-  const data=await r.json();if(!r.ok&&path==='/partners'&&r.status!==401){throw new Error(data.error==='partner_limit'?'저장 가능한 상대는 최대 20명이에요. 기존 정보를 삭제한 뒤 다시 저장해 주세요.':data.error==='invalid_partner'?'상대방의 이름·영문 이름·출생 정보를 확인해 주세요.':r.status===404?'상대 정보 저장 서버의 경로가 연결되지 않았어요. 서버 업데이트가 필요해요.':'상대 정보 저장 서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.')}if(!r.ok){if(r.status===401){accountToken='';accountUser=null;try{localStorage.removeItem('oracle-session')}catch(_){}accountPaint()}throw new Error(r.status===401?'로그인이 만료됐어요. 다시 로그인해 주세요.':r.status===403?'리포트 열람 승인이 필요해요. 관리자에게 계정 ID와 원하는 리포트를 알려주세요.':r.status===409?'저장된 출생 정보가 필요해요. 내 정보에서 출생 정보를 저장해주세요.':r.status===404?'리포트 또는 권한 서버를 준비하고 있어요.':r.status===503?'카카오 로그인 설정을 마무리하고 있어요.':r.status===429?'요청이 많아요. 잠시 뒤 다시 시도해 주세요.':'요청을 처리하지 못했어요. 잠시 뒤 다시 시도해 주세요.')}return data;
+  let data={};try{data=await r.json()}catch(_){if(r.ok)throw new TypeError('bad_json')}if(!r.ok&&path==='/partners'&&r.status!==401){throw new Error(data.error==='partner_limit'?'저장 가능한 상대는 최대 20명이에요. 기존 정보를 삭제한 뒤 다시 저장해 주세요.':data.error==='invalid_partner'?'상대방의 이름·영문 이름·출생 정보를 확인해 주세요.':r.status===404?'상대 정보 저장 서버의 경로가 연결되지 않았어요. 서버 업데이트가 필요해요.':'상대 정보 저장 서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.')}if(!r.ok){if(r.status===401){accountToken='';accountUser=null;accountChecking=false;try{localStorage.removeItem('oracle-session');localStorage.removeItem('oracle-nick')}catch(_){}accountPaint()}throw new Error(r.status===401?'로그인이 만료됐어요. 다시 로그인해 주세요.':r.status===403?'리포트 열람 승인이 필요해요. 관리자에게 계정 ID와 원하는 리포트를 알려주세요.':r.status===409?'저장된 출생 정보가 필요해요. 내 정보에서 출생 정보를 저장해주세요.':r.status===404?'리포트 또는 권한 서버를 준비하고 있어요.':r.status===503?'카카오 로그인 설정을 마무리하고 있어요.':r.status===429?'요청이 많아요. 잠시 뒤 다시 시도해 주세요.':'요청을 처리하지 못했어요. 잠시 뒤 다시 시도해 주세요.')}return data;
 }
 function profileFill(v){
   const p=JSON.parse(JSON.stringify(v));if(p.place?.ki!=null&&p.place.ki>=MAPS.kor.length)delete p.place.ki;if(p.place?.wi!=null&&p.place.wi>=MAPS.world.length)delete p.place.wi;if(p.place?.ci!=null&&p.place.ci>=PLACES.length)delete p.place.ci;
@@ -3629,7 +3631,7 @@ $('profileDeleteConfirm').addEventListener('click',async()=>{
 });
 $('accountLogout').addEventListener('click',async()=>{
   if(accountBusy)return;accountBusy=true;accountPaint();
-  try{await accountAPI('/auth/logout',{});accountToken='';accountUser=null;localStorage.removeItem('oracle-session');try{sessionStorage.removeItem('oracle-pending');sessionStorage.removeItem('oracle-save-intent');localStorage.removeItem('oracle-admin')}catch(_){}location.replace(location.pathname);return}catch(e){accountStatus(e.message)}finally{accountBusy=false;accountPaint()}
+  try{await accountAPI('/auth/logout',{});accountToken='';accountUser=null;accountChecking=false;localStorage.removeItem('oracle-session');try{localStorage.removeItem('oracle-nick');sessionStorage.removeItem('oracle-pending');sessionStorage.removeItem('oracle-save-intent');localStorage.removeItem('oracle-admin')}catch(_){}location.replace(location.pathname);return}catch(e){accountStatus(e.message)}finally{accountBusy=false;accountPaint()}
 });
 async function accountInit(){
   const startVersion=formVersion;const hash=new URLSearchParams(location.hash.slice(1)),code=hash.get('oracle_code'),error=hash.get('oracle_error');
@@ -3638,14 +3640,14 @@ async function accountInit(){
     if(error){clearLoginProof();accountNotice('카카오 인증이 완료되지 않았어요. 로그인 버튼을 눌러 다시 시도해 주세요.');return}
     if(code){const verifier=readLoginProof();if(!verifier)throw new Error('로그인 연결 시간이 지났거나 브라우저가 변경됐어요. 현재 화면에서 다시 로그인해 주세요.');const data=await accountAPI('/auth/exchange',{code,verifier});clearLoginProof();accountToken=data.token;lsSet('oracle-session',accountToken)}
     if(!accountToken){const config=await accountAPI('/auth/config');if(!config.enabled){$('accountLogin').disabled=true;accountStatus('카카오 로그인 연결을 준비하고 있어요.');}return}
-    let user;try{user=await accountAPI('/me')}catch(e1){if(!(e1 instanceof TypeError))throw e1;await new Promise(r=>setTimeout(r,1200));user=await accountAPI('/me')}accountUser=user;lsSet('oracle-admin',user.isAdmin?'1':'0');paintAccessAccount();if(code){accountNotice((user.nickname||'회원')+'님, 로그인했어요.');if(!user.profile){document.body.classList.add('app-entered');$('askbox').open=true}}
+    let user;try{user=await accountAPI('/me')}catch(e1){if(!(e1 instanceof TypeError||e1?.name==='AbortError'))throw e1;await new Promise(r=>setTimeout(r,1200));user=await accountAPI('/me')}accountUser=user;accountChecking=false;lsSet('oracle-nick',user.nickname||'');lsSet('oracle-admin',user.isAdmin?'1':'0');paintAccessAccount();if(code){accountNotice((user.nickname||'회원')+'님, 로그인했어요.');if(!user.profile){document.body.classList.add('app-entered');$('askbox').open=true}}
     let pending=null,intent=false,runAfter=false;try{pending=JSON.parse(sessionStorage.getItem('oracle-pending')||'null');intent=sessionStorage.getItem('oracle-save-intent')==='1';runAfter=sessionStorage.getItem('oracle-pending-run')==='1';sessionStorage.removeItem('oracle-pending');sessionStorage.removeItem('oracle-save-intent');sessionStorage.removeItem('oracle-pending-run')}catch(_){}
     $('profileConsent').checked=intent||!!user.profile;
     if(pending&&formVersion===startVersion&&runAfter){const ok=restoreSavedResult(pending);if(intent&&ok){try{await accountAPI('/profile',{profile:pending,consent:true});accountUser.profile=pending;$('profileConsent').checked=true;accountNotice('로그인했어요. 지금 본 출생 정보를 카카오 계정에 저장했어요.')}catch(e){accountNotice('로그인했어요. 출생 정보 저장은 실패했어요: '+(e.message||''))}}else accountNotice(ok?'로그인했어요. 보던 결과를 그대로 이어서 보여 드려요.':'로그인했어요.')}
     else if(pending&&formVersion===startVersion){profileFill(pending);accountStatus('로그인했어요. ‘나의 운명 확인하기’를 누르면 입력한 정보가 카카오 계정에 저장돼요.')}
     else if(user.profile&&formVersion===startVersion){const ready=restoreSavedResult(user.profile);accountStatus(ready?'저장한 정보로 운명 결과를 불러왔어요.':'저장된 정보를 확인해주세요.')}
     else accountStatus(intent?'로그인했어요. 정보를 입력하고 ‘나의 운명 확인하기’를 누르면 저장돼요.':user.profile?'저장한 정보가 있어요. 하단 내 정보에서 불러올 수 있어요.':'');
-  }catch(e){const message=e instanceof TypeError?'로그인 서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.':(e.message||'내 정보를 불러오지 못했어요.');if(code||error)accountNotice(message);else accountStatus(message)}finally{accountPaint();document.documentElement.classList.remove('boot');try{cmpPairBoot()}catch(_){}}
+  }catch(e){if(!accountToken)accountChecking=false;const message=(e instanceof TypeError||e?.name==='AbortError')?'로그인 서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.':(e.message||'내 정보를 불러오지 못했어요.');if(code||error)accountNotice(message);else accountStatus(message)}finally{accountPaint();document.documentElement.classList.remove('boot');try{cmpPairBoot()}catch(_){}}
 }
 $('loginSaveGo')?.addEventListener('click',()=>{try{const v=readForm();if(!v.err&&!checkForm()){sessionStorage.setItem('oracle-pending',JSON.stringify(v));sessionStorage.setItem('oracle-pending-run','1')}sessionStorage.setItem('oracle-save-intent',$('loginSaveAgree').checked?'1':'')}catch(_){}$('loginSaveDialog').close();window.__loginAsked=true;$('accountLogin').click()});
 $('loginSaveCancel')?.addEventListener('click',()=>$('loginSaveDialog').close());

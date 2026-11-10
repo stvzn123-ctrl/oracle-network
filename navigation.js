@@ -33,7 +33,7 @@
  document.getElementById('accountWithdraw').onclick=async()=>{
   if(!confirm('탈퇴하면 저장한 출생 정보, 궁합 정보, 리포트와 열람 권한이 삭제됩니다. 탈퇴할까요?'))return;
   const b=document.getElementById('accountWithdraw'),status=document.getElementById('accountMenuStatus');b.disabled=true;
-  try{await accountAPI('/auth/withdraw',{});localStorage.removeItem('oracle-session');localStorage.removeItem('oracle-admin');sessionStorage.removeItem('oracle-pending');location.replace(location.pathname)}catch(e){status.textContent=e.message;b.disabled=false}
+  try{await accountAPI('/auth/withdraw',{});localStorage.removeItem('oracle-session');localStorage.removeItem('oracle-nick');localStorage.removeItem('oracle-admin');sessionStorage.removeItem('oracle-pending');location.replace(location.pathname)}catch(e){status.textContent=e.message;b.disabled=false}
  };
  let swipe=null;const result=document.getElementById('result'),order=['natal','flow','today'];
  result.addEventListener('touchstart',e=>{if(e.touches.length!==1||(document.body.classList.contains('nav-topics')||document.body.classList.contains('nav-ask'))||e.target.closest('input,select,textarea,button,a,summary,.feng-explorer,.mapwrap')){swipe=null;return}const p=e.touches[0];swipe={x:p.clientX,y:p.clientY,time:Date.now()}},{passive:true});
