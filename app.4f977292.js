@@ -3867,11 +3867,15 @@ document.addEventListener('click',e=>{
  if(c&&/^[a-f0-9]{12}$/.test(c)){sessionStorage.setItem(PAIRKEY,c);u.searchParams.delete('c');history.replaceState(null,'',u.pathname+u.search+u.hash)}
 }catch(_){}})();
 
+/* 초대 링크로 들어온 사람이 이미 출생 정보를 저장해 둔 경우: 바로 합류하지 않고 서로 보는 데 동의하는지 먼저 묻는다. 링크를 보낸 사람은 만들 때 동의한 것으로 본다. */
+function pairConsent(){return new Promise(res=>{let d=$('pairConsentDialog');if(!d){d=document.createElement('dialog');d.id='pairConsentDialog';d.className='login-save-dialog pair-consent';d.setAttribute('aria-labelledby','pairConsentTitle');d.innerHTML='<h2 id="pairConsentTitle">친구가 보낸 궁합 링크예요</h2><p>동의하면 저장된 내 출생 정보로 궁합을 계산하고, 결과와 출생 정보가 링크를 보낸 사람에게도 보여요.</p><p class="fine">링크를 보낸 사람은 링크를 만들 때 이미 동의한 것으로 봐요.</p><div class="login-save-btns"><button type="button" data-pair-no>나중에</button><button type="button" class="primary" data-pair-yes>동의하고 궁합 보기</button></div>';document.body.append(d);d.querySelector('[data-pair-yes]').onclick=()=>d.close('yes');d.querySelector('[data-pair-no]').onclick=()=>d.close('no')}
+ d.onclose=()=>res(d.returnValue==='yes');d.returnValue='';d.showModal()})}
 async function cmpPairBoot(){
  let code='';try{code=sessionStorage.getItem(PAIRKEY)||''}catch(_){}
  if(!code){try{const pending=JSON.parse(localStorage.getItem('oracle-pair-request')||'null');if(pending&&pending.userId===accountUser?.id&&Date.now()-pending.created<7*864e5)cmpWatch(pending.code)}catch(_){}return}
  if(!accountUser){accountNotice('친구가 보낸 궁합 링크예요. 카카오로 로그인하고 내 출생 정보를 저장하면 두 사람의 궁합이 서로에게 보여요.');return}
  if(!accountUser.profile){accountNotice('궁합 링크로 들어왔어요. 출생 정보를 입력하고 ‘내 정보 저장’을 누르면 친구와의 궁합이 바로 나와요.');return}
+ if(!(await pairConsent())){try{sessionStorage.removeItem(PAIRKEY)}catch(_){}accountNotice('궁합 링크 참여를 미뤘어요. 보고 싶어지면 친구가 보낸 링크를 다시 열어 주세요.');return}
  try{
   await accountAPI('/pair/join',{code});
   try{sessionStorage.removeItem(PAIRKEY)}catch(_){}

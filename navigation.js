@@ -1,6 +1,8 @@
 /* Bottom navigation reuses the existing login and profile actions. */
 (()=>{
- const sheet=document.getElementById('accountSheet');
+ const sheet=document.getElementById('accountSheet'),guidePage=document.getElementById('guidePage');
+ function showGuides(){leaveEditor();document.querySelectorAll('dialog[open]').forEach(d=>d.close());if(!document.getElementById('report').hidden)closeReport();document.body.classList.remove('nav-topics','nav-ask');document.body.classList.add('app-entered','nav-account');sheet.hidden=true;guidePage.hidden=false;select('account');window.scrollTo({top:0,behavior:'instant'})}
+ function hideGuides(){guidePage.hidden=true}
  const nav=document.querySelector('.bottom-nav');
  const askbox=document.getElementById('askbox'),formAnchor=document.createComment('birth-form-home');askbox.before(formAnchor);
  const editor=document.createElement('section');editor.id='accountEditor';editor.hidden=true;const editorTitle=document.createElement('h3');editorTitle.textContent='내 정보 수정';editor.append(editorTitle);sheet.append(editor);
@@ -40,7 +42,7 @@
  function select(key){nav.querySelectorAll('button').forEach(b=>{if(b.dataset.bottom===key)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')})}
  nav.addEventListener('click',e=>{
   const b=e.target.closest('[data-bottom]');if(!b)return;
-  const key=b.dataset.bottom;leaveEditor();
+  const key=b.dataset.bottom;leaveEditor();hideGuides();
   document.querySelectorAll('dialog[open]').forEach(d=>d.close());
   if(!document.getElementById('report').hidden)closeReport();
   document.body.classList.toggle('nav-account',key==='account');sheet.hidden=key!=='account';
@@ -67,12 +69,13 @@
    e.preventDefault();e.stopImmediatePropagation();document.body.classList.remove('nav-topics');document.getElementById('askbox').open=true;select('home');document.getElementById('err').textContent='생년월일 등 출생 정보를 입력하면 선택한 주제의 운세를 볼 수 있어요.';document.getElementById('in-name').focus();
   }
  },true);
- document.addEventListener('click',e=>{if(e.target.closest('[data-complete-profile]'))document.getElementById('profileEdit').click();if(e.target.closest('[data-open-account]')){const b=nav.querySelector('[data-bottom="account"]');if(b)b.click()}});
+ document.addEventListener('click',e=>{if(e.target.closest('[data-complete-profile]'))document.getElementById('profileEdit').click();if(e.target.closest('[data-open-guides]'))showGuides();if(e.target.closest('[data-guide-back]')){hideGuides();sheet.hidden=false;paintProfile();window.scrollTo({top:0,behavior:'instant'})}});
+ document.getElementById('savedRecordsClose').onclick=()=>{document.getElementById('savedRecordsPanel').hidden=true};
  document.getElementById('profileDeleteDialog').addEventListener('close',()=>{if(!document.getElementById('savedRecordsPanel').hidden)showSavedRecords()});
  new MutationObserver(()=>{if(document.body.classList.contains('nav-edit')){if(!askbox.open)leaveEditor();select('account')}}).observe(askbox,{attributes:true,attributeFilter:['open']});
  document.getElementById('profileEdit').addEventListener('click',()=>{
   document.querySelectorAll('dialog[open]').forEach(d=>d.close());if(!document.getElementById('report').hidden)closeReport();
-  document.body.classList.remove('nav-topics','nav-ask');document.body.classList.add('app-entered','nav-account','nav-edit');sheet.hidden=false;editor.hidden=false;editor.append(askbox);
+  hideGuides();document.body.classList.remove('nav-topics','nav-ask');document.body.classList.add('app-entered','nav-account','nav-edit');sheet.hidden=false;editor.hidden=false;editor.append(askbox);
   askbox.open=true;editSave.hidden=!accountUser;select('account');window.scrollTo({top:0,behavior:'instant'});document.getElementById('in-name').focus({preventScroll:true});
  });
 

@@ -269,9 +269,13 @@
 - 클라이언트 리포트 꼬리말(`note`)에 '미래를 예측하는 정확성은 검증되지 않았으며…' 안내를 worker와 같은 문장으로 되살렸다(판매 시 필수 고지).
 
 ## 내 정보 · 안내와 약관, 종합 리포트 안내 (2026-11-10)
-- '내 정보'(`#accountSheet`) 아래 `.acct-guides`에 안내 6개를 모았다: 리포트 안내(`policy-products`, product-flow.js `productsGuideHTML`이 `catalog`로 생성: 종합·주제별·자유질문 비교표 + 상품별 무료/리포트/범위), 이용 안내, 결제·환불, 개인정보 처리방침, 이용약관, 사업자 정보. 모두 기존 `data-policy` 다이얼로그로 연다. 푸터에는 법적으로 늘 보여야 하는 개인정보 처리방침·이용약관과 '안내·약관 전체 보기'(`data-open-account` → 내 정보 탭)만 남겼다.
+- 안내 6개는 별도 페이지 `#guidePage`(`.account-page`, 내 정보의 '안내와 약관' 버튼 `data-open-guides`로 열고 `data-guide-back`으로 돌아옴, navigation.js `showGuides/hideGuides`)에 모았다. 페이지 모드 CSS는 `:is(#accountSheet,#guidePage).account-page`로 둘 다 적용. 내 정보에서 '저장 정보 보기' 패널은 `#savedRecordsClose`로 닫는다. 내 정보 수정(`nav-edit`) 중에는 안내 버튼도 숨긴다. 안내 6개: 리포트 안내(`policy-products`, product-flow.js `productsGuideHTML`이 `catalog`로 생성: 종합·주제별·자유질문 비교표 + 상품별 무료/리포트/범위), 이용 안내, 결제·환불, 개인정보 처리방침, 이용약관, 사업자 정보. 모두 기존 `data-policy` 다이얼로그로 연다. 푸터에는 법적으로 늘 보여야 하는 개인정보 처리방침·이용약관과 '안내·약관 전체 보기'(`data-open-account` → 내 정보 탭)만 남겼다.
 - 결과 화면의 상품 설명(`report-value`·`scopeHTML`·`compareHTML`)은 메인과 주제 패널에서 뺐다.
 - 종합 리포트 안내(`#reportCta`)는 책 표지 없이 한 열: '○○님의 운명, 리포트에서는 이렇게 읽어 드려요' → `#rcPreview`(실제 `buildRichReport(CH,'comprehensive')` 장 제목 + 첫 문장 6개, `renderReportCTA`가 `renderAll` 뒤에 채움; 계산 전에는 정적 목록) → 가격 → `#reportOpen` 버튼 → 한 줄 안내.
+
+## 궁합 초대 링크 동의 (2026-11-10)
+- 링크로 들어온 사람이 로그인 + 출생 정보 저장까지 되어 있으면 `cmpPairBoot`가 바로 합류하지 않고 `pairConsent()` 다이얼로그(`#pairConsentDialog`, 동적 생성)로 '동의하고 궁합 보기 / 나중에'를 묻는다. 안내 문구에 '링크를 보낸 사람은 링크를 만들 때 이미 동의한 것으로 봐요'를 둔다. 나중에를 고르면 sessionStorage `oracle-pair`를 지우고 안내만 띄운다.
+- 궁합·우정 폼 머리(`.cmp-head`)는 제목 아래 '공유해서 입력 요청하기' 버튼을 전체 폭으로 둔다. 소개 글과 폼 상자 사이 간격은 `#tab-match .topic-intro`·`.cmp-kind-note`로 줄였다.
 
 ## 궁합 확장 (2026-11-09)
 - 메뉴는 **궁합**(`data-tab=match`, 연인)과 **우정**(`data-tab=friend`) 둘. 둘 다 `#tab-match` 패널을 쓰고 `CMPKIND`로 구분한다. 궁합 탭은 종류 선택 없이 바로 연인 폼(`.cmp-kind` 숨김). 우정 탭 맨 위에만 종류 버튼 2개(`CMP_KIND`, `cmpSetKind`): **우정(두 사람) / 모임(3명 이상)**(2026-11-10, 예전 3버튼에서 변경). `matchPanelHTML()`이 종류 버튼 + `#cmpOne`(1:1 폼) + `#cmpGroup`(모임 폼)을 만든다. `compatScore`와 점수는 전혀 바뀌지 않는다.

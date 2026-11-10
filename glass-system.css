@@ -96,8 +96,8 @@ body.nav-topics .res-nav{margin-top:14px!important}
 .account-sheet .acct-pop>span[hidden]{display:none!important}#saveProfileEdits{margin-top:12px;width:100%;min-height:46px;border:1px solid var(--line);border-radius:14px;background:var(--field);color:var(--fg);font:500 15px var(--body)}
 /* Account is a regular bottom-tab page, not a floating sheet. */
 body.nav-account>.wrap,body.nav-account #landing{display:none!important}
-#accountSheet.account-page{position:relative!important;inset:auto!important;z-index:auto!important;max-width:var(--app-w,480px);width:100%;max-height:none!important;overflow:visible!important;margin:0 auto!important;padding:24px 20px!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;color:var(--fg)}
-#accountSheet.account-page header{display:block}#accountSheet.account-page h2{font:400 26px/1.5 var(--display);margin:0 0 12px}#accountSheet.account-page>p{font:400 14px/1.8 var(--body);color:var(--muted);margin:0 0 20px}
+:is(#accountSheet,#guidePage).account-page{position:relative!important;inset:auto!important;z-index:auto!important;max-width:var(--app-w,480px);width:100%;max-height:none!important;overflow:visible!important;margin:0 auto!important;padding:24px 20px!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;color:var(--fg)}
+:is(#accountSheet,#guidePage).account-page header{display:block}:is(#accountSheet,#guidePage).account-page h2{font:400 26px/1.5 var(--display);margin:0 0 12px}:is(#accountSheet,#guidePage).account-page>p{font:400 14px/1.8 var(--body);color:var(--muted);margin:0 0 20px}
 .account-page #accountMember{width:100%}.account-page .acct-pop{padding:0!important}.account-page #savedRecordsPanel{margin-top:24px}.account-page #savedRecordsPanel h3{font:500 18px/1.6 var(--body);color:var(--gold-ink);margin:24px 0 12px}
 .saved-record{padding:16px 0;margin:0 0 16px;border-top:1px solid var(--line)}.saved-record h4{font:500 16px/1.6 var(--body);margin:0 0 12px}.saved-record dl{display:grid;grid-template-columns:90px minmax(0,1fr);gap:8px 12px;font:400 14px/1.7 var(--body);margin:0 0 12px}.saved-record dt{color:var(--muted)}.saved-record dd{margin:0;overflow-wrap:anywhere}.saved-record button{font:500 14px var(--body);padding:10px 16px;min-height:40px;margin-right:8px;border:1px solid var(--line);border-radius:12px;background:var(--field);color:var(--fg)}
 #savedPartnersStatus,#savedPersonalRecord{font:400 14px/1.8 var(--body);color:var(--ink2)}
@@ -117,7 +117,7 @@ h1,h2,h3,h4,h5,h6{font-weight:600!important}
 #result .res-lead{font-weight:600!important;color:var(--text-primary)}#result .res-lead .destiny-strength{color:var(--text-emphasis)}
 #result :is(small,.fine,.r-note,.wk-hint,.td-date,.act-meta){font-family:var(--body)!important;font-size:var(--type-meta)!important;line-height:1.7;color:var(--text-caption)}
 #result .home-habit-list{margin:0;padding:0}#result .home-habit-list li{display:block!important;position:relative;padding:4px 0 10px!important;margin:0 0 8px!important;border:0!important;background:transparent!important}.home-habit-number{display:none}.home-habit-list .home-habit-reason{margin:6px 0!important}.home-habit-list small{margin-top:4px}
-#accountSheet.account-page h2{font:600 var(--type-page)/1.5 var(--body)!important}#accountSheet.account-page h3{font:600 var(--type-section)/1.6 var(--body)!important;color:var(--text-emphasis)}
+:is(#accountSheet,#guidePage).account-page h2{font:600 var(--type-page)/1.5 var(--body)!important}:is(#accountSheet,#guidePage).account-page h3{font:600 var(--type-section)/1.6 var(--body)!important;color:var(--text-emphasis)}
 #report .r-page h2{font:600 24px/1.5 var(--body)!important}#report .r-page h3{font:600 var(--type-section)/1.6 var(--body)!important}#report .r-page h4{font:500 var(--type-subtitle)/1.6 var(--body)!important}#report .r-page p,#report .r-page li{font:400 var(--type-copy)/1.85 var(--body)!important}#report .r-page :is(b,strong){font-weight:600!important}
 .wk-scale{font:11px var(--body);fill:var(--muted)}.wk-v{font-family:var(--body)!important;font-weight:500}.wk-d{font-family:var(--body)!important;font-weight:400}.td-cats b{font-weight:600}
 
@@ -125,7 +125,7 @@ h1,h2,h3,h4,h5,h6{font-weight:600!important}
 #tab-today #todayHead{margin-bottom:0!important}#tab-today #todayHead+.blk{margin-top:16px!important;padding-top:0!important}#tab-today #weekTitle{margin:0 0 12px!important;padding-top:0!important}#tab-today .week{margin-top:0!important}
 
 /* The editor belongs to the account tab, never the home result container. */
-body.nav-edit #accountMember,body.nav-edit #savedRecordsPanel,body.nav-edit #accountSheet>header,body.nav-edit #accountSheet>p,body.nav-edit #accountLogin{display:none!important}#accountEditor h3{font:600 22px/1.5 var(--body);color:var(--fg);margin:0 0 16px}#accountEditor .askbox{margin:0;width:100%}body.nav-edit>.wrap{display:none!important}
+body.nav-edit #accountMember,body.nav-edit #savedRecordsPanel,body.nav-edit #accountSheet>header,body.nav-edit #accountSheet>p,body.nav-edit #accountLogin,body.nav-edit .acct-guide-link{display:none!important}#accountEditor h3{font:600 22px/1.5 var(--body);color:var(--fg);margin:0 0 16px}#accountEditor .askbox{margin:0;width:100%}body.nav-edit>.wrap{display:none!important}
 /* Unified birth-information form, including the account-owned editor. */
 #askbox{border:1px solid var(--line)!important;border-radius:22px!important;background:rgba(255,253,249,.72)!important;box-shadow:inset 0 1px 0 #fff}
 #askbox>summary{padding:14px 18px!important;border-bottom:1px solid var(--line);font:500 14px/1.6 var(--body)}
@@ -221,10 +221,10 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 .cmp-kind{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:4px;margin:0 0 10px;border:1px solid var(--line);border-radius:14px;background:var(--field)}
 .cmp-kind button{min-height:44px;padding:8px 6px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--ink2);font:600 14px/1.3 var(--body);cursor:pointer}
 .cmp-kind button[aria-pressed=true]{background:var(--panel);border-color:var(--gold-ink);color:var(--gold-ink)}
-.cmp-kind[hidden]{display:none}.cmp-kind-note{margin:0 0 14px;font-size:13px;line-height:1.7;color:var(--muted)}
-.cmp-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px}
+.cmp-kind[hidden]{display:none}.cmp-kind-note{margin:0 0 8px;font-size:13px;line-height:1.7;color:var(--muted)}#tab-match .topic-intro{margin-bottom:10px!important}#tab-match .cmp-form{margin-top:4px}
+.cmp-head{display:grid;gap:10px;margin:0 0 12px}
 .cmp-head h4{margin:0}
-.cmp-askshare{margin-left:auto;min-height:40px;padding:8px 14px;border:1px solid var(--gold-ink);border-radius:999px;background:transparent;color:var(--gold-ink);font:600 13px/1.3 var(--body);cursor:pointer}
+.cmp-askshare{width:100%;min-height:44px;padding:10px 14px;border:1px solid var(--gold-ink);border-radius:999px;background:transparent;color:var(--gold-ink);font:600 13px/1.3 var(--body);cursor:pointer}
 .cmp-pair:not(:empty){margin:0 0 14px;padding:12px;border-radius:14px;background:var(--field)}
 .cmp-link input{width:100%;min-height:44px;font-size:13px}
 .cmp-group-list{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:6px}
@@ -234,7 +234,7 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 .cmp-roles{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
 .cmp-roles li{padding:10px 12px;border-radius:12px;background:var(--field);font-size:14px}
 .cmp-roles li small{display:block;margin-top:4px;color:var(--muted);font-size:12.5px;line-height:1.65}
-@media(max-width:420px){.cmp-kind{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.cmp-kind button{font-size:12.5px;padding:8px 2px}.cmp-askshare{margin-left:0;width:100%}}
+@media(max-width:420px){.cmp-kind{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.cmp-kind button{font-size:12.5px;padding:8px 2px}}
 
 /* 2026-11-10 종합 리포트 안내: 한 열, 장 목록 바로 아래 버튼 */
 #reportCta.report-cta{display:block;text-align:left;padding:24px 20px}
@@ -258,3 +258,11 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 #reportCta .eyebrow{display:inline-block;color:var(--gold-ink);font-size:12px;letter-spacing:.08em}
 #reportCta .rc-toc li{border-left:2px solid var(--gold);background:none}
 #tab-natal #reportCta button.linklike{display:inline!important;width:auto!important;min-height:0!important;padding:0!important;margin:0!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;font:inherit!important;font-weight:600!important;color:var(--gold-ink)!important;text-decoration:underline!important}
+
+/* 내 정보 → 안내와 약관 페이지 */
+.acct-guide-link{margin:20px 0 0}.acct-guide-link button{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 12px;width:100%;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--fg);font:600 15px/1.4 var(--body);text-align:left;cursor:pointer}
+.acct-guide-link button small{grid-column:1;display:block;font-size:12.5px;font-weight:400;color:var(--muted);line-height:1.5}.acct-guide-link button span{grid-column:2;grid-row:1/3;color:var(--gold-ink)}
+.guide-page header{display:flex!important;flex-direction:column;align-items:flex-start;gap:6px}.guide-back{font:500 14px/1 var(--body);color:var(--gold-ink);background:none;border:0;padding:4px 0;cursor:pointer}
+.guide-page .acct-guide-list{margin-top:14px}
+.saved-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.saved-head h3{margin:0!important}.saved-close{font:500 13px/1 var(--body);color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:7px 12px;cursor:pointer}
+.pair-consent .fine{font-size:12.5px;color:var(--muted);margin-top:6px}
