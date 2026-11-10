@@ -118,7 +118,7 @@ const ONELINE = [
   "{name}님은 분명한 기준으로 옳은 길을 고르고, 끝까지 지켜 내는 사람이에요.",
   "{name}님은 깊이 생각하고 흐름을 읽어, 남들이 못 보는 답을 찾아내는 사람이에요."
 ];
-const SUM_YEAR = "앞으로 10년 동안은 특히 {cat} 쪽이 밝고, 그중에서도 {y}년이 가장 빛나는 해예요.";
+const SUM_YEAR = "앞으로 10년 동안은 특히 {cat} 쪽이 밝고, 그중에서도 {y}년이 가장 밝은 해예요.";
 const FLOW_OPEN = "앞으로 10년은 한 방향으로만 흐르지 않아요. 크게 나아갈 해가 있고, 숨을 고를 해가 있어요. {name}님에게 특히 중요한 해들을 순서대로 짚어 볼게요.";
 
 /* ───────── 6. 마무리 ───────── */
@@ -148,7 +148,7 @@ export function narrativeComprehensive(c) {
     lead: F(ONELINE[c.dom]),
     paras: [
       "다섯 가지 점술이 공통으로 말하는 건, " + c.common,
-      fill(SUM_YEAR, { cat: CAT_KO[c.bestCat], y: c.bestYear }) + (c.mateYears.length ? " 사랑에서는 " + c.mateYears[0].y + "년 무렵 인연의 기운이 뚜렷하게 들어와요. 만나는 사람이 있다면 그 관계가 결실을 맺는 때예요." : ""),
+      fill(SUM_YEAR, { cat: CAT_KO[c.bestCat], y: c.bestYear }) + (c.mateYears.length ? " 사랑에서는 새 인연이나 약속의 신호가 가장 많이 겹치는 해가 " + c.mateYears[0].y + "년이에요." + (c.loveYear && c.loveYear !== c.mateYears[0].y ? " 이미 곁에 있는 관계가 가장 따뜻해지는 해는 " + c.loveYear + "년이에요." : "") : ""),
       "이 리포트는 사주, 서양 점성술, 인도 점성술, 수비학, 마야력 다섯 가지로 {name}님을 함께 읽고, 여러 점술이 공통으로 가리키는 이야기를 중심으로 풀어 썼어요.".replace(/\{name\}/g, c.name)
     ],
     basis: c.basis.summary
@@ -170,7 +170,8 @@ export function narrativeComprehensive(c) {
   out.push({
     kind: "partner", title: "사랑과 인연",
     lead: "",
-    paras: [F(LOVE[c.venusEl]), F(MATE[c.mateEl]), MEETP[c.descEl] + " " + mateWhen],
+    /* 2026-11-10: 성격(일간·오행)과 사랑(금성) 문단이 부딪힐 때 잇는 문장, 인연 신호 해와 애정 점수 최고 해를 구분하는 문장. */
+    paras: [([2, 3, 4].includes(c.dom) && c.venusEl % 2 === 0 ? "평소에는 차분하고 신중해 보여도, 마음이 움직이면 달라져요. " : [0, 1].includes(c.dom) && c.venusEl % 2 === 1 ? "평소에는 앞장서고 활발한 편이지만, 마음을 여는 데는 시간이 걸려요. " : "") + F(LOVE[c.venusEl]), F(MATE[c.mateEl]), MEETP[c.descEl] + " " + mateWhen + (c.loveYear && !c.mateYears.some(m => m.y === c.loveYear) ? " 한편 애정 점수만 보면 " + c.loveYear + "년이 가장 높아요. 새로운 만남보다 지금 있는 관계가 따뜻해지는 해로 읽어 주세요." : "")],
     action: "만나는 사람이 있다면 이번 달에 둘이 가 본 적 없는 곳에 함께 가 보세요. 혼자라면 평소 가지 않던 모임이나 자리에 한 번 나가 보세요.",
     basis: c.basis.partner
   });
