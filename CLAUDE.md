@@ -257,8 +257,11 @@
 - 분야 색(--money/--love/--work/--health)은 글자색으로도 쓰이므로 파스텔로 되돌리지 않는다. 금색 글자는 --gold-ink.
 - 생년월일 한 칸 입력 때문에 `clampNum`의 월·일 리스너는 더 이상 쓰이지 않는다(`#in-m`·`#in-d`는 hidden).
 
+## 입력 폼 (2026-11-10)
+- '어떤 고민부터 볼까요?' 고민 선택 섹션은 폼에서 뺐다(`product-flow.js`의 라우팅 코드는 남아 있으나 버튼이 없다). '현재 관계 상태'는 출생지 아래, 제출 버튼 위. 선택지 '혼자임'은 '혼자에요'. 출생 시각은 포커스 때 ':'를 미리 넣지 않고 시 두 자리를 치면 ':'가 붙는다(`input-experience.js`, 지울 때는 붙이지 않음).
+
 ## 궁합 확장 (2026-11-09)
-- 궁합 탭 맨 위에 종류 버튼 3개(`CMP_KIND`, `cmpSetKind`): **연인·썸 / 친구 / 모임(3명 이상)**. `matchPanelHTML()`이 종류 버튼 + `#cmpOne`(1:1 폼) + `#cmpGroup`(모임 폼)을 만든다. `compatScore`와 점수는 전혀 바뀌지 않는다.
+- 메뉴는 **궁합**(`data-tab=match`, 연인)과 **우정**(`data-tab=friend`) 둘. 둘 다 `#tab-match` 패널을 쓰고 `CMPKIND`로 구분한다. 궁합 탭은 종류 선택 없이 바로 연인 폼(`.cmp-kind` 숨김). 우정 탭 맨 위에만 종류 버튼 2개(`CMP_KIND`, `cmpSetKind`): **우정(두 사람) / 모임(3명 이상)**(2026-11-10, 예전 3버튼에서 변경). `matchPanelHTML()`이 종류 버튼 + `#cmpOne`(1:1 폼) + `#cmpGroup`(모임 폼)을 만든다. `compatScore`와 점수는 전혀 바뀌지 않는다.
 - **친구 궁합**은 같은 점수에 표현만 바꾼다. `friendify(v)`가 `FRIEND_WORDS`(결혼·동거·연애·데이트·설렘 등 → 우정 표현)로 문자열을 재귀 치환하고, `openCompatReport`에서 `COMPAT.kind==='friend'`일 때만 `compatReportData` 결과에 적용한다. `birthCharts`는 치환하지 않는다.
 - **모임 궁합**(`groupResult`): 참여자 모든 두 사람 조합을 `compatScore`로 재고 평균(`total`). 역할은 `groupRole` = 가장 많은 오행 + 신강/신약 → `GROUP_ROLE` 10종. 지속 점수 `keep` = 평균 + 띠 삼합·육합 쌍 ×2 − 띠 충 쌍 ×2 − (최고·최저 짝 차이 − 10)×0.4, 68~97. `years`로 '10년 넘게 / 5~10년쯤 / 3~5년쯤 / 계기가 있을 때마다'를 보여 준다. 3~8명. 리포트는 `groupReportData`(요약·역할·지속·주의할 점·범위)를 기존 `approvedReportHTML`로 그린다.
 - `compatFormHTML(mode)`에 `group` 모드 추가(제목 '모임에 사람 추가하기', 버튼 '모임에 추가'). `compatSubmit`은 `mode==='group'`이면 점수를 내지 않고 `GROUP`에 넣는다.
