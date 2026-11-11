@@ -928,7 +928,7 @@ const TABS=["natal","flow","today","money","marry","love","reunion","work","matc
 function setTab(t,focus){const friend=t==="friend";if(friend)t="match";if(t==="love")t="marry";if(t==="match")CMPKIND=friend?FRIENDKIND:"love";if(t==="employment"||t==="move")t="work";if(t==="exam"||t==="cert")t="study";t=TOPIC_GROUPS[t]?.[0]||t;{const fb=document.querySelector(`#topicFold [data-tab="${t}"]`);if(fb&&focus)document.getElementById("topicFold").open=true;}document.querySelectorAll("[data-subgroup]").forEach(el=>{el.hidden=!(TOPIC_GROUPS[el.dataset.subgroup]||[]).includes(t)});document.querySelectorAll(".res-nav [role=tab]").forEach(b=>{const on=b.dataset.topicGroup?TOPIC_GROUPS[b.dataset.topicGroup].includes(t):b.hasAttribute("data-romance")?["love","marry","reunion","match"].includes(t):b.dataset.tab===(friend?"friend":t);b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1;if(on){if(focus)b.focus();}});
   document.querySelector(".romance-tabs").hidden=!["love","marry","reunion","match"].includes(t);
   TABS.forEach(k=>{$("tab-"+k).hidden=k!==t});
-  if(t==="match"){cmpSetKind(CMPKIND);const heading=$("tab-match").querySelector(".topic-intro h3");if(heading)heading.textContent=CMPKIND==="group"?"우리 모임은 얼마나 잘 어울릴까?":friend?"우리의 우정은 어떻게 잘 맞을까?":"우리 둘은 어떤 점에서 잘 맞을까?"}if(t==="match"||t==="reunion")setTimeout(partnerSync,0);if(CH&&TOPICS.some(x=>x[0]===t)&&!$("tab-"+t).innerHTML)$("tab-"+t).innerHTML=t==="money"?moneyAllHTML(CH):topicHTML(CH,t);if(t==="match"){cmpSetKind(CMPKIND);const heading=$("tab-match").querySelector(".topic-intro h3");if(heading)heading.textContent=CMPKIND==="group"?"우리 모임은 얼마나 잘 어울릴까?":friend?"우리의 우정은 어떻게 잘 맞을까?":"우리 둘은 어떤 점에서 잘 맞을까?"}if(t==="flow"&&CH){drawGraph=true;renderBig();setTimeout(()=>{drawGraph=false},0)}}
+  if(t==="match"){cmpSetKind(CMPKIND);const heading=$("tab-match").querySelector(".topic-intro h3");if(heading)heading.textContent=CMPKIND==="group"?"우리 모임의 역할과 캐릭터":friend?"우리의 역할과 어울리는 캐릭터":"우리 둘은 어떤 점에서 잘 맞을까?"}if(t==="match"||t==="reunion")setTimeout(partnerSync,0);if(CH&&TOPICS.some(x=>x[0]===t)&&!$("tab-"+t).innerHTML)$("tab-"+t).innerHTML=t==="money"?moneyAllHTML(CH):topicHTML(CH,t);if(t==="match"){cmpSetKind(CMPKIND);const heading=$("tab-match").querySelector(".topic-intro h3");if(heading)heading.textContent=CMPKIND==="group"?"우리 모임의 역할과 캐릭터":friend?"우리의 역할과 어울리는 캐릭터":"우리 둘은 어떤 점에서 잘 맞을까?"}if(t==="flow"&&CH){drawGraph=true;renderBig();setTimeout(()=>{drawGraph=false},0)}}
 document.addEventListener("click",e=>{const g=e.target.closest("[data-goto]");if(g){setTab(g.dataset.goto);requestAnimationFrame(()=>document.querySelector("#tab-natal .act")?.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"}));return}
   const b=e.target.closest("[data-buy]");if(b&&b.dataset.buy!=="ask"){openTopicReport(b.dataset.buy,b);return}if(b){const msg=b.closest(".topic-offer")?.querySelector(".buy-msg")||b.nextElementSibling;if(msg)msg.textContent="결제 기능을 준비하고 있어요. 아직 결제되지는 않았어요."}});
 document.querySelectorAll(".res-nav [role=tab]").forEach((b,i,all)=>{b.addEventListener("click",()=>setTab(b.dataset.tab));b.addEventListener("keydown",e=>{all=Array.from(b.closest("[role=tablist]").querySelectorAll("[role=tab]"));i=all.indexOf(b);const k=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(!k)return;e.preventDefault();setTab(all[(i+k+all.length)%all.length].dataset.tab,true)})});
@@ -1670,15 +1670,16 @@ async function partnerSync(){if(!accountUser){PSRV=null;partnerRefresh();return}
 async function partnerSave(p){if(accountUser){try{await accountAPI('/partners',{partner:p,consent:true});await partnerSync();return '내 계정에 저장했어요.'}catch(e){return '저장하지 못했어요. '+(e.message||'연결 상태를 확인하고 다시 시도해 주세요.')}}
  const l=partnerLocal().filter(x=>!(x.name===p.name&&x.date===p.date));l.unshift({...p,at:new Date().toISOString().slice(0,10)});partnerStore(l);partnerRefresh();return '이 기기에 저장했어요.'}
 async function partnerDelete(i){const p=partnerList()[i];if(!p)return;if(accountUser&&p.id){try{await accountAPI('/partners',{action:'delete',id:p.id})}catch(_){}await partnerSync()}else{const l=partnerLocal();l.splice(i,1);partnerStore(l);partnerRefresh()}}
-function partnerSavedHTML(){const l=partnerList();if(!l.length)return '';return '<p class="cmp-saved-h">저장한 상대'+(accountUser?' (내 계정)':' (이 기기)')+'</p><ul>'+l.map((p,i)=>'<li><button type="button" class="cmp-load" data-pi="'+i+'"><b>'+topicEsc(p.name)+'</b><small>'+topicEsc(p.date)+(p.score!=null?' · 최근 궁합 '+p.score+'점':'')+'</small></button><button type="button" class="cmp-del" data-pd="'+i+'" aria-label="'+topicEsc(p.name)+' 삭제">삭제</button></li>').join('')+'</ul>'}
-function partnerRefresh(){document.querySelectorAll('.cmp-saved').forEach(el=>el.innerHTML=partnerSavedHTML());document.querySelectorAll('.cmp-form .cmp-save-lb').forEach(lb=>lb.textContent=accountUser?'상대방의 동의를 받았고, 내 계정에 저장할게요':'이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)')}
+function sameGroupPerson(a,b){const x=a.inp||a,y=b.inp||b,n=t=>String(t||'').normalize('NFKC').replace(/\s+/g,'').toLowerCase();return x.date===y.date&&x.sex===y.sex&&n(x.name)===n(y.name);}
+function partnerSavedHTML(group=false){const l=partnerList();if(!l.length)return '';return '<p class="cmp-saved-h">저장한 상대'+(accountUser?' (내 계정)':' (이 기기)')+'</p><ul>'+l.map((p,i)=>'<li><button type="button" class="cmp-load" data-pi="'+i+'"'+(group&&[CH,...GROUP].some(c=>c&&sameGroupPerson(c,p))?' disabled aria-label="이미 추가된 사람"':'')+'><b>'+topicEsc(p.name)+'</b><small>'+topicEsc(p.date)+(p.score!=null?' · 최근 궁합 '+p.score+'점':'')+'</small></button><button type="button" class="cmp-del" data-pd="'+i+'" aria-label="'+topicEsc(p.name)+' 삭제">삭제</button></li>').join('')+'</ul>'}
+function partnerRefresh(){document.querySelectorAll('.cmp-saved').forEach(el=>el.innerHTML=partnerSavedHTML(!!el.closest('.cmp-form')?.querySelector('#group-form')));document.querySelectorAll('.cmp-form .cmp-save-lb').forEach(lb=>lb.textContent=accountUser?'상대방의 동의를 받았고, 내 계정에 저장할게요':'이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)')}
 document.addEventListener('click',e=>{const ld=e.target.closest('.cmp-load'),dl=e.target.closest('.cmp-del');if(!ld&&!dl)return;const l=partnerList();
  if(dl){const p=l[+dl.dataset.pd];if(p&&confirm(p.name+'님의 정보를 삭제할까요?'))partnerDelete(+dl.dataset.pd);return}
  const p=l[+ld.dataset.pi],f=ld.closest('.cmp-form')?.querySelector('form');if(!p||!f)return;const el=f.elements;el.partnerName.value=/^이름 없음/.test(p.name)?'':p.name;el.partnerRoman.value=p.roman;el.partnerRoman.dataset.edited='1';
  [...el.partnerSex].forEach(r=>r.checked=r.value===p.sex);el.partnerDate.value=String(p.date).replace(/\D/g,'');el.partnerTime.value=p.time||'';el.partnerNoTime.checked=!!p.notime;el.partnerTime.disabled=!!p.notime;
  el.partnerNoPlace.checked=p.pi==null;el.partnerPlace.disabled=p.pi==null;if(p.pi!=null)el.partnerPlace.value=String(p.pi);f.requestSubmit()});
 function compatFormHTML(mode='match'){const RU=mode==='reunion',GP=mode==='group',opts=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
- return `<section class="chart-form cmp-form"><div class="cmp-head"><h4>${GP?"모임에 사람 추가하기":RU?"상대방 정보로 재회 흐름 보기":"상대방 정보로 궁합 보기"}</h4>${RU?"":'<button type="button" class="cmp-askshare" data-pmake>공유해서 입력 요청하기</button>'}</div>${RU?"":'<div class="cmp-pair"></div>'}<div class="cmp-saved">${partnerSavedHTML()}</div><form id="${GP?"group-form":RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate><div class="chart-fields">
+ return `<section class="chart-form cmp-form ${GP?'cmp-form-group':''}"><div class="cmp-head"><h4>${GP?"모임에 사람 추가하기":RU?"상대방 정보로 재회 흐름 보기":"상대방 정보로 궁합 보기"}</h4>${RU?"":'<button type="button" class="cmp-askshare" data-pmake>공유해서 입력 요청하기</button>'}</div>${RU?"":'<div class="cmp-pair"></div>'}<div class="cmp-saved">${partnerSavedHTML(GP)}</div><form id="${GP?"group-form":RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate>${GP?'<details class="group-manual"><summary>직접 입력해서 추가</summary>':''}<div class="chart-fields">
  <label>상대 이름 <small>(선택)</small><input name="partnerName" maxlength="40" autocomplete="off" placeholder="홍길동 · 비워 두면 이름 없이 봐요"></label>
  <label>상대 영문 이름 <small>(선택)</small><input name="partnerRoman" maxlength="80" autocomplete="off" placeholder="자동 입력"></label>
  <p class="cmp-priv">이름을 넣지 않으면 이름으로 계산하는 수비학 영혼 수는 빼고, 생년월일로 보는 점술만으로 계산해요.</p>
@@ -1686,7 +1687,7 @@ function compatFormHTML(mode='match'){const RU=mode==='reunion',GP=mode==='group
  <label>상대 생년월일 (양력)<input name="partnerDate" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="예: 19981122" required></label>
  <label>출생 시각 (24시간제)<input name="partnerTime" type="text" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="예: 15:00"></label><label class="chk"><input type="checkbox" name="partnerNoTime">시각을 몰라요</label>
  <label>출생지<select name="partnerPlace">${opts}</select></label><label class="chk"><input type="checkbox" name="partnerNoPlace">출생지를 선택하지 않을래요</label>
- <label class="chk"><input type="checkbox" name="partnerSave"><span class="cmp-save-lb">${accountUser?"상대방의 동의를 받았고, 내 계정에 저장할게요":"이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)"}</span></label><p class="cmp-priv">상대방의 이름과 생년월일은 그 사람의 개인정보예요. 상대방이 동의한 경우에만 저장하고, 필요 없으면 언제든 삭제해 주세요. 이름 대신 별명을 써도 돼요.</p></div><button type="submit">${GP?"모임에 추가":RU?"재회 흐름 보기":"궁합 보기"}</button><div class="chart-feedback cmp-result" aria-live="polite"></div></form></section>`}
+ <label class="chk"><input type="checkbox" name="partnerSave"><span class="cmp-save-lb">${accountUser?"상대방의 동의를 받았고, 내 계정에 저장할게요":"이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)"}</span></label><p class="cmp-priv">상대방의 이름과 생년월일은 그 사람의 개인정보예요. 상대방이 동의한 경우에만 저장하고, 필요 없으면 언제든 삭제해 주세요. 이름 대신 별명을 써도 돼요.</p></div><button type="submit">${GP?"모임에 추가":RU?"재회 흐름 보기":"궁합 보기"}</button>${GP?'</details>':''}<div class="chart-feedback cmp-result" aria-live="polite"></div></form></section>`}
 document.addEventListener('input',e=>{const f=e.target.form;if(!f||!f.dataset.mode)return;if(e.target.name==='partnerDate')e.target.value=e.target.value.replace(/\D/g,'').slice(0,8);if(e.target.name==='partnerTime')e.target.value=formatBirthTime(e.target.value);if(e.target.name!=='partnerSave'){const o=f.querySelector('.cmp-result');if(o&&o.innerHTML){o.innerHTML='';COMPAT=null}}
  if(e.target.name==='partnerName'&&!f.partnerRoman.dataset.edited){f.partnerRoman.value=romanize(e.target.value)||''}
  if(e.target.name==='partnerRoman')f.partnerRoman.dataset.edited=e.target.value?'1':''});
@@ -1703,7 +1704,7 @@ function compatSubmit(f,form){const mode=form.dataset.mode,RU=mode==='reunion',o
  const place=!noP&&f.partnerPlace.value==='shared'&&form.dataset.sharedPlace?JSON.parse(form.dataset.sharedPlace):noP?{none:true,name:'출생지 미상',lon:127.5,lat:37.5,tz:9,kr:true}:{name:P[0],lat:P[1],lon:P[2],tz:P[3],kr:PLACES.indexOf(P)<26};
  const inp={name:label,roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,cal:'s',date,time:noT?'12:00':tv,notime:noT,place};
  let other;try{other=buildChart(inp)}catch(err){out.textContent='상대의 출생 정보를 계산하지 못했어요. 입력값을 확인해 주세요.';return}
- if(mode==='group'){if(GROUP.length>=7){out.textContent='모임은 8명까지 넣을 수 있어요.';return}GROUP.push(other);GROUPRES=null;groupRefresh();out.textContent=(other.inp.name||'참여자')+'님을 모임에 넣었어요.';form.reset();f.partnerRoman.dataset.edited='';return}
+ if(mode==='group'){if([CH,...GROUP].some(c=>sameGroupPerson(c,other))){out.textContent='이미 모임에 추가된 사람이에요.';return;}if(GROUP.length>=7){out.textContent='모임은 8명까지 넣을 수 있어요.';return}GROUP.push(other);GROUPRES=null;groupRefresh();out.textContent=(other.inp.name||'참여자')+'님을 모임에 넣었어요.';form.reset();f.partnerRoman.dataset.edited='';return}
  const res=compatScore(CH,other);COMPAT={b:other,res,mode,kind:CMPKIND};const ru=RU?reunionCalc(CH,other,res):null;if(ru)COMPAT.ru=ru;
  if(f.partnerSave&&f.partnerSave.checked){partnerSave({name:name||('이름 없음 '+date.slice(2).replace(/-/g,'.')),roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,date,time:noT?'':tv,notime:noT,pi:noP?null:+f.partnerPlace.value,score:RU?ru.score:res.total}).then(m=>{const n=form.querySelector('.cmp-save-msg');if(n)n.textContent=m})}
  if(RU){out.innerHTML=`<div class="cmp-score"><span>${topicEsc(J(label+(name?'님':''),'과','와'))}의 재회 흐름</span><b>${ru.score}<small>점</small></b><em>${ru.level}</em></div><p class="cmp-note">다시 연락하기 좋은 시기, 헤어짐에 영향을 준 차이, 다시 만나면 달라져야 할 점은 <b>재회 리포트</b>에서 확인해 주세요.</p><p class="cmp-price">${LAUNCH_PRICE(TOPIC_REPORT_PRICE)}</p><button type="button" class="cmp-open" data-cmp-open>재회 리포트 보기 →</button><p class="cmp-priv cmp-save-msg" aria-live="polite"></p>`;return}
@@ -4121,8 +4122,8 @@ document.getElementById('landingStart').addEventListener('click',()=>{document.b
    점수 계산(compatScore)은 그대로 쓰고, 종류에 따라 표현과 묶는 방식만 바꾼다. */
 const CMP_KIND={love:'연인',friend:'우정(두 사람)',group:'모임(3명 이상)'};
 const CMP_NOTE={love:'두 사람의 다섯 점술을 나란히 읽어 잘 맞는 점을 먼저 보여 드려요.',
- friend:'친구 사이의 강점, 대화 방식과 편안한 거리감을 핵심만 읽어요. 점수는 기존 두 사람 비교 지표예요.',
- group:'나를 포함해 3~8명까지 넣을 수 있어요. 모임의 조합과 각자 기여할 역할, 함께 정하면 좋은 약속을 봐요.'};
+ friend:'서로의 역할과 어울리는 캐릭터를 보여드려요. 함께하는 조합에 따라 상대적인 역할과 캐릭터가 달라질 수 있어요.',
+ group:'나를 포함해 3~8명의 역할과 어울리는 캐릭터를 보여드려요. 조합이 달라지면 같은 사람도 다른 역할과 캐릭터로 나올 수 있어요.'};
 let CMPKIND='love',FRIENDKIND='friend',GROUP=[],GROUPRES=null;
 
 /* 연애 표현을 우정 표현으로 바꾼다. 긴 말부터 먼저 치환해야 짧은 말에 먹히지 않는다. */
@@ -4166,7 +4167,7 @@ function groupListHTML(){
  return '<ul class="cmp-group-list">'+all.map((c,i)=>'<li><b>'+topicEsc(groupName(c,i))+'</b><small>'+topicEsc(c.inp.date)+(i===0?' · 나':'')+'</small>'+(i?'<button type="button" class="cmp-del" data-gdel="'+(i-1)+'" aria-label="'+topicEsc(groupName(c,i))+' 빼기">빼기</button>':'')+'</li>').join('')+'</ul>'+
   '<p class="cmp-priv">'+(all.length<3?'모임 궁합은 3명부터 볼 수 있어요. '+(3-all.length)+'명 더 넣어 주세요.':'지금 '+all.length+'명이에요. 8명까지 넣을 수 있어요.')+'</p>'+
   '<button type="button" class="cmp-open" data-gcalc'+(all.length<3?' disabled':'')+'>모임 보기 →</button>'}
-function groupRefresh(){const b=document.getElementById('cmpGroupList');if(b)b.innerHTML=groupListHTML()}
+function groupRefresh(){const b=document.getElementById('cmpGroupList');if(b)b.innerHTML=groupListHTML();const out=document.getElementById('cmpGroupOut');if(out)out.innerHTML='';partnerRefresh();}
 
 function groupRender(){
  const all=[CH,...GROUP],out=document.getElementById('cmpGroupOut');if(!out)return;
@@ -4208,7 +4209,7 @@ function socialContext(list){
  });
 }
 function socialDogCast(list){return socialContext(list).map(x=>x.cast);}
-function socialCastHTML(cast){return '<div class="social-cast">'+cast.map(c=>'<figure class="social-dog"><figcaption class="social-dog-label">'+topicEsc(c.label)+'</figcaption><div class="social-dog-window social-dog-row-'+Math.floor(c.index/3)+'" role="img" aria-label="'+topicEsc(c.label)+' 강아지 캐릭터"><span class="social-dog-sprite" style="background-image:url(img/social-dogs-'+c.sheet+(['a','c'].includes(c.sheet)?'-v3.png)':'-v2.png)')+';background-position:'+(c.index%3*50)+'% '+(Math.floor(c.index/3)*50)+'%"></span></div><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>').join('')+'</div>';}
+function socialCastHTML(cast){return '<div class="social-cast">'+cast.map(c=>'<figure class="social-dog"><figcaption class="social-dog-label">'+topicEsc(c.label)+'</figcaption><div class="social-dog-window social-dog-row-'+Math.floor(c.index/3)+'" role="img" aria-label="'+topicEsc(c.label)+' 강아지 캐릭터"><span class="social-dog-sprite" style="background-image:url(img/social-dogs-'+c.sheet+'-v4.png)'+';background-position:'+(c.index%3*50)+'% '+(Math.floor(c.index/3)*50)+'%"></span></div><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>').join('')+'</div>';}
 function socialResultHTML(list){
  const context=socialContext(list);
  return '<div class="social-result">'+socialCastHTML(context.map(x=>x.cast))+reportInfoTable('각자 역할',['이름','역할','강점'],context.map(x=>[x.cast.name,x.role,x.strength]),'social-role-table',['25%','30%','45%'])+'</div>';
@@ -4292,7 +4293,7 @@ async function cmpPairCheck(code,msgEl){
  const others=(d.members||[]).filter(m=>!m.me);
  if(!others.length){if(msgEl)msgEl.textContent='아직 친구가 들어오지 않았어요. 친구가 로그인하고 내 정보를 저장하면 여기에 바로 보여요.';return false}
  const kind=d.kind==='group'?'group':d.kind==='friend'?'friend':'love';
- if(kind==='group'){GROUP=others.map(pairChart);cmpSetKind('group');groupRefresh();groupRender()}
+ if(kind==='group'){GROUP=others.map(pairChart).filter((c,i,a)=>!sameGroupPerson(c,CH)&&a.findIndex(x=>sameGroupPerson(c,x))===i);cmpSetKind('group');groupRefresh();groupRender()}
  else{const other=pairChart(others[0],1);COMPAT={b:other,res:compatScore(CH,other),mode:'match',kind};cmpSetKind(kind);cmpFillShared(other.inp);cmpShowOne((other.inp.name||'친구')+'님')}
  return true}
 
@@ -4307,6 +4308,7 @@ function cmpShowOne(label,scroll=true){
 
 function cmpSetKind(k){
  CMPKIND=k;if(k!=='love')FRIENDKIND=k;
+ const intro=document.querySelector('#tab-match .topic-intro');if(intro){const h=intro.querySelector('h3'),p=intro.querySelector('p');if(h)h.textContent=k==='group'?'우리 모임의 역할과 캐릭터':k==='friend'?'우리의 역할과 어울리는 캐릭터':'우리 둘은 어떤 점에서 잘 맞을까?';if(p)p.textContent=k==='love'?'두 사람의 관계 성향과 조율할 점을 함께 살펴봐요.':'정보를 입력하면 각자 역할과 어울리는 캐릭터를 바로 보여드려요. 조합에 따라 상대적인 역할과 캐릭터가 달라질 수 있어요.';}
  if(COMPAT?.mode==='match'&&k!=='group'){COMPAT.kind=k;cmpShowOne((COMPAT.b.inp.name||'친구')+'님',false)}
  /* 궁합 탭(연인)은 종류 선택 없이 바로 폼, 우정 탭은 '우정 / 모임' 두 가지 */
  document.querySelectorAll('.cmp-kind').forEach(box=>{box.hidden=k==='love'});
