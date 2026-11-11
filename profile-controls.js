@@ -41,6 +41,17 @@
   document.querySelector('[data-bottom="account"]').click();
   accountPaint();accountStatus('저장한 내 출생 정보와 현재 분석을 삭제했어요. 계정과 로그인은 유지돼요.');
  }
+ function completeProfileDeletion(reload=true){
+  revisionEpoch++;formVersion++;
+  if(accountUser)accountUser.profile=null;
+  for(const k of ['oracle-pending','oracle-save-intent','oracle-pending-run'])sessionStorage.removeItem(k);
+  if(accountUser?.id)localStorage.removeItem('oracle-relationship-v1:'+accountUser.id);
+  sessionStorage.setItem('oracle-profile-deleted','1');
+  // Discard mounted dialogs, navigation history and charts together after server success.
+  if(reload)location.reload();
+ }
+ window.completeProfileDeletion=completeProfileDeletion;
+ if(sessionStorage.getItem('oracle-profile-deleted')){sessionStorage.removeItem('oracle-profile-deleted');setTimeout(()=>{document.querySelector('[data-bottom="account"]').click();accountStatus('저장한 내 정보를 삭제했어요. 계정과 로그인은 유지돼요.');},0);}
  window.clearCurrentProfile=clearCurrentProfile;
  accountPaint();
 })();

@@ -343,3 +343,10 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 #cmpGroup>details>summary{padding:14px 16px;font:600 14px/1.5 var(--body);color:var(--gold-ink);cursor:pointer}
 #cmpGroup>details .cmp-form{margin:0;border:0;box-shadow:none}
 #cmpGroup .group-add-panel .cmp-head h4{display:none}
+
+.social-card-image{display:block;width:100%;height:auto;border-radius:18px;border:1px solid var(--line)}
+.social-share-button{display:block;width:100%;min-height:46px;margin:14px 0 0;padding:12px;font:700 14px/1.5 var(--body);border:1px solid var(--gold-ink);border-radius:12px;background:var(--panel);color:var(--gold-ink)}
+.social-share-status{font-size:13px;color:var(--muted);margin:8px 0}
+.askbox.casting form::after{background:transparent url('img/pose-white-note.webp') center/140px 140px no-repeat!important;animation:reading-dog 1.1s ease-in-out!important;z-index:5}
+@keyframes reading-dog{0%{opacity:0;transform:translateY(8px)}25%,75%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-5px)}}
+@media(prefers-reduced-motion:reduce){.askbox.casting form::after{animation:none!important}}

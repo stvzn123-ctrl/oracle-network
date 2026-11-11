@@ -4046,7 +4046,7 @@ $('profileDelete').addEventListener('click',()=>{$('profileDeleteError').textCon
 $('profileDeleteCancel').addEventListener('click',()=>$('profileDeleteDialog').close());
 $('profileDeleteConfirm').addEventListener('click',async()=>{
   if(accountBusy)return;accountBusy=true;$('profileDeleteConfirm').disabled=true;accountStatus('저장 정보를 삭제하고 있어요…');
-  try{await accountAPI('/profile',{action:'delete'});clearCurrentProfile()}catch(e){$('profileDeleteError').textContent=e.message;accountStatus(e.message)}finally{accountBusy=false;$('profileDeleteConfirm').disabled=false;accountPaint()}
+  try{await accountAPI('/profile',{action:'delete'});completeProfileDeletion()}catch(e){$('profileDeleteError').textContent=e.message;accountStatus(e.message)}finally{accountBusy=false;$('profileDeleteConfirm').disabled=false;accountPaint()}
 });
 $('accountLogout').addEventListener('click',async()=>{
   if(accountBusy)return;accountBusy=true;accountPaint();
