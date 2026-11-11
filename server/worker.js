@@ -1691,6 +1691,7 @@ function buildRichReport(ch,key){
   const seen=new Set();S.forEach(sec=>{sec.paragraphs=sec.paragraphs.filter(text=>{const k=String(text).replace(/\s+/g,' ').trim();if(seen.has(k))return false;seen.add(k);return true;});});
 
  }
+ if(['love','marry'].includes(key)&&ch.inp.relationship==='married'){for(let i=S.length-1;i>=0;i--)if(['partner','partner-detail'].includes(S[i].kind))S.splice(i,1);}
  const noticeSentence=/(?:보장하지|성과를 보장하는|검증되지|과학적으로 검증|확률(?:이|은|을)|예측(?:이|력|하는 정확)|예측한 곳이 아니라|진단하는 수치가 아니|질병이나 건강 상태의 예측|중요한 결정은 실제|전문가의 조언을 우선|상대의 마음과 의사는 이 리포트의 범위|정확한 시각을 알게 되면 경계|미상으로 현지 정오|도움을 받을 사람의 외모나 등장 날짜를 확정)/;
  const readerText=t=>String(t||'').split(/(?<=[.!?。])\s+/).filter(sentence=>!noticeSentence.test(sentence)).join(' ').trim();
  for(let i=S.length-1;i>=0;i--)if(S[i].kind==='limit')S.splice(i,1);
