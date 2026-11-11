@@ -1671,7 +1671,7 @@ async function partnerSave(p){if(accountUser){try{await accountAPI('/partners',{
  const l=partnerLocal().filter(x=>!(x.name===p.name&&x.date===p.date));l.unshift({...p,at:new Date().toISOString().slice(0,10)});partnerStore(l);partnerRefresh();return '이 기기에 저장했어요.'}
 async function partnerDelete(i){const p=partnerList()[i];if(!p)return;if(accountUser&&p.id){try{await accountAPI('/partners',{action:'delete',id:p.id})}catch(_){}await partnerSync()}else{const l=partnerLocal();l.splice(i,1);partnerStore(l);partnerRefresh()}}
 function sameGroupPerson(a,b){const x=a.inp||a,y=b.inp||b,n=t=>String(t||'').normalize('NFKC').replace(/\s+/g,'').toLowerCase();return x.date===y.date&&x.sex===y.sex&&n(x.name)===n(y.name);}
-function partnerSavedHTML(group=false){const l=partnerList();if(!l.length)return '';return '<p class="cmp-saved-h">저장한 상대'+(accountUser?' (내 계정)':' (이 기기)')+'</p><ul>'+l.map((p,i)=>'<li><button type="button" class="cmp-load" data-pi="'+i+'"'+(group&&[CH,...GROUP].some(c=>c&&sameGroupPerson(c,p))?' disabled aria-label="이미 추가된 사람"':'')+'><b>'+topicEsc(p.name)+'</b><small>'+topicEsc(p.date)+(p.score!=null?' · 최근 궁합 '+p.score+'점':'')+'</small></button><button type="button" class="cmp-del" data-pd="'+i+'" aria-label="'+topicEsc(p.name)+' 삭제">삭제</button></li>').join('')+'</ul>'}
+function partnerSavedHTML(group=false){const l=partnerList();if(!l.length)return '';return '<p class="cmp-saved-h">저장한 상대'+(accountUser?' (내 계정)':' (이 기기)')+'</p><ul>'+l.map((p,i)=>'<li><button type="button" class="cmp-load" data-pi="'+i+'"'+(group&&[CH,...GROUP].some(c=>c&&sameGroupPerson(c,p))?' disabled aria-label="이미 추가된 사람"':'')+'><b>'+topicEsc(p.name)+'</b><small>'+topicEsc(p.date)+'</small></button><button type="button" class="cmp-del" data-pd="'+i+'" aria-label="'+topicEsc(p.name)+' 삭제">삭제</button></li>').join('')+'</ul>'}
 function partnerRefresh(){document.querySelectorAll('.cmp-saved').forEach(el=>el.innerHTML=partnerSavedHTML(!!el.closest('.cmp-form')?.querySelector('#group-form')));document.querySelectorAll('.cmp-form .cmp-save-lb').forEach(lb=>lb.textContent=accountUser?'상대방의 동의를 받았고, 내 계정에 저장할게요':'이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)')}
 document.addEventListener('click',e=>{const ld=e.target.closest('.cmp-load'),dl=e.target.closest('.cmp-del');if(!ld&&!dl)return;const l=partnerList();
  if(dl){const p=l[+dl.dataset.pd];if(p&&confirm(p.name+'님의 정보를 삭제할까요?'))partnerDelete(+dl.dataset.pd);return}
@@ -1707,7 +1707,7 @@ function compatSubmit(f,form){const mode=form.dataset.mode,RU=mode==='reunion',o
  if(mode==='group'){if([CH,...GROUP].some(c=>sameGroupPerson(c,other))){out.textContent='이미 모임에 추가된 사람이에요.';return;}if(GROUP.length>=7){out.textContent='모임은 8명까지 넣을 수 있어요.';return}GROUP.push(other);GROUPRES=null;groupRefresh();out.textContent=(other.inp.name||'참여자')+'님을 모임에 넣었어요.';form.reset();f.partnerRoman.dataset.edited='';return}
  const res=compatScore(CH,other);COMPAT={b:other,res,mode,kind:CMPKIND};const ru=RU?reunionCalc(CH,other,res):null;if(ru)COMPAT.ru=ru;
  if(f.partnerSave&&f.partnerSave.checked){partnerSave({name:name||('이름 없음 '+date.slice(2).replace(/-/g,'.')),roman:/[a-z]/i.test(roman)?roman:'',sex:f.partnerSex.value,date,time:noT?'':tv,notime:noT,pi:noP?null:+f.partnerPlace.value,score:RU?ru.score:res.total}).then(m=>{const n=form.querySelector('.cmp-save-msg');if(n)n.textContent=m})}
- if(RU){out.innerHTML=`<div class="cmp-score"><span>${topicEsc(J(label+(name?'님':''),'과','와'))}의 재회 흐름</span><b>${ru.score}<small>점</small></b><em>${ru.level}</em></div><p class="cmp-note">다시 연락하기 좋은 시기, 헤어짐에 영향을 준 차이, 다시 만나면 달라져야 할 점은 <b>재회 리포트</b>에서 확인해 주세요.</p><p class="cmp-price">${LAUNCH_PRICE(TOPIC_REPORT_PRICE)}</p><button type="button" class="cmp-open" data-cmp-open>재회 리포트 보기 →</button><p class="cmp-priv cmp-save-msg" aria-live="polite"></p>`;return}
+ if(RU){out.innerHTML=`<div class="cmp-score"><span>${topicEsc(J(label+(name?'님':''),'과','와'))}의 재회 흐름</span><em>${ru.level}</em></div><p class="cmp-note">다시 연락하기 좋은 시기, 헤어짐에 영향을 준 차이, 다시 만나면 달라져야 할 점은 <b>재회 리포트</b>에서 확인해 주세요.</p><p class="cmp-price">${LAUNCH_PRICE(TOPIC_REPORT_PRICE)}</p><button type="button" class="cmp-open" data-cmp-open>재회 리포트 보기 →</button><p class="cmp-priv cmp-save-msg" aria-live="polite"></p>`;return}
  cmpShowOne(label+(name?'님':''))}
 function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'상대',tot=res.total,EN=['목','화','토','금','수'];
  const all=res.sys.flatMap(o=>o.items.map(x=>[o.n,...x])),pos=all.filter(x=>x[2]>0).sort((x,y)=>y[2]-x[2]),neg=all.filter(x=>x[2]<0).sort((x,y)=>x[2]-y[2]);
@@ -1752,7 +1752,7 @@ function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'�
    const mind=x.pa===x.pb?`두 사람 모두 ${PYW[x.pa]} 해라 마음이 같은 곳을 봅니다.`:x.s>=58?[`${me}님은 ${PYW[x.pa]} 해, ${you}님은 ${PYW[x.pb]} 해입니다. 바라는 것이 조금 다르니 각자 원하는 걸 한 번씩 말로 맞춰 두면 충분합니다.`,`이 해 ${me}님은 ${PYW[x.pa]} 쪽, ${you}님은 ${PYW[x.pb]} 쪽에 마음이 가 있습니다. 서로의 속도를 존중해 주면 오히려 각자의 시간이 관계에 힘이 됩니다.`,`${me}님은 ${PYW[x.pa]} 해이고 ${you}님은 ${PYW[x.pb]} 해입니다. 같은 곳을 보지 않아도 괜찮은 해라, 함께하는 날에는 서로의 한 해 이야기를 들어 주세요.`][i%3]:`${me}님은 ${PYW[x.pa]} 해, ${you}님은 ${PYW[x.pb]} 해입니다. 상대가 내 속도를 안 맞춰 준다고 느끼기 쉽지만 서로 보는 곳이 다를 뿐이니, 누가 양보할지보다 만나는 날을 지키는 데 마음을 쓰세요.`;
    return `${x.y}년 · ${t.label} — ${sig}${body} ${mind}`}),
   `${up[0].y}년에는 여행이나 기념일처럼 둘만 아는 추억을 하나 만들어 두세요. 잔잔하게 흐르는 해에 그 기억이 버팀목이 됩니다.`,
-  {table:{cap:'앞으로 3년 관계 흐름',head:['해','분위기','가까워지는 신호','조심할 것'],rows:yrs.map(x=>[x.y+'년',yearTone(x).cell+' · '+x.s,x.why.join(', ')||(x.pa===x.pb?'두 사람 다 '+PYW[x.pa]+' 해':me+'님은 '+PYW[x.pa]+' 해, '+you+'님은 '+PYW[x.pb]+' 해'),x.warn.join(', ')||'없음'])}});
+  {table:{cap:'앞으로 3년 관계 흐름',head:['해','분위기','가까워지는 신호','조심할 것'],rows:yrs.map(x=>[x.y+'년',yearTone(x).cell,x.why.join(', ')||(x.pa===x.pb?'두 사람 다 '+PYW[x.pa]+' 해':me+'님은 '+PYW[x.pa]+' 해, '+you+'님은 '+PYW[x.pb]+' 해'),x.warn.join(', ')||'없음'])}});
  add('place','함께 가면 좋은 곳',`${PLACE[need][0]} 같은 곳이 두 사람에게 가장 잘 맞습니다.`,
   [`${PLACE[need][0]}: ${PLACE[need][1]}`,`${me}님의 태양은 ${SEL[sa]} 원소라 ${SUNPL[sa]} 쪽을, ${you}님은 ${SEL[sb]} 원소라 ${SUNPL[sb]} 쪽을 좋아합니다.${sa===sb?' 취향이 같아 데이트 계획이 쉽게 맞습니다.':' 번갈아 서로의 취향대로 계획하면 둘 다 만족합니다.'}`,
    `두 사람이 같이 있으면 ${['자꾸 새로운 일을 벌이는','금방 뜨거워지고 금방 지치는','한자리에 오래 머무르는','계획하고 따지는','생각만 많아지는'][rich]} 쪽으로 흐릅니다. 데이트가 비슷해진다고 느껴질 때는 일부러 반대 성격의 장소를 골라 보세요.`],
@@ -1882,7 +1882,7 @@ function reportHook(ch){const b=bestCell();const tp=turningPoints(ch)[0];
 function rFieldChart(ci){const c=CATS[ci],S=R.map(r=>D(r[ci].mean)),y0=new Date().getFullYear()+1;const W=320,H=170,L=30,Rr=12,T=22,B=24;
   const x=k=>L+(W-L-Rr)*k/9,y=v=>T+(100-v)/40*(H-T-B);let s="",bi=0;S.forEach((v,k)=>{if(v>S[bi])bi=k});
   [60,80,100].forEach(v=>{s+=`<line x1="${L}" x2="${W-Rr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end" class="rc-t">${v}</text>`});
-  for(let k=0;k<10;k+=1)s+=`<text x="${x(k)}" y="${H-6}" text-anchor="middle" class="rc-t">’${String(y0+k).slice(2)}</text>`;
+  for(let k=0;k<10;k+=1)s+=`<text x="${x(k)}" y="${H-6}" text-anchor="middle" class="rc-t">${y0+k}년</text>`;
   const p=S.map((v,k)=>[x(k),y(v)]);s+=`<path d="${smoothPath(p.map(q=>q.join(",")).join(" "))}" fill="none" stroke="var(--${c.k})" stroke-width="2.2"/>`;
   p.forEach((q,k)=>{s+=`<circle cx="${q[0]}" cy="${q[1]}" r="${k===bi?5:2.8}" fill="var(--${c.k})"${k===bi?' stroke="var(--bg)" stroke-width="2"':""}/>`});
   s+=`<text x="${clamp(p[bi][0],L+14,W-Rr-14)}" y="${p[bi][1]-10}" text-anchor="middle" class="rc-t rc-best">${S[bi]}</text>`;
@@ -2293,7 +2293,7 @@ function annualScoreChart(t){
  const best=Math.max(...values),name=head[col]==='점수'?(t.cap||'').split(' 연도별')[0]:head[col],W=520,H=310,L=42,R=22,T=28,B=48;
  const x=i=>L+i*(W-L-R)/(values.length-1),y=v=>T+(100-v)/40*(H-T-B);
  const ticks=[60,70,80,90,100].map(v=>'<line class="year-grid" x1="'+L+'" x2="'+(W-R)+'" y1="'+y(v)+'" y2="'+y(v)+'"/><text class="year-axis" x="'+(L-9)+'" y="'+(y(v)+5)+'" text-anchor="end">'+v+'</text>').join('');
- let points=values.map((v,i)=>'<g class="year-point'+(v===best?' best':'')+'"><title>'+E(t.rows[i][0])+' · '+E(name)+' '+v+'점</title><circle cx="'+x(i)+'" cy="'+y(v)+'" r="'+(v===best?4.5:3.5)+'"/><text class="year-value" x="'+x(i)+'" y="'+(y(v)-12)+'" text-anchor="middle">'+v+'</text><text class="year-axis" x="'+x(i)+'" y="'+(H-22)+'" text-anchor="middle">'+E(String(t.rows[i][0]).match(/^\d{4}/)[0].slice(2)+'년')+'</text></g>').join('');
+ let points=values.map((v,i)=>'<g class="year-point'+(v===best?' best':'')+'"><title>'+E(t.rows[i][0])+' · '+E(name)+' '+v+'점</title><circle cx="'+x(i)+'" cy="'+y(v)+'" r="'+(v===best?4.5:3.5)+'"/><text class="year-value" x="'+x(i)+'" y="'+(y(v)-12)+'" text-anchor="middle">'+v+'</text><text class="year-axis" x="'+x(i)+'" y="'+(H-22)+'" text-anchor="middle">'+E(String(t.rows[i][0]).match(/^\d{4}/)[0]+'년')+'</text></g>').join('');
  if(t.hideScores)points=points.replace(/<text class="year-value"[^>]*>[\s\S]*?<\/text>/g,'').replace(/ · [^<]*?\d+점/g,'');
  const label=name+' 연도별 점수: '+t.rows.map((r,i)=>String(r[0]).match(/^\d{4}/)[0]+'년 '+values[i]+'점').join(', ');
  return '<figure class="annual-score-chart annual-line-chart"><figcaption>'+E(name)+' · 연도별 흐름</figcaption><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+E(t.hideScores?name+' · 연도별 흐름':label)+'"><title>'+E(name)+' · 연도별 흐름</title>'+ticks+'<line class="year-border" x1="'+L+'" x2="'+L+'" y1="'+T+'" y2="'+y(60)+'"/><polyline class="year-line" points="'+values.map((v,i)=>x(i)+','+y(v)).join(' ')+'"/>'+points+'</svg></figure>';
@@ -2365,14 +2365,19 @@ function pairBirthAppendixHTML(charts){
  return table+atlases;
 
 }
-function compactReportHTML(html){
- return String(html).split(/(<[^>]*>)/g).map((part,i)=>i%2||/\b(?:19\d{2}|21\d{2})년/.test(part)?part:part.replace(/\b(20\d{2})년/g,(_,y)=>y.slice(2)+'년')).join('');
-}
+function compactReportHTML(html){return String(html).split(/(<[^>]*>)/g).map((part,i)=>i%2?part:formatYearText(part)).join('');}
+function formatYearText(text){return String(text).replace(/\b((?:19|20|21)\d{2})년(?=\s*\d{1,2}월)/g,(_,y)=>y.slice(2)+'년');}
 function reportReaderText(text){
  const notice=/(?:보장하지|성과를 보장하는|검증되지|과학적으로 검증|확률(?:이|은|을)|예측(?:이|력|하는 정확)|예측한 곳이 아니라|진단하는 수치가 아니|질병이나 건강 상태의 예측|중요한 결정은 실제|전문가의 조언을 우선)/;
  return String(text||'').split(/(?<=[.!?。])\s+/).filter(sentence=>!notice.test(sentence)).join(' ').trim();
 }
 function approvedReportHTML(data,key,sourceChart=null){
+ if(['match','reunion'].includes(key)){
+  const clean=t=>String(t||'').replace(/\[다섯 점술\][^.!?]*[.!?]?/g,'').replace(/두 사람의 기본 궁합은 \d+점이고, /g,'').replace(/\([^()]*\d+(?:\.\d+)?점[^()]*\)/g,'').replace(/\d+(?:\.\d+)?점[,，]?\s*/g,'').replace(/궁합 점수/g,'관계 흐름').replace(/기본 점수/g,'관계 흐름');
+  const scoreTables=(data.sections||[]).filter(s=>s.kind==='table'&&s.table?.head?.includes('점수')).map(s=>s.table);
+  data={...data,summary:(data.summary||[]).map(clean),sections:(data.sections||[]).filter(s=>!(s.kind==='table'&&s.table?.head?.includes('점수'))).map(s=>({...s,lead:clean(s.lead),paragraphs:(s.paragraphs||[]).map(clean),action:clean(s.action)})),appendix:{...(data.appendix||{}),tables:[...(data.appendix?.tables||[]),...scoreTables]}};
+ }
+
  if(["employment","move"].includes(key)){key="work";data={...data,title:String(data.title||"").replace(/취업|이직/g,"직업")}}
 
  if(["exam","cert"].includes(key)){key="study";data={...data,title:String(data.title||"").replace(/대입·수능|자격증/g,"학업·성취")}}
@@ -3846,7 +3851,7 @@ function flowProseHTML(ch){const y0=new Date().getFullYear(),S=R.map(r=>r.map(c=
 function renderBig(){const el=$("bigchart");if(!el||!CH)return;bigW=el.clientWidth;const S=R.map(r=>r.map(c=>D(c.mean))),y0=new Date().getFullYear()+1;
   const W=220,H=150,L=26,Rr=8,T=12,B=22,x=k=>L+(W-L-Rr)*k/9,y=v=>T+(100-v)/40*(H-T-B);
   const one=(c,ci)=>{let g="",pts="";[60,80,100].forEach(v=>{g+=`<line x1="${L}" x2="${W-Rr}" y1="${y(v)}" y2="${y(v)}" class="bc-grid"/><text x="${L-5}" y="${y(v)+4}" text-anchor="end" class="bc-t">${v===100?"높음":v===80?"보통":"낮음"}</text>`});
-    [0,3,6,9].forEach(k=>{g+=`<text x="${x(k)}" y="${H-6}" text-anchor="middle" class="bc-t">’${String(y0+k).slice(2)}</text>`});
+    [0,3,6,9].forEach(k=>{g+=`<text x="${x(k)}" y="${H-6}" text-anchor="middle" class="bc-t">${y0+k}년</text>`});
     const p=S.map((r,k)=>[x(k),y(r[ci])]);g+=`<path class="bc-line${drawCls()}" pathLength="1" d="${smoothPath(p.map(q=>q.join(",")).join(" "))}" stroke="var(--${c.k})"/>`;
     let bi=0;S.forEach((r,k)=>{if(r[ci]>S[bi][ci])bi=k});
     p.forEach((q,k)=>{const top=k===bi;pts+=`<g class="bc-pg" data-c="${ci}" data-h="${k}" tabindex="0" role="button" aria-label="${y0+k}년 ${c.n} 흐름 보기"><title>${y0+k}년 ${c.n} 흐름 보기</title><circle class="bc-hit" cx="${q[0]}" cy="${q[1]}" r="10"/><circle class="bc-pt${top?" top":""}" cx="${q[0]}" cy="${q[1]}" r="${top?5:3}" fill="var(--${c.k})"/></g>`});
@@ -4324,7 +4329,7 @@ function cmpShowOne(label,scroll=true){
  if(COMPAT?.kind==='friend'){const out=document.querySelector('#cmpOne .cmp-result');if(out){out.innerHTML=socialResultHTML([CH,COMPAT.b]);collapseFriendInputs(out);if(scroll)out.scrollIntoView({behavior:soft(),block:'nearest'});}return;}
  const res=COMPAT.res,out=document.querySelector('#cmpOne .cmp-result');if(!out)return;
  const lv=res.total>=88?'아주 잘 맞는 편':res.total>=80?'잘 맞는 편':res.total>=74?'서로 편안한 사이':'맞춰 갈수록 좋아지는 사이';
- out.innerHTML='<div class="cmp-score"><span>'+topicEsc(J(label,'과','와'))+' 나의 '+(COMPAT.kind==='friend'?'우정 ':'')+'궁합</span><b>'+res.total+'<small>점</small></b><em>'+lv+'</em></div>'+
+ out.innerHTML='<div class="cmp-score"><span>'+topicEsc(J(label,'과','와'))+' 나의 '+(COMPAT.kind==='friend'?'우정 ':'')+'궁합</span><em>'+lv+'</em></div>'+
   socialResultHTML([CH,COMPAT.b])+
   '<p class="cmp-note">잘 맞는 점과 다섯 점술별 근거는 <b>'+(COMPAT.kind==='friend'?'우정':'궁합')+' 리포트</b>에서 확인해 주세요.</p><p class="cmp-price">'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</p><button type="button" class="cmp-open" data-cmp-open>리포트 보기 →</button>';
  if(scroll)out.scrollIntoView({behavior:soft(),block:'nearest'})}
