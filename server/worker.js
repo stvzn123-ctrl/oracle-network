@@ -1478,14 +1478,36 @@ function buildRichReport(ch,key){
    const counts=[0,0,0,0,0];o.list.forEach(x=>counts[Math.floor(TG.indexOf(x.f.tg)/2)]++);const theme=themes[counts.indexOf(Math.max(...counts))],up=av>=mAll;
    const b=o.list.reduce((a,x)=>x.v>a.v?x:a),act=actions[c][up?0:1];
    return {...o,av,sc,c,care,b,up,act,theme};});
+  // Compare each field with its own baseline, then describe actual intra-month windows.
+  const fieldNames=['돈 관리','관계와 대화','일과 배움','생활 리듬'];
+  const baseline=[0,1,2,3].map(c=>days.reduce((sum,x)=>sum+x.f.sc[c],0)/days.length);
+  const opportunities=['예산 조정이나 미뤄 둔 정산처럼 돈의 흐름을 정리할 일을 배치해 보세요.','안부를 전하거나 함께 의논할 대화를 잡아 보세요.','지원·제안·발표처럼 준비한 것을 보여 줄 일을 배치해 보세요.','활동과 휴식 시간을 균형 있게 배치해 보세요.'];
+  const checks=['작은 지출이 쌓이지 않도록 결제 내역과 예정 비용을 확인하세요.','상대의 뜻을 짐작해 결론 내리기보다 직접 묻고 답할 시간을 주세요.','일을 더 맡기 전에 마감과 현재 업무량부터 조율하세요.','일정을 빽빽하게 채우지 말고 회복할 시간을 먼저 남겨 두세요.'];
+  months.forEach((o,i)=>{
+   const phases=[0,1,2].map(k=>{const list=o.list.filter(x=>Math.min(2,Math.floor((x.f.d-1)/10))===k);return {from:list[0].f.d,to:list.at(-1).f.d,score:list.reduce((n,x)=>n+x.v,0)/list.length,sc:[0,1,2,3].map(c=>list.reduce((n,x)=>n+x.f.sc[c],0)/list.length)};});
+   const allowed=comp?[0,1,2,3]:[ci];
+   const options=phases.flatMap(p=>allowed.map(c=>({p,c,delta:p.sc[c]-baseline[c]})));
+   const best=options.reduce((a,b)=>b.delta>a.delta?b:a),care=options.reduce((a,b)=>b.delta<a.delta?b:a);
+   const span=p=>p.from+'~'+p.to+'일',prev=i?months[i-1]:null,delta=prev?o.av-prev.av:0;
+   const change=!prev?'이번 달을 이후 흐름과 비교하는 출발점으로 읽어요.':Math.abs(delta)<1?'지난달과 종합 흐름은 비슷해요. 달 전체의 큰 변화보다 아래 구간별 차이를 살펴보세요.':delta>0?'지난달보다 종합 흐름이 '+delta.toFixed(1)+'점 높아요. 준비한 일의 실행 순서를 점검해 보세요.':'지난달보다 종합 흐름이 '+Math.abs(delta).toFixed(1)+'점 낮아요. 새 일을 늘리기 전에 진행 중인 일을 정돈해 보세요.';
+   const meaningful=best.delta>=1;
+   o.theme=meaningful?span(best.p)+' · '+fieldNames[best.c]+'에 힘 싣기':'큰 폭의 확장보다 구간별 균형 잡기';
+   const opportunity=span(best.p)+'의 '+fieldNames[best.c]+' 흐름은 '+best.p.sc[best.c].toFixed(1)+'점으로, 같은 분야의 12개월 기준보다 '+(best.delta>=0?best.delta.toFixed(1)+'점 높아요.':Math.abs(best.delta).toFixed(1)+'점 낮아요.');
+   const timing=meaningful?opportunities[best.c]:'두드러지는 상승 구간이 크지 않으니, 기존 계획을 꾸준히 이어 가면서 일정을 조율해 보세요.';
+   const caution=span(care.p)+'에는 '+fieldNames[care.c]+'을 더 살펴보세요. '+checks[care.c];
+   o.act=span(best.p)+'에는 '+opportunities[best.c]+' '+span(care.p)+' 전에는 '+checks[care.c];
+   o.reading={change,opportunity,timing,caution,action:o.act};
+   o.phases=phases.map(p=>({from:p.from,to:p.to,score:Number(p.score.toFixed(1)),scores:p.sc.map(v=>Number(v.toFixed(1)))}));
+   o.focus={field:best.c,from:best.p.from,to:best.p.to,delta:Number(best.delta.toFixed(1))};
+  });
   const mHi=months.reduce((a,b)=>b.av>a.av?b:a),mLo=months.reduce((a,b)=>b.av<a.av?b:a),top3=months.slice().sort((a,b)=>b.av-a.av).slice(0,3).sort((a,b)=>a.k-b.k);
   const monthLabel=o=>o.y+'년 '+o.m+'월',period=monthLabel(months[0])+'~'+monthLabel(months[11]);
   put('calendar','앞으로 12개월, 월별 운명',period+' · 이번 달부터 열두 달을 함께 살펴봐요.',[],
    ['양력 월의 첫날부터 말일까지를 같은 기준으로 비교했어요. 이번 달은 이미 지난 날도 포함한 한 달 전체예요. 특정 사건이 일어날 확률을 뜻하지 않아요. 달 사이 점수 차이가 작으면 비슷한 기본 흐름으로 읽고 실제 일정과 준비 상태를 우선해 주세요.',
-    ...months.map(o=>monthLabel(o)+' · '+o.theme+' — '+(comp?'종합':CN[ci])+' 흐름 '+o.av.toFixed(1)+'점. '+(o.up?'열두 달 평균보다 높아 작은 시도를 검토할 달이에요.':'열두 달 평균보다 낮아 점검과 준비에 무게를 둘 달이에요.')+' '+(comp?'상대적으로 주목할 분야는 '+CN[o.c]+', 더 세심히 돌볼 분야는 '+CN[o.care]+'이에요. ':'')+'실천: '+o.act),
+    ...months.map(o=>monthLabel(o)+' · '+o.theme+' — '+o.reading.change+' '+o.reading.opportunity+' '+o.reading.timing+' '+o.reading.caution+' 실천: '+o.act),
     '사주·서양 점성술·인도 점성술·수비학·마야력의 기존 일별 흐름을 양력 월 단위로 모은 자체 해석이에요. 절기월 자체를 뜻하지 않으며, 건강 점수는 질병이나 건강 상태의 예측이 아니라 생활 리듬을 돌아보는 참고로 읽어 주세요.'],
    '이번 달에 해당하는 실천 한 가지를 고르고, 월말에 실제 경험과 비교해 보세요.',
-   {period,months:months.map(o=>({year:o.y,month:o.m,days:o.list.length,score:Number(o.av.toFixed(1)),scores:o.sc.map(v=>Number(v.toFixed(1))),theme:o.theme,action:o.act})),table:{cap:'월별 흐름 한눈에 보기 · '+period,head:['연월','흐름과 실천'],cols:['30%','70%'],rows:months.map(o=>[monthLabel(o),o.theme+' · '+o.av.toFixed(1)+'점 / '+o.act])}});
+   {period,months:months.map(o=>({year:o.y,month:o.m,days:o.list.length,score:Number(o.av.toFixed(1)),scores:o.sc.map(v=>Number(v.toFixed(1))),theme:o.theme,action:o.act,reading:o.reading,phases:o.phases,focus:o.focus})),table:{cap:'월별 흐름 한눈에 보기 · '+period,head:['연월','흐름과 실천'],cols:['30%','70%'],rows:months.map(o=>[monthLabel(o),o.theme+' · '+o.av.toFixed(1)+'점 / '+o.act])}});
   /* 2026-11-10 G3: 모두에게 같던 마무리 장·실천·재회 성찰을 나이대·신강/신약·오행·금성·십성과 달력 날짜로 조립한다. */
   const nm3=ch.inp.name||'당신',F3=t=>t.replace(/\{name\}/g,nm3),ac=key==='comprehensive'?3:ci,ka=kage(y0),band=ka<30?0:ka<45?1:ka<60?2:3,tg3=ng.indexOf(Math.max(...ng));
   const AGE=[['지금 시기의 돈은 크기보다 습관이 먼저예요. 지금 만든 저축 습관 하나가 몇 년 뒤의 선택지를 넓혀 줘요.','지금은 여러 사람을 만나며 나에게 맞는 사람을 알아 가는 시기예요. 서두르지 않아도 괜찮아요.','지금은 한 우물보다 여러 경험이 자산이 되는 시기예요. 해 본 일의 목록이 다음 기회의 지도가 돼요.','지금의 {name}님에게는 많이 시도해 보는 것 자체가 운을 키우는 일이에요.'],
@@ -1604,7 +1626,7 @@ function buildRichReport(ch,key){
  const summary=[sumHi?'앞으로 10년 중 '+(key==='comprehensive'?'네 분야를 합친 흐름':['금전','애정','직업·학업'][ci]+' 흐름')+'이 가장 밝은 해는 '+sumHi.year+'년('+kage(sumHi.year)+'살, '+sumHi.score+'점)이에요.':'',sumLo&&sumLo!==sumHi?'속도를 늦추고 다지기 좋은 해는 '+sumLo.year+'년('+sumLo.score+'점)이에요.':'',...(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(s=>{const l=firstLine(s.lead||(s.paragraphs||[])[0]);return l?s.question+' — '+l:''})].filter(Boolean);
  S.forEach(s=>{if(s.kind==='yearly')s.paragraphs=s.paragraphs.map(p=>p.split(' [사주]')[0]);s.answer=s.paragraphs.join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
- return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts:[],sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:null,version:'reader-2026-11-11-v5',
+ return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts:[],sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:null,version:'reader-2026-11-11-v6',
   body:S.map((r,i)=>(i+1)+'장 · '+r.question+'\n\n핵심: '+r.lead+(r.basis.length?'\n근거: '+r.basis.join(' / '):'')+'\n\n'+r.answer+(r.action?'\n\n실천 · '+r.action:'')).join('\n\n────────────────\n\n')};
 }
 
