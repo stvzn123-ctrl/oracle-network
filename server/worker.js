@@ -1471,7 +1471,7 @@ function buildRichReport(ch,key){
   const mHi=months.reduce((a,b)=>b.av>a.av?b:a),mLo=months.reduce((a,b)=>b.av<a.av?b:a),top3=months.slice().sort((a,b)=>b.av-a.av).slice(0,3).sort((a,b)=>a.k-b.k);
   const monthLabel=o=>o.y+'년 '+o.m+'월',period=monthLabel(months[0])+'~'+monthLabel(months[11]);
   put('calendar','앞으로 12개월, 월별 운명',period+' · 이번 달부터 열두 달을 함께 살펴봐요.',[],
-   ['양력 월의 첫날부터 말일까지를 같은 기준으로 비교했어요. 이번 달은 이미 지난 날도 포함한 한 달 전체이며, 특정 사건이 일어날 확률을 뜻하지 않아요.',
+   ['양력 월의 첫날부터 말일까지를 같은 기준으로 비교했어요. 이번 달은 이미 지난 날도 포함한 한 달 전체이며, 특정 사건이 일어날 확률을 뜻하지 않아요. 달 사이 점수 차이가 작으면 비슷한 기본 흐름으로 읽고 실제 일정과 준비 상태를 우선해 주세요.',
     ...months.map(o=>monthLabel(o)+' · '+o.theme+' — '+(comp?'종합':CN[ci])+' 흐름 '+o.av.toFixed(1)+'점. '+(o.up?'열두 달 평균보다 높아 작은 시도를 검토할 달이에요.':'열두 달 평균보다 낮아 점검과 준비에 무게를 둘 달이에요.')+' '+(comp?'상대적으로 주목할 분야는 '+CN[o.c]+', 더 세심히 돌볼 분야는 '+CN[o.care]+'이에요. ':'')+'실천: '+o.act),
     '사주·서양 점성술·인도 점성술·수비학·마야력의 기존 일별 흐름을 양력 월 단위로 모은 자체 해석이에요. 절기월 자체를 뜻하지 않으며, 건강 점수는 질병이나 건강 상태의 예측이 아니라 생활 리듬을 돌아보는 참고로 읽어 주세요.'],
    '이번 달에 해당하는 실천 한 가지를 고르고, 월말에 실제 경험과 비교해 보세요.',
@@ -1500,7 +1500,7 @@ function buildRichReport(ch,key){
  if(key==='comprehensive'){
   const themes=['자기 기준과 협력의 균형','표현과 결과물 만들기','자원과 지출 관리','역할과 약속 점검','배움과 도움 주고받기'];
   const original=Object.fromEntries(S.map(x=>[x.kind,x]));
-  const section=(kind,question,lead,paragraphs,action,extra={})=>Object.assign({kind,question,lead,paragraphs:paragraphs.filter(Boolean),action,basis:[]},extra);
+  const section=(kind,question,lead,paragraphs,action,extra={})=>Object.assign({kind,question,lead:lead?lead.replace(/[.。]$/,'')+'.':'',paragraphs:paragraphs.filter(Boolean),action,basis:[]},extra);
   const personality=original.personality;
   personality.question='타고난 성격과 재능';
   personality.caution=dm[4]+'. '+(zero.length?ELZ[zero[0]]:ELO[maxEl])+'.';
@@ -1543,7 +1543,7 @@ function buildRichReport(ch,key){
    if(w.endsWith('입')){const s=w.slice(0,-1);return s+(T(s.charCodeAt(s.length-1))?'이에요':'예요')}
    const c=w.charCodeAt(w.length-1);if(T(c)!==17)return tok;return open(w.slice(0,-1)+mk(I(c),V(c),0))};
   return t=>typeof t==='string'?t.replace(/[가-힣]+니다(?![가-힣])/g,one):t})();
- S.forEach(s=>{s.question=haeyo(s.question);s.lead=haeyo(s.lead);s.paragraphs=(s.paragraphs||[]).map(haeyo);s.action=haeyo(s.action);if(s.table&&Array.isArray(s.table.rows))s.table.rows=s.table.rows.map(r=>r.map(haeyo))});
+ S.forEach(s=>{s.question=haeyo(s.question);s.lead=haeyo(s.lead);s.paragraphs=(s.paragraphs||[]).map(haeyo);s.action=haeyo(s.action);s.caution=haeyo(s.caution);if(s.table&&Array.isArray(s.table.rows))s.table.rows=s.table.rows.map(r=>r.map(haeyo))});
  /* 2026-11-10: 핵심 요약은 본문 세 문장을 복사하지 않고, 10년 숫자 결론 2줄 + 장마다 결론 한 줄(목차처럼)로 만든다. */
  const firstLine=t=>String(t||'').split(/(?<=[.!?])\s+/).map(x=>x.trim()).find(x=>x&&!/^\[/.test(x))||'';
  const sumArr=key==='comprehensive'?years.map((r,i)=>({year:r.year,score:Math.round(Y4.reduce((a,c)=>a+c[i].score,0)/4)})):years,sumYv=sumArr.map(r=>r.score),sumHi=sumArr[sumYv.indexOf(Math.max(...sumYv))],sumLo=sumArr[sumYv.indexOf(Math.min(...sumYv))];

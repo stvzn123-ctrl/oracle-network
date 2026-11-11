@@ -74,7 +74,7 @@
    const text=[s.lead,...(s.paragraphs||[])].filter(Boolean).map(x=>readingParts(x).main).filter(Boolean).join(' ').split(/(?<=[.!?])\s+/)[0]||'';
    const short=text.length>72?text.slice(0,70).replace(/[,\s]+$/,'')+'…':text;
    return '<li><b>'+E(s.question)+'</b><span>'+E(short)+'</span></li>'});
-  if(items.length>=3)list.innerHTML=items.join('');
+  if(items.length>=3)list.innerHTML=compactReportHTML(items.join(''));
  }
  const previousRenderAll=renderAll;renderAll=function(){previousRenderAll();renderReportCTA()};
  // Summary and body share the same section model, rather than separate generated claims.

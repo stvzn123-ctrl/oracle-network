@@ -2353,7 +2353,7 @@ function pairBirthAppendixHTML(charts){
 
 }
 function compactReportHTML(html){
- return String(html).split(/(<[^>]*>)/g).map((part,i)=>i%2?part:part.replace(/\b(20\d{2})년/g,(_,y)=>y.slice(2)+'년')).join('');
+ return String(html).split(/(<[^>]*>)/g).map((part,i)=>i%2||/\b(?:19\d{2}|21\d{2})년/.test(part)?part:part.replace(/\b(20\d{2})년/g,(_,y)=>y.slice(2)+'년')).join('');
 }
 function approvedReportHTML(data,key,sourceChart=null){
  if(["employment","move"].includes(key)){key="work";data={...data,title:String(data.title||"").replace(/취업|이직/g,"직업")}}
@@ -2378,13 +2378,13 @@ function approvedReportHTML(data,key,sourceChart=null){
  const lineHTML=l=>{if(!l||!Array.isArray(l.values))return '';const W=340,H=170,L=28,Rr=10,T=18,B=24,v=l.values,mn=Math.min(...v)-3,mx=Math.max(...v)+3,x=i=>L+(W-L-Rr)*i/(v.length-1),y=n=>T+(mx-n)/Math.max(6,mx-mn)*(H-T-B);let g='';[mn,(mn+mx)/2,mx].forEach(n=>{g+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+y(n)+'" y2="'+y(n)+'" stroke="rgba(168,123,54,.25)"/>'});g+='<path d="'+v.map((n,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(n).toFixed(1)).join(' ')+'" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linejoin="round"/>';v.forEach((n,i)=>{const h=(l.hi||[]).includes(i),o=(l.lo||[]).includes(i);g+='<circle cx="'+x(i)+'" cy="'+y(n)+'" r="'+(h||o?5:3)+'" fill="'+(h?'#b04a6c':o?'#6f7584':'var(--gold)')+'"/>'+(h||o?'<text x="'+x(i)+'" y="'+(y(n)-9)+'" text-anchor="middle" font-size="10" fill="'+(h?'#b04a6c':'#6f7584')+'">'+(h?'가까움':'느슨')+'</text>':'')+'<text x="'+x(i)+'" y="'+(H-6)+'" text-anchor="middle" font-size="10" fill="#8a8174">'+E(l.labels[i])+'</text>'});return '<figure class="rv3-line"><figcaption>'+E(l.cap||'')+'</figcaption><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+E(l.cap||'')+'">'+g+'</svg></figure>'};
  const faceHTML=()=>{if(!ch||!['love','marry','comprehensive'].includes(key))return null;try{const f=spouseFaceProfile(ch);return '<figure class="rv3-face"><img loading="lazy" decoding="async" src="'+f.full+'" width="240" height="300" alt="차트의 상징으로 그린 참고용 인물 일러스트" loading="lazy" decoding="async"><figcaption>차트의 상징으로 그린 참고 일러스트예요</figcaption></figure>'}catch(e){return null}};
  const interpretationHTML=(p,cls='',literal=false)=>'<p'+(cls?' class="'+cls+'"':'')+'><span class="reading-meaning">'+destinyMeaningHTML(literal?String(p):readingParts(p).main)+'</span></p>';
- const paraHTML=s=>{const paras=(s.paragraphs||[s.answer]).filter(Boolean),literal=['calendar','daewoon'].includes(s.kind),meaning=paras.filter(p=>literal||readingParts(p).main),evidence=paras.filter(p=>!readingParts(p).main);/* 2026-11-10 G8: 문단이 5개 이상이면 앞 3개만 펼치고 나머지는 접는다(인쇄 때는 printReport가 모두 펼친다). */return meaning.map(p=>interpretationHTML(p,'',literal)).join('')};
+ const paraHTML=s=>{if(s.kind==='calendar'&&Array.isArray(s.months))return interpretationHTML(s.paragraphs[0],'',true)+'<div class="report-months">'+s.months.map((m,i)=>'<article class="report-month"><h3>'+E(m.year+'년 '+m.month+'월')+'</h3><p class="month-theme">'+E(m.theme)+'</p>'+interpretationHTML((s.paragraphs[i+1]||'').split(' — ').slice(1).join(' — '),'',true)+'</article>').join('')+'</div>'+interpretationHTML(s.paragraphs.at(-1),'',true);const paras=(s.paragraphs||[s.answer]).filter(Boolean),literal=['calendar','daewoon'].includes(s.kind),meaning=paras.filter(p=>literal||readingParts(p).main),evidence=paras.filter(p=>!readingParts(p).main);/* 2026-11-10 G8: 문단이 5개 이상이면 앞 3개만 펼치고 나머지는 접는다(인쇄 때는 printReport가 모두 펼친다). */return meaning.map(p=>interpretationHTML(p,'',literal)).join('')};
  /* 마스코트는 리포트 한 권 안에서 같은 포즈를 두 번 쓰지 않는다. 표지 포즈를 먼저 쓴 것으로 치고, 인물 일러스트가 있는 장에는 넣지 않는다. */
  const usedPoses=new Set([reportPose]),POSE_POOL=['lucky','happy','note','money','heart','rest','care','detective'];
  const chapterPose=(s,i)=>{if(i%3!==0||s.kind==='partner'||(s.kind==='partner-detail'))return '';const want=/건강|휴식/.test(s.question)?'rest':/주의|조심/.test(s.question)?'care':/돈|재물|투자|사업/.test(s.question)?'money':/사랑|인연|결혼|연애/.test(s.question)?'heart':/공부|학업|시험|계산|방법/.test(s.question)?'note':'lucky';const pick=[want,...POSE_POOL].find(p=>!usedPoses.has(p));if(!pick)return '';usedPoses.add(pick);return mascotPoseHTML(pick,'report-chapter-pose')};
  const chapter=(s,i)=>{
-  const face=s.kind==='partner'?faceHTML():null;
-  const body=(s.caution?'<aside class="report-caution"><b>살펴볼 점</b><p>'+E(s.caution)+'</p></aside>':'')+(["love","marry"].includes(key)&&s.kind==='meet'&&ch?encounterHTML(ch):paraHTML(s))+lineHTML(s.line)+tableHTML(s.table)+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
+  const face=s.kind==='partner'&&!comp?faceHTML():null;
+  const body=(s.caution?'<aside class="report-caution"><b>살펴볼 점</b><p>'+E(s.caution)+'</p></aside>':'')+(["love","marry"].includes(key)&&s.kind==='meet'&&ch?encounterHTML(ch):paraHTML(s))+lineHTML(s.line)+(s.kind==='calendar'&&Array.isArray(s.months)?'':tableHTML(s.table))+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
   return '<section class="r-page rv3-ch" id="chapter-'+i+'"><header class="rv3-hd"><span class="rv3-no">'+(v3?'CHAPTER '+n2(i):(i+1)+'장')+'</span><h2>'+E(s.question)+'</h2></header>'+chapterPose(s,i)+
    (s.lead&&readingParts(s.lead).main&&!(ch&&['love','marry'].includes(key)&&['meet','partner'].includes(s.kind))?interpretationHTML(s.lead,'rv3-lead'):'')+
 
@@ -3360,7 +3360,7 @@ function buildRichReport(ch,key){
   const mHi=months.reduce((a,b)=>b.av>a.av?b:a),mLo=months.reduce((a,b)=>b.av<a.av?b:a),top3=months.slice().sort((a,b)=>b.av-a.av).slice(0,3).sort((a,b)=>a.k-b.k);
   const monthLabel=o=>o.y+'년 '+o.m+'월',period=monthLabel(months[0])+'~'+monthLabel(months[11]);
   put('calendar','앞으로 12개월, 월별 운명',period+' · 이번 달부터 열두 달을 함께 살펴봐요.',[],
-   ['양력 월의 첫날부터 말일까지를 같은 기준으로 비교했어요. 이번 달은 이미 지난 날도 포함한 한 달 전체이며, 특정 사건이 일어날 확률을 뜻하지 않아요.',
+   ['양력 월의 첫날부터 말일까지를 같은 기준으로 비교했어요. 이번 달은 이미 지난 날도 포함한 한 달 전체이며, 특정 사건이 일어날 확률을 뜻하지 않아요. 달 사이 점수 차이가 작으면 비슷한 기본 흐름으로 읽고 실제 일정과 준비 상태를 우선해 주세요.',
     ...months.map(o=>monthLabel(o)+' · '+o.theme+' — '+(comp?'종합':CN[ci])+' 흐름 '+o.av.toFixed(1)+'점. '+(o.up?'열두 달 평균보다 높아 작은 시도를 검토할 달이에요.':'열두 달 평균보다 낮아 점검과 준비에 무게를 둘 달이에요.')+' '+(comp?'상대적으로 주목할 분야는 '+CN[o.c]+', 더 세심히 돌볼 분야는 '+CN[o.care]+'이에요. ':'')+'실천: '+o.act),
     '사주·서양 점성술·인도 점성술·수비학·마야력의 기존 일별 흐름을 양력 월 단위로 모은 자체 해석이에요. 절기월 자체를 뜻하지 않으며, 건강 점수는 질병이나 건강 상태의 예측이 아니라 생활 리듬을 돌아보는 참고로 읽어 주세요.'],
    '이번 달에 해당하는 실천 한 가지를 고르고, 월말에 실제 경험과 비교해 보세요.',
@@ -3389,7 +3389,7 @@ function buildRichReport(ch,key){
  if(key==='comprehensive'){
   const themes=['자기 기준과 협력의 균형','표현과 결과물 만들기','자원과 지출 관리','역할과 약속 점검','배움과 도움 주고받기'];
   const original=Object.fromEntries(S.map(x=>[x.kind,x]));
-  const section=(kind,question,lead,paragraphs,action,extra={})=>Object.assign({kind,question,lead,paragraphs:paragraphs.filter(Boolean),action,basis:[]},extra);
+  const section=(kind,question,lead,paragraphs,action,extra={})=>Object.assign({kind,question,lead:lead?lead.replace(/[.。]$/,'')+'.':'',paragraphs:paragraphs.filter(Boolean),action,basis:[]},extra);
   const personality=original.personality;
   personality.question='타고난 성격과 재능';
   personality.caution=dm[4]+'. '+(zero.length?ELZ[zero[0]]:ELO[maxEl])+'.';
@@ -3432,7 +3432,7 @@ function buildRichReport(ch,key){
    if(w.endsWith('입')){const s=w.slice(0,-1);return s+(T(s.charCodeAt(s.length-1))?'이에요':'예요')}
    const c=w.charCodeAt(w.length-1);if(T(c)!==17)return tok;return open(w.slice(0,-1)+mk(I(c),V(c),0))};
   return t=>typeof t==='string'?t.replace(/[가-힣]+니다(?![가-힣])/g,one):t})();
- S.forEach(s=>{s.question=haeyo(s.question);s.lead=haeyo(s.lead);s.paragraphs=(s.paragraphs||[]).map(haeyo);s.action=haeyo(s.action);if(s.table&&Array.isArray(s.table.rows))s.table.rows=s.table.rows.map(r=>r.map(haeyo))});
+ S.forEach(s=>{s.question=haeyo(s.question);s.lead=haeyo(s.lead);s.paragraphs=(s.paragraphs||[]).map(haeyo);s.action=haeyo(s.action);s.caution=haeyo(s.caution);if(s.table&&Array.isArray(s.table.rows))s.table.rows=s.table.rows.map(r=>r.map(haeyo))});
  /* 2026-11-10: 핵심 요약은 본문 세 문장을 복사하지 않고, 10년 숫자 결론 2줄 + 장마다 결론 한 줄(목차처럼)로 만든다. */
  const firstLine=t=>String(t||'').split(/(?<=[.!?])\s+/).map(x=>x.trim()).find(x=>x&&!/^\[/.test(x))||'';
  const sumArr=key==='comprehensive'?years.map((r,i)=>({year:r.year,score:Math.round(Y4.reduce((a,c)=>a+c[i].score,0)/4)})):years,sumYv=sumArr.map(r=>r.score),sumHi=sumArr[sumYv.indexOf(Math.max(...sumYv))],sumLo=sumArr[sumYv.indexOf(Math.min(...sumYv))];

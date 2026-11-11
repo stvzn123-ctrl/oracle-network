@@ -102,3 +102,10 @@
 @media(max-width:480px){#report .rv3-table{font-size:13px}#report .rv3-table th,#report .rv3-table td{padding:10px 7px}#report .rv3-toc a{min-height:44px}}
 
 body.nav-edit #guestProfile{display:none!important}
+
+#report .report-months{display:grid;gap:16px;margin:24px 0}
+#report .report-month{min-width:0;border:1px solid var(--report-border);border-radius:14px;padding:18px;background:var(--report-surface)}
+#report .report-month h3{margin:0 0 8px!important;white-space:nowrap;color:var(--report-accent);font-size:18px}
+#report .report-month .month-theme{font-weight:600;margin:0 0 10px}
+#report .report-month p:last-child{margin-bottom:0}
+@media print{#report .report-month{break-inside:avoid}}
