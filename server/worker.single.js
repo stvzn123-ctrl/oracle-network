@@ -2378,11 +2378,26 @@ async function questionRoute(req,env,url,ctx){
   return json(req,env,{error:"not_found"},404);
 }
 
+async function sharedResultRoute(req,env,url){
+ if(url.pathname!=='/shared-result')return null;
+ await env.DB.prepare('CREATE TABLE IF NOT EXISTS shared_results(code TEXT PRIMARY KEY,owner TEXT NOT NULL,payload TEXT NOT NULL,created INTEGER NOT NULL,expires INTEGER NOT NULL)').run();
+ const now=Date.now();
+ if(req.method==='GET'){const code=url.searchParams.get('code');if(!/^[a-f0-9]{32}$/.test(code||''))return json(req,env,{error:'invalid'},400);const row=await env.DB.prepare('SELECT payload FROM shared_results WHERE code=? AND expires>?').bind(code,now).first();return row?json(req,env,JSON.parse(row.payload)):json(req,env,{error:'expired'},404);}
+ if(req.method!=='POST')return json(req,env,{error:'method'},405);
+ const user=await member(req,env);if(!user)return json(req,env,{error:'unauthorized'},401);
+ const text=await req.text();if(text.length>60000)return json(req,env,{error:'size'},413);let b;try{b=JSON.parse(text)}catch{return json(req,env,{error:'invalid'},400)}
+ const valid=(x,max)=>typeof x==='string'&&x.length<=max;
+ if(!valid(b.title,160)||!Array.isArray(b.sections)||b.sections.length<1||b.sections.length>30||b.sections.some(s=>!valid(s.title,200)||!Array.isArray(s.paragraphs)||s.paragraphs.length>40||s.paragraphs.some(p=>!valid(p,3000))))return json(req,env,{error:'invalid'},400);
+ const count=await env.DB.prepare('SELECT COUNT(*) n FROM shared_results WHERE owner=? AND created>?').bind(user.id,now-86400000).first();if(count.n>=30)return json(req,env,{error:'limit'},429);
+ const code=authRandom().slice(0,32),payload={title:b.title,sections:b.sections.map(s=>({title:s.title,paragraphs:s.paragraphs}))};
+ await env.DB.prepare('INSERT INTO shared_results(code,owner,payload,created,expires) VALUES(?,?,?,?,?)').bind(code,user.id,JSON.stringify(payload),now,now+30*86400000).run();return json(req,env,{code});
+}
 export default {
   async fetch(req, env, ctx) {
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors(req, env) });
     const url = new URL(req.url), path = url.pathname.replace(/\/+$/, "");
     try {
+      const shared=await sharedResultRoute(req,env,url);if(shared)return shared;
       const q=await questionRoute(req,env,url,ctx);if(q)return q;
       const access=await accessRoute(req,env,url);if(access)return access;
       const auth=await authRoute(req,env,url,ctx);if(auth)return auth;
