@@ -1679,7 +1679,7 @@ document.addEventListener('click',e=>{const ld=e.target.closest('.cmp-load'),dl=
  [...el.partnerSex].forEach(r=>r.checked=r.value===p.sex);el.partnerDate.value=String(p.date).replace(/\D/g,'');el.partnerTime.value=p.time||'';el.partnerNoTime.checked=!!p.notime;el.partnerTime.disabled=!!p.notime;
  el.partnerNoPlace.checked=p.pi==null;el.partnerPlace.disabled=p.pi==null;if(p.pi!=null)el.partnerPlace.value=String(p.pi);f.requestSubmit()});
 function compatFormHTML(mode='match'){const RU=mode==='reunion',GP=mode==='group',opts=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
- return `<section class="chart-form cmp-form ${GP?'cmp-form-group':''}"><div class="cmp-head"><h4>${GP?"모임에 사람 추가하기":RU?"상대방 정보로 재회 흐름 보기":"상대방 정보로 궁합 보기"}</h4>${RU?"":'<button type="button" class="cmp-askshare" data-pmake>공유해서 입력 요청하기</button>'}</div>${RU?"":'<div class="cmp-pair"></div>'}<div class="cmp-saved">${partnerSavedHTML(GP)}</div><form id="${GP?"group-form":RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate>${GP?'<details class="group-manual"><summary>직접 입력해서 추가</summary>':''}<div class="chart-fields">
+ return `<section class="chart-form cmp-form ${GP?'cmp-form-group':''}"><div class="cmp-head"><h4>${GP?"모임에 사람 추가하기":RU?"상대방 정보로 재회 흐름 보기":CMPKIND==='friend'?"친구 선택하기":"상대방 정보로 궁합 보기"}</h4>${RU?"":'<button type="button" class="cmp-askshare" data-pmake>공유해서 입력 요청하기</button>'}</div>${RU?"":'<div class="cmp-pair"></div>'}<div class="cmp-saved">${partnerSavedHTML(GP)}</div><form id="${GP?"group-form":RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate>${GP||(!RU&&CMPKIND==='friend')?'<details class="group-manual"><summary>직접 입력해서 추가</summary>':''}<div class="chart-fields">
  <label>상대 이름 <small>(선택)</small><input name="partnerName" maxlength="40" autocomplete="off" placeholder="홍길동 · 비워 두면 이름 없이 봐요"></label>
  <label>상대 영문 이름 <small>(선택)</small><input name="partnerRoman" maxlength="80" autocomplete="off" placeholder="자동 입력"></label>
  <p class="cmp-priv">이름을 넣지 않으면 이름으로 계산하는 수비학 영혼 수는 빼고, 생년월일로 보는 점술만으로 계산해요.</p>
@@ -1687,7 +1687,7 @@ function compatFormHTML(mode='match'){const RU=mode==='reunion',GP=mode==='group
  <label>상대 생년월일 (양력)<input name="partnerDate" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="예: 19981122" required></label>
  <label>출생 시각 (24시간제)<input name="partnerTime" type="text" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="예: 15:00"></label><label class="chk"><input type="checkbox" name="partnerNoTime">시각을 몰라요</label>
  <label>출생지<select name="partnerPlace">${opts}</select></label><label class="chk"><input type="checkbox" name="partnerNoPlace">출생지를 선택하지 않을래요</label>
- <label class="chk"><input type="checkbox" name="partnerSave"><span class="cmp-save-lb">${accountUser?"상대방의 동의를 받았고, 내 계정에 저장할게요":"이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)"}</span></label><p class="cmp-priv">상대방의 이름과 생년월일은 그 사람의 개인정보예요. 상대방이 동의한 경우에만 저장하고, 필요 없으면 언제든 삭제해 주세요. 이름 대신 별명을 써도 돼요.</p></div><button type="submit">${GP?"모임에 추가":RU?"재회 흐름 보기":"궁합 보기"}</button>${GP?'</details>':''}<div class="chart-feedback cmp-result" aria-live="polite"></div></form></section>`}
+ <label class="chk"><input type="checkbox" name="partnerSave"><span class="cmp-save-lb">${accountUser?"상대방의 동의를 받았고, 내 계정에 저장할게요":"이 기기에만 저장할게요 (로그인하면 계정에 저장돼요)"}</span></label><p class="cmp-priv">상대방의 이름과 생년월일은 그 사람의 개인정보예요. 상대방이 동의한 경우에만 저장하고, 필요 없으면 언제든 삭제해 주세요. 이름 대신 별명을 써도 돼요.</p></div><button type="submit">${GP?"모임에 추가":RU?"재회 흐름 보기":CMPKIND==='friend'?"우정 보기":"궁합 보기"}</button>${GP||(!RU&&CMPKIND==='friend')?'</details>':''}<div class="chart-feedback cmp-result" aria-live="polite"></div></form></section>`}
 document.addEventListener('input',e=>{const f=e.target.form;if(!f||!f.dataset.mode)return;if(e.target.name==='partnerDate')e.target.value=e.target.value.replace(/\D/g,'').slice(0,8);if(e.target.name==='partnerTime')e.target.value=formatBirthTime(e.target.value);if(e.target.name!=='partnerSave'){const o=f.querySelector('.cmp-result');if(o&&o.innerHTML){o.innerHTML='';COMPAT=null}}
  if(e.target.name==='partnerName'&&!f.partnerRoman.dataset.edited){f.partnerRoman.value=romanize(e.target.value)||''}
  if(e.target.name==='partnerRoman')f.partnerRoman.dataset.edited=e.target.value?'1':''});
@@ -4122,7 +4122,7 @@ document.getElementById('landingStart').addEventListener('click',()=>{document.b
    점수 계산(compatScore)은 그대로 쓰고, 종류에 따라 표현과 묶는 방식만 바꾼다. */
 const CMP_KIND={love:'연인',friend:'우정(두 사람)',group:'모임(3명 이상)'};
 const CMP_NOTE={love:'두 사람의 다섯 점술을 나란히 읽어 잘 맞는 점을 먼저 보여 드려요.',
- friend:'서로의 역할과 어울리는 캐릭터를 보여드려요. 함께하는 조합에 따라 상대적인 역할과 캐릭터가 달라질 수 있어요.',
+ friend:'친구 한 명을 선택하거나 직접 입력해 주세요.',
  group:'나를 포함해 3~8명의 역할과 어울리는 캐릭터를 보여드려요. 조합이 달라지면 같은 사람도 다른 역할과 캐릭터로 나올 수 있어요.'};
 let CMPKIND='love',FRIENDKIND='friend',GROUP=[],GROUPRES=null;
 
@@ -4194,6 +4194,16 @@ SOCIAL_DOGS.push(
  ['c',0,'가만있다 혼나는 애'],['c',1,'관심 없는 척 다 듣는 애'],['c',2,'밥 먹고 또 먹는 애'],['c',3,'답장은 내일 하는 애'],['c',4,'굳이 건드리는 애'],['c',5,'안 정하면 답답한 애'],['c',6,'욕하면서 챙기는 애'],['c',7,'여기가 내 자리인 애'],['c',8,'조용하면 불안한 애'],
  ['d',0,'표정으로 욕하는 애'],['d',1,'길 모르는데 앞장서는 애'],['d',2,'듣다가 팩트 꽂는 애'],['d',3,'자기가 말하고 웃는 애'],['d',4,'일단 사진부터 찍는 애'],['d',5,'친해지면 시끄러운 애'],['d',6,'괜찮다 하고 삐진 애'],['d',7,'싸우면 중간에 낀 애'],['d',8,'대충 살아도 잘되는 애']
 );
+// Character personality vectors: initiative, expression, care, structure, listening, energy.
+const SOCIAL_PERSONALITIES=[
+ [0,-1,0,0,1,-1],[0,1,0,-1,0,1],[0,1,1,0,0,1],[0,-1,0,1,1,-1],[1,1,0,1,-1,1],[0,-1,1,0,1,-1],
+ [0,0,1,1,-1,0],[0,-1,0,1,1,-1],[1,1,1,-1,0,1],[0,-1,0,1,1,-1],[0,1,1,1,0,1],[1,1,0,-1,0,1],
+ [1,0,1,1,0,1],[1,1,0,-1,0,1],[0,1,1,-1,1,-1],[0,1,0,1,1,0],[0,-1,1,-1,1,-1],[0,1,1,-1,1,1],
+ [0,-1,0,1,1,-1],[0,-1,1,0,1,-1],[0,1,1,-1,0,0],[1,-1,0,-1,1,-1],[1,1,-1,1,0,1],[1,0,0,1,-1,1],
+ [0,-1,1,1,0,0],[0,-1,1,1,1,-1],[1,1,0,-1,-1,1],[0,-1,-1,1,1,-1],[1,1,0,0,-1,1],[0,-1,0,1,1,0],
+ [1,1,1,-1,0,1],[1,1,0,1,0,1],[0,1,1,-1,1,0],[0,-1,1,0,1,-1],[0,0,1,1,1,0],[0,0,0,-1,1,-1]
+];
+const SOCIAL_PERSONALITY_COPY=['느긋하게 거리를 지키는 편','신나면 멈추는 타이밍을 놓치는 편','좋아하는 것 앞에서는 반응이 빠른 편','결정 전에 의심부터 해 보는 편','취향과 준비에 진심인 편','편안한 공간에서 충전하는 편','챙기려는 마음은 큰데 가끔 허술한 편','말없이 듣고 기억하는 편','함께 웃는 순간에 에너지를 쓰는 편','시작은 의욕적이지만 혼자 쉴 시간도 필요한 편','함께 먹고 즐길 것을 챙기는 편','이야기를 재미있게 풀어내는 편','계획을 세우고 진행을 이끄는 편','고민보다 행동이 먼저인 편','다른 사람의 감정에 쉽게 공감하는 편','취향과 결과물을 꼼꼼히 보는 편','여럿이 있어도 휴식이 필요한 편','가까운 사람을 먼저 응원하는 편','조용히 지켜보다 타이밍을 놓치기도 하는 편','관심을 드러내지 않고 듣는 편','소소한 즐거움을 자주 찾는 편','자기 속도로 반응하는 편','궁금하면 직접 확인하는 편','정해지지 않은 상황을 정리하는 편','표현은 무뚝뚝해도 행동으로 챙기는 편','익숙한 자리와 자기 영역을 지키는 편','정적을 깨고 반응을 끌어내는 편','말보다 표정으로 속내가 드러나는 편','일단 나서고 보며 시행착오를 겪는 편','듣다가 핵심을 짚는 편','자기 이야기에도 즐겁게 반응하는 편','좋은 순간을 기록하는 편','편해지면 표현이 많아지는 편','서운함을 바로 말하기 어려운 편','양쪽 사정을 듣고 조율하는 편','유연하게 흘러가는 대로 즐기는 편'];
 function socialContext(list){
  const ratio=c=>{const total=c.cnt.reduce((a,b)=>a+b,0)||1;return c.cnt.map(v=>v/total);};
  const values=list.map(ratio),mean=[0,1,2,3,4].map(k=>values.reduce((n,r)=>n+r[k],0)/list.length);
@@ -4204,8 +4214,8 @@ function socialContext(list){
  return list.map((c,i)=>{
   // Relative difference dominates; absolute tendency breaks ties without input-order bias.
   const weights=values[i].map((v,k)=>v-mean[k]+v*.2),field=weights.indexOf(Math.max(...weights));
-  const pool=pools[field],id=pool[(hash+mod(c.stems.d,10))%pool.length],dog=SOCIAL_DOGS[id];
-  return {field,role:roles[field][0],strength:roles[field][1],cast:{name:groupName(c,i),sheet:dog[0],index:dog[1],label:dog[2]}};
+  const pool=pools[field],score=id=>SOCIAL_PERSONALITIES[id].slice(0,5).reduce((n,v,k)=>n+v*weights[k],0)+SOCIAL_PERSONALITIES[id][5]*(c.strong?.03:-.03);const maximum=Math.max(...pool.map(score)),tied=pool.filter(id=>Math.abs(score(id)-maximum)<1e-9),id=tied[(hash+mod(c.stems.d,10))%tied.length],dog=SOCIAL_DOGS[id];
+  return {field,role:roles[field][0],strength:SOCIAL_PERSONALITY_COPY[id]+'이에요. '+roles[field][1],personality:id,cast:{name:groupName(c,i),sheet:dog[0],index:dog[1],label:dog[2]}};
  });
 }
 function socialDogCast(list){return socialContext(list).map(x=>x.cast);}
@@ -4308,7 +4318,8 @@ function cmpShowOne(label,scroll=true){
 
 function cmpSetKind(k){
  CMPKIND=k;if(k!=='love')FRIENDKIND=k;
- const intro=document.querySelector('#tab-match .topic-intro');if(intro){const h=intro.querySelector('h3'),p=intro.querySelector('p');if(h)h.textContent=k==='group'?'우리 모임의 역할과 캐릭터':k==='friend'?'우리의 역할과 어울리는 캐릭터':'우리 둘은 어떤 점에서 잘 맞을까?';if(p)p.textContent=k==='love'?'두 사람의 관계 성향과 조율할 점을 함께 살펴봐요.':'정보를 입력하면 각자 역할과 어울리는 캐릭터를 바로 보여드려요. 조합에 따라 상대적인 역할과 캐릭터가 달라질 수 있어요.';}
+ document.getElementById('cmpOne')?.classList.toggle('friend-controls',k==='friend');
+ const intro=document.querySelector('#tab-match .topic-intro');if(intro){const h=intro.querySelector('h3'),p=intro.querySelector('p');if(h)h.textContent=k==='group'?'우리 모임의 역할과 캐릭터':k==='friend'?'우리의 역할과 어울리는 캐릭터':'우리 둘은 어떤 점에서 잘 맞을까?';if(p)p.textContent=k==='love'?'두 사람의 관계 성향과 조율할 점을 함께 살펴봐요.':'서로의 역할과 어울리는 캐릭터를 보여드려요. 함께하는 조합에 따라 상대적인 역할과 캐릭터가 달라져요.';}
  if(COMPAT?.mode==='match'&&k!=='group'){COMPAT.kind=k;cmpShowOne((COMPAT.b.inp.name||'친구')+'님',false)}
  /* 궁합 탭(연인)은 종류 선택 없이 바로 폼, 우정 탭은 '우정 / 모임' 두 가지 */
  document.querySelectorAll('.cmp-kind').forEach(box=>{box.hidden=k==='love'});
@@ -4321,7 +4332,7 @@ function cmpSetKind(k){
 function matchPanelHTML(){
  return '<div class="cmp-kind" role="group" aria-label="우정 궁합 종류"'+(CMPKIND==='love'?' hidden':'')+'>'+Object.keys(CMP_KIND).map(k=>'<button type="button" data-ck="'+k+'" aria-pressed="'+(k===CMPKIND)+'">'+CMP_KIND[k]+'</button>').join('')+'</div>'+
   '<p class="cmp-kind-note" id="cmpKindNote">'+CMP_NOTE[CMPKIND]+'</p>'+
-  '<div id="cmpOne"'+(CMPKIND==='group'?' hidden':'')+'>'+compatFormHTML('match')+'</div>'+
+  '<div id="cmpOne" class="'+(CMPKIND==='friend'?'friend-controls':'')+'"'+(CMPKIND==='group'?' hidden':'')+'>'+compatFormHTML('match')+'</div>'+
   '<div id="cmpGroup"'+(CMPKIND==='group'?'':' hidden')+'><section class="chart-form cmp-form"><h4>모임에 참여할 사람</h4><div id="cmpGroupList">'+groupListHTML()+'</div><div id="cmpGroupOut" class="chart-feedback" aria-live="polite"></div></section>'+compatFormHTML('group')+'</div>'}
 
 document.addEventListener('click',e=>{

@@ -305,22 +305,28 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 .social-result .social-role-table tbody th{font-weight:700}
 
 /* Compact group controls with separate selection and deletion targets. */
-#cmpGroup .cmp-form{padding:20px;margin-top:16px;border-radius:18px}
-#cmpGroup .cmp-form h4{font-size:17px;margin:0 0 14px}
+:is(#cmpGroup,.friend-controls) .cmp-form{padding:20px;margin-top:16px;border-radius:18px}
+:is(#cmpGroup,.friend-controls) .cmp-form h4{font-size:17px;margin:0 0 14px}
 .cmp-kind{max-width:380px;gap:3px;border-radius:12px}
 .cmp-kind button{min-height:40px!important;padding:7px 12px!important;font-size:13px!important;margin:0!important}
-#cmpGroup .cmp-head{gap:10px;align-items:center;flex-wrap:wrap}
-#cmpGroup .cmp-askshare{width:auto!important;min-height:36px!important;font-size:12px!important;padding:6px 10px!important;margin:0!important}
-#cmpGroup .cmp-saved ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:260px;overflow-y:auto;padding:2px}
-#cmpGroup .cmp-saved li{min-width:0;display:flex;gap:3px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--field)}
-#cmpGroup .cmp-load{flex:1;min-width:0;width:auto!important;min-height:54px!important;margin:0!important;padding:8px!important;border:0!important;border-radius:0!important;font-size:13px!important;box-shadow:none!important;background:transparent!important;gap:1px}
-#cmpGroup .cmp-load b{overflow-wrap:anywhere;line-height:1.4}#cmpGroup .cmp-load small{font-size:11px}
-#cmpGroup .cmp-load:disabled{opacity:.45;cursor:default}
-#cmpGroup .cmp-del{flex:none;width:auto!important;min-width:40px;min-height:40px!important;margin:0!important;padding:5px 7px!important;border:0!important;box-shadow:none!important;font-size:11px!important;background:transparent!important}
-#cmpGroup .cmp-group-list li{padding:8px 10px;flex-wrap:wrap;gap:4px 8px;font-size:13px}
-#cmpGroup .cmp-group-list li small{font-size:11px}#cmpGroup .cmp-group-list .cmp-del{margin-left:auto!important}
-#cmpGroup [data-gcalc],#group-form>button[type=submit]{width:100%;min-height:42px!important;padding:9px 14px!important;margin:12px 0 0!important;font-size:14px!important}
+:is(#cmpGroup,.friend-controls) .cmp-head{gap:10px;align-items:center;flex-wrap:wrap}
+:is(#cmpGroup,.friend-controls) .cmp-askshare{width:auto!important;min-height:36px!important;font-size:12px!important;padding:6px 10px!important;margin:0!important}
+:is(#cmpGroup,.friend-controls) .cmp-saved ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:260px;overflow-y:auto;padding:2px}
+:is(#cmpGroup,.friend-controls) .cmp-saved li{min-width:0;display:flex;gap:3px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--field)}
+:is(#cmpGroup,.friend-controls) .cmp-load{flex:1;min-width:0;width:auto!important;min-height:54px!important;margin:0!important;padding:8px!important;border:0!important;border-radius:0!important;font-size:13px!important;box-shadow:none!important;background:transparent!important;gap:1px}
+:is(#cmpGroup,.friend-controls) .cmp-load b{overflow-wrap:anywhere;line-height:1.4}:is(#cmpGroup,.friend-controls) .cmp-load small{font-size:11px}
+:is(#cmpGroup,.friend-controls) .cmp-load:disabled{opacity:.45;cursor:default}
+:is(#cmpGroup,.friend-controls) .cmp-del{flex:none;width:auto!important;min-width:40px;min-height:40px!important;margin:0!important;padding:5px 7px!important;border:0!important;box-shadow:none!important;font-size:11px!important;background:transparent!important}
+:is(#cmpGroup,.friend-controls) .cmp-group-list li{padding:8px 10px;flex-wrap:wrap;gap:4px 8px;font-size:13px}
+:is(#cmpGroup,.friend-controls) .cmp-group-list li small{font-size:11px}:is(#cmpGroup,.friend-controls) .cmp-group-list .cmp-del{margin-left:auto!important}
+:is(#cmpGroup,.friend-controls) [data-gcalc],#group-form>button[type=submit]{width:100%;min-height:42px!important;padding:9px 14px!important;margin:12px 0 0!important;font-size:14px!important}
 #group-form .chart-fields{gap:10px}#group-form input,#group-form select{min-height:40px;font-size:14px}
-@media(max-width:360px){#cmpGroup .cmp-saved ul{grid-template-columns:1fr}}
+@media(max-width:360px){:is(#cmpGroup,.friend-controls) .cmp-saved ul{grid-template-columns:1fr}}
 
 .group-manual{border-top:1px solid var(--line);padding-top:10px;margin-top:8px}.group-manual summary{cursor:pointer;font:600 13px/1.5 var(--body);padding:10px 2px;color:var(--gold-ink)}.group-manual[open] summary{margin-bottom:10px}
+
+.cmp-kind{width:100%;max-width:none;grid-template-columns:repeat(2,minmax(0,1fr));box-sizing:border-box}
+.cmp-kind button{width:100%;box-sizing:border-box}
+.friend-controls .cmp-form{padding:20px;margin-top:16px;border-radius:18px}
+.friend-controls .chart-fields{gap:10px}.friend-controls input,.friend-controls select{min-height:40px;font-size:14px}
+.friend-controls button[type=submit]{min-height:42px!important;padding:9px 14px!important;font-size:14px!important}
