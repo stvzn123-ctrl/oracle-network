@@ -255,7 +255,7 @@ const HOUSE=["","자신","재물","소통","가정","연애","일상·건강","�
 const NAK="아슈위니 바라니 크리티카 로히니 므리가시라 아르드라 푸나르바수 푸쉬야 아슐레샤 마가 푸르바팔구니 우타라팔구니 하스타 치트라 스와티 비샤카 아누라다 즈예슈타 물라 푸르바아샤다 우타라아샤다 슈라바나 다니슈타 샤타비샤 푸르바바드라 우타라바드라 레바티".split(" ");
 const DL=["Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury"],DY=[7,20,6,10,7,18,16,19,17];
 const PK={Sun:"태양",Moon:"달",Mars:"화성",Mercury:"수성",Jupiter:"목성",Venus:"금성",Saturn:"토성",Rahu:"라후",Ketu:"케투"};
-const M=[{k:"saju",n:"사주",c:"#e9c46a"},{k:"west",n:"서양 점성술",c:"#4fd1e8"},{k:"vedic",n:"인도 점성술",c:"#3dffb0"},{k:"num",n:"수비학",c:"#b49cff"},{k:"maya",n:"마야력",c:"#ff9a3c"}];
+const M=[{k:"saju",n:"사주",c:"#e9c46a"},{k:"west",n:"서양 점성술",c:"#4fd1e8"},{k:"vedic",n:"베딕점성술",c:"#3dffb0"},{k:"num",n:"수비학",c:"#b49cff"},{k:"maya",n:"마야력",c:"#ff9a3c"}];
 const CATS=[{k:"money",n:"금전운",c:"#f2c45a"},{k:"love",n:"애정운",c:"#ff86b0"},{k:"work",n:"직업·학업운",c:"#52d6ff"},{k:"health",n:"건강운",c:"#48f0a6"}];
 const HZ=[1,2,3,4,5,6,7,8,9,10].map(o=>({n:`${o}년 뒤`,off:o}));
 
@@ -383,7 +383,7 @@ function lunarToSolar(y,m,d,leap){const L=lunarInfo(y);if(!L)return {err:"음력
   let off=0;for(const x of L.months){if(x.m===m&&x.leap===!!leap){if(d>x.len)return {err:`${y}년 음력 ${leap?"윤":""}${m}월은 ${x.len}일까지 있어요.`};
     const [ny,nm,nd]=L.ny.split("-").map(Number);const [sy,sm,sd]=jdnToDate(jdn(ny,nm,nd)+off+d-1);return {y:sy,m:sm,d:sd}}off+=x.len}return {err:"날짜를 확인해 주세요."}}
 function koreaTz(y,m,d){const v=y*10000+m*100+d;return (v>=19540321&&v<19610810)?8.5:9}
-/* 전문 해석용 보강: 신강·신약과 희신, 신살, 인도 점성술 기능적 길흉, 수비학(구간별 축약) */
+/* 전문 해석용 보강: 신강·신약과 희신, 신살, 베딕점성술 기능적 길흉, 수비학(구간별 축약) */
 function enrich(ch){const d=ch.stems.d,de=SE[d],re=(de+4)%5;
   const items=[[ch.stems.y,1,"s"],[ch.stems.m,1,"s"],[ch.stems.h,1,"s"],[ch.brs.y,1,"b"],[ch.brs.m,3,"b"],[ch.brs.d,1.5,"b"],[ch.brs.h,1,"b"]].filter(x=>x[0]!=null);
   let sup=0,tot=0;items.forEach(([v,w,k])=>{const e=k==="s"?SE[v]:SE[BMAIN[v]];tot+=w;if(e===de||e===re)sup+=w});
@@ -614,7 +614,7 @@ function lifeQ(ch){const d=ch.stems.d,y0=new Date().getFullYear(),kage=y=>y-ch.Y
       ${jobs[2]===QJOB_LP[ch.lp]?`<li><b>${jobs[2]}</b> 수비학 인생 수 ${ch.lp}의 방향이에요.</li>`:jobs[2]?`<li><b>${jobs[2]}</b> 같은 결에서 한 가지 더 고른 방향이에요.</li>`:""}</ul>
       <p class="r-note">자체 분류예요. 실제 진로는 흥미·능력·환경을 함께 보고 정해 주세요.</p>`};
   // 4. 이직·자격증
-  const n1=y0+1,A=R.reduce((a,r)=>a+D(r[2].mean),0)/R.length,near=turningPoints(ch).filter(e=>e.y<=y0+2&&(e.src==="사주"||e.src==="인도 점성술"));
+  const n1=y0+1,A=R.reduce((a,r)=>a+D(r[2].mean),0)/R.length,near=turningPoints(ch).filter(e=>e.y<=y0+2&&(e.src==="사주"||e.src==="베딕점성술"));
   const in3=yrs.slice(0,3),bestY=in3.slice().sort((a,b)=>sc(b,2)-sc(a,2))[0],pyN=pyOf(ch,n1),pyC=pyOf(ch,y0);
   const mv=[];if(sc(n1,2)>=A)mv.push(`${n1}년 직업운 ${sc(n1,2)}점이 10년 평균(${Math.round(A)}점) 이상`);if([1,5].includes(pyN))mv.push(`${n1}년 개인년 ${pyN}(${pyN===1?"새 시작":"변화"})`);
   if(near.length)mv.push(`${near[0].y}년 ${near[0].src}의 큰 주기 교체`);if(in3.slice(0,2).some(y=>mod(y-4,12)===ch.yeokma))mv.push("2년 안에 역마의 해");
@@ -673,7 +673,7 @@ const ico=k=>`<i class="ic">${IC[k]}</i>`;
 function todayHTML(ch){const f=dayFortune(ch,new Date());const lc=LUCKC[f.le];
   const rows=[["saju","사주",`일진 ${f.pil} · ${f.tg}`,f.sj.length?f.sj.join(" · "):`${f.tg}의 날`],
     ["west","서양 점성술",`달 ${ZOD[f.ms]}자리 · ${f.mh}하우스`,`${HOUSE[f.mh]}에 마음이 가는 날`],
-    ["vedic","인도 점성술",`타라 ${f.ta+1} · ${TARA[f.ta]}`,TARAM[f.ta]],
+    ["vedic","베딕점성술",`타라 ${f.ta+1} · ${TARA[f.ta]}`,TARAM[f.ta]],
     ["num","수비학",`개인일 ${f.pd}`,`${PDAY[f.pd]}의 흐름`],
     ["maya","마야력",`${f.tone} ${MS[f.ks][0]}(${MS[f.ks][1]})`,f.my.length?f.my.join(" · "):MS[f.ks][2]]];
   return `<div class="today">
@@ -711,7 +711,7 @@ function sysScan(ch,kind){const d=ch.stems.d,y0=new Date().getFullYear(),kage=y=
       if(ch.goodG.includes(grp(tenGod(d,st)))&&[3,4].includes(grp(tenGod(d,st))))S.push(["사주",`도움을 주는 ${tenGod(d,st)}의 해`]);
       ch.gui.forEach(gb=>months.push([brMonth(gb),"사주 귀인의 달"]));
       if(jh===11||jh===9)S.push(["서양 점성술",`목성 ${jh}하우스(${HOUSE[jh]})`]);
-      const p=ads.find(p=>p.lord==="Jupiter"||p.lord===lord9);if(p)S.push(["인도 점성술",`${PK[p.lord]} 보조 기간(${ymd(p.s)}~${ymd(p.e)})${p.lord===lord9&&p.lord!=="Jupiter"?" · 9하우스(스승·행운) 주인":" · 스승의 별"}`]);
+      const p=ads.find(p=>p.lord==="Jupiter"||p.lord===lord9);if(p)S.push(["베딕점성술",`${PK[p.lord]} 보조 기간(${ymd(p.s)}~${ymd(p.e)})${p.lord===lord9&&p.lord!=="Jupiter"?" · 9하우스(스승·행운) 주인":" · 스승의 별"}`]);
       if(py===2||py===8)S.push(["수비학",`개인년 ${py}(${py===2?"협력·인연":"성과·후원"})`]);
     }else{
       if(grp(tenGod(d,st))===mateG||grp(tenGod(d,BMAIN[b]))===mateG)S.push(["사주",`${ch.male?"재성":"관성"}(배우자 별)의 해`]);
@@ -720,7 +720,7 @@ function sysScan(ch,kind){const d=ch.stems.d,y0=new Date().getFullYear(),kage=y=
       [...Array(12)].forEach((_,mb)=>{if((mb+db)%12===1)months.push([brMonth(mb),"배우자 자리와 합하는 달"]);if(mb===ch.dohwa)months.push([brMonth(mb),"도화의 달"])});
       if(jh===7)S.push(["서양 점성술","목성 7하우스(결혼·짝)"]);if(sh===7)S.push(["서양 점성술","토성 7하우스(약속·책임)"]);
       if(sep(jl,ven)<12)S.push(["서양 점성술","목성이 출생 금성 위"]);
-      const p=ads.find(p=>p.lord==="Venus"||p.lord===lord7);if(p)S.push(["인도 점성술",`${PK[p.lord]} 보조 기간(${ymd(p.s)}~${ymd(p.e)})${p.lord===lord7?" · 7하우스(배우자) 주인":" · 사랑의 별"}`]);
+      const p=ads.find(p=>p.lord==="Venus"||p.lord===lord7);if(p)S.push(["베딕점성술",`${PK[p.lord]} 보조 기간(${ymd(p.s)}~${ymd(p.e)})${p.lord===lord7?" · 7하우스(배우자) 주인":" · 사랑의 별"}`]);
       if(py===6||py===2)S.push(["수비학",`개인년 ${py}(${py===6?"사랑·가정":"협력·인연"})`]);
     }
     const kd=kinDates(ch,y);S.length&&kd.length&&S.push(["마야력",`탄생일 ${kd.map(k=>k.m+"/"+k.d).join("·")}`]);
@@ -739,7 +739,7 @@ function benefactorQ(ch){const d=ch.stems.d,ng=natalGroups(ch),sp=actionProfile(
     d:`<div class="r-fact"><div><small>언제</small><b>${top?`${top.y}년(${top.age}살) ${mon}`:"꾸준히"}</b>${kd?`<span>마야력 탄생일 ${kd} 전후가 가장 또렷해요</span>`:""}</div><div><small>누구</small><b>${GUI_AGE[who]}</b><span>${person}</span></div><div><small>어디서</small><b>${QWHERE[sp]}</b><span>${dirs}쪽${ch.has.yeokma?", 이동·출장·해외에서도":""}</span></div></div>
     <ul class="r-list"><li><b>사주</b>필요한 기운이 ${QGRP[who]} 쪽이라 ${J(QWHO[who],"이","가")} 귀인이 되기 쉬워요. 천을귀인 글자 ${ch.gui.map(b=>BR[b]).join("·")}${bat(BR[ch.gui[ch.gui.length-1]])?"은":"는"} ${ch.gui.map(b=>brMonth(b)+"월").join("·")}과 ${dirs}쪽을 가리켜요.${ch.has.gui?" 원국에 천을귀인이 있어 결정적인 순간에 돕는 사람이 나타나는 구조예요.":""}</li>
     <li><b>서양 점성술</b>인맥의 자리(11하우스)가 ${ZOD[h11]}자리라, 귀인은 '${SUNP[h11]}'의 모습으로 다가와요. 목성이 9·11하우스를 지나는 해에 이 인연이 열려요.</li>
-    <li><b>인도 점성술</b>스승·행운의 자리(9하우스) 주인이 ${PK[lord9]}이라 ${PL_PERSON[lord9]} 사람이 길을 열어 줘요. 목성이나 ${PK[lord9]}의 보조 기간이 귀인의 시기예요.</li>
+    <li><b>베딕점성술</b>스승·행운의 자리(9하우스) 주인이 ${PK[lord9]}이라 ${PL_PERSON[lord9]} 사람이 길을 열어 줘요. 목성이나 ${PK[lord9]}의 보조 기간이 귀인의 시기예요.</li>
     <li><b>수비학</b>개인년 2(협력)와 8(후원)인 해에 도움의 손길이 커져요.</li>
     <li><b>마야력</b>260일마다 돌아오는 탄생일 전후는 새 인연이 시작되기 좋은 때로 봐요.</li></ul>
     ${rows.length?`<div class="r-tbl"><table><thead><tr><th>해</th><th>짚은 점술</th><th>근거</th></tr></thead><tbody>${rows.map(r=>`<tr${r===top?' class="now"':""}><td class="num">${r.y}<small> ${r.age}살</small></td><td>${sysChips(r.sys)}</td><td>${r.S.map(s=>s[1]).join(" · ")}</td></tr>`).join("")}</tbody></table></div>`:""}
@@ -755,7 +755,7 @@ function mateQ(ch){const d=ch.stems.d,db=ch.brs.d,y0=new Date().getFullYear(),yo
     d:`<div class="r-fact"><div><small>언제</small><b>${top.length?top.map(t=>`${t.y}년(${t.age}살)`).join(", "):"-"}</b>${best?`<span>${best.y}년 ${mon}${best.kd.length?`, 마야력 탄생일 ${best.kd.map(k=>k.m+"/"+k.d).join("·")} 전후`:""}</span>`:""}</div><div><small>어떤 사람</small><b>${PL_PERSON[lord7]} 사람</b><span>${look}</span></div><div><small>어디서</small><b>${MEET[desc%4]}</b><span>${LOVE_STYLE[ven%4]} 연애를 해요</span></div></div>
     <ul class="r-list"><li><b>사주</b>배우자 자리는 태어난 날의 지지 ${BR[db]}(${ELK[me]})예요. 나와의 관계가 ${tenGod(d,BMAIN[db])}이라 ${look}과 잘 맞아요. ${ch.male?"재성":"관성"}이 드는 해와 배우자 자리와 합하는 해가 인연의 해예요.</li>
     <li><b>서양 점성술</b>짝의 자리(7하우스)가 ${ZOD[desc]}자리라 상대는 '${SUNP[desc]}'의 모습이에요. 금성이 ${ZOD[ven]}자리에 있어 ${LOVE_STYLE[ven%4]} 연애를 해요. 목성·토성이 7하우스를 지나거나 목성이 출생 금성 위를 지날 때 결혼 이야기가 나와요.</li>
-    <li><b>인도 점성술</b>7하우스 주인이 ${PK[lord7]}이라 배우자는 ${PL_PERSON[lord7]} 사람으로 봐요. 금성이나 ${PK[lord7]}의 보조 기간에 인연이 맺어져요.</li>
+    <li><b>베딕점성술</b>7하우스 주인이 ${PK[lord7]}이라 배우자는 ${PL_PERSON[lord7]} 사람으로 봐요. 금성이나 ${PK[lord7]}의 보조 기간에 인연이 맺어져요.</li>
     <li><b>수비학</b>개인년 6(사랑·가정)과 2(협력)인 해가 관계를 약속하기 좋은 해예요.</li>
     <li><b>마야력</b>그해의 탄생일 전후가 관계가 새로 시작되기 좋은 때예요.</li></ul>
     ${rows.length?`<div class="r-tbl"><table><thead><tr><th>해</th><th>짚은 점술</th><th>근거</th></tr></thead><tbody>${rows.map(r=>`<tr${top.includes(r)?' class="now"':""}><td class="num">${r.y}<small> ${r.age}살</small></td><td>${sysChips(r.sys)}</td><td>${r.S.map(s=>s[1]).join(" · ")}</td></tr>`).join("")}</tbody></table></div>`:""}
@@ -1000,7 +1000,7 @@ const conflict=['앞서 결론을 내리기보다 상대가 원하는 속도를 
 if(k==='marry')return [...rows,['결혼 후 어떤 생활이 잘 맞을까?',pace+' 생활이 잘 어울려요. 집안일·돈·혼자만의 시간에 대한 기준을 미리 맞추면 편안해져요.'],['결혼을 결정하기 전 꼭 맞춰볼 점은?',conflict],['나와 나이 차이가 있는 사람도 잘 맞을까?','연상·동갑·연하보다 '+pace+' 사람이 내 관계 성향과 더 잘 맞는 모습이에요.']];
 if(k==='love')return [...rows,['소개팅과 자연스러운 만남 중 무엇이 맞을까?',MEET[((base+6)%12)%4]+'처럼 대화할 계기가 있는 자리에서 내 매력을 보여주기 좋아요. 첫 만남에서는 공통 관심사 하나부터 나눠보세요.'],['썸에서 연애로 발전하려면 어떻게 할까?',pace+' 방식이 어울려요. 막연히 기다리기보다 다음에 함께할 활동을 하나 제안해보세요.'],['오래 만나는 연애를 위해 필요한 것은?',conflict]];
 if(k==='reunion')return [...rows,['다시 연락할 때 첫마디는 어떻게 할까?',ven%2?'길게 설득하기보다 안부와 연락한 이유를 짧게 전하는 편이 좋아요. 답을 재촉하지 않을 여지도 남겨보세요.':'솔직한 마음은 짧게 전하고, 상대가 대화할 의사가 있는지 먼저 물어보세요.'],['재회 후 같은 이유로 멀어지지 않으려면?','이전 갈등 한 가지를 골라 서로 바꿀 행동을 구체적으로 정해보세요. '+conflict],['새 인연을 만나기 위해 지금 할 일은?','익숙한 연락을 반복하기보다 새로운 일상 모임 하나를 만들어보세요. 내 차트에서 읽은 관계의 강점은 '+pace+' 데 있어요.']];
-if(k==='match')return [['나는 어떤 사람과 관계가 편안할까?',pace+' 사람과 편안함을 느끼는 모습이에요.'],['연애에서 내가 중요하게 생각하는 것은?',LOVE_STYLE[ven%4]+' 방식이에요. 연락 빈도와 애정 표현에서 서로 편안한 기준을 이야기해보세요.'],['서로 다를 때 어떻게 맞춰갈까?',conflict],['상대 정보를 넣으면 무엇을 비교할까?','두 사람의 사주·서양 점성술·인도 점성술·수비학·마야력을 나란히 읽어 공통 성향과 차이를 비교해요. 아래에 상대 정보를 입력해보세요.']];
+if(k==='match')return [['나는 어떤 사람과 관계가 편안할까?',pace+' 사람과 편안함을 느끼는 모습이에요.'],['연애에서 내가 중요하게 생각하는 것은?',LOVE_STYLE[ven%4]+' 방식이에요. 연락 빈도와 애정 표현에서 서로 편안한 기준을 이야기해보세요.'],['서로 다를 때 어떻게 맞춰갈까?',conflict],['상대 정보를 넣으면 무엇을 비교할까?','두 사람의 사주·서양 점성술·베딕점성술·수비학·마야력을 나란히 읽어 공통 성향과 차이를 비교해요. 아래에 상대 정보를 입력해보세요.']];
 return rows;}
 function extraSubtopicRows(ch,k){const d=ch.cnt.indexOf(Math.max(...ch.cnt)),w=topicAnswerRowsBase(ch,'work'),m=topicAnswerRowsBase(ch,'money');
 const style=['새로운 주제를 탐색하고 방향을 제안하는','사람 앞에서 설명하고 경험으로 익히는','정해진 계획을 꾸준히 완수하는','기준을 세우고 세부 오류를 점검하는','정보를 깊이 읽고 맥락을 연결하는'][d];
@@ -1036,7 +1036,7 @@ function spouseFaceProfile(ch){
  return candidates[spouseFaceHash(key)%candidates.length];
 }
 
-function spousePreviewHTML(ch,topic='marry'){const face=spouseFaceProfile(ch),selected=face.gender,love=topic==='love',person=love?'연애 상대':'배우자',title=love?'나와 인연이 될 사람은 어떤 외형을 갖고 있을까요?':'나의 배우자가 될 사람은 어떤 외형을 갖고 있을까요?';return '<section class="spouse-preview" data-face-id="'+face.id+'" aria-labelledby="spouse-preview-title-'+topic+'"><header><span class="eyebrow">미리 만나는 인연의 모습</span><h4 id="spouse-preview-title-'+topic+'">'+title+'</h4></header><div class="spouse-preview-content"><figure><div class="spouse-portrait"><img src="'+face.preview+'" width="48" height="60" alt="흐리게 처리한 '+(selected==='male'?'남성':'여성')+' '+person+' 예시 일러스트" decoding="async"><div class="spouse-portrait-label"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>선명한 모습은 리포트에서</span></div></div><figcaption>내 차트와 연결한 얼굴 이미지</figcaption></figure><div class="spouse-preview-copy"><p>사주, 서양 점성술, 인도 점성술, 수비학, 마야력으로 분석한 당신에게 맞는 사람의 외형을 예측해드립니다.</p><div class="spouse-face-traits">'+face.features.map(t=>'<span>'+t+'</span>').join('')+'</div><p class="spouse-promise">운명의 상대가 나타났을 때,<br>알아볼 수 있을 거예요.</p><button type="button" data-spouse-report>상세 리포트 내용 보기 ↓</button></div></div></section>'}
+function spousePreviewHTML(ch,topic='marry'){const face=spouseFaceProfile(ch),selected=face.gender,love=topic==='love',person=love?'연애 상대':'배우자',title=love?'나와 인연이 될 사람은 어떤 외형을 갖고 있을까요?':'나의 배우자가 될 사람은 어떤 외형을 갖고 있을까요?';return '<section class="spouse-preview" data-face-id="'+face.id+'" aria-labelledby="spouse-preview-title-'+topic+'"><header><span class="eyebrow">미리 만나는 인연의 모습</span><h4 id="spouse-preview-title-'+topic+'">'+title+'</h4></header><div class="spouse-preview-content"><figure><div class="spouse-portrait"><img src="'+face.preview+'" width="48" height="60" alt="흐리게 처리한 '+(selected==='male'?'남성':'여성')+' '+person+' 예시 일러스트" decoding="async"><div class="spouse-portrait-label"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>선명한 모습은 리포트에서</span></div></div><figcaption>내 차트와 연결한 얼굴 이미지</figcaption></figure><div class="spouse-preview-copy"><p>사주, 서양 점성술, 베딕점성술, 수비학, 마야력으로 분석한 당신에게 맞는 사람의 외형을 예측해드립니다.</p><div class="spouse-face-traits">'+face.features.map(t=>'<span>'+t+'</span>').join('')+'</div><p class="spouse-promise">운명의 상대가 나타났을 때,<br>알아볼 수 있을 거예요.</p><button type="button" data-spouse-report>상세 리포트 내용 보기 ↓</button></div></div></section>'}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-spouse-report]');if(!b)return;const section=b.closest('.spouse-preview');section?.parentElement.querySelector('.topic-offer')?.scrollIntoView({behavior:reduceM?'auto':'smooth',block:'center'})});
 const SUBTOPIC_COPY={"employment":{"title":"나에게 맞는 첫 일자리는?","intro":"취업의 방향과 준비 시기, 기회를 여는 강점을 살펴보세요.","rows":["어떤 직무에 지원하면 좋을까?","취업을 준비하기 좋은 흐름은?","면접에서 보여줄 나의 강점은?"],"outline":["나에게 맞는 직무와 조직 분위기","취업 준비 시기와 지원 전략","면접에서 드러낼 강점과 귀인"]},"move":{"title":"다음 직장에서는 더 잘 맞을까요?","intro":"이직의 흐름과 다음 일터를 고르는 기준을 살펴보세요.","rows":["이직을 검토할 시기는?","다음 직장은 어떤 기준으로 고를까?","옮기기 전에 준비할 것은?"],"outline":["이직·전환을 검토할 시기","잘 맞는 업무와 조직 환경","경력 정리와 도움을 줄 인연"]},"invest":{"title":"나에게 맞는 투자 습관은?","intro":"재물의 흐름과 돈을 다루는 성향을 함께 살펴보세요.","rows":["투자를 돌아볼 시기는?","내 돈 관리 방식은?","투자 전에 점검할 습관은?"],"outline":["재물 흐름과 투자 성향","결정 전 돌아볼 소비·위험 감수 습관","목표와 자금 계획을 정리하는 실천"]},"property":{"title":"나에게 맞는 공간과 자산 계획은?","intro":"주거의 우선순위와 큰 지출을 준비하는 흐름을 살펴보세요.","rows":["주거·자산 계획을 점검할 시기는?","공간을 고를 때 무엇을 중시할까?","큰 결정을 앞두고 준비할 것은?"],"outline":["주거와 자산 계획을 돌아볼 흐름","생활 성향에 맞는 공간의 기준","예산과 장기 계획을 정리하는 실천"]},"business":{"title":"나의 강점으로 어떤 사업을 시작할까?","intro":"사업에서 살릴 강점과 시작 전 준비할 일을 살펴보세요.","rows":["어떤 사업 방식이 나에게 맞을까?","사업 준비를 검토할 흐름은?","시작하기 전에 해볼 일은?"],"outline":["사업에 활용할 강점과 역할","사업·확장을 준비할 흐름","협업 상대와 작은 검증 과제"]},"exam":{"title":"대입·수능, 나에게 맞게 준비하기","intro":"공부 성향과 진학 준비의 흐름을 살펴보세요.","rows":["나에게 맞는 수능 공부 방식은?","진학 준비에서 눈여겨볼 흐름은?","시험 전 바꿔볼 습관은?"],"outline":["공부 성향과 과목별 접근 방식","진학 준비와 학습 흐름","오답·복습·실전 연습 계획"]},"cert":{"title":"다음 자격증, 어떻게 준비할까요?","intro":"경력과 연결할 배움, 꾸준히 완주하는 공부 방식을 살펴보세요.","rows":["어떤 분야의 자격증을 살펴볼까?","자격증 공부에 맞는 방식은?","언제부터 어떻게 준비할까?"],"outline":["강점과 연결되는 배움의 분야","자격증 준비 시기와 학습 방식","실기·필기 준비와 완주 습관"]}};
 Object.entries(SUBTOPIC_COPY).forEach(([k,v])=>{TOPIC_REPORT_CONTENTS[k]=v.outline});
@@ -1116,7 +1116,7 @@ function turningPoints(ch){const na=nowAge(),y0=new Date().getFullYear(),lim=Mat
     ev.push([a,"사주",`${pillar(dw)} 대운이 시작돼 10년의 큰 흐름이 바뀌어요. 천간 ${ST[s]}(${STK[s]})${bat(STK[s])?"이":"가"} 나에게 ${J(tg,"이라","라")}, ${TGP[tg][CATS[bc].k]}. ${fav?"내 사주에 필요한 기운이라 10년의 바탕이 밝아요.":"내 사주와 결이 달라 속도를 조절하며 쓰면 좋은 기운이에요."}`])}
   ch.dashas.forEach(x=>{const a=x.start-ch.birthYear;if(a<=na||a>lim)return;const w=PW[x.lord].map((v,i)=>v+ch.FW[x.lord][i]);const bc=w.indexOf(Math.max(...w));
     const role=["라그나 주인","요가카라카","행운 하우스 주인"].includes(ch.prole[x.lord])?` 당신의 차트에서 ${J(PK[x.lord],"은","는")} ${ch.prole[x.lord]}이라 특히 힘이 셉니다.`:"";
-    ev.push([a,"인도 점성술",`${PK[x.lord]} 다샤가 ${DY[x.L]}년 동안 이어져요. ${PP[x.lord][bc]}.${role}`])});
+    ev.push([a,"베딕점성술",`${PK[x.lord]} 다샤가 ${DY[x.L]}년 동안 이어져요. ${PP[x.lord][bc]}.${role}`])});
   let lastS=-99,lastJ=-99,jc=0;
   for(let yy=Math.ceil(ch.birthYear+na);yy<=by(lim);yy++){const jd=jdUTC(yy,7,1,0);const a=yy-ch.birthYear;
     if(sep(satLon(jd),ch.natSat)<7&&yy-lastS>20){lastS=yy;ev.push([a,"서양 점성술",`토성이 태어날 때의 자리로 돌아오는 토성 회귀예요. 삶의 구조를 새로 세우고, 책임만큼 단단한 결과를 얻는 성숙의 관문으로 봅니다.`])}
@@ -1222,7 +1222,7 @@ function buildRichReport(ch,key){
   ['태양 별자리',zs(sunS),SEL[sunS%4]+' 원소 · '+SMOD[sunS%3]],
   ['달 별자리',zs(moonS),SEL[moonS%4]+' 원소의 감정 방식'],
   ['상승궁',ascOK?zs(ascS):'미확정',ascOK?HX.self[ascS%4]:'출생 시각·장소가 있어야 계산합니다'],
-  ['낙샤트라',NAK[ch.nk]+' (주인 '+PK[nakLord]+')','인도 점성술 달 별자리 '+zs(sidMoon)],
+  ['낙샤트라',NAK[ch.nk]+' (주인 '+PK[nakLord]+')','베딕점성술 달 별자리 '+zs(sidMoon)],
   ['현재 다샤',curD?PK[curD.lord]+' ~'+Math.floor(curD.end)+'년':'-',curD?DSX[curD.lord]:'-'],
   ['인생 수 · 표현 수 · 영혼 수',ch.lp+' · '+ch.expr+' · '+(ch.soul||'미계산'),LPX[ch.lp]||''],
   [y0+'년 개인년',String(py),PYX[py]||''],
@@ -1505,7 +1505,7 @@ function buildRichReport(ch,key){
   put('calendar','앞으로 12개월, 월별 운명',period+' · 이번 달부터 열두 달을 함께 살펴봐요.',[],
    ['양력 월의 첫날부터 말일까지를 같은 기준으로 비교했어요. 이번 달은 이미 지난 날도 포함한 한 달 전체예요. 특정 사건이 일어날 확률을 뜻하지 않아요. 달 전체의 점수 차이는 크지 않아요. 비슷한 설명을 매달 반복하는 대신, 아래에서는 월 안에서 상대적으로 살펴볼 날짜 구간과 분야를 나누었어요.',
     ...months.map(o=>monthLabel(o)+' · '+o.theme+' — '+o.reading.change+' '+o.reading.opportunity+' '+o.reading.timing+' '+o.reading.caution+' 실천: '+o.act),
-    '사주·서양 점성술·인도 점성술·수비학·마야력의 기존 일별 흐름을 양력 월 단위로 모은 자체 해석이에요. 절기월 자체를 뜻하지 않으며, 건강 점수는 질병이나 건강 상태의 예측이 아니라 생활 리듬을 돌아보는 참고로 읽어 주세요.'],
+    '사주·서양 점성술·베딕점성술·수비학·마야력의 기존 일별 흐름을 양력 월 단위로 모은 자체 해석이에요. 절기월 자체를 뜻하지 않으며, 건강 점수는 질병이나 건강 상태의 예측이 아니라 생활 리듬을 돌아보는 참고로 읽어 주세요.'],
    '이번 달에 해당하는 실천 한 가지를 고르고, 월말에 실제 경험과 비교해 보세요.',
    {period,months:months.map(o=>({year:o.y,month:o.m,days:o.list.length,score:Number(o.av.toFixed(1)),scores:o.sc.map(v=>Number(v.toFixed(1))),theme:o.theme,action:o.act,reading:o.reading,phases:o.phases,focus:o.focus})),table:{cap:'월별 흐름 한눈에 보기 · '+period,head:['연월','흐름과 실천'],cols:['30%','70%'],rows:months.map(o=>[monthLabel(o),o.theme+' · '+o.av.toFixed(1)+'점 / '+o.act])}});
   /* 2026-11-10 G3: 모두에게 같던 마무리 장·실천·재회 성찰을 나이대·신강/신약·오행·금성·십성과 달력 날짜로 조립한다. */
@@ -1567,7 +1567,7 @@ function buildRichReport(ch,key){
     if(periods.some(p=>p.lord==='Jupiter'||p.lord===lord9))reasons.push('스승·지원 보조 주기');
     return {month,reasons,score:reasons.length};});
    const max=Math.max(...candidates.map(x=>x.score)),best=candidates.filter(x=>x.score===max);
-   return {year:r.y,months:max>0&&best.length<12?best.map(x=>x.month):[],candidates};
+   return {year:r.y,months:max>0&&best.length<12?best.slice(0,2).map(x=>x.month):[],candidates};
   });
   const support=section('support','나에게 오는 귀인들','나에게 부족한 역할을 보완해 주는 사람과, 그 인연이 열릴 시기를 함께 읽어요.',
    guiRows.map((r,i)=>{const timing=guiTiming[i],ms=timing.months.map(m=>m+'월').join('·');return r.y+'년'+(ms?' 중 '+ms+' 무렵':'에는 한 달에 한정하기보다 연중')+' — '+hs[0]+'과의 연결을 주목할 흐름이에요. '+(i===0?'만날 환경은 '+QWHERE[sp]+' 쪽으로 읽으며, '+hs[1]+'에서 연결될 수 있어요. 이 사람은 '+hs[2]+'을 줄 수 있어요.':'이미 조언을 주고받는 사람이 있다면 진행한 결과와 남은 문제를 보여 주세요. 새로운 소개를 받는 자리에서는 필요한 도움의 범위부터 구체적으로 전해 보세요.');}),
@@ -1622,22 +1622,23 @@ function buildRichReport(ch,key){
   // Consolidate the original numbered chapters without duplicating their prose.
   const yearly=original.yearly,calendar=original.calendar;
   flow.question='앞으로 10년의 전환점과 연별 운명';
-  flow.paragraphs=[...flow.paragraphs,...yearly.paragraphs];
-  flow.table=yearly.table;flow.line=yearly.line;flow.years=yearly.years;
-  const turningExplanations=[];
-  Y4.forEach((rows,k)=>{
-   const vals=rows.map(r=>r.score),hi=Math.max(...vals),lo=Math.min(...vals);
-   rows.forEach((r,i)=>{
-    const local=i>0&&i<rows.length-1&&((r.score>rows[i-1].score&&r.score>rows[i+1].score)||(r.score<rows[i-1].score&&r.score<rows[i+1].score));
+  flow.table=yearly.table;flow.table.hideScores=true;flow.line=null;flow.years=yearly.years;
+  flow.lead='해마다 달라지는 기회와 조정할 일을 한 해의 이야기로 이어 읽어요.';
+  flow.action='다가오는 해의 해설에서 먼저 준비할 일 하나를 골라, 올해의 계획에 연결해 보세요.';
+  flow.paragraphs=years.map((row,i)=>{
+   const insights=[];
+   Y4.forEach((rows,k)=>{
+    const r=rows[i],vals=rows.map(x=>x.score),hi=Math.max(...vals),lo=Math.min(...vals),prev=rows[i-1],next=rows[i+1];
+    const local=prev&&next&&((r.score>prev.score&&r.score>next.score)||(r.score<prev.score&&r.score<next.score));
     if(!local&&r.score!==hi&&r.score!==lo)return;
-    const high=r.score===hi||(local&&r.score>rows[i-1].score),name=['금전','애정','직업·학업','생활 리듬'][k];
-    const tg=tenGod(d,ys(r.year)),meaning=TGP[tg]?.[CATS[k].k]||'';
-    const previous=i?' 전년보다 '+Math.abs(r.score-rows[i-1].score)+'점 '+(r.score>=rows[i-1].score?'높아':'낮아')+'진 지점이에요.':'';
-    const action=high?['수입원을 넓히거나 거래를 제안할 준비를 하되, 늘릴 금액과 감당할 비용을 함께 정하세요.','새 만남을 위한 소개나 모임, 기존 관계의 미래를 의논할 대화를 계획해 보세요.','지원·발표·역할 확대를 위해 그 전에 성과물과 이력을 정리해 두세요.','꾸준히 이어 갈 생활 습관을 만들고 일과 휴식의 균형을 정착시켜 보세요.'][k]:['큰 지출과 거래 조건을 재점검하고, 수입이 늦어져도 버틸 여유를 먼저 확보하세요.','상대의 반응을 서둘러 단정하거나 관계의 결론을 재촉하지 말고 기대와 약속을 확인하세요.','새 책임을 늘리기보다 마감·준비 상태·함께 일할 사람과의 역할을 재점검하세요.','일정을 줄이고 회복 시간을 먼저 확보하세요.'][k];
-    turningExplanations.push({year:r.year,k,text:r.year+'년 · '+name+' '+r.score+'점 — '+(r.score===hi?'10년 중 최고점':r.score===lo?'10년 중 최저점':high?'주변 해보다 높은 고점':'주변 해보다 낮은 저점')+'이에요.'+previous+' '+meaning+' '+action});
+    const high=r.score===hi||(local&&r.score>prev.score);
+    const tone=r.score===hi?'특히 기회를 살펴볼 흐름':r.score===lo?'무리한 확장보다 점검을 우선할 흐름':high?'앞뒤 해에 비해 힘을 실어 볼 흐름':'앞뒤 해에 비해 속도를 조절할 흐름';
+    const action=high?['거래나 수입원을 넓힐 제안을 준비하되, 필요한 자금과 비용을 함께 정하세요.','새 인연을 위한 소개·모임이나, 가까운 사람과 미래를 의논할 대화를 계획해 보세요.','지원·발표·역할 확대를 준비하며 성과물과 이력을 미리 정리하세요.','잘 맞는 생활 습관을 정착시키고 일과 휴식의 균형을 이어 가세요.'][k]:['큰 지출과 거래 조건을 다시 살피고, 수입이 늦어져도 버틸 여유를 확보하세요.','관계의 결론을 재촉하기보다 기대와 약속을 확인할 시간을 주세요.','새 책임을 늘리기 전에 마감과 준비 상태, 함께하는 사람의 역할부터 조율하세요.','과밀한 일정을 줄이고 회복할 시간을 먼저 확보하세요.'][k];
+    insights.push(['돈과 거래는 ','사람과의 관계는 ','일과 배움은 ','일상의 균형은 '][k]+tone+'이에요. '+(TGP[tenGod(d,ys(r.year))]?.[CATS[k].k]||'')+' '+action);
    });
+   if(!insights.length){const values=Y4.map(r=>r[i].score),focus=values.indexOf(Math.max(...values));insights.push(['수입과 지출의 구조를 정리하며 다음 거래를 준비해 보세요.','주변 사람과의 만남을 이어 가며 서로의 기대를 확인해 보세요.','진행 중인 작업과 배움의 결과를 쌓아 다음 기회에 보여 줄 준비를 하세요.','지킬 수 있는 생활 습관을 정하고 일정에 여유를 남겨 두세요.'][focus]);}
+   return row.year+'년 — '+insights.join(' ');
   });
-  flow.paragraphs=[...flow.paragraphs,...turningExplanations.sort((a,b)=>a.year-b.year||a.k-b.k).map(r=>r.text)];
 
   calendar.question='가까운 한 해의 분야별 해설과 월별 운명';
   calendar.overview=annual.paragraphs;
@@ -1717,7 +1718,7 @@ function buildRichReport(ch,key){
  const summary=[sumHi?'앞으로 10년 중 '+(key==='comprehensive'?'네 분야를 합친 흐름':['금전','애정','직업·학업'][ci]+' 흐름')+'이 가장 밝은 해는 '+sumHi.year+'년('+kage(sumHi.year)+'살, '+sumHi.score+'점)이에요.':'',sumLo&&sumLo!==sumHi?'속도를 늦추고 다지기 좋은 해는 '+sumLo.year+'년('+sumLo.score+'점)이에요.':'',...(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(s=>{const l=firstLine(s.lead||(s.paragraphs||[])[0]);return l?s.question+' — '+l:''})].filter(Boolean);
  S.forEach(s=>{if(s.kind==='yearly')s.paragraphs=s.paragraphs.map(p=>p.split(' [사주]')[0]);s.answer=[...(s.overview||[]),...s.paragraphs].join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
- return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts:[],sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:null,version:'reader-2026-11-11-v9',
+ return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts:[],sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:null,version:'reader-2026-11-11-v10',
   body:S.map((r,i)=>(i+1)+'장 · '+r.question+'\n\n핵심: '+r.lead+(r.basis.length?'\n근거: '+r.basis.join(' / '):'')+'\n\n'+r.answer+(r.action?'\n\n실천 · '+r.action:'')).join('\n\n────────────────\n\n')};
 }
 

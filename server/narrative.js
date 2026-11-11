@@ -149,7 +149,7 @@ export function narrativeComprehensive(c) {
     paras: [
       "다섯 가지 점술이 공통으로 말하는 건, " + c.common,
       fill(SUM_YEAR, { cat: CAT_KO[c.bestCat], y: c.bestYear }) + (c.mateYears.length ? " 사랑에서는 새 인연이나 약속의 신호가 가장 많이 겹치는 해가 " + c.mateYears[0].y + "년이에요." + (c.loveYear && c.loveYear !== c.mateYears[0].y ? " 이미 곁에 있는 관계가 가장 따뜻해지는 해는 " + c.loveYear + "년이에요." : "") : ""),
-      "이 리포트는 사주, 서양 점성술, 인도 점성술, 수비학, 마야력 다섯 가지로 {name}님을 함께 읽고, 여러 점술이 공통으로 가리키는 이야기를 중심으로 풀어 썼어요.".replace(/\{name\}/g, c.name)
+      "이 리포트는 사주, 서양 점성술, 베딕점성술, 수비학, 마야력 다섯 가지로 {name}님을 함께 읽고, 여러 점술이 공통으로 가리키는 이야기를 중심으로 풀어 썼어요.".replace(/\{name\}/g, c.name)
     ],
     basis: c.basis.summary
   });
@@ -208,7 +208,7 @@ export function narrativeComprehensive(c) {
     paras: [
       "사주로 보면 {name}님은 " + SAJU_IMG[c.d] + "에 비유되는 사람이에요. 타고난 바탕이 " + (c.strong ? "단단해서 스스로 밀고 나가는 힘이 크고" : "섬세해서 좋은 사람과 환경을 만날 때 크게 자라고") + ", 앞으로는 " + c.goodTxt + "의 기운이 들어올 때 일이 잘 풀려요.",
       "서양 점성술로 보면 {name}님은 " + c.sunSign + "예요. " + SUN_TXT[c.sunIdx] + ", 그게 이 별자리가 타고난 힘이에요. 겉으로는 이런 모습이 먼저 보이고, 마음 깊은 곳에서는 " + c.moonSign + "처럼 " + ["뜨겁고 솔직한", "차분하고 안정을 원하는", "대화를 통해 정리하는", "깊고 섬세한"][c.moonEl] + " 감정이 움직여요.",
-      c.planet ? "인도 점성술로 보면 지금 {name}님은 " + PLANET_KO[c.planet] + josa(PLANET_KO[c.planet], "이", "가") + " 이끄는 시기를 지나고 있어요. " + PLANET_TXT[c.planet] + " 흐름이 " + c.planetEnd + "년까지 이어지니, 이 기간에는 그 방향으로 힘을 쓰는 게 좋아요." : "",
+      c.planet ? "베딕점성술로 보면 지금 {name}님은 " + PLANET_KO[c.planet] + josa(PLANET_KO[c.planet], "이", "가") + " 이끄는 시기를 지나고 있어요. " + PLANET_TXT[c.planet] + " 흐름이 " + c.planetEnd + "년까지 이어지니, 이 기간에는 그 방향으로 힘을 쓰는 게 좋아요." : "",
       "수비학으로 보면 {name}님의 생년월일은 " + c.lp + "이라는 숫자로 모여요. 이 숫자가 말하는 삶의 과제는 " + (LP_TXT[c.lp] || "자기만의 길을 찾는 것") + "이에요.",
       "마야력으로 보면 {name}님은 '" + c.mayaMeaning + "'" + josa(c.mayaMeaning, "을", "를") + " 뜻하는 기호를 타고났어요. 이 힘을 품고 있어서, 그 힘을 쓰는 일을 할 때 가장 자연스럽게 빛나요.",
       "다섯 가지 점술은 서로 다른 시대와 문화에서 왔지만, {name}님에 대해서는 같은 이야기를 하고 있어요. " + c.common
