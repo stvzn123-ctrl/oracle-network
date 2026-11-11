@@ -232,6 +232,7 @@ $("brandbar").addEventListener("keydown",e=>{if(e.target!==e.currentTarget)retur
 <script src="product-flow.js?v=14"></script>
 
 <script src="profile-controls.js?v=2"></script>
+<script>/* 숨겨진 .wrap 안의 대화상자는 열려도 보이지 않으면서 화면을 막는다: body로 옮긴다. */document.querySelectorAll(".wrap dialog").forEach(function(d){document.body.appendChild(d)});</script>
 <script src="install-app.js?v=1"></script>
 
 <script src="year-format.js?v=1"></script>
