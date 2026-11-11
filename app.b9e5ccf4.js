@@ -4189,14 +4189,29 @@ const SOCIAL_DOGS=[
  ['a',0,'혼자 평온한 애'],['a',1,'취했는데 안 취했대'],['a',2,'먹을 때만 빠른 애'],['a',3,'일단 의심하는 애'],['a',4,'꾸미다 지각한 애'],['a',5,'이불 밖은 무리인 애'],['a',6,'정산엔 진심인 애'],['a',7,'읽씹하고 다 아는 애'],['a',8,'웃다가 집 못 가는 애'],
  ['b',0,'약속 잡고 후회하는 애'],['b',1,'메뉴는 얘가 정함'],['b',2,'썰에 살 붙이는 애'],['b',3,'여행 가면 팀장인 애'],['b',4,'일단 가자는 애'],['b',5,'남 얘기에 우는 애'],['b',6,'사진 검사하는 애'],['b',7,'나오자마자 집 가재'],['b',8,'네 편부터 드는 애']
 ];
-function socialDogCast(list){
- // Existing dominant element and strong/weak roles choose the pool; duplicates are valid.
- const pools=[[[13,12],[9,0]],[[8,11,1],[17,14]],[[10,2],[17,5]],[[6,12],[3,15,4]],[[7,0],[16,5]]];
- return list.map((c,i)=>{const dom=c.cnt.indexOf(Math.max(...c.cnt)),pool=pools[dom][c.strong?0:1],id=pool[mod(c.stems.d, pool.length)],dog=SOCIAL_DOGS[id];return {name:groupName(c,i),sheet:dog[0],index:dog[1],label:dog[2]};});
+SOCIAL_DOGS.push(
+ ['c',0,'가만있는데 대장인 애'],['c',1,'관심 없는 척 다 듣는 애'],['c',2,'밥 먹고 또 먹는 애'],['c',3,'답장은 내일 하는 애'],['c',4,'굳이 건드리는 애'],['c',5,'안 정하면 답답한 애'],['c',6,'욕하면서 챙기는 애'],['c',7,'여기가 내 자리인 애'],['c',8,'조용하면 불안한 애'],
+ ['d',0,'표정으로 욕하는 애'],['d',1,'길 모르는데 앞장서는 애'],['d',2,'듣다가 팩트 꽂는 애'],['d',3,'자기가 말하고 웃는 애'],['d',4,'일단 사진부터 찍는 애'],['d',5,'친해지면 시끄러운 애'],['d',6,'괜찮다 하고 삐진 애'],['d',7,'싸우면 중간에 낀 애'],['d',8,'대충 살아도 잘되는 애']
+);
+function socialContext(list){
+ const ratio=c=>{const total=c.cnt.reduce((a,b)=>a+b,0)||1;return c.cnt.map(v=>v/total);};
+ const values=list.map(ratio),mean=[0,1,2,3,4].map(k=>values.reduce((n,r)=>n+r[k],0)/list.length);
+ const signature=list.map(c=>[c.inp.date,c.inp.time||'',c.inp.notime?'unknown':'known',c.inp.sex].join('/')).sort().join('|');
+ let hash=2166136261;for(const ch of signature)hash=Math.imul(hash^ch.charCodeAt(0),16777619)>>>0;
+ const roles=[['먼저 판을 벌이는 사람','아이디어와 다음 약속을 먼저 꺼내며 이 조합의 출발을 맡아요.'],['분위기를 띄우는 사람','반응과 표현으로 조용한 자리를 풀어 주는 역할이 상대적으로 잘 보여요.'],['모임을 챙기는 사람','사람들의 상태와 편의를 살피며 함께하는 시간을 안정적으로 이어 가요.'],['정리하고 결정하는 사람','흩어진 의견과 비용·일정을 정리하며 선택의 기준을 잡아 줘요.'],['듣고 중재하는 사람','다른 사람의 말을 살피고 놓친 사정을 짚으며 대화의 균형을 잡아요.']];
+ const pools=[[12,13,21,23,28],[1,8,11,26,30,32],[2,5,10,14,17,20,24,33,34],[3,4,6,15,18,22,29],[0,7,9,16,19,25,27,31,35]];
+ return list.map((c,i)=>{
+  // Relative difference dominates; absolute tendency breaks ties without input-order bias.
+  const weights=values[i].map((v,k)=>v-mean[k]+v*.2),field=weights.indexOf(Math.max(...weights));
+  const pool=pools[field],id=pool[(hash+mod(c.stems.d,10))%pool.length],dog=SOCIAL_DOGS[id];
+  return {field,role:roles[field][0],strength:roles[field][1],cast:{name:groupName(c,i),sheet:dog[0],index:dog[1],label:dog[2]}};
+ });
 }
+function socialDogCast(list){return socialContext(list).map(x=>x.cast);}
 function socialCastHTML(cast){return '<div class="social-cast">'+cast.map(c=>'<figure class="social-dog"><figcaption class="social-dog-label">'+topicEsc(c.label)+'</figcaption><div class="social-dog-window social-dog-row-'+Math.floor(c.index/3)+'" role="img" aria-label="'+topicEsc(c.label)+' 강아지 캐릭터"><span class="social-dog-sprite" style="background-image:url(img/social-dogs-'+c.sheet+'-v2.png);background-position:'+(c.index%3*50)+'% '+(Math.floor(c.index/3)*50)+'%"></span></div><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>').join('')+'</div>';}
 function socialResultHTML(list){
- return '<div class="social-result">'+socialCastHTML(socialDogCast(list))+reportInfoTable('구성원별 역할 제안',['이름','역할','강점'],list.map((c,i)=>[groupName(c,i),groupRole(c)[0],groupRole(c)[1]]),'social-role-table',['25%','30%','45%'])+'</div>';
+ const context=socialContext(list);
+ return '<div class="social-result">'+socialCastHTML(context.map(x=>x.cast))+reportInfoTable('각자 역할',['이름','역할','강점'],context.map(x=>[x.cast.name,x.role,x.strength]),'social-role-table',['25%','30%','45%'])+'</div>';
 }
 function socialPlayData(list){
  const style=[['개척 대장','아이디어 씨앗'],['분위기 점화자','리액션 요정'],['든든한 중심','안부 지킴이'],['계획 해결사','취향 감별사'],['대화 수집가','조용한 연결자']];
@@ -4286,6 +4301,7 @@ function cmpShowOne(label,scroll=true){
  const res=COMPAT.res,out=document.querySelector('#cmpOne .cmp-result');if(!out)return;
  const lv=res.total>=88?'아주 잘 맞는 편':res.total>=80?'잘 맞는 편':res.total>=74?'서로 편안한 사이':'맞춰 갈수록 좋아지는 사이';
  out.innerHTML='<div class="cmp-score"><span>'+topicEsc(J(label,'과','와'))+' 나의 '+(COMPAT.kind==='friend'?'우정 ':'')+'궁합</span><b>'+res.total+'<small>점</small></b><em>'+lv+'</em></div>'+
+  socialResultHTML([CH,COMPAT.b])+
   '<p class="cmp-note">잘 맞는 점과 다섯 점술별 근거는 <b>'+(COMPAT.kind==='friend'?'우정':'궁합')+' 리포트</b>에서 확인해 주세요.</p><p class="cmp-price">'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</p><button type="button" class="cmp-open" data-cmp-open>리포트 보기 →</button>';
  if(scroll)out.scrollIntoView({behavior:soft(),block:'nearest'})}
 
