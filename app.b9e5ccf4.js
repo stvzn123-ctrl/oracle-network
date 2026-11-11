@@ -2394,7 +2394,7 @@ function approvedReportHTML(data,key,sourceChart=null){
  const lineHTML=l=>{if(!l||!Array.isArray(l.values))return '';const W=340,H=170,L=28,Rr=10,T=18,B=24,v=l.values,mn=Math.min(...v)-3,mx=Math.max(...v)+3,x=i=>L+(W-L-Rr)*i/(v.length-1),y=n=>T+(mx-n)/Math.max(6,mx-mn)*(H-T-B);let g='';[mn,(mn+mx)/2,mx].forEach(n=>{g+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+y(n)+'" y2="'+y(n)+'" stroke="rgba(168,123,54,.25)"/>'});g+='<path d="'+v.map((n,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(n).toFixed(1)).join(' ')+'" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linejoin="round"/>';v.forEach((n,i)=>{const h=(l.hi||[]).includes(i),o=(l.lo||[]).includes(i);g+='<circle cx="'+x(i)+'" cy="'+y(n)+'" r="'+(h||o?5:3)+'" fill="'+(h?'#b04a6c':o?'#6f7584':'var(--gold)')+'"/>'+(h||o?'<text x="'+x(i)+'" y="'+(y(n)-9)+'" text-anchor="middle" font-size="10" fill="'+(h?'#b04a6c':'#6f7584')+'">'+(h?'가까움':'느슨')+'</text>':'')+'<text x="'+x(i)+'" y="'+(H-6)+'" text-anchor="middle" font-size="10" fill="#8a8174">'+E(l.labels[i])+'</text>'});return '<figure class="rv3-line"><figcaption>'+E(l.cap||'')+'</figcaption><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+E(l.cap||'')+'">'+g+'</svg></figure>'};
  const faceHTML=()=>{if(!ch||!['love','marry','comprehensive'].includes(key))return null;try{const f=spouseFaceProfile(ch);return '<figure class="rv3-face"><img loading="lazy" decoding="async" src="'+f.full+'" width="240" height="300" alt="차트의 상징으로 그린 참고용 인물 일러스트" loading="lazy" decoding="async"><figcaption>차트의 상징으로 그린 참고 일러스트예요</figcaption></figure>'}catch(e){return null}};
  const interpretationHTML=(p,cls='',literal=false)=>'<p'+(cls?' class="'+cls+'"':'')+'><span class="reading-meaning">'+destinyMeaningHTML(literal?String(p):readingParts(p).main)+'</span></p>';
- const paraHTML=s=>{if(s.kind==='daewoon')return s.paragraphs.slice(0,2).map(p=>interpretationHTML(p,'',true)).join('')+dataTableHTML(s.table).replace('class="rv3-table','class="rv3-table daewoon-table').replace(/<th scope="row">현재 · ([^<]+)<\/th>/g,'<th scope="row"><small class="current-tag">현재</small><span class="pillar-label">$1</span></th>')+s.paragraphs.slice(2).map(p=>interpretationHTML(p,'',true)).join('');if(s.kind==='calendar'&&Array.isArray(s.months))return '<div class="report-months">'+s.months.map(m=>'<article class="report-month"><h3>'+E(m.year+'년 '+m.month+'월')+'</h3><p class="month-theme">이번 달에 좋은 분야: '+E(m.theme)+'</p><p>'+E(m.reading.timing)+'</p><p><b>살펴볼 점</b> '+E(m.reading.caution)+'</p></article>').join('')+'</div>';const paras=(s.paragraphs||[s.answer]).filter(Boolean),literal=comp||['calendar','daewoon'].includes(s.kind),meaning=paras.filter(p=>literal||readingParts(p).main),evidence=paras.filter(p=>!readingParts(p).main);/* 2026-11-10 G8: 문단이 5개 이상이면 앞 3개만 펼치고 나머지는 접는다(인쇄 때는 printReport가 모두 펼친다). */return meaning.map(p=>interpretationHTML(p,'',literal)).join('')};
+ const paraHTML=s=>{if(s.kind==='daewoon')return s.paragraphs.slice(0,2).map(p=>interpretationHTML(p,'',true)).join('')+dataTableHTML(s.table).replace('class="rv3-table','class="rv3-table daewoon-table').replace(/<th scope="row">현재 · ([^<]+)<\/th>/g,'<th scope="row"><small class="current-tag">현재</small><span class="pillar-label">$1</span></th>')+s.paragraphs.slice(2).map(p=>interpretationHTML(p,'',true)).join('');if(s.kind==='calendar'&&s.compactMonthly){const groups=[];s.months.forEach(m=>{const last=groups.at(-1);if(last&&last.brief===m.brief)last.end=m;else groups.push({start:m,end:m,brief:m.brief});});const label=m=>m.year+'년 '+m.month+'월';return '<div class="report-months">'+groups.map(g=>'<article class="report-month"><h3>'+E(label(g.start)+(g.start===g.end?'':'~'+label(g.end)))+'</h3><p>'+E(g.brief)+'</p></article>').join('')+'</div>';}if(s.kind==='calendar'&&Array.isArray(s.months))return '<div class="report-months">'+s.months.map(m=>'<article class="report-month"><h3>'+E(m.year+'년 '+m.month+'월')+'</h3><p class="month-theme">이번 달에 좋은 분야: '+E(m.theme)+'</p><p>'+E(m.reading.timing)+'</p><p><b>살펴볼 점</b> '+E(m.reading.caution)+'</p></article>').join('')+'</div>';const paras=(s.paragraphs||[s.answer]).filter(Boolean),literal=comp||['calendar','daewoon'].includes(s.kind),meaning=paras.filter(p=>literal||readingParts(p).main),evidence=paras.filter(p=>!readingParts(p).main);/* 2026-11-10 G8: 문단이 5개 이상이면 앞 3개만 펼치고 나머지는 접는다(인쇄 때는 printReport가 모두 펼친다). */return meaning.map(p=>interpretationHTML(p,'',literal)).join('')};
  /* 마스코트는 리포트 한 권 안에서 같은 포즈를 두 번 쓰지 않는다. 표지 포즈를 먼저 쓴 것으로 치고, 인물 일러스트가 있는 장에는 넣지 않는다. */
  const usedPoses=new Set([reportPose]),POSE_POOL=['lucky','happy','note','money','heart','rest','care','detective'];
  const chapterPose=(s,i)=>{if(i%3!==0||s.kind==='partner'||(s.kind==='partner-detail'))return '';const want=/건강|휴식/.test(s.question)?'rest':/주의|조심/.test(s.question)?'care':/돈|재물|투자|사업/.test(s.question)?'money':/사랑|인연|결혼|연애/.test(s.question)?'heart':/공부|학업|시험|계산|방법/.test(s.question)?'note':'lucky';const pick=[want,...POSE_POOL].find(p=>!usedPoses.has(p));if(!pick)return '';usedPoses.add(pick);return mascotPoseHTML(pick,'report-chapter-pose')};
@@ -3594,6 +3594,19 @@ function buildRichReport(ch,key){
   const seen=new Set();S.forEach(sec=>{sec.paragraphs=sec.paragraphs.filter(text=>{const k=String(text).replace(/\s+/g,' ').trim();if(seen.has(k))return false;seen.add(k);return true;});});
 
  }
+ if(['love','marry'].includes(key)){
+  const calendar=S.find(s=>s.kind==='calendar');
+  if(calendar){
+   const baseline=[0,1,2,3].map(k=>calendar.months.reduce((n,m)=>n+m.scores[k],0)/12);
+   const positive=['함께 쓸 돈과 예정 지출을 정리해 보세요.','미뤄 둔 대화나 함께할 약속을 잡아 보세요.','바쁜 일정을 맞추고 함께할 시간을 미리 정하세요.','무리 없는 약속으로 둘의 생활 리듬을 맞춰 보세요.'];
+   const careful=['공동 지출은 금액과 부담할 몫을 먼저 맞추세요.','서운함은 짐작으로 키우지 말고 원하는 행동을 구체적으로 전하세요.','일 때문에 약속을 바꿔야 한다면 상대에게 미리 알려 주세요.','피곤한 날에는 중요한 대화를 미루고 회복할 시간을 남겨 두세요.'];
+   calendar.months.forEach(m=>{const diff=m.scores.map((v,k)=>v-baseline[k]),best=diff.indexOf(Math.max(...diff)),low=diff.indexOf(Math.min(...diff));
+    m.brief=(diff[best]>=1?positive[best]:'익숙한 일상에서 작은 약속을 지키며 관계를 돌보세요.')+(diff[low]<=-1?' '+careful[low]:'');
+   });
+   calendar.compactMonthly=true;calendar.lead='';calendar.action='';
+   calendar.paragraphs=calendar.months.map(m=>m.year+'년 '+m.month+'월 — '+m.brief);calendar.table=null;
+  }
+ }
  if(key==='marry'){
   const timing=S.find(s=>s.kind==='timing'),yearly=S.find(s=>s.kind==='yearly');
   if(timing&&yearly){
@@ -3612,6 +3625,21 @@ function buildRichReport(ch,key){
   const core=S.find(s=>s.kind==='core');if(core&&ch.inp.relationship==='married'){core.question='결혼 생활에서 드러나는 나의 성향';core.lead=core.paragraphs[0]||core.lead;}
  }
  if(['love','marry'].includes(key)&&ch.inp.relationship==='married'){for(let i=S.length-1;i>=0;i--)if(['partner','partner-detail'].includes(S[i].kind))S.splice(i,1);}
+ if(ch.inp.relationship==='married'){
+  const marriedCopy=t=>String(t||'')
+   .replace('지금은 여러 사람을 만나며 나에게 맞는 사람을 알아 가는 시기예요. 서두르지 않아도 괜찮아요.','지금은 두 사람의 생활 방식과 앞으로의 계획을 맞춰 가는 시기예요. 서로 중요하게 여기는 일을 구체적으로 이야기해 보세요.')
+   .replace(/새로운 인연이 시작되거나, 만나던 사람과의 관계가 한 단계 깊어지기 쉬운 해예요\./g,'배우자와 함께 세운 계획을 실행하고 서로의 역할을 새롭게 맞춰 보기 좋은 해예요.')
+   .replace(/마음이 가는 사람이 있다면 이 해에 조금 더 용기를 내 보세요\./g,'함께 하고 싶었던 일이 있다면 배우자에게 먼저 제안해 보세요.')
+   .replace(/새로운 만남이 시작되거나, 만나던 사람과 미래를 약속하게 될 가능성이 커요\./g,'함께 준비하던 계획과 생활의 변화를 구체적으로 의논해 보세요.')
+   .replace(/연인이 있다면 미래를 이야기하기 좋은 시기예요\./g,'배우자와 앞으로의 생활 계획을 이야기하기 좋은 시기예요.')
+   .replace(/뜻밖의 자리에서 마음이 움직일 수 있어요\./g,'함께하는 일상에 새로운 활력을 더해 볼 수 있어요.')
+   .replace(/인연이 없다는 뜻이 아니라, 나를 돌보고 내가 원하는 관계가 무엇인지 정리하기 좋은 시기라는 뜻이에요\./g,'서로에게 필요한 휴식과 함께할 시간의 균형을 조정해 보세요.')
+   .replace(/이 해에 마음을 잘 정리해 두면 그다음 만남이 훨씬 편안해져요\./g,'서운했던 일과 바라는 점을 차분히 나누면 일상을 함께하는 부담을 줄일 수 있어요.')
+   .replace(/새 인연이나 약속의 신호/g,'함께할 계획과 약속의 흐름')
+   .replace(/평소와 다른 모임이나 여행, 새로운 일을 시작한 곳에서 인연이 닿기 쉬우니, 이 해에는 초대를 거절하지 말고 한 번 더 나가 보세요\./g,'배우자와 평소와 다른 활동이나 여행을 함께 계획하며 새로운 경험을 나눠 보세요.');
+  if(['love','marry','comprehensive'].includes(key))S.forEach(s=>{s.lead=marriedCopy(s.lead);s.paragraphs=s.paragraphs.map(marriedCopy);s.action=marriedCopy(s.action);});
+  if(S.__sum)S.__sum=S.__sum.map(marriedCopy);
+ }
  const noticeSentence=/(?:보장하지|성과를 보장하는|검증되지|과학적으로 검증|확률(?:이|은|을)|예측(?:이|력|하는 정확)|예측한 곳이 아니라|진단하는 수치가 아니|질병이나 건강 상태의 예측|중요한 결정은 실제|전문가의 조언을 우선|상대의 마음과 의사는 이 리포트의 범위|정확한 시각을 알게 되면 경계|미상으로 현지 정오|도움을 받을 사람의 외모나 등장 날짜를 확정)/;
  const readerText=t=>String(t||'').split(/(?<=[.!?。])\s+/).filter(sentence=>!noticeSentence.test(sentence)).join(' ').trim();
  for(let i=S.length-1;i>=0;i--)if(S[i].kind==='limit')S.splice(i,1);
@@ -3639,7 +3667,7 @@ function buildRichReport(ch,key){
  const summary=[sumHi?'앞으로 10년 중 '+(key==='comprehensive'?'네 분야를 합친 흐름':['금전','애정','직업·학업'][ci]+' 흐름')+'이 가장 밝은 해는 '+sumHi.year+'년('+kage(sumHi.year)+'살, '+sumHi.score+'점)이에요.':'',sumLo&&sumLo!==sumHi?'속도를 늦추고 다지기 좋은 해는 '+sumLo.year+'년('+sumLo.score+'점)이에요.':'',...(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(s=>{const l=firstLine(s.lead||(s.paragraphs||[])[0]);return l?s.question+' — '+l:''})].filter(Boolean);
  S.forEach(s=>{if(s.kind==='yearly')s.paragraphs=s.paragraphs.map(p=>p.split(' [사주]')[0]);s.answer=[...(s.overview||[]),...s.paragraphs].join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
- return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'reader-2026-11-11-v13',
+ return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'reader-2026-11-11-v14',
   body:S.map((r,i)=>(i+1)+'장 · '+r.question+'\n\n핵심: '+r.lead+(r.basis.length?'\n근거: '+r.basis.join(' / '):'')+'\n\n'+r.answer+(r.action?'\n\n실천 · '+r.action:'')).join('\n\n────────────────\n\n')};
 }
 
