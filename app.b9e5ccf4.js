@@ -3382,12 +3382,12 @@ function buildRichReport(ch,key){
    const options=phases.flatMap(p=>allowed.map(c=>({p,c,delta:p.sc[c]-baseline[c]})));
    const best=options.reduce((a,b)=>b.delta>a.delta?b:a),care=options.reduce((a,b)=>b.delta<a.delta?b:a);
    const span=p=>p.from+'~'+p.to+'일',prev=i?months[i-1]:null,delta=prev?o.av-prev.av:0;
-   const change=!prev?'이번 달을 이후 흐름과 비교하는 출발점으로 읽어요.':Math.abs(delta)<1?'지난달과 종합 흐름은 비슷해요. 달 전체의 큰 변화보다 아래 구간별 차이를 살펴보세요.':delta>0?'지난달보다 종합 흐름이 '+delta.toFixed(1)+'점 높아요. 준비한 일의 실행 순서를 점검해 보세요.':'지난달보다 종합 흐름이 '+Math.abs(delta).toFixed(1)+'점 낮아요. 새 일을 늘리기 전에 진행 중인 일을 정돈해 보세요.';
+   const change=!prev?'이번 달을 이후 흐름과 비교하는 출발점으로 읽어요.':Math.abs(delta)<1?'':delta>0?'지난달보다 종합 흐름이 '+delta.toFixed(1)+'점 높아요. 준비한 일의 실행 순서를 점검해 보세요.':'지난달보다 종합 흐름이 '+Math.abs(delta).toFixed(1)+'점 낮아요. 새 일을 늘리기 전에 진행 중인 일을 정돈해 보세요.';
    const meaningful=best.delta>=1;
-   o.theme=meaningful?span(best.p)+' · '+fieldNames[best.c]+'에 힘 싣기':'큰 폭의 확장보다 구간별 균형 잡기';
+   o.theme=meaningful?span(best.p)+' · '+fieldNames[best.c]+'에 힘 싣기':span(best.p)+' · '+fieldNames[best.c]+' 살펴보기';
    const opportunity=span(best.p)+'의 '+fieldNames[best.c]+' 흐름은 '+best.p.sc[best.c].toFixed(1)+'점으로, 같은 분야의 12개월 기준보다 '+(best.delta>=0?best.delta.toFixed(1)+'점 높아요.':Math.abs(best.delta).toFixed(1)+'점 낮아요.');
-   const timing=meaningful?opportunities[best.c]:'두드러지는 상승 구간이 크지 않으니, 기존 계획을 꾸준히 이어 가면서 일정을 조율해 보세요.';
-   const caution=span(care.p)+'에는 '+fieldNames[care.c]+'을 더 살펴보세요. '+checks[care.c];
+   const timing=meaningful?opportunities[best.c]:'';
+   const caution=span(care.p)+'에는 '+J(fieldNames[care.c],'을','를')+' 더 살펴보세요. '+checks[care.c];
    o.act=span(best.p)+'에는 '+opportunities[best.c]+' '+span(care.p)+' 전에는 '+checks[care.c];
    o.reading={change,opportunity,timing,caution,action:o.act};
    o.phases=phases.map(p=>({from:p.from,to:p.to,score:Number(p.score.toFixed(1)),scores:p.sc.map(v=>Number(v.toFixed(1)))}));
@@ -3396,7 +3396,7 @@ function buildRichReport(ch,key){
   const mHi=months.reduce((a,b)=>b.av>a.av?b:a),mLo=months.reduce((a,b)=>b.av<a.av?b:a),top3=months.slice().sort((a,b)=>b.av-a.av).slice(0,3).sort((a,b)=>a.k-b.k);
   const monthLabel=o=>o.y+'년 '+o.m+'월',period=monthLabel(months[0])+'~'+monthLabel(months[11]);
   put('calendar','앞으로 12개월, 월별 운명',period+' · 이번 달부터 열두 달을 함께 살펴봐요.',[],
-   ['양력 월의 첫날부터 말일까지를 같은 기준으로 비교했어요. 이번 달은 이미 지난 날도 포함한 한 달 전체예요. 특정 사건이 일어날 확률을 뜻하지 않아요. 달 사이 점수 차이가 작으면 비슷한 기본 흐름으로 읽고 실제 일정과 준비 상태를 우선해 주세요.',
+   ['양력 월의 첫날부터 말일까지를 같은 기준으로 비교했어요. 이번 달은 이미 지난 날도 포함한 한 달 전체예요. 특정 사건이 일어날 확률을 뜻하지 않아요. 달 전체의 점수 차이는 크지 않아요. 비슷한 설명을 매달 반복하는 대신, 아래에서는 월 안에서 상대적으로 살펴볼 날짜 구간과 분야를 나누었어요.',
     ...months.map(o=>monthLabel(o)+' · '+o.theme+' — '+o.reading.change+' '+o.reading.opportunity+' '+o.reading.timing+' '+o.reading.caution+' 실천: '+o.act),
     '사주·서양 점성술·인도 점성술·수비학·마야력의 기존 일별 흐름을 양력 월 단위로 모은 자체 해석이에요. 절기월 자체를 뜻하지 않으며, 건강 점수는 질병이나 건강 상태의 예측이 아니라 생활 리듬을 돌아보는 참고로 읽어 주세요.'],
    '이번 달에 해당하는 실천 한 가지를 고르고, 월말에 실제 경험과 비교해 보세요.',
