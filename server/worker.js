@@ -1718,7 +1718,7 @@ function buildRichReport(ch,key){
  const summary=[sumHi?'앞으로 10년 중 '+(key==='comprehensive'?'네 분야를 합친 흐름':['금전','애정','직업·학업'][ci]+' 흐름')+'이 가장 밝은 해는 '+sumHi.year+'년('+kage(sumHi.year)+'살, '+sumHi.score+'점)이에요.':'',sumLo&&sumLo!==sumHi?'속도를 늦추고 다지기 좋은 해는 '+sumLo.year+'년('+sumLo.score+'점)이에요.':'',...(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(s=>{const l=firstLine(s.lead||(s.paragraphs||[])[0]);return l?s.question+' — '+l:''})].filter(Boolean);
  S.forEach(s=>{if(s.kind==='yearly')s.paragraphs=s.paragraphs.map(p=>p.split(' [사주]')[0]);s.answer=[...(s.overview||[]),...s.paragraphs].join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
- return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts:[],sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:null,version:'reader-2026-11-11-v10',
+ return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'reader-2026-11-11-v11',
   body:S.map((r,i)=>(i+1)+'장 · '+r.question+'\n\n핵심: '+r.lead+(r.basis.length?'\n근거: '+r.basis.join(' / '):'')+'\n\n'+r.answer+(r.action?'\n\n실천 · '+r.action:'')).join('\n\n────────────────\n\n')};
 }
 
