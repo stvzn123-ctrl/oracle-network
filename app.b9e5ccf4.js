@@ -4328,7 +4328,6 @@ function cmpShowOne(label,scroll=true){
  const res=COMPAT.res,out=document.querySelector('#cmpOne .cmp-result');if(!out)return;
  const lv=res.total>=88?'아주 잘 맞는 편':res.total>=80?'잘 맞는 편':res.total>=74?'서로 편안한 사이':'맞춰 갈수록 좋아지는 사이';
  out.innerHTML='<div class="cmp-score"><span>'+topicEsc(J(label,'과','와'))+' 나의 '+(COMPAT.kind==='friend'?'우정 ':'')+'궁합</span><em>'+lv+'</em></div>'+
-  socialResultHTML([CH,COMPAT.b])+
   '<p class="cmp-note">잘 맞는 점과 다섯 점술별 근거는 <b>'+(COMPAT.kind==='friend'?'우정':'궁합')+' 리포트</b>에서 확인해 주세요.</p><p class="cmp-price">'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</p><button type="button" class="cmp-open" data-cmp-open>리포트 보기 →</button>';
  if(scroll)out.scrollIntoView({behavior:soft(),block:'nearest'})}
 
