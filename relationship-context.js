@@ -35,7 +35,7 @@
   topicReportHTML=function(key){
     if(!['love','marry'].includes(key)||!CH)return originalOffer(key);
     const c=COPY[context(CH)];
-    return '<section class="topic-offer"><h4>'+c.title+' 리포트</h4><ul><li>'+c.question+'</li><li>나의 관계 성향과 표현 방식</li><li>'+c.next+'</li><li>지금 실천할 대화와 행동</li></ul><p class="relationship-report-note" role="note">현재 관계 상태를 정확히 입력해 주세요. 미혼·연애 중·기혼 여부에 따라 리포트 내용이 달라져요. 내 정보에서 현재 상태를 확인하고 수정한 뒤 리포트를 열어 주세요.</p><div class="topic-offer-action"><strong>'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</strong><button type="button" data-buy="'+key+'">나의 리포트 보기</button></div><p class="buy-msg" aria-live="polite"></p></section>';
+    return '<section class="topic-offer"><h4>'+c.title+' 리포트</h4><ul><li>'+c.question+'</li><li>나의 관계 성향과 표현 방식</li><li>'+c.next+'</li><li>지금 실천할 대화와 행동</li></ul><p class="relationship-report-note" role="note">운명은 같아도 현재 상태에 따라 해석이 달라질 수 있어요. 현재 상태를 입력해 주시면 내 상황을 더 정확하게 반영한 해석을 받아보실 수 있어요. 리포트를 보기 전, 내 정보에서 현재 상태를 확인해 주세요.</p><div class="topic-offer-action"><strong>'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</strong><button type="button" data-buy="'+key+'">나의 리포트 보기</button></div><p class="buy-msg" aria-live="polite"></p></section>';
   };
   const oldTopic=topicHTML;
   topicHTML=function(ch,key){

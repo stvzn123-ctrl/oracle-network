@@ -1552,7 +1552,7 @@ function compatibilityRows(a,b){const ae=SE[a.stems.d],be=SE[b.stems.d],ab=a.brs
 const TOPIC_REPORT_CONTENTS={"study":["나에게 맞는 공부 방식과 집중 습관","시험·자격증·진학을 준비할 시기","학업을 돕는 귀인과 배움의 환경","성취를 방해하는 습관과 실천 계획"],"money":["타고난 재물 구조와 돈을 다루는 방식","투자 습관·집과 부동산·사업과 부수입","앞으로 10년의 재물 흐름과 주의할 패턴"],"marry":["사랑할 때 드러나는 나의 매력과 연애 성향","나와 잘 맞는 연인·배우자의 모습과 생활 방식","인연의 시작부터 관계가 깊어지고 결혼을 생각할 시기","오래가는 관계를 위한 대화와 현실적인 준비"],"love":["새 인연을 만날 시기와 장소","예상 연애 상대의 외모·분위기 일러스트","내 매력과 상대가 끌리는 포인트","연애 상대의 성격·직업·경제관","관계가 깊어지는 시기와 연애 패턴"],"reunion":["관계를 다시 돌아볼 시기","연락과 대화의 흐름","다시 만났을 때 맞춰볼 점","새로운 인연으로 나아가는 방향"],"work":["나에게 맞는 직업과 업무 방식","이직·승진·도전을 준비할 시기","귀인을 만날 때·장소·인물상","기회를 만드는 준비와 실천"],"match":["두 사람의 다섯 점술 궁합","잘 맞는 성향과 서로 끌리는 차이","대화·감정·생활·경제관 비교","관계를 깊게 만드는 시기와 실천"],"ask":["내 질문에 대한 개인별 풀이","사주·별자리·베딕·수비학·마야력의 관련 근거","주목할 시기와 구체적인 실천 제안"]};
 const FREE_LAUNCH=true,LAUNCH_PRICE=p=>'<del>'+p.toLocaleString()+'원</del> <b class="free">0원</b> <small class="launch">출시 기념 무료 · 첫 1회</small>';
 const TOPIC_REPORT_PRICE=1900,FREE_QUESTION_PRICE=3900,COMPREHENSIVE_REPORT_PRICE=2900;
-function topicReportHTML(k){const name=TOPICS.find(t=>t[0]===k)[1],ask=k==='ask';return '<section class="topic-offer"><span class="eyebrow">'+(ask?'나의 질문에 대한 리포트':'더 구체적인 나의 리포트')+'</span><h4>'+name+' 리포트에서 볼 내용</h4><ul>'+TOPIC_REPORT_CONTENTS[k].map(x=>'<li>'+x+'</li>').join('')+'</ul>'+(['love','marry'].includes(k)?'<p class="relationship-report-note" role="note">현재 관계 상태를 정확히 입력해 주세요. 미혼·연애 중·기혼 여부에 따라 리포트 내용이 달라져요. 내 정보에서 현재 상태를 확인하고 수정한 뒤 리포트를 열어 주세요.</p>':'')+(ask?'':'<div class="topic-offer-action"><strong>'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</strong><button type="button" data-buy="'+k+'">나의 리포트 보기</button></div><p class="buy-msg" aria-live="polite"></p>')+'</section>'}
+function topicReportHTML(k){const name=TOPICS.find(t=>t[0]===k)[1],ask=k==='ask';return '<section class="topic-offer"><span class="eyebrow">'+(ask?'나의 질문에 대한 리포트':'더 구체적인 나의 리포트')+'</span><h4>'+name+' 리포트에서 볼 내용</h4><ul>'+TOPIC_REPORT_CONTENTS[k].map(x=>'<li>'+x+'</li>').join('')+'</ul>'+(['love','marry'].includes(k)?'<p class="relationship-report-note" role="note">운명은 같아도 현재 상태에 따라 해석이 달라질 수 있어요. 현재 상태를 입력해 주시면 내 상황을 더 정확하게 반영한 해석을 받아보실 수 있어요. 리포트를 보기 전, 내 정보에서 현재 상태를 확인해 주세요.</p>':'')+(ask?'':'<div class="topic-offer-action"><strong>'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</strong><button type="button" data-buy="'+k+'">나의 리포트 보기</button></div><p class="buy-msg" aria-live="polite"></p>')+'</section>'}
 
 function mascotPoseHTML(p,cls=''){return '<span class="pose pose-'+p+' '+cls+'" aria-hidden="true"></span>'}
 function freeQuestionHTML(){return '<section class="blk blk-first topic"><header class="topic-intro"><span class="pose pose-note question-pose" aria-hidden="true"></span><span class="eyebrow">자유질문</span><h3>지금 궁금한 이야기를 남겨주세요.</h3><p class="q-beta">남겨 주신 질문은 검토한 뒤, 사주·서양 점성술·베딕 점성술·수비학·마야력으로 도출된 내 차트 결과를 바탕으로 순차적으로 리포트를 작성해 이메일로 보내드려요.</p></header><section class="chart-form question-chat"><form id="free-question-form"><label for="chart-question"><span class="sr-only">나의 질문</span><textarea id="chart-question" name="question" maxlength="1000" minlength="2" required placeholder="나의 운명에 대해 궁금한 내용을 자유롭게 적어주세요."></textarea></label><label class="q-email">답변 받을 이메일<input type="email" name="email" required autocomplete="email" placeholder="example@email.com"></label><div class="question-submit"><span>질문 1건 <strong>'+LAUNCH_PRICE(FREE_QUESTION_PRICE)+'</strong></span><button type="submit">제출하기</button></div><div id="free-question-result" class="chart-feedback" aria-live="polite"></div></form></section>'+topicReportHTML('ask')+'</section>'}
@@ -4187,6 +4187,15 @@ async function openGroupReport(trigger){
  try{const ac=await accountAPI('/access');if(ac.isAdmin||ac.reports.includes('group')||ac.reports.includes('all'))return show()}catch(_){}
  showLaunchReport('group',{me:me.inp,members:list.slice(1).map(c=>c.inp)},trigger,show)
 }
+function socialPlayData(list){
+ const style=[['개척 대장','아이디어 씨앗'],['분위기 점화자','리액션 요정'],['든든한 중심','안부 지킴이'],['계획 해결사','취향 감별사'],['대화 수집가','조용한 연결자']];
+ const activity=['처음 가 보는 동네 산책과 작은 체험 수업','노래 맞히기나 몸으로 설명하는 팀 게임','각자 좋아하는 간식 하나씩 가져오는 소풍','규칙이 간단한 보드게임과 취향별 맛집 투표','서로 고른 음악을 듣고 이유를 나누는 카페 시간'];
+ const mission=['아직 안 해 본 활동 하나를 제안하기','오늘 제일 웃겼던 순간을 한 문장으로 남기기','모두 편하게 먹을 간식과 쉬는 시간 챙기기','비용과 일정을 한눈에 보이게 정리하기','말이 적었던 사람에게 부담 없는 질문 하나 건네기'];
+ const dom=c=>c.cnt.indexOf(Math.max(...c.cnt));
+ const counts=[0,0,0,0,0];list.forEach(c=>counts[dom(c)]++);
+ const order=counts.map((n,i)=>({n,i})).filter(x=>x.n).sort((a,b)=>b.n-a.n||a.i-b.i);
+ return {nick:list.map(c=>style[dom(c)][c.strong?0:1]),activities:order.slice(0,2).map(x=>activity[x.i]),missions:list.map(c=>mission[dom(c)]),same:order.length===1};
+}
 function friendReportData(a,b,res){
  const names=[a.inp.name||'나',b.inp.name||'친구'],roles=[groupRole(a),groupRole(b)];
  const dom=c=>c.cnt.indexOf(Math.max(...c.cnt)),same=dom(a)===dom(b);
@@ -4196,7 +4205,13 @@ function friendReportData(a,b,res){
   {kind:'communication',question:'서로에게 편한 대화와 거리',lead:'연락의 양보다 서로 편한 방식을 맞춰보세요.',paragraphs:names.map((n,i)=>n+'님은 '+style[dom([a,b][i])]+'을 대화의 출발점으로 삼아볼 수 있어요.'),action:'답장이 늦을 때의 기준과 만나고 싶은 빈도를 한 번씩 이야기해 보세요.'},
   {kind:'advice',question:'오래 편하게 지내는 작은 약속',lead:'도움과 부탁에도 서로의 여유를 먼저 확인해 보세요.',paragraphs:[names[0]+'님은 '+roles[0][0]+', '+names[1]+'님은 '+roles[1][0]+'의 역할을 시도해 볼 수 있어요. 역할은 고정하지 말고 번갈아 맡아보세요.','서운할 때는 “너는 항상” 대신 최근 있었던 일 하나와 내가 바라는 행동 하나를 전하세요. 함께 쓰는 돈과 취소 약속은 미리 정하면 편해요.'],action:'이번 주에는 함께 할 짧은 활동 하나를 정하고, 고마웠던 점을 한 문장씩 나눠보세요.'}
  ];
- return {title:names.join('님과 ')+'님의 우정 리포트',summary:[sections[0].lead,same?'비슷한 방식을 강점으로, 서로의 기준은 말로 확인해요.':'다른 반응을 존중하며 각자의 강점을 나눠요.',sections[2].action],sections,years:[],category:'우정',birthCharts:[a,b],version:'friend-2026-11-10',note:'점수는 기존 두 사람 궁합 계산을 재사용한 자체 비교 지표이며 우정의 깊이나 지속 기간을 예측하지 않아요. 출생 시각·장소 미상 항목은 참고값이며, 실제 대화와 서로의 선택을 우선해 주세요. 미래 예측력은 검증되지 않았어요.',body:''}
+ const play=socialPlayData([a,b]);
+ sections.push(
+  {kind:'friend-chemistry',question:'우리 둘의 우정 별명',lead:play.nick.join(' × '),paragraphs:[play.same?'닮은 리듬으로 웃음 포인트가 통하는 조합이에요. 취향이 겹칠 때는 함께 깊게 파보고, 의견이 갈리면 먼저 양보할 항목을 하나씩 정해 보세요.':'서로 다른 재주가 만나는 조합이에요. 한 사람이 시작한 아이디어를 다른 사람이 어떻게 살려 주는지 찾아보세요.',...names.map((n,i)=>n+'님의 오늘 역할: '+play.nick[i]+' — '+roles[i][1])]},
+  {kind:'friend-play',question:'둘이 만나면 해 볼 것',lead:'다음 약속에 하나만 골라 보세요.',paragraphs:play.activities,action:'각자 하고 싶은 활동에 한 표씩 주고, 의견이 다르면 이번과 다음 약속에 번갈아 해 보세요.'},
+  {kind:'friend-mission',question:'친구 사용 설명서 맞혀보기',lead:'서로 답을 적은 뒤 동시에 공개해 보세요.',paragraphs:['친구가 지쳤을 때 원하는 것은? 조용히 듣기 / 해결책 찾기 / 함께 놀기','약속이 취소되면 더 반가운 것은? 바로 다음 날짜 잡기 / 편하게 쉬라고 하기','친구가 생각하는 내 장점 하나를 먼저 예상하고, 실제 답과 비교해 보세요.'],action:'틀린 답은 놀릴 소재보다 새로 알게 된 취향으로 기억해 주세요.'}
+ );
+ return {title:names.join('님과 ')+'님의 우정 리포트',summary:[sections[0].lead,same?'비슷한 방식을 강점으로, 서로의 기준은 말로 확인해요.':'다른 반응을 존중하며 각자의 강점을 나눠요.',sections[2].action],sections,years:[],category:'우정',birthCharts:[a,b],version:'friend-2026-11-11-v17',note:'점수는 기존 두 사람 궁합 계산을 재사용한 자체 비교 지표이며 우정의 깊이나 지속 기간을 예측하지 않아요. 출생 시각·장소 미상 항목은 참고값이며, 실제 대화와 서로의 선택을 우선해 주세요. 미래 예측력은 검증되지 않았어요.',body:''}
 }
 function groupReportData(list,r){
  if(list.length<3||list.length>8)throw new Error('모임은 3~8명이 필요해요.');
@@ -4208,7 +4223,13 @@ function groupReportData(list,r){
   {kind:'pairs',question:'두 사람씩 살펴보기',lead:'누가 더 중요한지가 아니라 서로 다른 조합을 비교해요.',paragraphs:['점수 차이가 있는 조합은 결정 속도나 말투, 약속 기준이 서로 다른지 확인해 보세요. 소외되는 사람이 없도록 대화할 기회와 자리를 고르게 나눠요.'],table:{cap:'전체 두 사람 조합 · 자체 비교 지표',head:['두 사람','점수'],rows:r.pairs.slice().sort((a,b)=>b.total-a.total).map(p=>[pairName(p),p.total+'점'])}},
   {kind:'advice',question:'다음 모임 전에 정할 세 가지',lead:'돈·시간·역할을 미리 맞추면 함께하기 편해져요.',paragraphs:['회비와 정산: 1인 예산, 결제 담당, 정산 날짜를 단체 대화방에 남겨요.','일정과 취소: 가능한 날짜를 함께 고르고 불참·취소 기준을 정해요.','역할과 의견: 진행·예약·정리를 순환하고 각자 원하는 활동을 하나씩 제안해요.'],action:'다음 날짜를 잡기 전에 이번 모임에서 좋았던 점과 바꾸고 싶은 점을 하나씩 나눠보세요.'}
  ];
- return {title:list.length+'명의 모임 리포트',summary:[sections[0].lead,'역할은 강점의 제안으로 읽고 돌아가며 맡아요.',sections[3].lead],sections,years:[],category:'모임',note:'전통 차트의 두 사람 비교 점수를 평균 낸 참고 지표예요. 출생 시각·장소 미상 항목은 참고값이며 모임의 수명이나 개인의 실제 성격을 단정하지 않아요. 미래 예측력은 검증되지 않았어요.',birthCharts:list,version:'group-2026-11-10',body:''}
+ const play=socialPlayData(list);
+ sections.push(
+  {kind:'group-cast',question:'우리 모임 예능 캐스팅',lead:'차트의 강점을 별명과 오늘의 미션으로 바꿔 봤어요.',paragraphs:[],table:{cap:'이번 모임 캐릭터와 미션',head:['이름','별명','오늘의 미션'],rows:nm.map((n,i)=>[n,play.nick[i],play.missions[i]])},action:'별명이 마음에 안 들면 서로 더 잘 맞는 이름을 붙여 주세요. 다음 모임에는 역할도 바꿔 보세요.'},
+  {kind:'group-play',question:'우리 모임에 어울리는 놀거리',lead:play.same?'취향이 모이는 활동 하나를 깊게 즐겨 보세요.':'서로 다른 취향을 번갈아 즐길 코스를 만들어 보세요.',paragraphs:play.activities,action:'각자 활동 하나를 더 제안하고, 모두가 참여할 수 있는 난이도와 예산으로 골라 보세요.'},
+  {kind:'group-mission',question:'단톡방에서 시작하는 10분 미션',lead:'다음 모임 전에 한 번씩 답해 보세요.',paragraphs:['취향 빙고: 좋아하는 음식·휴일 활동·듣는 음악을 하나씩 적고 가장 많이 겹친 취향을 찾아요.','칭찬 이어달리기: 명단 순서대로 다음 사람에게 함께해서 좋았던 순간 하나를 전해요. 마지막 사람은 첫 사람에게 전해요.','숨은 공통점 찾기: 처음에는 달라 보이는 두 사람이 대화해 의외의 공통점 세 개를 찾아요.'],action:'답하기 어려운 질문은 패스해도 좋아요. 모든 사람이 한 번씩 말할 수 있게 차례를 나눠 주세요.'}
+ );
+ return {title:list.length+'명의 모임 리포트',summary:[sections[0].lead,'역할은 강점의 제안으로 읽고 돌아가며 맡아요.',sections[3].lead],sections,years:[],category:'모임',note:'전통 차트의 두 사람 비교 점수를 평균 낸 참고 지표예요. 출생 시각·장소 미상 항목은 참고값이며 모임의 수명이나 개인의 실제 성격을 단정하지 않아요. 미래 예측력은 검증되지 않았어요.',birthCharts:list,version:'group-2026-11-11-v17',body:''}
 }
 
 /* ===== 카카오 친구 초대 링크: 친구가 로그인하고 내 정보를 저장하면 서로의 궁합이 보인다 ===== */
