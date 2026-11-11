@@ -11,12 +11,12 @@
   reunion:{name:'재회 리포트',question:'다시 연락하기 전에 무엇을 확인하고 바꿔야 할까?',free:'두 사람의 재회 흐름과 핵심 특징',detail:'관계의 차이, 연락과 관계 회복의 흐름, 다시 만날 때 조율할 점',limit:'두 사람의 차트를 비교해요. 실제 연락과 재회는 상대의 의사를 존중해야 해요.'},
   friend:{name:'우정 보기',question:'우리 우정의 강점과 편한 거리감은?',free:'두 사람의 캐릭터와 역할 표',detail:'정보 입력 후 바로 캐릭터·이름·역할·강점 확인',limit:'친구의 출생 정보로 비교하며 우정의 깊이나 지속 기간을 예측하지 않아요.'},
   group:{name:'모임 보기',question:'우리 모임의 강점과 조율할 부분은?',free:'구성원 캐릭터와 역할 표',detail:'3~8명 입력 후 바로 캐릭터·이름·역할·강점 확인',limit:'입력한 구성원들의 차트를 함께 비교해요.'},
-  ask:{name:'자유질문',question:'내가 처한 구체적인 상황은 어떻게 살펴보면 좋을까?',free:'출시 기념 첫 질문 1건 접수',detail:'작성한 고민을 검토하고 차트 결과를 바탕으로 개별 리포트를 이메일로 전달',limit:'즉시 채팅 답변이 아니에요. 접수 순서대로 검토하며 확정된 답변 기한은 아직 안내하지 않고 있어요.'}
+  ask:{name:'자유질문',question:'내가 처한 구체적인 상황은 어떻게 살펴보면 좋을까?',free:'질문 1건 접수(3,900원)',detail:'작성한 고민을 검토하고 차트 결과를 바탕으로 개별 리포트를 이메일로 전달',limit:'즉시 채팅 답변이 아니에요. 접수 순서대로 검토하며 확정된 답변 기한은 아직 안내하지 않고 있어요.'}
  };
  const aliases={love:'marry',invest:'money',property:'money',business:'money',employment:'work',move:'work',exam:'study',cert:'study'};
  function scope(key){return catalog[aliases[key]||key]||catalog.comprehensive}
  function scopeHTML(key){const c=scope(key);return '<section class="product-scope"><h4>'+E(c.question)+'</h4><dl><dt>무료로 먼저 확인</dt><dd>'+E(c.free)+'</dd><dt>리포트에서 더 읽기</dt><dd>'+E(c.detail)+'</dd></dl><p>'+E(c.limit)+'</p></section>'}
- function compareHTML(){return '<details class="product-compare"><summary>종합·주제별·자유질문은 어떻게 다른가요?</summary><div class="product-table"><table><thead><tr><th>상품</th><th>답해 주는 질문과 범위</th><th>정상가</th></tr></thead><tbody>'+[['comprehensive',COMPREHENSIVE_REPORT_PRICE],['marry',TOPIC_REPORT_PRICE],['money',TOPIC_REPORT_PRICE],['work',TOPIC_REPORT_PRICE],['study',TOPIC_REPORT_PRICE],['match',TOPIC_REPORT_PRICE],['friend',0],['reunion',TOPIC_REPORT_PRICE],['group',0],['ask',FREE_QUESTION_PRICE]].map(([key,price])=>'<tr><th>'+catalog[key].name+'</th><td>'+catalog[key].question+'<br><small>'+catalog[key].detail+'</small></td><td>'+(price?price.toLocaleString()+'원':'무료')+'</td></tr>').join('')+'</tbody></table></div><p>종합과 주제별 리포트는 같은 차트를 사용해 일부 설명이 겹칠 수 있어요. 종합은 전체 방향, 주제별은 선택한 고민에 집중해요. 출시 기념 상품별 첫 1회는 무료예요.</p></details>'}
+ function compareHTML(){return '<details class="product-compare"><summary>종합·주제별·자유질문은 어떻게 다른가요?</summary><div class="product-table"><table><thead><tr><th>상품</th><th>답해 주는 질문과 범위</th><th>정상가</th></tr></thead><tbody>'+[['comprehensive',COMPREHENSIVE_REPORT_PRICE],['marry',TOPIC_REPORT_PRICE],['money',TOPIC_REPORT_PRICE],['work',TOPIC_REPORT_PRICE],['study',TOPIC_REPORT_PRICE],['match',TOPIC_REPORT_PRICE],['friend',0],['reunion',TOPIC_REPORT_PRICE],['group',0],['ask',FREE_QUESTION_PRICE]].map(([key,price])=>'<tr><th>'+catalog[key].name+'</th><td>'+catalog[key].question+'<br><small>'+catalog[key].detail+'</small></td><td>'+(price?(key==='ask'?price.toLocaleString()+'원':'전체 열람권 990원에 포함'):'무료')+'</td></tr>').join('')+'</tbody></table></div><p>종합과 주제별 리포트는 같은 차트를 사용해 일부 설명이 겹칠 수 있어요. 종합은 전체 방향, 주제별은 선택한 고민에 집중해요. 990원 한 번 결제로 모든 리포트를 열람할 수 있어요.</p></details>'}
  /* 주제별 안내(scopeHTML)는 리포트 안내 문서로 옮겼고 결과 화면에는 붙이지 않는다. */
  // Short complete answers remain free; the offer names the added depth explicitly.
  function trimPreview(html,key){
@@ -60,8 +60,8 @@
  function productsGuideHTML(){
   const rows=[['comprehensive',COMPREHENSIVE_REPORT_PRICE],['marry',TOPIC_REPORT_PRICE],['money',TOPIC_REPORT_PRICE],['work',TOPIC_REPORT_PRICE],['study',TOPIC_REPORT_PRICE],['match',TOPIC_REPORT_PRICE],['friend',0],['reunion',TOPIC_REPORT_PRICE],['group',0],['ask',FREE_QUESTION_PRICE]];
   return '<p>운명탐정의 리포트는 모두 같은 출생 차트(사주·서양 점성술·베딕 점성술·수비학·마야력)를 바탕으로 쓰여요. <b>종합</b>은 나 전체를 넓게, <b>주제별</b>은 고른 고민 하나를 깊게, <b>자유질문</b>은 내가 적은 상황을 사람이 검토해 이메일로 답해 드려요.</p>'
-   +'<h3>한눈에 비교</h3><div class="product-table"><table><thead><tr><th>상품</th><th>답해 주는 질문</th><th>정상가</th></tr></thead><tbody>'+rows.map(([key,price])=>'<tr><th>'+E(catalog[key].name)+'</th><td>'+E(catalog[key].question)+'</td><td>'+(price?price.toLocaleString()+'원':'무료')+'</td></tr>').join('')+'</tbody></table></div>'
-   +'<p>출시 기념으로 상품별 첫 1회는 무료예요. 같은 입력의 리포트는 다시 열어 볼 수 있어요.</p>'
+   +'<h3>한눈에 비교</h3><div class="product-table"><table><thead><tr><th>상품</th><th>답해 주는 질문</th><th>정상가</th></tr></thead><tbody>'+rows.map(([key,price])=>'<tr><th>'+E(catalog[key].name)+'</th><td>'+E(catalog[key].question)+'</td><td>'+(price?(key==='ask'?price.toLocaleString()+'원':'전체 열람권 990원에 포함'):'무료')+'</td></tr>').join('')+'</tbody></table></div>'
+   +'<p>990원 한 번 결제로 종합·주제별 리포트를 모두 열람할 수 있어요. 자유질문은 1건 3,900원으로 별도예요.</p>'
    +rows.map(([key])=>{const c=catalog[key];return '<h3>'+E(c.name)+'</h3><dl class="product-dl"><dt>무료로 먼저 확인</dt><dd>'+E(c.free)+'</dd><dt>리포트에서 더 읽기</dt><dd>'+E(c.detail)+'</dd><dt>범위</dt><dd>'+E(c.limit)+'</dd></dl>'}).join('')
    +'<p>종합과 주제별 리포트는 같은 차트를 쓰기 때문에 일부 설명이 겹칠 수 있어요. 해석은 전통 규칙에 따른 상징 풀이이며, 미래를 보장하거나 예측하지 않아요.</p>';
  }

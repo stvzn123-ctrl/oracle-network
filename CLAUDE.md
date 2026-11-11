@@ -8,7 +8,7 @@
 - `index.html` — 전부 이 파일 하나. 외부 라이브러리 없음(구글 폰트만 사용). 브라우저로 바로 열면 동작.
 
 ## 코드 구조 (`<script>` 안, 위에서 아래 순서)
-1. **constants** — 빠른 선택 도시(PLACES), 음력 표(LUNAR: 1920~2026, 한국천문연구원 기준 korean-lunar-calendar(MIT)에서 생성), 지도 경로(MAPS: 시군구는 KOSTAT 2013, 세계는 Natural Earth 기반 world.geo.json), 국가별 시간대(TZC), 천간·지지, 십신 가중치(TGW),
+1. **constants** — 빠른 선택 도시(PLACES), 음력 표(LUNAR: 1920~2049, 한국천문연구원 기준 korean-lunar-calendar(MIT)에서 생성), 지도 경로(MAPS: 시군구는 KOSTAT 2013, 세계는 Natural Earth 기반 world.geo.json), 국가별 시간대(TZC), 천간·지지, 십신 가중치(TGW),
    하우스 가중치(JW 목성 / SW 토성), 다샤 행성 가중치(PW), 수비학 개인년(NYW), 마야 기호(MS)·숫자(MT),
    문구 테이블(TGP, PP, NYP, HEAD 등).
 2. **astronomy & calendar** — 태양·달 황경(Meeus 저정밀식), 상승궁, 목성·토성 지구 기준 위치(JPL 근사 궤도요소),
@@ -80,7 +80,7 @@
 | 수비학 | 피타고라스식 구간 축약법 | 인생 수 = 월(한 자리로) + 일(11·22 유지) + 연 숫자합(11·22·33 유지) → 합계(11·22·33 유지) | https://numerology.pardesco.com/life-path/how-to-calculate/ |
 | 마야력 | 전통 촐킨, GMT 584283 | 숫자 = (JDN−584283+3) mod 13 + 1, 기호 = (JDN−584283+19) mod 20. 그해 운은 260일마다 돌아오는 탄생일의 횟수(1~2번) | https://rosettacode.org/wiki/Mayan_calendar (2012-12-21 = 4 Ajaw) |
 | 한국 시각 | IANA tz Asia/Seoul | UTC+8:30: 1954-03-21~1961-08-10. 서머타임: 1948~1951, 1955~1960, 1987~1988(`KDST`) | https://en.wikipedia.org/wiki/Time_in_South_Korea , https://mm.icann.org/pipermail/tz/2014-October/046867.html |
-| 음력 | 한국천문연구원 기준 | korean-lunar-calendar(MIT) 표에서 1920~2026 생성 | https://github.com/usingsky/korean_lunar_calendar_js |
+| 음력 | 한국천문연구원 기준 | korean-lunar-calendar(MIT) 표에서 1920~2049 생성(1920~2026은 기존 표와 동일 확인) | https://github.com/usingsky/korean_lunar_calendar_js |
 
 미확인·한계: 신강·신약 가중치, 신살 표, 인도 기능적 길흉 가중치, 각 점술의 점수 가중치는 출처로 확인하지 않은 자체 규칙. 균시차 미적용. 시각을 모를 때 태양 별자리를 1하우스로 쓰는 대체 규칙은 홀사인 원칙에 없음.
 
@@ -323,3 +323,8 @@
 ## 버튼 통일 (2026-11-11)
 - `ui-unify.css`를 맨 마지막에 불러와 앞 CSS를 덮는다. 위 탭(`.res-nav`)은 하단 바와 같은 반투명 유리. 선택 상태는 위 탭·하단 바·주제 카드·주제 칩 모두 흰 알약 + 금색 테두리 + `--gold-ink` 글자. 누르면 투명도 .7, 크기 .97.
 - 청록(`--accent-ink`·`--emerald`·`--teal`)은 갈색·금색 계열로 바꿨다. 보조 버튼(공유해서 입력 요청하기·저장한 상대·삭제)은 크림 바탕 + 옅은 갈색 선.
+
+## 가격·사업자 정보 (2026-11-11)
+- 출시 기념 '상품별 첫 1회 무료'를 없앴다(`FREE_LAUNCH=false`). 리포트는 **전체 열람권 990원**(`ALL_ACCESS_PRICE`) 하나로 종합·주제별·궁합·재회·모임을 모두 연다. `showLaunchReport`는 서버 `/access`에 `all`(또는 해당 키) 권한이 있을 때만 리포트를 그리고, 없으면 구매 안내(`#reportPurchase`)를 띄운다. 권한 부여는 관리자 페이지의 `all` 승인(서버 `report_entitlements`)으로 한다. 온라인 결제는 아직 없다.
+- 자유질문은 1건 3,900원 별도, 무료 접수 없음(관리자만 바로 제출).
+- 사업자 정보: 트리웨이브 · 대표 오은석 · 사업자등록번호 476-40-01293 · 통신판매업 신고 2026-서울강남-05652 · 서울특별시 강남구 논현로10길 30, 505-가5호. `policy-business`와 푸터에 표시.
