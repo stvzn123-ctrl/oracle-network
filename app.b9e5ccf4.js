@@ -4186,11 +4186,11 @@ async function openGroupReport(trigger){groupRender();return;
  showLaunchReport('group',{me:me.inp,members:list.slice(1).map(c=>c.inp)},trigger,show)
 }
 const SOCIAL_DOGS=[
- ['a',0,'혼자 평온한 애'],['a',1,'취했는데 안 취했대'],['a',2,'먹을 때만 빠른 애'],['a',3,'일단 의심하는 애'],['a',4,'꾸미다 지각한 애'],['a',5,'이불 밖은 무리인 애'],['a',6,'정산엔 진심인 애'],['a',7,'읽씹하고 다 아는 애'],['a',8,'웃다가 집 못 가는 애'],
+ ['a',0,'혼자 평온한 애'],['a',1,'취했는데 안 취했대'],['a',2,'먹을 때만 빠른 애'],['a',3,'일단 의심하는 애'],['a',4,'꾸미다 지각한 애'],['a',5,'이불 밖은 무리인 애'],['a',6,'계산하다 까먹는 애'],['a',7,'읽씹하고 다 아는 애'],['a',8,'웃다가 집 못 가는 애'],
  ['b',0,'약속 잡고 후회하는 애'],['b',1,'메뉴는 얘가 정함'],['b',2,'썰에 살 붙이는 애'],['b',3,'여행 가면 팀장인 애'],['b',4,'일단 가자는 애'],['b',5,'남 얘기에 우는 애'],['b',6,'사진 검사하는 애'],['b',7,'나오자마자 집 가재'],['b',8,'네 편부터 드는 애']
 ];
 SOCIAL_DOGS.push(
- ['c',0,'가만있는데 대장인 애'],['c',1,'관심 없는 척 다 듣는 애'],['c',2,'밥 먹고 또 먹는 애'],['c',3,'답장은 내일 하는 애'],['c',4,'굳이 건드리는 애'],['c',5,'안 정하면 답답한 애'],['c',6,'욕하면서 챙기는 애'],['c',7,'여기가 내 자리인 애'],['c',8,'조용하면 불안한 애'],
+ ['c',0,'가만있다 혼나는 애'],['c',1,'관심 없는 척 다 듣는 애'],['c',2,'밥 먹고 또 먹는 애'],['c',3,'답장은 내일 하는 애'],['c',4,'굳이 건드리는 애'],['c',5,'안 정하면 답답한 애'],['c',6,'욕하면서 챙기는 애'],['c',7,'여기가 내 자리인 애'],['c',8,'조용하면 불안한 애'],
  ['d',0,'표정으로 욕하는 애'],['d',1,'길 모르는데 앞장서는 애'],['d',2,'듣다가 팩트 꽂는 애'],['d',3,'자기가 말하고 웃는 애'],['d',4,'일단 사진부터 찍는 애'],['d',5,'친해지면 시끄러운 애'],['d',6,'괜찮다 하고 삐진 애'],['d',7,'싸우면 중간에 낀 애'],['d',8,'대충 살아도 잘되는 애']
 );
 function socialContext(list){
@@ -4208,7 +4208,7 @@ function socialContext(list){
  });
 }
 function socialDogCast(list){return socialContext(list).map(x=>x.cast);}
-function socialCastHTML(cast){return '<div class="social-cast">'+cast.map(c=>'<figure class="social-dog"><figcaption class="social-dog-label">'+topicEsc(c.label)+'</figcaption><div class="social-dog-window social-dog-row-'+Math.floor(c.index/3)+'" role="img" aria-label="'+topicEsc(c.label)+' 강아지 캐릭터"><span class="social-dog-sprite" style="background-image:url(img/social-dogs-'+c.sheet+'-v2.png);background-position:'+(c.index%3*50)+'% '+(Math.floor(c.index/3)*50)+'%"></span></div><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>').join('')+'</div>';}
+function socialCastHTML(cast){return '<div class="social-cast">'+cast.map(c=>'<figure class="social-dog"><figcaption class="social-dog-label">'+topicEsc(c.label)+'</figcaption><div class="social-dog-window social-dog-row-'+Math.floor(c.index/3)+'" role="img" aria-label="'+topicEsc(c.label)+' 강아지 캐릭터"><span class="social-dog-sprite" style="background-image:url(img/social-dogs-'+c.sheet+(['a','c'].includes(c.sheet)?'-v3.png)':'-v2.png)')+';background-position:'+(c.index%3*50)+'% '+(Math.floor(c.index/3)*50)+'%"></span></div><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>').join('')+'</div>';}
 function socialResultHTML(list){
  const context=socialContext(list);
  return '<div class="social-result">'+socialCastHTML(context.map(x=>x.cast))+reportInfoTable('각자 역할',['이름','역할','강점'],context.map(x=>[x.cast.name,x.role,x.strength]),'social-role-table',['25%','30%','45%'])+'</div>';
