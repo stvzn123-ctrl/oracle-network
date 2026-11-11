@@ -1677,9 +1677,10 @@ document.addEventListener('click',e=>{const ld=e.target.closest('.cmp-load'),dl=
  if(dl){const p=l[+dl.dataset.pd];if(p&&confirm(p.name+'님의 정보를 삭제할까요?'))partnerDelete(+dl.dataset.pd);return}
  const p=l[+ld.dataset.pi],f=ld.closest('.cmp-form')?.querySelector('form');if(!p||!f)return;const el=f.elements;el.partnerName.value=/^이름 없음/.test(p.name)?'':p.name;el.partnerRoman.value=p.roman;el.partnerRoman.dataset.edited='1';
  [...el.partnerSex].forEach(r=>r.checked=r.value===p.sex);el.partnerDate.value=String(p.date).replace(/\D/g,'');el.partnerTime.value=p.time||'';el.partnerNoTime.checked=!!p.notime;el.partnerTime.disabled=!!p.notime;
- el.partnerNoPlace.checked=p.pi==null;el.partnerPlace.disabled=p.pi==null;if(p.pi!=null)el.partnerPlace.value=String(p.pi);f.requestSubmit()});
+ el.partnerNoPlace.checked=p.pi==null;el.partnerPlace.disabled=p.pi==null;if(p.pi!=null)el.partnerPlace.value=String(p.pi);
+ if(f.dataset.mode==='match'&&CMPKIND==='friend'){COMPAT=null;const out=document.getElementById('friendRoleOut');if(out){delete out.dataset.reveal;out.innerHTML=socialPlaceholderHTML(2);}const panel=f.closest('.cmp-form');panel.querySelectorAll('.cmp-load').forEach(b=>b.setAttribute('aria-pressed',String(b===ld)));const status=panel.querySelector('.friend-selection-status');if(status)status.textContent=p.name+'님을 선택했어요. 결과보기를 눌러 주세요.';return;}f.requestSubmit()});
 function compatFormHTML(mode='match'){const RU=mode==='reunion',GP=mode==='group',opts=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
- return `<section class="chart-form cmp-form ${GP?'cmp-form-group':''}"><div class="cmp-head"><h4>${GP?"모임에 사람 추가하기":RU?"상대방 정보로 재회 흐름 보기":CMPKIND==='friend'?"친구 선택하기":"상대방 정보로 궁합 보기"}</h4>${RU?"":'<button type="button" class="cmp-askshare" data-pmake>공유해서 입력 요청하기</button>'}</div>${RU?"":'<div class="cmp-pair"></div>'}<div class="cmp-saved">${partnerSavedHTML(GP)}</div><form id="${GP?"group-form":RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate>${GP||(!RU&&CMPKIND==='friend')?'<details class="group-manual"><summary>직접 입력해서 추가</summary>':''}<div class="chart-fields">
+ return `<section class="chart-form cmp-form ${GP?'cmp-form-group':''}"><div class="cmp-head"><h4>${GP?"모임에 사람 추가하기":RU?"상대방 정보로 재회 흐름 보기":CMPKIND==='friend'?"친구 선택하기":"상대방 정보로 궁합 보기"}</h4>${RU?"":'<button type="button" class="cmp-askshare" data-pmake>공유해서 입력 요청하기</button>'}</div>${RU?"":'<div class="cmp-pair"></div>'}<div class="cmp-saved">${partnerSavedHTML(GP)}</div>${!GP&&!RU?'<p class="friend-selection-status" role="status"></p><button type="button" data-friend-result>결과보기</button>':''}<form id="${GP?"group-form":RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate>${GP||(!RU&&CMPKIND==='friend')?'<details class="group-manual"><summary>직접 입력해서 추가</summary>':''}<div class="chart-fields">
  <label>상대 이름 <small>(선택)</small><input name="partnerName" maxlength="40" autocomplete="off" placeholder="홍길동 · 비워 두면 이름 없이 봐요"></label>
  <label>상대 영문 이름 <small>(선택)</small><input name="partnerRoman" maxlength="80" autocomplete="off" placeholder="자동 입력"></label>
  <p class="cmp-priv">이름을 넣지 않으면 이름으로 계산하는 수비학 영혼 수는 빼고, 생년월일로 보는 점술만으로 계산해요.</p>
@@ -4172,11 +4173,12 @@ function groupListHTML(){
  return '<ul class="cmp-group-list">'+all.map((c,i)=>'<li><b>'+topicEsc(groupName(c,i))+'</b><small>'+topicEsc(c.inp.date)+(i===0?' · 나':'')+'</small>'+(i?'<button type="button" class="cmp-del" data-gdel="'+(i-1)+'" aria-label="'+topicEsc(groupName(c,i))+' 빼기">빼기</button>':'')+'</li>').join('')+'</ul>'+
   '<p class="cmp-priv">'+(all.length<3?'모임 궁합은 3명부터 볼 수 있어요. '+(3-all.length)+'명 더 넣어 주세요.':'지금 '+all.length+'명이에요. 8명까지 넣을 수 있어요.')+'</p>'+
   '<button type="button" class="cmp-open" data-gcalc'+(all.length<3?' disabled':'')+'>모임 역할 보기 →</button>'}
-function groupRefresh(){const b=document.getElementById('cmpGroupList');if(b)b.innerHTML=groupListHTML();const out=document.getElementById('cmpGroupOut');if(out)out.innerHTML=socialPlaceholderHTML(3);partnerRefresh();}
+function groupRefresh(){const b=document.getElementById('cmpGroupList');if(b)b.innerHTML=groupListHTML();const out=document.getElementById('cmpGroupOut');if(out){delete out.dataset.reveal;out.innerHTML=socialPlaceholderHTML(3);}partnerRefresh();}
 
-function groupRender(){
+function groupRender(reveal=true){
  const all=[CH,...GROUP],out=document.getElementById('cmpGroupOut');if(!out)return;
  if(!CH||all.length<3||all.length>8){GROUPRES=null;out.textContent='모임은 나를 포함해 3~8명을 입력해 주세요.';return}
+ if(reveal){const token=String(Date.now());out.dataset.reveal=token;out.innerHTML=socialRevealHTML();out.scrollIntoView({behavior:soft(),block:'nearest'});setTimeout(()=>{if(out.isConnected&&out.dataset.reveal===token&&[CH,...GROUP].every((c,i)=>c===all[i])&&GROUP.length+1===all.length)groupRender(false);},900);return;}
  const r=GROUPRES=groupResult(all);
  out.innerHTML=socialResultHTML(all);collapseGroupMembers();
  out.scrollIntoView({behavior:soft(),block:'nearest'})}
@@ -4225,6 +4227,7 @@ function socialContext(list){
 }
 function socialDogCast(list){return socialContext(list).map(x=>x.cast);}
 function socialCastHTML(cast){return '<div class="social-cast">'+cast.map(c=>'<figure class="social-dog"><figcaption class="social-dog-label">'+topicEsc(c.label)+'</figcaption><div class="social-dog-window social-dog-row-'+Math.floor(c.index/3)+'" role="img" aria-label="'+topicEsc(c.label)+' 강아지 캐릭터"><span class="social-dog-sprite" style="background-image:url(img/social-dogs-'+c.sheet+'-v4.png)'+';background-position:'+(c.index%3*50)+'% '+(Math.floor(c.index/3)*50)+'%"></span></div><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>').join('')+'</div>';}
+function socialRevealHTML(){return '<div class="social-reveal" role="status"><img src="img/pose-white-note.png" width="144" height="144" alt="물음표와 메모하는 강아지"><p>우리 조합을 확인하고 있어요…</p></div>';}
 function socialPlaceholderHTML(count){return '<div class="social-placeholder"><h4>'+ (count===2?'우리 둘의 관계는 어떤 캐릭터일까요?':'우리 모임에서 나는 어떤 캐릭터일까요?')+'</h4><div class="mystery-line" style="--count:'+count+'">'+Array.from({length:count},(_,i)=>'<div class="mystery-character"><b aria-hidden="true">?</b><span class="mystery-dog" style="--mystery-image:url(img/pose-white-'+(i%2?'rest':'happy')+'.webp)" role="img" aria-label="아직 공개되지 않은 강아지 캐릭터"></span></div>').join('')+'</div></div>';}
 function collapseFriendInputs(out){
  const panel=out.closest('.cmp-form')||document.querySelector('#cmpOne .cmp-form');if(!panel)return;
@@ -4324,7 +4327,7 @@ async function cmpPairCheck(code,msgEl){
  return true}
 
 function cmpShowOne(label,scroll=true){
- if(COMPAT?.kind==='friend'&&scroll){const pair=COMPAT,out=document.getElementById('friendRoleOut');if(out){const token=String(Date.now())+Math.random();out.dataset.reveal=token;out.innerHTML=socialPlaceholderHTML(2);out.scrollIntoView({behavior:soft(),block:'nearest'});setTimeout(()=>{if(COMPAT===pair&&out.isConnected&&out.dataset.reveal===token)cmpShowOne(label,false);},900);return;}}
+ if(COMPAT?.kind==='friend'&&scroll){const pair=COMPAT,out=document.getElementById('friendRoleOut');if(out){const token=String(Date.now())+Math.random();out.dataset.reveal=token;out.innerHTML=socialRevealHTML();out.scrollIntoView({behavior:soft(),block:'nearest'});setTimeout(()=>{if(COMPAT===pair&&out.isConnected&&out.dataset.reveal===token)cmpShowOne(label,false);},900);return;}}
 
  if(COMPAT?.kind==='friend'){const out=document.getElementById('friendRoleOut')||document.querySelector('#cmpOne .cmp-result');if(out){out.innerHTML=socialResultHTML([CH,COMPAT.b]);collapseFriendInputs(out);if(scroll)out.scrollIntoView({behavior:soft(),block:'nearest'});}return;}
  const res=COMPAT.res,out=document.querySelector('#cmpOne .cmp-result');if(!out)return;
@@ -4406,3 +4409,5 @@ TOPIC_REPORT_CONTENTS.group=['모임의 조합','구성원별 역할 제안','�
 function natalReadingHTML(ch){return natalReadingOriginalHTML(ch)+'<p>'+topicEsc(constructiveCaution(ch))+'</p>'}
 
 document.addEventListener('input',e=>{if(e.target.closest('.friend-controls form')&&e.target.name!=='partnerSave'){const out=document.getElementById('friendRoleOut');if(out)out.innerHTML=socialPlaceholderHTML(2);COMPAT=null;}});
+
+document.addEventListener('click',e=>{const b=e.target.closest('[data-friend-result]');if(b)b.closest('.cmp-form')?.querySelector('form')?.requestSubmit();});
