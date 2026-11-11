@@ -70,7 +70,7 @@
  function renderReportCTA(){
   const list=document.getElementById('rcPreview');if(!list||typeof CH==='undefined'||!CH)return;
   let data;try{data=buildRichReport(CH,'comprehensive')}catch(_){return}
-  const items=(data.sections||[]).filter(s=>!['limit','fun','relationship-context'].includes(s.kind)).slice(0,6).map(s=>{
+  const items=(data.sections||[]).filter(s=>!['limit','fun','relationship-context'].includes(s.kind)).map(s=>{
    const text=[s.lead,...(s.paragraphs||[])].filter(Boolean).map(x=>readingParts(x).main).filter(Boolean).join(' ').split(/(?<=[.!?])\s+/)[0]||'';
    const short=text.length>72?text.slice(0,70).replace(/[,\s]+$/,'')+'…':text;
    return '<li><b>'+E(s.question)+'</b><span>'+E(short)+'</span></li>'});

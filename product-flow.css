@@ -88,3 +88,17 @@
  #result #reportCta.report-cta,#result .topic-offer{padding:20px!important;border-radius:16px!important}
  #result #reportCta h3,#result .topic-offer h4{font-size:19px!important}
 }
+
+/* Report v4: shared screen/PDF content and readable time labels. */
+#report .rv3-table tbody th{word-break:keep-all;overflow-wrap:normal}
+#report .rv3-table.fixed tbody th{white-space:nowrap;font-size:13px}
+#report .rv3-ch{scroll-margin-top:70px}
+#report .report-caution{margin:20px 0;padding:16px;border-left:3px solid var(--report-border);background:var(--report-tint);color:var(--report-secondary);border-radius:8px}
+#report .report-caution p{margin:6px 0 0}
+#report .rv3-lead{font-weight:600;line-height:1.8}
+#report .rv3-ch p{overflow-wrap:anywhere;line-height:1.85}
+#guestProfile button,#profileDeleteVisible{min-height:46px;padding:12px 16px;font:inherit;border:1px solid var(--report-border);border-radius:10px;background:var(--report-surface);color:var(--report-text);cursor:pointer}
+#guestProfileNote{font-size:14px;line-height:1.8}
+@media(max-width:480px){#report .rv3-table{font-size:13px}#report .rv3-table th,#report .rv3-table td{padding:10px 7px}#report .rv3-toc a{min-height:44px}}
+
+body.nav-edit #guestProfile{display:none!important}

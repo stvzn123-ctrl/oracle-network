@@ -207,7 +207,7 @@ function buildChart(inp){
 const SL=1.2;
 /* 점술·운별 기본값 보정: 무작위 출생 300명×81년 평균이 기준점 근처가 되도록 맞춘 값 */
 const OCAL=[[-6.4,-5.7,-21.2,1.2],[-4.5,-1.7,-6.6,4.9],[-10.6,-6.2,-15.1,5.3],[-7.2,-14.2,-15.7,-12.1],[-7.2,-10.6,-15.4,-11.9],[-13.4,-17,-18.7,-14.1]];
-function horizonDate(off){const y=new Date().getFullYear()+off;return {y,frac:y+.5}}
+function horizonDate(off){const y=Number(new Intl.DateTimeFormat('en',{timeZone:'Asia/Seoul',year:'numeric'}).format(new Date()))+off;return {y,frac:y+.5}}
 function lifeDate(ch,age){const frac=ch.birthYear+age+.5;return {y:Math.floor(frac),frac}}
 function fin(raw,F,oi,ci){return [stretch(raw+OCAL[oi][ci]),F.filter(f=>Math.abs(f[1])>=.5).map(f=>[f[0],Math.round(f[1]*SL)])]}
 const sumF=F=>F.reduce((a,f)=>a+f[1],0);
@@ -2281,7 +2281,7 @@ function annualScoreChart(t){
  const best=Math.max(...values),name=head[col]==='점수'?(t.cap||'').split(' 연도별')[0]:head[col],W=520,H=310,L=42,R=22,T=28,B=48;
  const x=i=>L+i*(W-L-R)/(values.length-1),y=v=>T+(100-v)/40*(H-T-B);
  const ticks=[60,70,80,90,100].map(v=>'<line class="year-grid" x1="'+L+'" x2="'+(W-R)+'" y1="'+y(v)+'" y2="'+y(v)+'"/><text class="year-axis" x="'+(L-9)+'" y="'+(y(v)+5)+'" text-anchor="end">'+v+'</text>').join('');
- const points=values.map((v,i)=>'<g class="year-point'+(v===best?' best':'')+'"><title>'+E(t.rows[i][0])+' · '+E(name)+' '+v+'점</title><circle cx="'+x(i)+'" cy="'+y(v)+'" r="'+(v===best?4.5:3.5)+'"/><text class="year-value" x="'+x(i)+'" y="'+(y(v)-12)+'" text-anchor="middle">'+v+'</text><text class="year-axis" x="'+x(i)+'" y="'+(H-22)+'" text-anchor="middle">'+E(String(t.rows[i][0]).match(/^\d{4}/)[0])+'</text></g>').join('');
+ const points=values.map((v,i)=>'<g class="year-point'+(v===best?' best':'')+'"><title>'+E(t.rows[i][0])+' · '+E(name)+' '+v+'점</title><circle cx="'+x(i)+'" cy="'+y(v)+'" r="'+(v===best?4.5:3.5)+'"/><text class="year-value" x="'+x(i)+'" y="'+(y(v)-12)+'" text-anchor="middle">'+v+'</text><text class="year-axis" x="'+x(i)+'" y="'+(H-22)+'" text-anchor="middle">'+E(String(t.rows[i][0]).match(/^\d{4}/)[0].slice(2)+'년')+'</text></g>').join('');
  const label=name+' 연도별 점수: '+t.rows.map((r,i)=>String(r[0]).match(/^\d{4}/)[0]+'년 '+values[i]+'점').join(', ');
  return '<figure class="annual-score-chart annual-line-chart"><figcaption>'+E(name)+' · 연도별 흐름</figcaption><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+E(label)+'"><title>'+E(name)+' · 연도별 흐름</title>'+ticks+'<line class="year-border" x1="'+L+'" x2="'+L+'" y1="'+T+'" y2="'+y(60)+'"/><polyline class="year-line" points="'+values.map((v,i)=>x(i)+','+y(v)).join(' ')+'"/>'+points+'</svg></figure>';
  }).filter(Boolean).join('');return charts?'<div class="annual-score-grid">'+charts+'</div>':'';
@@ -2352,6 +2352,9 @@ function pairBirthAppendixHTML(charts){
  return table+atlases;
 
 }
+function compactReportHTML(html){
+ return String(html).split(/(<[^>]*>)/g).map((part,i)=>i%2?part:part.replace(/\b(20\d{2})년/g,(_,y)=>y.slice(2)+'년')).join('');
+}
 function approvedReportHTML(data,key,sourceChart=null){
  if(["employment","move"].includes(key)){key="work";data={...data,title:String(data.title||"").replace(/취업|이직/g,"직업")}}
 
@@ -2374,15 +2377,15 @@ function approvedReportHTML(data,key,sourceChart=null){
   const barsHTML=b=>b&&Array.isArray(b.items)?'<figure class="rv3-bars"><figcaption>'+E(b.cap||'')+'</figcaption>'+b.items.map(x=>'<div><span>'+E(x.label)+'</span><i><b style="width:'+Math.round(100*Number(x.value)/Math.max(1,Number(x.max)||1))+'%"></b></i><em>'+Number(x.value)+'</em></div>').join('')+'</figure>':'';
  const lineHTML=l=>{if(!l||!Array.isArray(l.values))return '';const W=340,H=170,L=28,Rr=10,T=18,B=24,v=l.values,mn=Math.min(...v)-3,mx=Math.max(...v)+3,x=i=>L+(W-L-Rr)*i/(v.length-1),y=n=>T+(mx-n)/Math.max(6,mx-mn)*(H-T-B);let g='';[mn,(mn+mx)/2,mx].forEach(n=>{g+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+y(n)+'" y2="'+y(n)+'" stroke="rgba(168,123,54,.25)"/>'});g+='<path d="'+v.map((n,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(n).toFixed(1)).join(' ')+'" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linejoin="round"/>';v.forEach((n,i)=>{const h=(l.hi||[]).includes(i),o=(l.lo||[]).includes(i);g+='<circle cx="'+x(i)+'" cy="'+y(n)+'" r="'+(h||o?5:3)+'" fill="'+(h?'#b04a6c':o?'#6f7584':'var(--gold)')+'"/>'+(h||o?'<text x="'+x(i)+'" y="'+(y(n)-9)+'" text-anchor="middle" font-size="10" fill="'+(h?'#b04a6c':'#6f7584')+'">'+(h?'가까움':'느슨')+'</text>':'')+'<text x="'+x(i)+'" y="'+(H-6)+'" text-anchor="middle" font-size="10" fill="#8a8174">'+E(l.labels[i])+'</text>'});return '<figure class="rv3-line"><figcaption>'+E(l.cap||'')+'</figcaption><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+E(l.cap||'')+'">'+g+'</svg></figure>'};
  const faceHTML=()=>{if(!ch||!['love','marry','comprehensive'].includes(key))return null;try{const f=spouseFaceProfile(ch);return '<figure class="rv3-face"><img loading="lazy" decoding="async" src="'+f.full+'" width="240" height="300" alt="차트의 상징으로 그린 참고용 인물 일러스트" loading="lazy" decoding="async"><figcaption>차트의 상징으로 그린 참고 일러스트예요</figcaption></figure>'}catch(e){return null}};
- const interpretationHTML=(p,cls='')=>'<p'+(cls?' class="'+cls+'"':'')+'><span class="reading-meaning">'+destinyMeaningHTML(readingParts(p).main)+'</span></p>';
- const paraHTML=s=>{const paras=(s.paragraphs||[s.answer]).filter(Boolean),meaning=paras.filter(p=>readingParts(p).main),evidence=paras.filter(p=>!readingParts(p).main);/* 2026-11-10 G8: 문단이 5개 이상이면 앞 3개만 펼치고 나머지는 접는다(인쇄 때는 printReport가 모두 펼친다). */return meaning.map(p=>interpretationHTML(p)).join('')};
+ const interpretationHTML=(p,cls='',literal=false)=>'<p'+(cls?' class="'+cls+'"':'')+'><span class="reading-meaning">'+destinyMeaningHTML(literal?String(p):readingParts(p).main)+'</span></p>';
+ const paraHTML=s=>{const paras=(s.paragraphs||[s.answer]).filter(Boolean),literal=['calendar','daewoon'].includes(s.kind),meaning=paras.filter(p=>literal||readingParts(p).main),evidence=paras.filter(p=>!readingParts(p).main);/* 2026-11-10 G8: 문단이 5개 이상이면 앞 3개만 펼치고 나머지는 접는다(인쇄 때는 printReport가 모두 펼친다). */return meaning.map(p=>interpretationHTML(p,'',literal)).join('')};
  /* 마스코트는 리포트 한 권 안에서 같은 포즈를 두 번 쓰지 않는다. 표지 포즈를 먼저 쓴 것으로 치고, 인물 일러스트가 있는 장에는 넣지 않는다. */
  const usedPoses=new Set([reportPose]),POSE_POOL=['lucky','happy','note','money','heart','rest','care','detective'];
  const chapterPose=(s,i)=>{if(i%3!==0||s.kind==='partner'||(s.kind==='partner-detail'))return '';const want=/건강|휴식/.test(s.question)?'rest':/주의|조심/.test(s.question)?'care':/돈|재물|투자|사업/.test(s.question)?'money':/사랑|인연|결혼|연애/.test(s.question)?'heart':/공부|학업|시험|계산|방법/.test(s.question)?'note':'lucky';const pick=[want,...POSE_POOL].find(p=>!usedPoses.has(p));if(!pick)return '';usedPoses.add(pick);return mascotPoseHTML(pick,'report-chapter-pose')};
  const chapter=(s,i)=>{
   const face=s.kind==='partner'?faceHTML():null;
-  const body=(["love","marry"].includes(key)&&s.kind==='meet'&&ch?encounterHTML(ch):paraHTML(s))+lineHTML(s.line)+tableHTML(s.table)+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
-  return '<section class="r-page rv3-ch" id="chapter-'+i+'"><header class="rv3-hd"><span class="rv3-no">'+(v3?'CHAPTER '+n2(i):(i+1)+'장')+'</span><h2>'+E(s.question)+'</h2></header>'+((s.basis||[]).filter(b=>b&&!/^\d{4}년 .*\d+점$/.test(b)).length?'<p class="rv3-basis" aria-label="이 장의 계산 근거">'+s.basis.filter(b=>b&&!/^\d{4}년 .*\d+점$/.test(b)).slice(0,4).map(b=>'<span>'+E(b)+'</span>').join('')+'</p>':'')+chapterPose(s,i)+
+  const body=(s.caution?'<aside class="report-caution"><b>살펴볼 점</b><p>'+E(s.caution)+'</p></aside>':'')+(["love","marry"].includes(key)&&s.kind==='meet'&&ch?encounterHTML(ch):paraHTML(s))+lineHTML(s.line)+tableHTML(s.table)+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
+  return '<section class="r-page rv3-ch" id="chapter-'+i+'"><header class="rv3-hd"><span class="rv3-no">'+(v3?'CHAPTER '+n2(i):(i+1)+'장')+'</span><h2>'+E(s.question)+'</h2></header>'+chapterPose(s,i)+
    (s.lead&&readingParts(s.lead).main&&!(ch&&['love','marry'].includes(key)&&['meet','partner'].includes(s.kind))?interpretationHTML(s.lead,'rv3-lead'):'')+
 
    (face?'<div class="rv3-profile">'+face+'<div class="rv3-profile-tx">'+(ch?partnerProfileHTML(ch,key):'')+'</div></div>'+'<div class="partner-reading">'+body+'</div>'+(ch?partnerProfileHTML(ch,key,'rest'):''):body)+
@@ -2390,14 +2393,12 @@ function approvedReportHTML(data,key,sourceChart=null){
  const facts=Array.isArray(data.facts)&&data.facts.length?'<div class="rv3-tw"><table class="rv3-table rv3-facts"><caption>계산된 출생 지표</caption><thead><tr><th scope="col">지표</th><th scope="col">값</th><th scope="col">전통적 의미</th></tr></thead><tbody>'+data.facts.map(f=>'<tr><th scope="row">'+E(f[0])+'</th><td>'+E(f[1])+'</td><td>'+E(f[2])+'</td></tr>').join('')+'</tbody></table></div>':'';
  const toc='<nav class="rv3-toc" aria-label="리포트 목차"><ol>'+secs.map((s,i)=>'<li><a href="#chapter-'+i+'"><b>'+(v3?n2(i):i+1)+'</b>'+E(s.question)+'</a></li>').join('')+'</ol></nav>';
  const ymd=new Date().toLocaleDateString('ko-KR');
- const hasTiming=secs.some(s=>s.kind==='timing'||s.kind==='flow');
+ const hasTiming=secs.some(s=>s.kind==='timing'||s.kind==='flow'||s.kind==='yearly');
  const flowOld=!hasTiming&&Array.isArray(data.years)&&data.years.length?'<section class="r-page rv3-ch"><header class="rv3-hd"><h2>앞으로 10년의 '+E(data.category)+' 흐름</h2></header><div class="r-yearflow">'+data.years.map(r=>'<div><b>'+E(r.year)+'년</b><meter min="60" max="100" value="'+Number(r.score)+'">'+Number(r.score)+'</meter><span>'+Number(r.score)+'점</span></div>').join('')+'</div><p class="r-note">점수는 확률이 아닌 자체 흐름 지표입니다.</p></section>':'';
- return '<header class="r-cover rv3-cover">'+mascotPoseHTML(reportPose,'report-cover-pose')+'<span class="eyebrow">운명 탐정 / 개인 리포트</span><span class="rv3-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 17.6 20.5 2.6 9.3h18.8L6.4 20.5z"/></svg></span><h2>'+E(data.title).replace(/(\S+·\S+)/g,'<span class="nowrap">$1</span>')+'</h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><span class="rv3-date">발행 '+ymd+'</span></header>'+
-  '<section class="r-page rv3-ch rv3-intro"><aside class="report-reading-key"><b>리포트 읽는 법</b><p>해석을 먼저 읽고, 자세한 계산 방식과 전문 지표는 왼쪽 위 Appendix에서 확인하세요.</p></aside><header class="rv3-hd"><span class="rv3-no">SUMMARY</span><h2>핵심 요약</h2></header><ol class="rv3-sum">'+(data.summary||[]).filter(x=>readingParts(x).main).map(x=>'<li>'+destinyMeaningHTML(readingParts(x).main)+'</li>').join('')+'</ol></section><section class="r-page rv3-ch rv3-contents"><header class="rv3-hd"><span class="rv3-no">CONTENTS</span><h2>목차</h2></header>'+toc+'</section>'+
-  secs.map(chapter).join('')+flowOld+(String(data.version||'').startsWith('match-')?'':(comp?comprehensiveOverviewHTML(data,ch):''))+
- '<template id="reportAppendixTemplate"><section class="r-page rv3-ch rv3-appendix" id="report-appendix"><header class="rv3-hd"><span class="rv3-no">APPENDIX</span><h2>'+ E((Array.isArray(data.birthCharts)?data.birthCharts.map(c=>c.inp?.name||'상대').join('·'):(ch?.inp.name||String(data.title||'나').split('님의')[0]))+'님의 출생정보와 전문 지표') +'</h2></header>'+(Array.isArray(data.birthCharts)?pairBirthAppendixHTML(data.birthCharts):'')+facts+(data.appendix?barsHTML(data.appendix.bars)+(data.appendix.tables||[]).map(dataTableHTML).join(''):'')+(!Array.isArray(data.birthCharts)&&ch?'<p class="birth-note">입력한 출생 정보로 계산한 별자리 천문도와 전통 달력이에요. 천체의 도수·하우스, 수비학 계산 과정, 마야 촐킨 출생 칸을 아래에서 확인할 수 있어요.</p>'+(ch?.inp.notime?'<p class="birth-note">출생 시각 미상: 현지 정오의 참고 위치예요. 상승궁·출생 하우스는 확정하지 않으며 달의 위치도 실제 시각에 따라 달라질 수 있어요.</p>':'')+chartHTML('west')+chartHTML('vedic')+chartHTML('numbers')+chartHTML('maya'):'')+'<div class="reading-sources">'+(data.summary||[]).filter(x=>readingParts(x).basis).map(x=>readingParagraph(readingParts(x).basis)).join('')+'</div>'+
- secs.map(s=>{const evidence=[...(s.paragraphs||[s.answer]),s.lead].filter(p=>p&&readingParts(p).basis);return evidence.length?'<section class="reading-sources"><h3>'+E(s.question)+' · 해석 근거</h3>'+evidence.map(p=>readingParagraph(readingParts(p).basis)).join('')+'</section>':''}).join('')+
- secs.filter(s=>(s.basis||[]).some(Boolean)).map(s=>'<div class="rv3-tw"><table class="rv3-table"><caption>'+E(s.question)+' · 근거 지표</caption><thead><tr><th scope="col">구분</th><th scope="col">계산값 및 지표</th></tr></thead><tbody>'+s.basis.filter(Boolean).map(b=>'<tr><th scope="row">'+E(s.question)+'</th><td>'+E(b)+'</td></tr>').join('')+'</tbody></table></div>').join('')+reportScoreGuideHTML(data,key,ch)+'</section></template>'+(data.note?'<p class="r-foot">'+E(data.note)+'</p>':'');
+ return compactReportHTML('<header class="r-cover rv3-cover">'+mascotPoseHTML(reportPose,'report-cover-pose')+'<span class="eyebrow">운명 탐정 / 개인 리포트</span><span class="rv3-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 17.6 20.5 2.6 9.3h18.8L6.4 20.5z"/></svg></span><h2>'+E(data.title).replace(/(\S+·\S+)/g,'<span class="nowrap">$1</span>')+'</h2><p>사주 · 서양 점성술 · 인도 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><span class="rv3-date">발행 '+ymd+'</span></header>'+
+  '<section class="r-page rv3-ch rv3-intro"><aside class="report-reading-key"><b>리포트 읽는 법</b><p>핵심 결론부터 읽고, 목차에서 궁금한 장으로 이동하세요. 점수와 기간의 뜻은 왼쪽 위 읽는 법에서 확인할 수 있어요.</p></aside><header class="rv3-hd"><span class="rv3-no">SUMMARY</span><h2>핵심 요약</h2></header><ol class="rv3-sum">'+(data.summary||[]).filter(x=>readingParts(x).main).map(x=>'<li>'+destinyMeaningHTML(readingParts(x).main)+'</li>').join('')+'</ol></section><section class="r-page rv3-ch rv3-contents"><header class="rv3-hd"><span class="rv3-no">CONTENTS</span><h2>목차</h2></header>'+toc+'</section>'+
+  secs.map(chapter).join('')+flowOld+
+ '<template id="reportAppendixTemplate"><section class="r-page"><h2>리포트 읽는 법</h2><p>사주·서양 점성술·인도 점성술·수비학·마야력의 전통적 상징을 참고한 풀이예요. 점수는 확률이 아닌 서비스 자체 흐름 지표예요.</p><p>대운은 만 나이 근사값, 연별 표의 나이는 해당 연도에서 출생 연도를 뺀 뒤 1을 더한 나이예요. 월별 흐름은 양력 월 전체를 비교하며 기준 시점은 한국 시간이에요.</p><p>출생 시각·장소가 미상이면 일부 항목은 참고 계산이 포함돼요. 미래의 사건이나 건강 상태, 수익을 보장하지 않아요.</p></section></template>' +(data.note?'<p class="r-foot">'+E(data.note)+'</p>':''));
 }
 
 function paintAccessAccount(){const el=$('accountIdLabel');if(el){el.textContent='';el.hidden=true}const a=$('adminPageLink');if(a)a.hidden=accountUser?!accountUser.isAdmin:!(accountToken&&lsGet('oracle-admin')==='1');}
@@ -3011,7 +3012,7 @@ function buildRichReport(ch,key){
     계산식(buildChart·enrich·oracles·compute)은 읽기만 하고 바꾸지 않는다. index.html과 server/worker.js에 같은 코드가 들어간다. */
  const NAMES={comprehensive:'종합',money:'재물·돈',work:'직업',study:'학업·성취',love:'연인',marry:'연인',reunion:'재회',match:'궁합',employment:'취업',move:'이직',invest:'투자',property:'부동산',business:'사업',exam:'대입·수능',cert:'자격증'};
  if(!NAMES[key])key='comprehensive';
- const now=new Date(),y0=now.getFullYear(),fy=y0+(now.getMonth()+.5)/12;
+ const kp=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(new Date()),kv=t=>Number(kp.find(p=>p.type===t).value),now=new Date(kv('year'),kv('month')-1,kv('day'),12),y0=now.getFullYear(),fy=y0+(now.getMonth()+.5)/12;
  const STK='갑을병정무기경신임계',BRK='자축인묘진사오미신유술해',ANI='쥐 소 호랑이 토끼 용 뱀 말 양 원숭이 닭 개 돼지'.split(' ');
  const ELN=['목(木)','화(火)','토(土)','금(金)','수(水)'],ELS1=['목','화','토','금','수'];
  const GN=['비겁','식상','재성','관성','인성'],GNL=['비겁(나와 같은 기운)','식상(표현·생산)','재성(재물·결과)','관성(책임·직위)','인성(배움·보호)'];
@@ -3340,33 +3341,30 @@ function buildRichReport(ch,key){
   const mY=Math.round(YS.reduce((a,r)=>a+r.s,0)/YS.length),hiY=YS.reduce((a,b)=>b.s>a.s?b:a),loY=YS.reduce((a,b)=>b.s<a.s?b:a);
   const yPara=r=>{const w=why(r.y,r.k),up=w.up.map(x=>x[0]+'의 '+x[1]).join(', '),tone=r.s>=mY+3?'평소보다 밝은 해':r.s<=mY-3?'속도를 늦추고 다지기 좋은 해':'평소 흐름을 이어 가는 해';
    return r.y+'년('+kage(r.y)+'살) · '+r.s+'점 — '+(ch.inp.name||'당신')+'님에게 '+tone+'예요.'+(comp?' 이 해에 가장 밝은 분야는 '+CN[r.k]+'이에요.':'')+
-    (r===hiY?' 10년 중 가장 밝은 해라서, 미뤄 둔 큰 결정을 꺼내 보기 좋아요.':r===loY?' 새로 벌이기보다 지금 가진 것을 다지는 데 힘을 쓰면 다음 해가 가벼워져요.':'')+
+    (r===hiY?' 비교한 10년 중 가장 높은 자체 지표예요. 계획은 실제 여건을 함께 살펴 결정하세요.':r===loY?' 새로 벌이기보다 지금 가진 것을 다지는 데 힘을 쓰면 다음 해가 가벼워져요.':'')+
     ' [사주] 그해의 세운은 '+ST[ys(r.y)]+BR[yb(r.y)]+'이고 천간은 나에게 '+(w=>w+(((w.charCodeAt(w.length-1)-0xac00)%28)?'이에요':'예요'))(tenGod(d,ys(r.y)))+'.'+(up?' 이 해에는 '+J(up,'이','가')+' 점수를 올렸어요.':'')};
-  put('yearly','해마다 한 문단으로 읽는 10년',hiY.y+'년이 가장 밝고, '+loY.y+'년은 다지기 좋은 해예요.',[(comp?'네 분야 평균':CN[ci])+' 10년 평균 '+mY+'점','세운(해마다의 간지)'],
+  put('yearly','앞으로 10년, 연도별 운명',hiY.y+'년이 가장 밝고, '+loY.y+'년은 다지기 좋은 해예요.',[(comp?'네 분야 평균':CN[ci])+' 10년 평균 '+mY+'점','세운(해마다의 간지)'],
    YS.map(yPara),(hiY.y-1)+'년 12월 달력에 "'+hiY.y+'년 준비 점검"을 적어 두세요. 그해에 꺼낼 계획을 미리 한 줄로 정해 두면 좋아요.',
    comp?{table:{cap:'해마다 분야별 점수(60~100, 자체 지표)',head:['연도','금전','애정','직업·학업','건강'],rows:years.map((r,i)=>[r.year+'년 ('+kage(r.year)+'살)',...Y4.map(a=>a[i].score+'점')])}}:{});
-  const t0=new Date();t0.setHours(12,0,0,0);const days=[];
-  for(let i=1;i<=365;i++){const dt=new Date(t0);dt.setDate(t0.getDate()+i);const f=dayFortune(ch,dt);days.push({f,v:comp?f.all:f.sc[ci]})}
-  const dTx=x=>x.f.m+'월 '+x.f.d+'일('+x.f.wd+')',good=days.slice(0,90).map((x,i)=>({...x,i})).sort((a,b)=>b.v-a.v||a.i-b.i).slice(0,5).sort((a,b)=>a.i-b.i);
-  /* 2026-11-11: 달마다 할 일이 겹치지 않게 분야 × 밝음/잔잔함마다 6개씩 두고 차례로 고른다(시작 위치는 일간으로 사람마다 다르게). */
-  const ACTP=[[['이번 달 수입과 지출을 한 장에 적고, 미뤄 둔 돈 문제 하나를 정리해 보세요.','월급날 자동이체 저축액을 1만 원이라도 올려 보세요.','관심 있던 부업이나 판매 아이디어 하나를 작게 시험해 보세요.','연봉·단가 협상에 쓸 내 성과를 숫자 세 줄로 정리해 보세요.','적금이나 연금 상품 하나를 골라 조건을 비교해 보세요.','미뤄 둔 중고 판매나 환급 신청을 이번 달에 끝내 보세요.'],
-    ['고정 지출 하나를 줄이고, 큰 지출은 다음 달로 미뤄 보세요.','구독 서비스를 훑어보고 안 쓰는 것 하나를 해지해 보세요.','카드 한 장만 남기고 나머지는 이번 달 서랍에 넣어 두세요.','받을 돈과 갚을 돈을 목록으로 적고 한 건만 정리해 보세요.','장바구니에 담은 물건은 사흘 뒤에 다시 보고 사세요.','비상금 통장을 따로 만들고 이번 달 남은 돈을 옮겨 보세요.']],
-   [['마음이 가는 사람에게 먼저 안부를 건네 보세요.','소개나 모임 제안이 오면 이번 달만큼은 "좋아요"라고 답해 보세요.','연인이나 친구와 처음 가 보는 동네로 반나절 나들이를 가 보세요.','고마웠던 사람에게 짧은 손편지나 메시지를 보내 보세요.','새 취미 모임이나 원데이 클래스에 한 번 참여해 보세요.','함께 찍은 사진 한 장을 골라 상대에게 보내 보세요.'],
-    ['서운한 일은 쌓아 두지 말고 짧게 이야기해 보세요.','연락이 뜸한 관계는 재촉하지 말고 한 주 기다려 보세요.','혼자 보내는 저녁을 하루 정해 내 마음을 정리해 보세요.','다툼이 생기면 결론보다 "그때 내 기분"을 먼저 말해 보세요.','SNS를 덜 보고, 만나는 사람에게 더 집중해 보세요.','오래된 친구 한 명과 편한 식사 약속을 잡아 보세요.']],
-   [['미뤄 둔 지원서·제안서 하나를 이번 달 안에 보내 보세요.','회의에서 내 아이디어 하나를 먼저 꺼내 보세요.','관심 분야 사람 한 명에게 커피 한 잔을 청해 보세요.','이력서와 포트폴리오를 최근 성과로 고쳐 두세요.','새 자격증이나 강의 하나를 등록하고 시작일을 정해 보세요.','맡고 싶은 업무를 상사나 동료에게 한 문장으로 말해 보세요.'],
-    ['새 일을 벌이기보다 하던 일의 마무리를 챙겨 보세요.','할 일 목록에서 안 해도 되는 일 하나를 빼 보세요.','책상과 파일 폴더를 정리해 다음 달을 가볍게 시작해 보세요.','지난 석 달 동안 배운 것을 한 쪽에 정리해 보세요.','야근을 한 번 줄이고 그 시간을 잠에 써 보세요.','도움을 준 동료에게 고맙다고 한마디 건네 보세요.']],
-   [['일주일에 세 번, 20분 걷는 약속을 달력에 넣어 보세요.','미뤄 둔 건강검진이나 치과 예약을 이번 달에 잡아 보세요.','수영·요가·등산 중 하나를 한 번 체험해 보세요.','물을 하루 여섯 잔 마시는 것을 2주만 지켜 보세요.','주말 아침 한 번은 해 뜰 무렵 산책해 보세요.','하루 한 번 계단 오르기를 습관으로 만들어 보세요.'],
-    ['잠드는 시간을 30분 앞당기는 것부터 시작해 보세요.','잠들기 한 시간 전에는 휴대폰을 멀리 두어 보세요.','카페인은 오후 2시 이후로 줄여 보세요.','몸이 무거운 날은 쉬는 것도 계획이라 생각하고 하루 비워 두세요.','저녁에 10분 스트레칭이나 반신욕을 해 보세요.','과식한 다음 날은 한 끼를 가볍게 먹어 보세요.']]];
-  const actPtr={},pickAct=(c,u)=>{const k=c*2+(u?0:1);actPtr[k]=actPtr[k]??(d%6);return ACTP[c][u?0:1][actPtr[k]++%6]};
-  const mAll=days.reduce((a,x)=>a+x.v,0)/days.length,MO=[];days.forEach(x=>{const k=x.f.y*12+x.f.m;let m=MO.find(o=>o.k===k);if(!m)MO.push(m={k,y:x.f.y,m:x.f.m,list:[]});m.list.push(x)});
-  const months=MO.slice(0,12).map(o=>{const av=o.list.reduce((a,x)=>a+x.v,0)/o.list.length,cs=[0,1,2,3].map(c=>o.list.reduce((a,x)=>a+x.f.sc[c],0)),c=comp?cs.indexOf(Math.max(...cs)):ci,b=o.list.reduce((a,x)=>x.v>a.v?x:a);return {...o,av,c,b,up:av>=mAll}});months.forEach(o=>o.act=pickAct(o.c,o.up));
+  const t0=new Date(now),days=[];const first=new Date(y0,now.getMonth(),1,12),until=new Date(y0,now.getMonth()+12,1,12);
+  for(let dt=new Date(first);dt<until;dt.setDate(dt.getDate()+1)){const f=dayFortune(ch,dt);days.push({f,v:comp?f.all:f.sc[ci]})}
+  const dTx=x=>x.f.m+'월 '+x.f.d+'일('+x.f.wd+')',good=days.filter(x=>new Date(x.f.y,x.f.m-1,x.f.d,12)>=t0).slice(0,90).map((x,i)=>({...x,i})).sort((a,b)=>b.v-a.v||a.i-b.i).slice(0,5).sort((a,b)=>a.i-b.i);
+  const mAll=days.reduce((a,x)=>a+x.v,0)/days.length,MO=[];
+  days.forEach(x=>{const k=x.f.y*12+x.f.m;let m=MO.find(o=>o.k===k);if(!m)MO.push(m={k,y:x.f.y,m:x.f.m,list:[]});m.list.push(x)});
+  const actions=[['수입·지출 기록에서 이번 달 조정할 항목 하나를 정하세요.','지출 예정표를 확인하고 계약·결제 조건을 다시 읽어 보세요.'],['중요한 사람과 대화할 시간을 잡고 내 바람을 구체적으로 전하세요.','짐작한 뜻을 단정하기 전에 상대에게 직접 확인해 보세요.'],['보여 줄 결과물 하나와 제출·공유 날짜를 정해 보세요.','할 일을 줄이고 진행 중인 작업의 검토 시간을 확보하세요.'],['내게 편한 활동과 휴식 시간을 일정에 함께 넣어 보세요.','무리한 일정을 줄이고 평소 생활 리듬을 돌아보세요.']];
+  const themes=['자기 기준과 협력의 균형','표현과 결과물 만들기','자원과 지출 관리','역할과 약속 점검','배움과 도움 주고받기'];
+  const months=MO.map(o=>{const av=o.list.reduce((a,x)=>a+x.v,0)/o.list.length,sc=[0,1,2,3].map(c=>o.list.reduce((a,x)=>a+x.f.sc[c],0)/o.list.length),c=comp?sc.indexOf(Math.max(...sc)):ci,care=comp?sc.indexOf(Math.min(...sc)):ci;
+   const counts=[0,0,0,0,0];o.list.forEach(x=>counts[Math.floor(TG.indexOf(x.f.tg)/2)]++);const theme=themes[counts.indexOf(Math.max(...counts))],up=av>=mAll;
+   const b=o.list.reduce((a,x)=>x.v>a.v?x:a),act=actions[c][up?0:1];
+   return {...o,av,sc,c,care,b,up,act,theme};});
   const mHi=months.reduce((a,b)=>b.av>a.av?b:a),mLo=months.reduce((a,b)=>b.av<a.av?b:a),top3=months.slice().sort((a,b)=>b.av-a.av).slice(0,3).sort((a,b)=>a.k-b.k);
-  put('calendar','앞으로 12개월 실천 달력',mHi.y+'년 '+mHi.m+'월이 가장 밝고, '+mLo.y+'년 '+mLo.m+'월은 쉬어 가기 좋은 달이에요.',['날마다 다섯 점술 점수의 달 평균','발행일 기준 계산'],
-   ['앞으로 12개월 중 '+(comp?'흐름':CN[ci]+' 흐름')+'이 가장 밝은 달 세 번은 '+top3.map(o=>o.y+'년 '+o.m+'월').join(', ')+'이에요.',
-    '아래 표는 달마다 해 볼 일 한 가지예요. 흐름이 밝은 달에는 시작하는 일을, 잔잔한 달에는 정리하는 일을 골랐어요.',
-    '달마다의 흐름은 이 리포트를 발행한 날을 기준으로 계산했어요. 재미로 참고하고, 중요한 일정은 실제 상황에 맞춰 정해 주세요.'],
-   top3.map(o=>o.y+'년 '+o.m+'월').join(', ')+'을 지금 휴대폰 달력에 표시해 두세요.',
-   {table:{cap:'앞으로 12개월 실천 달력',head:['달','이번 달 해 볼 일'],cols:['24%','76%'],rows:months.map((o,i)=>[(i===0||o.m===1?o.y+'년 ':'')+o.m+'월',o.act])}});
+  const monthLabel=o=>o.y+'년 '+o.m+'월',period=monthLabel(months[0])+'~'+monthLabel(months[11]);
+  put('calendar','앞으로 12개월, 월별 운명',period+' · 이번 달부터 열두 달을 함께 살펴봐요.',[],
+   ['양력 월의 첫날부터 말일까지를 같은 기준으로 비교했어요. 이번 달은 이미 지난 날도 포함한 한 달 전체이며, 특정 사건이 일어날 확률을 뜻하지 않아요.',
+    ...months.map(o=>monthLabel(o)+' · '+o.theme+' — '+(comp?'종합':CN[ci])+' 흐름 '+o.av.toFixed(1)+'점. '+(o.up?'열두 달 평균보다 높아 작은 시도를 검토할 달이에요.':'열두 달 평균보다 낮아 점검과 준비에 무게를 둘 달이에요.')+' '+(comp?'상대적으로 주목할 분야는 '+CN[o.c]+', 더 세심히 돌볼 분야는 '+CN[o.care]+'이에요. ':'')+'실천: '+o.act),
+    '사주·서양 점성술·인도 점성술·수비학·마야력의 기존 일별 흐름을 양력 월 단위로 모은 자체 해석이에요. 절기월 자체를 뜻하지 않으며, 건강 점수는 질병이나 건강 상태의 예측이 아니라 생활 리듬을 돌아보는 참고로 읽어 주세요.'],
+   '이번 달에 해당하는 실천 한 가지를 고르고, 월말에 실제 경험과 비교해 보세요.',
+   {period,months:months.map(o=>({year:o.y,month:o.m,days:o.list.length,score:Number(o.av.toFixed(1)),scores:o.sc.map(v=>Number(v.toFixed(1))),theme:o.theme,action:o.act})),table:{cap:'월별 흐름 한눈에 보기 · '+period,head:['연월','흐름과 실천'],cols:['30%','70%'],rows:months.map(o=>[monthLabel(o),o.theme+' · '+o.av.toFixed(1)+'점 / '+o.act])}});
   /* 2026-11-10 G3: 모두에게 같던 마무리 장·실천·재회 성찰을 나이대·신강/신약·오행·금성·십성과 달력 날짜로 조립한다. */
   const nm3=ch.inp.name||'당신',F3=t=>t.replace(/\{name\}/g,nm3),ac=key==='comprehensive'?3:ci,ka=kage(y0),band=ka<30?0:ka<45?1:ka<60?2:3,tg3=ng.indexOf(Math.max(...ng));
   const AGE=[['지금 시기의 돈은 크기보다 습관이 먼저예요. 지금 만든 저축 습관 하나가 몇 년 뒤의 선택지를 넓혀 줘요.','지금은 여러 사람을 만나며 나에게 맞는 사람을 알아 가는 시기예요. 서두르지 않아도 괜찮아요.','지금은 한 우물보다 여러 경험이 자산이 되는 시기예요. 해 본 일의 목록이 다음 기회의 지도가 돼요.','지금의 {name}님에게는 많이 시도해 보는 것 자체가 운을 키우는 일이에요.'],
@@ -3386,6 +3384,45 @@ function buildRichReport(ch,key){
    if(Rf)Rf.paragraphs.unshift(F3(['{name}님은 마음먹으면 곧장 움직이는 편이라, 헤어진 뒤에도 빨리 결론을 내리고 싶어지기 쉬워요.','{name}님은 감정이 뜨겁고 솔직해서, 헤어진 뒤 그리움도 크게 밀려오기 쉬워요.','{name}님은 한번 맺은 인연을 오래 품는 편이라, 마음을 정리하는 데 시간이 더 걸릴 수 있어요.','{name}님은 기준이 분명해서, 헤어진 이유를 스스로 또렷하게 정리해야 다음 걸음이 가벼워져요.','{name}님은 생각이 깊어서, 지난 대화를 여러 번 되짚으며 마음을 정리하는 편이에요.'][maxEl]));
    if(Cu)Cu.paragraphs.push('연락을 고민하고 있다면, 가까운 밝은 달인 '+nb.y+'년 '+nb.m+'월이 상대적으로 편안해요. 그전까지는 내 마음부터 충분히 정리해 두세요.')}
  }
+
+ /* Reader-centred comprehensive report: retain the established chart engine. */
+ if(key==='comprehensive'){
+  const themes=['자기 기준과 협력의 균형','표현과 결과물 만들기','자원과 지출 관리','역할과 약속 점검','배움과 도움 주고받기'];
+  const original=Object.fromEntries(S.map(x=>[x.kind,x]));
+  const section=(kind,question,lead,paragraphs,action,extra={})=>Object.assign({kind,question,lead,paragraphs:paragraphs.filter(Boolean),action,basis:[]},extra);
+  const personality=original.personality;
+  personality.question='타고난 성격과 재능';
+  personality.caution=dm[4]+'. '+(zero.length?ELZ[zero[0]]:ELO[maxEl])+'.';
+  const partner=original.partner;partner.question='사랑과 가까운 관계';
+  const rel=ch.inp.relationship||'private';
+  const relText={married:'배우자와 함께하는 일상의 신뢰와 역할 분담을 중심으로 읽어 주세요.',dating:'현재 만나는 사람과 대화와 약속을 조율하는 흐름으로 읽어 주세요.',crush:'상대의 반응과 경계를 존중하며 서로의 호감을 확인하는 과정에 활용하세요.',single:'내가 편안한 만남의 환경과 원하는 관계의 기준을 살펴보세요.',private:'현재 관계 상태를 가정하지 않아요. 새로운 만남과 기존 관계 중 내 상황에 맞는 쪽으로 읽어 주세요.'}[rel];
+  partner.paragraphs=[HX.love[pl.venus%4]+'를 편하게 느끼는 상징이 나타나요.',relText,'대화와 감정 표현은 '+HX.emo[moonS%4]+'. 서로 원하는 표현의 속도와 빈도를 확인해 보세요.'];
+  partner.action='고마운 점과 바라는 점을 하나씩 적고, 상대와 이야기할 수 있는 시간을 정해 보세요.';
+  const career=section('career','일과 사회생활',GRX.work[topG],
+   [HX.work[sunS%4]+'에서 자신의 역할을 찾아볼 수 있어요.',dm[2]+'. 일의 범위와 중간 점검 시점을 정하면 이 성향을 편하게 활용할 수 있어요.'],original.career?.action||'최근 성과 세 가지를 기록해 보세요.',{caution:dm[4]+'. 업무를 나누고 피드백을 받을 지점을 정해 보세요.'});
+  const money=section('money','돈을 벌고 지키는 방식',GRX.money[topG],
+   ['돈과 관련해서는 '+HX.money[sunS%4]+'을 돌아볼 수 있어요.','수입·고정 지출·예정된 큰 지출을 구분하면 나에게 맞는 관리 기준을 세우기 쉬워요.'],'지출 예정표를 확인하고 계약·결제 조건을 다시 읽어 보세요.',{caution:'풀이만으로 수익이나 투자 시점을 판단하지 마세요. 실제 비용과 감당 가능한 손실 범위를 먼저 확인하세요.'});
+  const helpGroup=good.slice().sort((a,b)=>ng[a]-ng[b])[0]??4;
+  const support=section('support','사람의 도움과 기회','도움은 '+GRX.gen[helpGroup]+'을 나누는 관계에서 찾아볼 수 있어요.',
+   ['나에게 상대적으로 부족한 역할을 편하게 해내는 사람과 협업해 보세요. 같은 성향의 사람만 찾기보다 서로 보완할 일을 구체적으로 정하는 것이 좋아요.','도움을 받을 사람의 외모나 등장 날짜를 확정하는 풀이가 아니에요. 실제로 신뢰할 수 있는 행동과 약속을 기준으로 관계를 살펴보세요.'], '도움을 구할 질문 하나와 내가 나눌 수 있는 경험 하나를 정리해 보세요.');
+  const dwRows=[];
+  for(let k=1;k<=9;k++){const from=ch.dwStart+10*(k-1),to=from+10,idx=mod(ch.mIdx+(ch.fwd?k:-k),60),tg=tenGod(d,idx%10),group=Math.floor(TG.indexOf(tg)/2),fromY=ch.birthYear+from,toY=ch.birthYear+to;
+   dwRows.push([((ageNow>=from&&ageNow<to)?'현재 · ':'')+pillar(idx),from.toFixed(1)+'세 이상~'+to.toFixed(1)+'세 미만',Math.floor(fromY)+'년~'+Math.floor(toY)+'년 전후',themes[group]]);}
+  const dw=section('daewoon','대운수와 인생의 큰 흐름','첫 대운은 만 '+ch.dwStart.toFixed(1)+'세 전후에 시작하는 '+(ch.fwd?'순행':'역행')+' 흐름이에요.',
+   ['대운은 사주에서 약 10년씩 바뀌는 큰 주기를 읽는 방식이에요. 시작 나이는 대운수라고 부르며, 아래 나이는 만 나이의 근사값이에요.',
+    dwK?'현재는 '+themes[Math.floor(TG.indexOf(dwTG)/2)]+'에 주목하는 시기로 읽어요. 다음 대운은 '+Math.floor(ch.birthYear+ch.dwStart+10*dwK)+'년 전후에 시작하며 역할과 우선순위를 돌아볼 계기로 삼아 보세요.':'아직 첫 대운 전이에요. 대운 전 기간을 첫 대운으로 표시하지 않고 구분했어요.',
+    '연도는 시작·종료 시점이 들어 있는 해를 표시하므로 인접 대운에 같은 연도가 보일 수 있어요. 경계는 생일과 절기 시각에 따라 달라져 특정 날짜나 사건을 확정하지 않아요.',
+    ch.inp.notime?'출생 시각 미상으로 현지 정오를 사용해 시작 나이를 근사했어요. 정확한 시각을 알게 되면 경계가 달라질 수 있어요.':'출생 정보와 절기 간격에 따른 근사 주기이며 미래의 결과를 보장하지 않아요.'],
+   '현재 주기의 주제와 실제 생활을 비교하고, 다음 1년 동안 유지할 일과 바꿀 일을 하나씩 적어 보세요.',{table:{cap:'사주 대운 흐름 · 만 나이 근사값',head:['대운','만 나이','연도','주제'],rows:dwRows}});
+  const summary=original.summary;summary.question='나의 운명 한눈에 보기';
+  summary.paragraphs=[dm[0]+'의 상징처럼 '+dm[1]+' 면을 돌아볼 수 있어요.','사주의 오행 성향과 달 별자리의 감정 표현은 서로 다른 관점을 제공해요. 같은 결론이라고 가정하지 않고, 내 경험에 맞는 부분과 다른 부분을 함께 살펴보세요.','이 보고서는 나의 성향에서 시작해 사랑·일·돈, 대운·연별·월별 흐름과 실천으로 이어져요.'];
+  summary.caution=dm[4]+'.';
+  const advice=original.advice;advice.question='지금 나에게 필요한 실천';
+  advice.paragraphs=['첫째, '+personality.action,'둘째, '+career.action,'셋째, '+money.action,'앞으로 한 달 동안 세 가지 중 하나부터 시작하고, 월말에 실제로 바뀐 점을 기록해 보세요.'];
+  S.splice(0,S.length,summary,personality,partner,career,money,support,dw,original.yearly,original.calendar,advice);
+ }
+ S.forEach((s,i)=>{s.id=key+'-'+(i+1);s.basis=[];});
+
  /* 2026-11-10: 투자·시험 계열 문장의 '~합니다'를 해요체로 바꾼다(고지 note는 그대로). */
  const haeyo=(()=>{const EX={'이끕니다':'이끌어요','엽니다':'열어요','압니다':'알아요','만듭니다':'만들어요','삽니다':'살아요','아닙니다':'아니에요','입니다':'이에요','보입니다':'보여요','움직입니다':'움직여요','줄입니다':'줄여요','높입니다':'높여요','쌓입니다':'쌓여요','기울입니다':'기울여요','붙입니다':'붙여요','섞입니다':'섞여요','놓입니다':'놓여요'},
   B=0xac00,I=c=>(c-B)/588|0,V=c=>((c-B)%588)/28|0,T=c=>(c-B)%28,mk=(i,v,t)=>String.fromCharCode(B+i*588+v*28+t),IRR=/(쉽|어렵|스럽|가볍|무겁|즐겁|반갑|고맙|새롭|가깝|귀엽|부드럽|외롭|두렵|무섭|뜨겁|차갑|롭)$/,
@@ -3401,9 +3438,9 @@ function buildRichReport(ch,key){
  const sumArr=key==='comprehensive'?years.map((r,i)=>({year:r.year,score:Math.round(Y4.reduce((a,c)=>a+c[i].score,0)/4)})):years,sumYv=sumArr.map(r=>r.score),sumHi=sumArr[sumYv.indexOf(Math.max(...sumYv))],sumLo=sumArr[sumYv.indexOf(Math.min(...sumYv))];
  const sumSecs=S.filter(s=>!['limit','fun','caution','weak','care','yearly','calendar'].includes(s.kind)&&(s.lead||(s.paragraphs||[]).length));
  const summary=[sumHi?'앞으로 10년 중 '+(key==='comprehensive'?'네 분야를 합친 흐름':['금전','애정','직업·학업'][ci]+' 흐름')+'이 가장 밝은 해는 '+sumHi.year+'년('+kage(sumHi.year)+'살, '+sumHi.score+'점)이에요.':'',sumLo&&sumLo!==sumHi?'속도를 늦추고 다지기 좋은 해는 '+sumLo.year+'년('+sumLo.score+'점)이에요.':'',...(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(s=>{const l=firstLine(s.lead||(s.paragraphs||[])[0]);return l?s.question+' — '+l:''})].filter(Boolean);
- S.forEach(s=>{s.answer=s.paragraphs.join('\n\n')});
+ S.forEach(s=>{if(s.kind==='yearly')s.paragraphs=s.paragraphs.map(p=>p.split(' [사주]')[0]);s.answer=s.paragraphs.join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
- return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'chapters-2026-11-05-v3',
+ return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts:[],sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:null,version:'reader-2026-11-11-v4',
   body:S.map((r,i)=>(i+1)+'장 · '+r.question+'\n\n핵심: '+r.lead+(r.basis.length?'\n근거: '+r.basis.join(' / '):'')+'\n\n'+r.answer+(r.action?'\n\n실천 · '+r.action:'')).join('\n\n────────────────\n\n')+'\n\n'+note};
 }
 
@@ -3698,7 +3735,7 @@ async function accountAPI(path,body){
   const headers={};if(accountToken)headers.Authorization='Bearer '+accountToken;if(body!==undefined)headers['Content-Type']='application/json';
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),15000);
   let r;try{r=await fetch(INVITE_API+path,{method:body===undefined?'GET':'POST',headers,body:body===undefined?undefined:JSON.stringify(body),cache:'no-store',signal:controller.signal})}finally{clearTimeout(timeout)}
-  let data={};try{data=await r.json()}catch(_){if(r.ok)throw new TypeError('bad_json')}if(!r.ok&&path==='/partners'&&r.status!==401){throw new Error(data.error==='partner_limit'?'저장 가능한 상대는 최대 20명이에요. 기존 정보를 삭제한 뒤 다시 저장해 주세요.':data.error==='invalid_partner'?'상대방의 이름·영문 이름·출생 정보를 확인해 주세요.':r.status===404?'상대 정보 저장 서버의 경로가 연결되지 않았어요. 서버 업데이트가 필요해요.':'상대 정보 저장 서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.')}if(!r.ok){if(r.status===401){accountToken='';accountUser=null;accountChecking=false;try{localStorage.removeItem('oracle-session');localStorage.removeItem('oracle-nick')}catch(_){}accountPaint()}throw new Error(r.status===401?'로그인이 만료됐어요. 다시 로그인해 주세요.':r.status===403?'리포트 열람 승인이 필요해요. 관리자에게 계정 ID와 원하는 리포트를 알려주세요.':r.status===409?'저장된 출생 정보가 필요해요. 내 정보에서 출생 정보를 저장해주세요.':r.status===404?'리포트 또는 권한 서버를 준비하고 있어요.':r.status===503?'카카오 로그인 설정을 마무리하고 있어요.':r.status===429?'요청이 많아요. 잠시 뒤 다시 시도해 주세요.':'요청을 처리하지 못했어요. 잠시 뒤 다시 시도해 주세요.')}return data;
+  let data={};try{data=await r.json()}catch(_){if(r.ok)throw new TypeError('bad_json')}if(!r.ok&&path==='/partners'&&r.status!==401){throw new Error(data.error==='partner_limit'?'저장 가능한 상대는 최대 20명이에요. 기존 정보를 삭제한 뒤 다시 저장해 주세요.':data.error==='invalid_partner'?'상대방의 이름·영문 이름·출생 정보를 확인해 주세요.':r.status===404?'상대 정보 저장 서버의 경로가 연결되지 않았어요. 서버 업데이트가 필요해요.':'상대 정보 저장 서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.')}if(!r.ok){if(r.status===401){accountToken='';accountUser=null;accountChecking=false;try{localStorage.removeItem('oracle-session');localStorage.removeItem('oracle-nick')}catch(_){}accountPaint()}throw new Error(r.status===401?'로그인이 만료됐어요. 다시 로그인해 주세요.':r.status===403?'리포트 열람 승인이 필요해요. 관리자에게 계정 ID와 원하는 리포트를 알려주세요.':r.status===409?(data.error==='profile_conflict'?'다른 화면에서 정보가 변경됐어요. 새로고침 후 다시 확인해 주세요.':'저장된 출생 정보가 필요해요. 내 정보에서 출생 정보를 저장해주세요.'):r.status===404?'리포트 또는 권한 서버를 준비하고 있어요.':r.status===503?'카카오 로그인 설정을 마무리하고 있어요.':r.status===429?'요청이 많아요. 잠시 뒤 다시 시도해 주세요.':'요청을 처리하지 못했어요. 잠시 뒤 다시 시도해 주세요.')}return data;
 }
 function profileFill(v){
   const p=JSON.parse(JSON.stringify(v));if(p.place?.ki!=null&&p.place.ki>=MAPS.kor.length)delete p.place.ki;if(p.place?.wi!=null&&p.place.wi>=MAPS.world.length)delete p.place.wi;if(p.place?.ci!=null&&p.place.ci>=PLACES.length)delete p.place.ci;
@@ -3732,11 +3769,11 @@ function restoreSavedResult(profile){
  catch(_){if(fresh)document.body.classList.add('fresh');$('askbox').open=true;$('err').textContent='저장된 정보를 확인한 뒤 다시 시도해주세요.';return false}
 }
 $('profileLoad').addEventListener('click',()=>{if(accountUser?.profile){const ready=restoreSavedResult(accountUser.profile);accountStatus(ready?'저장한 정보로 운명 결과를 불러왔어요.':'저장된 정보를 확인해주세요.')}});
-$('profileDelete').addEventListener('click',()=>{$('profileDeleteDialog').showModal()});
+$('profileDelete').addEventListener('click',()=>{$('profileDeleteError').textContent='';$('profileDeleteDialog').showModal()});
 $('profileDeleteCancel').addEventListener('click',()=>$('profileDeleteDialog').close());
 $('profileDeleteConfirm').addEventListener('click',async()=>{
   if(accountBusy)return;accountBusy=true;$('profileDeleteConfirm').disabled=true;accountStatus('저장 정보를 삭제하고 있어요…');
-  try{await accountAPI('/profile',{action:'delete'});accountUser.profile=null;$('profileConsent').checked=false;$('profileDeleteDialog').close();accountStatus('서버에 저장된 출생 정보를 삭제했어요. 현재 입력창의 값은 그대로예요.')}catch(e){accountStatus(e.message)}finally{accountBusy=false;$('profileDeleteConfirm').disabled=false;accountPaint()}
+  try{await accountAPI('/profile',{action:'delete'});clearCurrentProfile()}catch(e){$('profileDeleteError').textContent=e.message;accountStatus(e.message)}finally{accountBusy=false;$('profileDeleteConfirm').disabled=false;accountPaint()}
 });
 $('accountLogout').addEventListener('click',async()=>{
   if(accountBusy)return;accountBusy=true;accountPaint();
