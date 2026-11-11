@@ -278,16 +278,28 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 .account-sheet:has(#accountMember:not([hidden])) .acct-guide-link{display:none}
 
 /* Friendship/group cast: caption, dog, participant name. Sheets remain unchanged. */
-#report .social-cast{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 12px;margin:28px 0 32px;align-items:start}
-#report .social-cast:has(> :last-child:nth-child(2)){grid-template-columns:repeat(2,minmax(0,1fr))}
-#report .social-dog{margin:0;min-width:0;text-align:center;break-inside:avoid}
-#report .social-dog-label{font:700 clamp(13px,2vw,17px)/1.5 var(--body);color:var(--ink);min-height:3em;display:flex;align-items:center;justify-content:center;word-break:keep-all;padding:0 3px}
-#report .social-dog-window{position:relative;aspect-ratio:1.22;overflow:hidden;background:#fdf8ef;border-radius:14px}
-#report .social-dog-sprite{display:block;position:absolute;left:0;top:-22%;width:100%;aspect-ratio:1;background-size:300% 300%;background-repeat:no-repeat;print-color-adjust:exact;-webkit-print-color-adjust:exact}
-#report .social-dog-name{display:block;margin-top:12px;font:700 16px/1.5 var(--body);overflow-wrap:anywhere;color:var(--ink)}
-@media(max-width:520px){#report .social-cast{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 10px}#report .social-dog-label{font-size:14px}}
-@media print{#report .social-cast{grid-template-columns:repeat(3,minmax(0,1fr))}.social-dog-window{print-color-adjust:exact}}
+:is(#report,.social-result) .social-cast{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 12px;margin:28px 0 32px;align-items:start}
+:is(#report,.social-result) .social-cast:has(> :last-child:nth-child(2)){grid-template-columns:repeat(2,minmax(0,1fr))}
+:is(#report,.social-result) .social-dog{margin:0;min-width:0;text-align:center;break-inside:avoid}
+:is(#report,.social-result) .social-dog-label{font:700 clamp(13px,2vw,17px)/1.5 var(--body);color:var(--ink);min-height:3em;display:flex;align-items:center;justify-content:center;word-break:keep-all;padding:0 3px}
+:is(#report,.social-result) .social-dog-window{position:relative;aspect-ratio:1.22;overflow:hidden;background:#fdf8ef;border-radius:14px}
+:is(#report,.social-result) .social-dog-sprite{display:block;position:absolute;left:0;top:-22%;width:100%;aspect-ratio:1;background-size:300% 300%;background-repeat:no-repeat;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+:is(#report,.social-result) .social-dog-name{display:block;margin-top:12px;font:700 16px/1.5 var(--body);overflow-wrap:anywhere;color:var(--ink)}
+@media(max-width:520px){:is(#report,.social-result) .social-cast{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 10px}:is(#report,.social-result) .social-dog-label{font-size:14px}}
+@media print{:is(#report,.social-result) .social-cast{grid-template-columns:repeat(3,minmax(0,1fr))}.social-dog-window{print-color-adjust:exact}}
 
-#report .social-dog-row-0{aspect-ratio:1.18}#report .social-dog-row-0 .social-dog-sprite{top:-18%}
-#report .social-dog-row-1{aspect-ratio:1.39}#report .social-dog-row-1 .social-dog-sprite{top:-39%}
-#report .social-dog-row-2{aspect-ratio:1.30}#report .social-dog-row-2 .social-dog-sprite{top:-30%}
+:is(#report,.social-result) .social-dog-row-0{aspect-ratio:1.18}:is(#report,.social-result) .social-dog-row-0 .social-dog-sprite{top:-18%}
+:is(#report,.social-result) .social-dog-row-1{aspect-ratio:1.39}:is(#report,.social-result) .social-dog-row-1 .social-dog-sprite{top:-39%}
+:is(#report,.social-result) .social-dog-row-2{aspect-ratio:1.30}:is(#report,.social-result) .social-dog-row-2 .social-dog-sprite{top:-30%}
+
+/* Show original handwritten captions with each full cell, then the participant name. */
+:is(#report,.social-result) .social-dog-label{display:none}
+:is(#report,.social-result) .social-dog-window{aspect-ratio:1!important;background:#fdf8ef;border-radius:0}
+:is(#report,.social-result) .social-dog-sprite{top:0!important;aspect-ratio:1}
+.social-result{max-width:900px;margin:20px auto;color:var(--ink)}
+.social-result .rv3-tw{overflow-x:auto;margin-top:28px}
+.social-result .social-role-table{width:100%;table-layout:fixed;border-collapse:collapse;font:400 14px/1.7 var(--body)}
+.social-result .social-role-table caption{text-align:left;margin-bottom:12px;font-weight:700}
+.social-result .social-role-table th,.social-result .social-role-table td{text-align:left;vertical-align:top;padding:14px 10px;border-bottom:1px solid var(--line);word-break:keep-all;overflow-wrap:anywhere}
+.social-result .social-role-table thead th{color:var(--gold);border-top:1px solid var(--line)}
+.social-result .social-role-table tbody th{font-weight:700}

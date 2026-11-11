@@ -1853,6 +1853,7 @@ function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name
  const L=k=>(S.find(s=>s.kind===k)||{}).lead;
  return {title:`${me}님과 ${you}님의 재회 리포트`,summary:[L('summary'),L('now'),L('timing'),L('plan'),L('bitter')].filter(Boolean),sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.',birthCharts:[a,b],version:'match-reunion-2026-11-11',body:''}}
 async function openCompatReport(btn,requestedKey=null){
+ if(requestedKey==='friend'||COMPAT?.kind==='friend'){cmpShowOne('',true);return;}
  if(!requireSavedProfile())return;
  const pair=COMPAT,me=CH;
  if(!pair||!me||(requestedKey==='reunion'&&pair.mode!=='reunion')||(requestedKey&&requestedKey!=='reunion'&&pair.mode==='reunion')){alert('상대방 정보를 입력하고 먼저 결과를 확인해 주세요.');return}
@@ -4164,20 +4165,17 @@ function groupListHTML(){
  const all=[CH,...GROUP];
  return '<ul class="cmp-group-list">'+all.map((c,i)=>'<li><b>'+topicEsc(groupName(c,i))+'</b><small>'+topicEsc(c.inp.date)+(i===0?' · 나':'')+'</small>'+(i?'<button type="button" class="cmp-del" data-gdel="'+(i-1)+'" aria-label="'+topicEsc(groupName(c,i))+' 빼기">빼기</button>':'')+'</li>').join('')+'</ul>'+
   '<p class="cmp-priv">'+(all.length<3?'모임 궁합은 3명부터 볼 수 있어요. '+(3-all.length)+'명 더 넣어 주세요.':'지금 '+all.length+'명이에요. 8명까지 넣을 수 있어요.')+'</p>'+
-  '<button type="button" class="cmp-open" data-gcalc'+(all.length<3?' disabled':'')+'>모임 궁합 보기 →</button>'}
+  '<button type="button" class="cmp-open" data-gcalc'+(all.length<3?' disabled':'')+'>모임 보기 →</button>'}
 function groupRefresh(){const b=document.getElementById('cmpGroupList');if(b)b.innerHTML=groupListHTML()}
 
 function groupRender(){
  const all=[CH,...GROUP],out=document.getElementById('cmpGroupOut');if(!out)return;
  if(!CH||all.length<3||all.length>8){GROUPRES=null;out.textContent='모임은 나를 포함해 3~8명을 입력해 주세요.';return}
  const r=GROUPRES=groupResult(all);
- out.innerHTML='<div class="cmp-score"><span>'+all.length+'명의 모임 궁합</span><b>'+r.total+'<small>점</small></b><em>구성원 조합 요약</em></div>'+
-  '<ul class="cmp-roles">'+all.map((c,i)=>'<li><b>'+topicEsc(groupName(c,i))+'</b> · '+topicEsc(r.roles[i][0])+'<small>'+topicEsc(r.roles[i][1])+'</small></li>').join('')+'</ul>'+
-  '<p class="cmp-note">점수는 모임의 수명을 뜻하지 않아요. 비교 점수가 가장 높은 두 사람은 '+topicEsc(groupName(all[r.best.i],r.best.i))+'·'+topicEsc(groupName(all[r.best.j],r.best.j))+'('+r.best.total+'점)이에요.</p>'+
-  '<p class="cmp-price">'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</p><button type="button" class="cmp-open" data-gopen>모임 리포트 보기 →</button>';
+ out.innerHTML=socialResultHTML(all);
  out.scrollIntoView({behavior:soft(),block:'nearest'})}
 
-async function openGroupReport(trigger){
+async function openGroupReport(trigger){groupRender();return;
  if(!requireSavedProfile()||!CH)return;
  const list=[CH,...GROUP];
  if(list.length<3||list.length>8){alert('모임은 나를 포함해 3~8명을 입력해 주세요.');return}
@@ -4197,6 +4195,9 @@ function socialDogCast(list){
  return list.map((c,i)=>{const dom=c.cnt.indexOf(Math.max(...c.cnt)),pool=pools[dom][c.strong?0:1],id=pool[mod(c.stems.d, pool.length)],dog=SOCIAL_DOGS[id];return {name:groupName(c,i),sheet:dog[0],index:dog[1],label:dog[2]};});
 }
 function socialCastHTML(cast){return '<div class="social-cast">'+cast.map(c=>'<figure class="social-dog"><figcaption class="social-dog-label">'+topicEsc(c.label)+'</figcaption><div class="social-dog-window social-dog-row-'+Math.floor(c.index/3)+'" role="img" aria-label="'+topicEsc(c.label)+' 강아지 캐릭터"><span class="social-dog-sprite" style="background-image:url(img/social-dogs-'+c.sheet+'-v2.png);background-position:'+(c.index%3*50)+'% '+(Math.floor(c.index/3)*50)+'%"></span></div><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>').join('')+'</div>';}
+function socialResultHTML(list){
+ return '<div class="social-result">'+socialCastHTML(socialDogCast(list))+reportInfoTable('구성원별 역할 제안',['이름','역할','강점'],list.map((c,i)=>[groupName(c,i),groupRole(c)[0],groupRole(c)[1]]),'social-role-table',['25%','30%','45%'])+'</div>';
+}
 function socialPlayData(list){
  const style=[['개척 대장','아이디어 씨앗'],['분위기 점화자','리액션 요정'],['든든한 중심','안부 지킴이'],['계획 해결사','취향 감별사'],['대화 수집가','조용한 연결자']];
  const activity=['처음 가 보는 동네 산책과 작은 체험 수업','노래 맞히기나 몸으로 설명하는 팀 게임','각자 좋아하는 간식 하나씩 가져오는 소풍','규칙이 간단한 보드게임과 취향별 맛집 투표','서로 고른 음악을 듣고 이유를 나누는 카페 시간'];
@@ -4217,7 +4218,7 @@ function friendReportData(a,b,res){
  ];
  const play=socialPlayData([a,b]);
  sections.push(
-  {kind:'friend-chemistry',question:'우리 둘이 친구인 이유',lead:'닮은 듯 다른 우리, 강아지로 보면 이런 조합이에요.',cast:socialDogCast([a,b]),paragraphs:[play.same?'닮은 리듬으로 웃음 포인트가 통하는 조합이에요. 취향이 겹칠 때는 함께 깊게 파보고, 의견이 갈리면 먼저 양보할 항목을 하나씩 정해 보세요.':'서로 다른 재주가 만나는 조합이에요. 한 사람이 시작한 아이디어를 다른 사람이 어떻게 살려 주는지 찾아보세요.',...names.map((n,i)=>n+'님이 함께할 때의 강점: '+roles[i][1])]},
+  {kind:'friend-chemistry',question:'우리 둘이 친구인 이유',lead:'',cast:socialDogCast([a,b]),paragraphs:[play.same?'닮은 리듬으로 웃음 포인트가 통하는 조합이에요. 취향이 겹칠 때는 함께 깊게 파보고, 의견이 갈리면 먼저 양보할 항목을 하나씩 정해 보세요.':'서로 다른 재주가 만나는 조합이에요. 한 사람이 시작한 아이디어를 다른 사람이 어떻게 살려 주는지 찾아보세요.',...names.map((n,i)=>n+'님이 함께할 때의 강점: '+roles[i][1])]},
   {kind:'friend-play',question:'둘이 만나면 해 볼 것',lead:'다음 약속에 하나만 골라 보세요.',paragraphs:play.activities,action:'각자 하고 싶은 활동에 한 표씩 주고, 의견이 다르면 이번과 다음 약속에 번갈아 해 보세요.'},
   {kind:'friend-mission',question:'친구 사용 설명서 맞혀보기',lead:'서로 답을 적은 뒤 동시에 공개해 보세요.',paragraphs:['친구가 지쳤을 때 원하는 것은? 조용히 듣기 / 해결책 찾기 / 함께 놀기','약속이 취소되면 더 반가운 것은? 바로 다음 날짜 잡기 / 편하게 쉬라고 하기','친구가 생각하는 내 장점 하나를 먼저 예상하고, 실제 답과 비교해 보세요.'],action:'틀린 답은 놀릴 소재보다 새로 알게 된 취향으로 기억해 주세요.'}
  );
@@ -4281,6 +4282,7 @@ async function cmpPairCheck(code,msgEl){
  return true}
 
 function cmpShowOne(label,scroll=true){
+ if(COMPAT?.kind==='friend'){const out=document.querySelector('#cmpOne .cmp-result');if(out){out.innerHTML=socialResultHTML([CH,COMPAT.b]);if(scroll)out.scrollIntoView({behavior:soft(),block:'nearest'});}return;}
  const res=COMPAT.res,out=document.querySelector('#cmpOne .cmp-result');if(!out)return;
  const lv=res.total>=88?'아주 잘 맞는 편':res.total>=80?'잘 맞는 편':res.total>=74?'서로 편안한 사이':'맞춰 갈수록 좋아지는 사이';
  out.innerHTML='<div class="cmp-score"><span>'+topicEsc(J(label,'과','와'))+' 나의 '+(COMPAT.kind==='friend'?'우정 ':'')+'궁합</span><b>'+res.total+'<small>점</small></b><em>'+lv+'</em></div>'+
