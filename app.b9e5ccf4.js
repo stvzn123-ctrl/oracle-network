@@ -4324,6 +4324,8 @@ async function cmpPairCheck(code,msgEl){
  return true}
 
 function cmpShowOne(label,scroll=true){
+ if(COMPAT?.kind==='friend'&&scroll){const pair=COMPAT,out=document.getElementById('friendRoleOut');if(out){const token=String(Date.now())+Math.random();out.dataset.reveal=token;out.innerHTML=socialPlaceholderHTML(2);out.scrollIntoView({behavior:soft(),block:'nearest'});setTimeout(()=>{if(COMPAT===pair&&out.isConnected&&out.dataset.reveal===token)cmpShowOne(label,false);},900);return;}}
+
  if(COMPAT?.kind==='friend'){const out=document.getElementById('friendRoleOut')||document.querySelector('#cmpOne .cmp-result');if(out){out.innerHTML=socialResultHTML([CH,COMPAT.b]);collapseFriendInputs(out);if(scroll)out.scrollIntoView({behavior:soft(),block:'nearest'});}return;}
  const res=COMPAT.res,out=document.querySelector('#cmpOne .cmp-result');if(!out)return;
  const lv=res.total>=88?'아주 잘 맞는 편':res.total>=80?'잘 맞는 편':res.total>=74?'서로 편안한 사이':'맞춰 갈수록 좋아지는 사이';
