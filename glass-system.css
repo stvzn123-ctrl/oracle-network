@@ -330,3 +330,5 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 .friend-controls .cmp-form{padding:20px;margin-top:16px;border-radius:18px}
 .friend-controls .chart-fields{gap:10px}.friend-controls input,.friend-controls select{min-height:40px;font-size:14px}
 .friend-controls button[type=submit]{min-height:42px!important;padding:9px 14px!important;font-size:14px!important}
+
+.friend-input-toggle,.group-members-toggle{margin:12px 0;border:1px solid var(--line);border-radius:12px;padding:0 12px}.friend-input-toggle>summary,.group-members-toggle>summary{padding:12px 0;cursor:pointer;font:600 14px/1.5 var(--body);color:var(--gold-ink)}.friend-input-toggle[open],.group-members-toggle[open]{padding-bottom:12px}.friend-input-toggle .cmp-saved{margin-top:8px}

@@ -4166,14 +4166,14 @@ function groupListHTML(){
  const all=[CH,...GROUP];
  return '<ul class="cmp-group-list">'+all.map((c,i)=>'<li><b>'+topicEsc(groupName(c,i))+'</b><small>'+topicEsc(c.inp.date)+(i===0?' · 나':'')+'</small>'+(i?'<button type="button" class="cmp-del" data-gdel="'+(i-1)+'" aria-label="'+topicEsc(groupName(c,i))+' 빼기">빼기</button>':'')+'</li>').join('')+'</ul>'+
   '<p class="cmp-priv">'+(all.length<3?'모임 궁합은 3명부터 볼 수 있어요. '+(3-all.length)+'명 더 넣어 주세요.':'지금 '+all.length+'명이에요. 8명까지 넣을 수 있어요.')+'</p>'+
-  '<button type="button" class="cmp-open" data-gcalc'+(all.length<3?' disabled':'')+'>모임 보기 →</button>'}
+  '<button type="button" class="cmp-open" data-gcalc'+(all.length<3?' disabled':'')+'>모임 역할 보기 →</button>'}
 function groupRefresh(){const b=document.getElementById('cmpGroupList');if(b)b.innerHTML=groupListHTML();const out=document.getElementById('cmpGroupOut');if(out)out.innerHTML='';partnerRefresh();}
 
 function groupRender(){
  const all=[CH,...GROUP],out=document.getElementById('cmpGroupOut');if(!out)return;
  if(!CH||all.length<3||all.length>8){GROUPRES=null;out.textContent='모임은 나를 포함해 3~8명을 입력해 주세요.';return}
  const r=GROUPRES=groupResult(all);
- out.innerHTML=socialResultHTML(all);
+ out.innerHTML=socialResultHTML(all);collapseGroupMembers();
  out.scrollIntoView({behavior:soft(),block:'nearest'})}
 
 async function openGroupReport(trigger){groupRender();return;
@@ -4220,6 +4220,19 @@ function socialContext(list){
 }
 function socialDogCast(list){return socialContext(list).map(x=>x.cast);}
 function socialCastHTML(cast){return '<div class="social-cast">'+cast.map(c=>'<figure class="social-dog"><figcaption class="social-dog-label">'+topicEsc(c.label)+'</figcaption><div class="social-dog-window social-dog-row-'+Math.floor(c.index/3)+'" role="img" aria-label="'+topicEsc(c.label)+' 강아지 캐릭터"><span class="social-dog-sprite" style="background-image:url(img/social-dogs-'+c.sheet+'-v4.png)'+';background-position:'+(c.index%3*50)+'% '+(Math.floor(c.index/3)*50)+'%"></span></div><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>').join('')+'</div>';}
+function collapseFriendInputs(out){
+ const panel=out.closest('.cmp-form');if(!panel)return;
+ let toggle=panel.querySelector('.friend-input-toggle');
+ if(!toggle){toggle=document.createElement('details');toggle.className='friend-input-toggle';toggle.innerHTML='<summary>친구 선택하기 · 변경</summary>';const saved=panel.querySelector('.cmp-saved');const form=panel.querySelector('form');if(form)form.prepend(toggle);else out.before(toggle);const manual=panel.querySelector('.group-manual');if(saved)toggle.append(saved);if(manual)toggle.append(manual);}
+ toggle.open=false;toggle.querySelectorAll('details').forEach(d=>d.open=false);
+ const h=panel.querySelector('.cmp-head h4');if(h)h.hidden=true;
+}
+function collapseGroupMembers(){
+ const list=document.getElementById('cmpGroupList');if(!list)return;
+ let toggle=list.querySelector('.group-members-toggle');
+ if(!toggle){toggle=document.createElement('details');toggle.className='group-members-toggle';toggle.innerHTML='<summary>모임 구성원 · 확인 및 변경</summary>';const members=list.querySelector('.cmp-group-list');if(members){members.before(toggle);toggle.append(members);}}
+ toggle.open=false;
+}
 function socialResultHTML(list){
  const context=socialContext(list);
  return '<div class="social-result">'+socialCastHTML(context.map(x=>x.cast))+reportInfoTable('각자 역할',['이름','역할','강점'],context.map(x=>[x.cast.name,x.role,x.strength]),'social-role-table',['25%','30%','45%'])+'</div>';
@@ -4308,7 +4321,7 @@ async function cmpPairCheck(code,msgEl){
  return true}
 
 function cmpShowOne(label,scroll=true){
- if(COMPAT?.kind==='friend'){const out=document.querySelector('#cmpOne .cmp-result');if(out){out.innerHTML=socialResultHTML([CH,COMPAT.b]);if(scroll)out.scrollIntoView({behavior:soft(),block:'nearest'});}return;}
+ if(COMPAT?.kind==='friend'){const out=document.querySelector('#cmpOne .cmp-result');if(out){out.innerHTML=socialResultHTML([CH,COMPAT.b]);collapseFriendInputs(out);if(scroll)out.scrollIntoView({behavior:soft(),block:'nearest'});}return;}
  const res=COMPAT.res,out=document.querySelector('#cmpOne .cmp-result');if(!out)return;
  const lv=res.total>=88?'아주 잘 맞는 편':res.total>=80?'잘 맞는 편':res.total>=74?'서로 편안한 사이':'맞춰 갈수록 좋아지는 사이';
  out.innerHTML='<div class="cmp-score"><span>'+topicEsc(J(label,'과','와'))+' 나의 '+(COMPAT.kind==='friend'?'우정 ':'')+'궁합</span><b>'+res.total+'<small>점</small></b><em>'+lv+'</em></div>'+
@@ -4333,7 +4346,7 @@ function matchPanelHTML(){
  return '<div class="cmp-kind" role="group" aria-label="우정 궁합 종류"'+(CMPKIND==='love'?' hidden':'')+'>'+Object.keys(CMP_KIND).map(k=>'<button type="button" data-ck="'+k+'" aria-pressed="'+(k===CMPKIND)+'">'+CMP_KIND[k]+'</button>').join('')+'</div>'+
   '<p class="cmp-kind-note" id="cmpKindNote">'+CMP_NOTE[CMPKIND]+'</p>'+
   '<div id="cmpOne" class="'+(CMPKIND==='friend'?'friend-controls':'')+'"'+(CMPKIND==='group'?' hidden':'')+'>'+compatFormHTML('match')+'</div>'+
-  '<div id="cmpGroup"'+(CMPKIND==='group'?'':' hidden')+'><section class="chart-form cmp-form"><h4>모임에 참여할 사람</h4><div id="cmpGroupList">'+groupListHTML()+'</div><div id="cmpGroupOut" class="chart-feedback" aria-live="polite"></div></section>'+compatFormHTML('group')+'</div>'}
+  '<div id="cmpGroup"'+(CMPKIND==='group'?'':' hidden')+'><section class="chart-form cmp-form"><h4>모임 구성원</h4><div id="cmpGroupList">'+groupListHTML()+'</div><div id="cmpGroupOut" class="chart-feedback" aria-live="polite"></div></section>'+compatFormHTML('group')+'</div>'}
 
 document.addEventListener('click',e=>{
  const k=e.target.closest('[data-ck]');if(k){cmpSetKind(k.dataset.ck);return}
