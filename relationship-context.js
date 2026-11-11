@@ -64,7 +64,7 @@
     if(key!=='marry')sections.unshift(section);
     const sumOf=s=>{const seen=[];[s.lead,...(s.paragraphs||[])].filter(Boolean).join(' ').split(/(?<=[.!?])\s+/).map(x=>x.trim()).filter(Boolean).forEach(x=>{if(seen.length<3&&!seen.includes(x))seen.push(x)});return seen.join(' ')};
     const summary=[...(key==='marry'?[]:[sumOf(section)]),...sections.filter(s=>['core','partner','timing'].includes(s.kind)).slice(0,3).map(sumOf)];
-    return {...data,title:(ch.inp.name||'당신')+'님의 '+(key==='marry'?'결혼 운명':'연인 운명')+' 리포트',relationshipContext:true,summary,sections};
+    return {...data,title:(ch.inp.name||'당신')+'님의 '+(key==='marry'?'인연 운명':'연인 운명')+' 리포트',relationshipContext:true,summary,sections};
   };
   // Restored profiles from the current API may not yet include this optional field.
   if(accountUser?.profile)$('in-relationship').value=context(CH);

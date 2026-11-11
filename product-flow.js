@@ -59,7 +59,7 @@
 /* 2026-11-10: 상품 설명·비교표는 메인에서 빼고 '내 정보 > 안내와 약관 > 리포트 안내'(policy-products)에 모은다. */
  function productsGuideHTML(){
   const rows=[['comprehensive',COMPREHENSIVE_REPORT_PRICE],['marry',TOPIC_REPORT_PRICE],['money',TOPIC_REPORT_PRICE],['work',TOPIC_REPORT_PRICE],['study',TOPIC_REPORT_PRICE],['match',TOPIC_REPORT_PRICE],['friend',TOPIC_REPORT_PRICE],['reunion',TOPIC_REPORT_PRICE],['group',TOPIC_REPORT_PRICE],['ask',FREE_QUESTION_PRICE]];
-  return '<p>운명탐정의 리포트는 모두 같은 출생 차트(사주·서양 점성술·베딕점성술·수비학·마야력)를 바탕으로 쓰여요. <b>종합</b>은 나 전체를 넓게, <b>주제별</b>은 고른 고민 하나를 깊게, <b>자유질문</b>은 내가 적은 상황을 사람이 검토해 이메일로 답해 드려요.</p>'
+  return '<p>운명탐정의 리포트는 모두 같은 출생 차트(사주·서양 점성술·베딕 점성술·수비학·마야력)를 바탕으로 쓰여요. <b>종합</b>은 나 전체를 넓게, <b>주제별</b>은 고른 고민 하나를 깊게, <b>자유질문</b>은 내가 적은 상황을 사람이 검토해 이메일로 답해 드려요.</p>'
    +'<h3>한눈에 비교</h3><div class="product-table"><table><thead><tr><th>상품</th><th>답해 주는 질문</th><th>정상가</th></tr></thead><tbody>'+rows.map(([key,price])=>'<tr><th>'+E(catalog[key].name)+'</th><td>'+E(catalog[key].question)+'</td><td>'+price.toLocaleString()+'원</td></tr>').join('')+'</tbody></table></div>'
    +'<p>출시 기념으로 상품별 첫 1회는 무료예요. 같은 입력의 리포트는 다시 열어 볼 수 있어요.</p>'
    +rows.map(([key])=>{const c=catalog[key];return '<h3>'+E(c.name)+'</h3><dl class="product-dl"><dt>무료로 먼저 확인</dt><dd>'+E(c.free)+'</dd><dt>리포트에서 더 읽기</dt><dd>'+E(c.detail)+'</dd><dt>범위</dt><dd>'+E(c.limit)+'</dd></dl>'}).join('')
