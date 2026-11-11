@@ -14,7 +14,7 @@
     return result;
   };
   const COPY={
-    married:{title:'함께하는 사랑과 결혼 생활',question:'우리 사랑이 더 단단해질 시기는?',answer:'새로운 상대를 찾는 시기 대신, 배우자와 신뢰를 쌓고 함께 세운 계획을 구체화할 흐름을 살펴봐요.',action:'생활비·가사·휴식 중 한 가지를 골라 서로 원하는 분담을 이야기해 보세요.',next:'함께 세울 다음 계획',detail:'여행이나 이사처럼 공동 계획이 있다면 예산과 역할을 먼저 맞춰보세요. 결실은 결혼을 새로 하는 일이 아니라 현재 관계가 더 안정되는 과정으로 읽어요.'},
+    married:{title:'함께하는 사랑과 결혼 생활',question:'함께하는 관계에서 중요한 것은?',answer:'서로의 생활 방식과 기대를 이해하고, 작은 약속을 꾸준히 지키는 데서 신뢰가 쌓여요.',action:'생활비·가사·휴식 중 한 가지를 골라 서로 원하는 분담을 이야기해 보세요.',next:'함께 세울 다음 계획',detail:'함께 세운 계획이 있다면 비용과 역할, 서로 양보할 수 있는 부분을 구체적으로 이야기해 보세요.'},
     dating:{title:'지금 사랑의 발전과 결실',question:'지금 사랑이 결실을 맺을 시기는?',answer:'다른 사람을 만날 시기 대신, 지금 만나는 사람과 관계를 깊게 하고 미래 계획을 이야기할 흐름을 살펴봐요.',action:'서로 생각하는 관계의 다음 단계를 묻고, 결혼·동거·장거리 등 실제 조건을 함께 확인해 보세요.',next:'우리 관계의 다음 단계',detail:'관계를 진전시키고 싶다면 두 사람의 의사와 준비를 먼저 확인해 보세요. 현재 상대와의 궁합은 상대의 출생 정보를 함께 넣었을 때 별도로 살펴볼 수 있어요.'},
     crush:{title:'설렘에서 관계로 이어지는 사랑',question:'호감이 관계로 발전할 흐름은?',answer:'새로운 상대를 예고하기보다, 지금의 호감을 확인하고 대화와 만남을 자연스럽게 넓힐 흐름을 살펴봐요.',action:'부담 없는 만남을 한 번 제안하고 상대가 편하게 응답할 여지를 주세요.',next:'서로의 마음을 확인하는 과정',detail:'상대의 반응과 경계를 존중하며 연락과 만남이 서로 이어지는지 살펴보세요. 내 차트만으로 상대의 마음이나 관계의 성사를 단정하지 않아요.'},
     single:{title:'새로운 만남과 사랑의 시작',question:'새로운 인연을 만날 흐름은?',answer:'새로운 사람을 알아가고 내게 맞는 관계를 시작할 흐름을 살펴봐요.',action:'내가 편안한 모임이나 활동 하나를 정하고 새로운 대화를 시작해 보세요.',next:'내게 맞는 만남 준비',detail:'만남의 기회와 함께 내가 원하는 관계의 기준을 정리해 보세요. 연애를 서두르기보다 대화와 실제 경험으로 잘 맞는지 확인하는 과정이 중요해요.'},
@@ -35,7 +35,7 @@
   topicReportHTML=function(key){
     if(!['love','marry'].includes(key)||!CH)return originalOffer(key);
     const c=COPY[context(CH)];
-    return '<section class="topic-offer"><h4>'+c.title+' 리포트</h4><ul><li>'+c.question+'</li><li>나의 관계 성향과 표현 방식</li><li>'+c.next+'</li><li>지금 실천할 대화와 행동</li></ul><div class="topic-offer-action"><strong>'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</strong><button type="button" data-buy="'+key+'">나의 리포트 보기</button></div><p class="buy-msg" aria-live="polite"></p></section>';
+    return '<section class="topic-offer"><h4>'+c.title+' 리포트</h4><ul><li>'+c.question+'</li><li>나의 관계 성향과 표현 방식</li><li>'+c.next+'</li><li>지금 실천할 대화와 행동</li></ul><p class="relationship-report-note" role="note">현재 관계 상태를 정확히 입력해 주세요. 미혼·연애 중·기혼 여부에 따라 리포트 내용이 달라져요. 내 정보에서 현재 상태를 확인하고 수정한 뒤 리포트를 열어 주세요.</p><div class="topic-offer-action"><strong>'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</strong><button type="button" data-buy="'+key+'">나의 리포트 보기</button></div><p class="buy-msg" aria-live="polite"></p></section>';
   };
   const oldTopic=topicHTML;
   topicHTML=function(ch,key){
@@ -58,12 +58,12 @@
     const sections=data.sections.map(s=>{
       if(s.kind==='partner'&&state==='married')return {...s,question:'배우자를 이렇게 읽었어요',lead:'함께하는 배우자를 차트의 상징으로 다시 읽어 본 모습이에요. '+(s.lead||'')};
       if(s.kind==='partner'&&taken)return {...s,question:'지금 곁에 있는 사람, 차트로 다시 읽기',lead:'현재 관계 상태와 별개로, 차트가 그리는 잘 맞는 상대의 모습이에요. 지금 곁의 사람과 겹치는 점을 찾아보세요. '+(s.lead||'')};
-      if(s.kind==='meet'&&taken)return {kind:'relationship-next',question:c.next,lead:'',paragraphs:[(s.paragraphs||[]).find(p=>/시기로 보면/.test(p))||'','아래 10년 흐름에서 밝게 표시된 해는 차트의 애정 흐름을 비교한 것이에요. 관계 상태를 골라도 계산 점수는 바뀌지 않으니, 이미 만나는 사람이 있다면 새 인연이 아니라 지금 관계가 한 단계 깊어지는 때로 읽어 주세요.'],basis:s.basis||[],action:c.action};
+      if(s.kind==='meet'&&taken)return {kind:'relationship-next',question:c.next,lead:'',paragraphs:[(s.paragraphs||[]).find(p=>/시기로 보면/.test(p))||'',c.detail],basis:s.basis||[],action:c.action};
       return s;
     });
-    sections.unshift(section);
+    if(key!=='marry')sections.unshift(section);
     const sumOf=s=>{const seen=[];[s.lead,...(s.paragraphs||[])].filter(Boolean).join(' ').split(/(?<=[.!?])\s+/).map(x=>x.trim()).filter(Boolean).forEach(x=>{if(seen.length<3&&!seen.includes(x))seen.push(x)});return seen.join(' ')};
-    const summary=[sumOf(section),...sections.filter(s=>['core','partner','timing'].includes(s.kind)).slice(0,3).map(sumOf)];
+    const summary=[...(key==='marry'?[]:[sumOf(section)]),...sections.filter(s=>['core','partner','timing'].includes(s.kind)).slice(0,3).map(sumOf)];
     return {...data,title:(ch.inp.name||'당신')+'님의 '+(key==='marry'?'결혼 운명':'연인 운명')+' 리포트',relationshipContext:true,summary,sections};
   };
   // Restored profiles from the current API may not yet include this optional field.

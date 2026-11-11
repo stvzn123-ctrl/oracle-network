@@ -2225,6 +2225,23 @@ function buildRichReport(ch,key){
   const seen=new Set();S.forEach(sec=>{sec.paragraphs=sec.paragraphs.filter(text=>{const k=String(text).replace(/\s+/g,' ').trim();if(seen.has(k))return false;seen.add(k);return true;});});
 
  }
+ if(key==='marry'){
+  const timing=S.find(s=>s.kind==='timing'),yearly=S.find(s=>s.kind==='yearly');
+  if(timing&&yearly){
+   const timeline=timing.paragraphs||[];
+   timing.question='앞으로 10년, 사랑과 결혼의 연별 흐름';
+   timing.lead='해마다 달라지는 관계의 기회와 함께 준비할 일을 살펴봐요.';
+   timing.paragraphs=Y4[1].map((r,i)=>{
+    const detail=timeline.filter(p=>new RegExp('(?:^|[^0-9])'+r.year+'년').test(p));
+    const prev=Y4[1][i-1],next=Y4[1][i+1],hi=r.score===Math.max(...Y4[1].map(x=>x.score)),lo=r.score===Math.min(...Y4[1].map(x=>x.score));
+    const tone=hi?'마음을 전하고 중요한 약속을 의논하기에 특히 눈여겨볼 해예요.':lo?'기대를 서둘러 결론 내리기보다 서로의 생활과 마음을 살필 여유가 필요한 해예요.':prev&&r.score>prev.score&&(!next||r.score>=next.score)?'앞뒤 흐름 속에서 관계의 진전을 의논해 볼 시기예요.':prev&&r.score<prev.score?'관계의 속도와 서로 바라는 역할을 다시 맞춰 볼 해예요.':'익숙한 일상 속에서 약속을 지키며 신뢰를 이어 갈 해예요.';
+    return r.year+'년 — '+tone+' '+(detail.length?detail.join(' '):TGP[tenGod(d,ys(r.year))].love);
+   });
+   timing.table=yearly.table;timing.action='가장 가까운 해의 해설에서 두 사람이 함께 준비할 일 하나를 정해 보세요.';
+   S.splice(S.indexOf(yearly),1);
+  }
+  const core=S.find(s=>s.kind==='core');if(core&&ch.inp.relationship==='married'){core.question='결혼 생활에서 드러나는 나의 성향';core.lead=core.paragraphs[0]||core.lead;}
+ }
  if(['love','marry'].includes(key)&&ch.inp.relationship==='married'){for(let i=S.length-1;i>=0;i--)if(['partner','partner-detail'].includes(S[i].kind))S.splice(i,1);}
  const noticeSentence=/(?:보장하지|성과를 보장하는|검증되지|과학적으로 검증|확률(?:이|은|을)|예측(?:이|력|하는 정확)|예측한 곳이 아니라|진단하는 수치가 아니|질병이나 건강 상태의 예측|중요한 결정은 실제|전문가의 조언을 우선|상대의 마음과 의사는 이 리포트의 범위|정확한 시각을 알게 되면 경계|미상으로 현지 정오|도움을 받을 사람의 외모나 등장 날짜를 확정)/;
  const readerText=t=>String(t||'').split(/(?<=[.!?。])\s+/).filter(sentence=>!noticeSentence.test(sentence)).join(' ').trim();
@@ -2253,7 +2270,7 @@ function buildRichReport(ch,key){
  const summary=[sumHi?'앞으로 10년 중 '+(key==='comprehensive'?'네 분야를 합친 흐름':['금전','애정','직업·학업'][ci]+' 흐름')+'이 가장 밝은 해는 '+sumHi.year+'년('+kage(sumHi.year)+'살, '+sumHi.score+'점)이에요.':'',sumLo&&sumLo!==sumHi?'속도를 늦추고 다지기 좋은 해는 '+sumLo.year+'년('+sumLo.score+'점)이에요.':'',...(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(s=>{const l=firstLine(s.lead||(s.paragraphs||[])[0]);return l?s.question+' — '+l:''})].filter(Boolean);
  S.forEach(s=>{if(s.kind==='yearly')s.paragraphs=s.paragraphs.map(p=>p.split(' [사주]')[0]);s.answer=[...(s.overview||[]),...s.paragraphs].join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
- return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'reader-2026-11-11-v11',
+ return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'reader-2026-11-11-v13',
   body:S.map((r,i)=>(i+1)+'장 · '+r.question+'\n\n핵심: '+r.lead+(r.basis.length?'\n근거: '+r.basis.join(' / '):'')+'\n\n'+r.answer+(r.action?'\n\n실천 · '+r.action:'')).join('\n\n────────────────\n\n')};
 }
 
