@@ -1,3 +1,13 @@
+function constructiveCaution(ch,area='natal'){
+ const dom=ch.cnt.indexOf(Math.max(...ch.cnt));
+ const copy={
+ natal:['시작한 일이 많아질수록 끝낸 일이 적어질 수 있어요. 의욕이 부족해서가 아니라 힘이 분산되는 문제일 수 있으니, 새 일을 더하기 전에 마무리할 하나를 정해 보세요.','마음이 앞서 약속을 늘리면 나중에 지키느라 지칠 수 있어요. 지금의 열정보다 실제 쓸 수 있는 시간을 기준으로 약속하세요.','참고 책임지는 모습을 계속 보이면 주변은 괜찮은 줄 알 수 있어요. 버티는 것만으로 해결되지 않는 일은 힘든 점과 필요한 도움을 구체적으로 말해 주세요.','기준이 분명해도 상대에게 설명하지 않으면 지적으로만 들릴 수 있어요. 무엇이 틀렸는지보다 왜 중요한지, 어떻게 함께 고칠지를 먼저 이야기해 보세요.','충분히 생각하는 것과 결정을 미루는 것은 달라요. 같은 고민을 반복하고 있다면 더 많은 정보보다 결정할 날짜와 작은 첫 행동이 필요할 수 있어요.'],
+ relationship:['내가 원하는 속도로 관계를 이끌면 상대의 망설임을 놓칠 수 있어요. 마음을 표현한 다음에는 상대가 선택하고 답할 시간을 주세요.','서운할 때 바로 꺼낸 말은 마음보다 강하게 전달될 수 있어요. 감정이 가라앉은 뒤 사실과 바라는 행동을 나누어 말해 보세요.','오래 만났다는 이유만으로 마음이 전해지지는 않아요. 표현을 줄이고 있지는 않은지 살피고, 고마운 점과 바라는 점을 말로 확인해 주세요.','옳은 말을 하는 것과 관계를 편안하게 만드는 것은 다를 수 있어요. 해결책을 주기 전에 상대가 어떤 마음이었는지 먼저 들어 보세요.','말하지 않은 마음을 상대가 알아주길 기다리면 오해가 길어질 수 있어요. 결론이 나지 않았어도 지금 느끼는 점부터 짧게 나누어 보세요.'],
+ money:['새로운 수입 아이디어가 많아도 지출과 마무리가 따라오지 않으면 남는 돈은 적을 수 있어요. 한 가지 시도의 비용과 결과를 확인한 뒤 다음으로 넓혀 보세요.','기분을 달래거나 관계를 챙기는 소비가 반복되면 예산을 넘기기 쉬워요. 결제 전에 필요한 지출인지, 지금의 감정을 위한 지출인지 구분해 보세요.','안정을 지키려는 마음이 현재의 돈 관리 방식을 점검하지 않는 이유가 될 수 있어요. 익숙한 상품이나 고정 지출도 조건을 다시 확인하세요.','조건을 완벽하게 비교하느라 필요한 결정을 계속 미룰 수 있어요. 비교할 기준과 기한을 먼저 정하되, 이해하지 못한 조건은 넘기지 마세요.','자료를 많이 읽는 것만으로 돈 관리가 달라지지는 않아요. 이번 달 실제 지출을 기록하고 바꿀 항목 하나를 정하는 것부터 시작해 보세요.'],
+ work:['새 일을 시작하는 힘이 있어도 마무리가 약하면 동료는 결과를 맡기기 어려워요. 끝낼 범위와 완료 기준을 먼저 합의해 보세요.','할 수 있다는 말이 앞서면 일정이 밀릴 때 신뢰를 잃을 수 있어요. 여유 시간을 포함해 약속하고, 늦어질 조짐은 먼저 공유하세요.','맡은 일을 묵묵히 해도 성과와 부담을 말하지 않으면 알아주기 어려워요. 한 일과 필요한 지원을 정기적으로 공유해 보세요.','완성도를 높이려다 피드백을 늦게 받으면 수정 비용이 커질 수 있어요. 완성 전 초안을 보여 주고 방향부터 확인하세요.','준비가 더 필요하다는 생각이 제출과 지원을 늦출 수 있어요. 지금 가능한 수준의 결과물을 내고 실제 피드백으로 보완해 보세요.'],
+ study:['계획과 교재를 자주 바꾸면 공부한 시간이 실력으로 쌓이기 어려워요. 새 방법을 찾기 전에 한 단원을 끝내고 확인 문제를 풀어 보세요.','의욕이 높은 날의 공부량을 매일의 기준으로 삼으면 쉽게 지칠 수 있어요. 집중이 낮은 날에도 지킬 최소 분량을 정하세요.','익숙한 문제를 반복하는 것만으로는 약점이 줄지 않을 수 있어요. 틀린 이유를 확인하고 불편한 유형도 계획에 넣어 보세요.','정리한 노트의 완성도와 문제를 푸는 능력은 다를 수 있어요. 노트를 보지 않고 설명하거나 시간을 재고 풀어 보세요.','이해한 느낌과 혼자 풀 수 있는 상태를 구분해 보세요. 설명을 다시 읽기 전에 답을 가리고 직접 떠올리는 시간을 가져 보세요.']};
+ return (copy[area]||copy.natal)[dom];
+}
 
 /* =========================================================
    constants
@@ -699,7 +709,7 @@ function lifeTraj(){const dm=LD.map(r=>r.reduce((a,b)=>a+b.mean,0)/4),cD=clamp(M
 function tpShort(e){if(e.src==="사주")return "10년 단위의 큰 흐름이 새로 시작돼요";if(e.src==="인도 점성술")return "인도 점성술로 보는 긴 주기가 바뀌어요";
   if(e.src==="수비학")return "수비학의 9년 주기가 새로 시작돼요";if(e.src==="서양 점성술")return e.t.startsWith("토성")?"토성이 제자리로 돌아와 삶의 기반을 다시 세우는 때예요":"목성이 제자리로 돌아와 새 기회의 주기가 열려요";
   return /올라가요/.test(e.t)?"네 가지 운이 함께 올라가는 구간이 시작돼요":"흐름이 차분해져 다지기 좋은 구간이 시작돼요"}
-function natalReadingHTML(ch){
+function natalReadingOriginalHTML(ch){
  const dom=ch.cnt.indexOf(Math.max(...ch.cnt));
  const stories=[
  ['새로운 가능성을 보면 직접 확인해 보고 싶어지는 편이에요. 익숙한 답을 그대로 따르기보다, 나에게 맞는 방법을 찾을 때 의욕이 살아나요.','그 힘은 막막한 일의 첫걸음을 떼거나 주변 사람에게 새로운 방향을 제안할 때 드러나요. 다만 관심이 여러 곳으로 퍼질 때는 시작한 일 하나를 끝내는 데 힘을 모아 보세요.'],
@@ -3463,6 +3473,11 @@ function buildRichReport(ch,key){
  const noticeSentence=/(?:보장하지|성과를 보장하는|검증되지|과학적으로 검증|확률(?:이|은|을)|예측(?:이|력|하는 정확)|예측한 곳이 아니라|진단하는 수치가 아니|질병이나 건강 상태의 예측|중요한 결정은 실제|전문가의 조언을 우선|상대의 마음과 의사는 이 리포트의 범위|정확한 시각을 알게 되면 경계|미상으로 현지 정오|도움을 받을 사람의 외모나 등장 날짜를 확정)/;
  const readerText=t=>String(t||'').split(/(?<=[.!?。])\s+/).filter(sentence=>!noticeSentence.test(sentence)).join(' ').trim();
  for(let i=S.length-1;i>=0;i--)if(S[i].kind==='limit')S.splice(i,1);
+ const area=['love','marry','match','reunion'].includes(key)?'relationship':['money','invest','property','business'].includes(key)?'money':['study','exam','cert'].includes(key)?'study':'work';
+ if(key==='comprehensive'){
+  const p=S.find(s=>s.kind==='partner');if(p)p.caution=constructiveCaution(ch,'relationship');
+  const m=S.find(s=>s.kind==='money');if(m)m.caution=constructiveCaution(ch,'money');
+ }else{const target=S.find(s=>['caution','care','weak'].includes(s.kind))||S.find(s=>!['calendar','yearly','limit'].includes(s.kind));if(target)target.caution=[target.caution,constructiveCaution(ch,area)].filter(Boolean).join(' ');}
  S.forEach((s,i)=>{s.id=key+'-'+(i+1);s.basis=[];delete s.originalLetter;s.lead=readerText(s.lead);s.paragraphs=s.paragraphs.map(readerText).filter(Boolean);s.action=readerText(s.action);s.caution=readerText(s.caution);});
 
  /* 2026-11-10: 투자·시험 계열 문장의 '~합니다'를 해요체로 바꾼다(고지 note는 그대로). */
@@ -4099,3 +4114,5 @@ async function cmpPairBoot(){
 
 TOPIC_REPORT_CONTENTS.friend=['우리 우정의 핵심','대화 방식과 편안한 거리','오래 편하게 지내는 작은 약속'];
 TOPIC_REPORT_CONTENTS.group=['모임의 조합','구성원별 역할 제안','전체 두 사람 비교','돈·시간·역할의 약속'];
+
+function natalReadingHTML(ch){return natalReadingOriginalHTML(ch)+'<p>'+topicEsc(constructiveCaution(ch))+'</p>'}
