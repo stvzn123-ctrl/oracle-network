@@ -2081,8 +2081,21 @@ function buildRichReport(ch,key){
   const money=section('money','돈을 벌고 지키는 방식',GRX.money[topG],
    [oldCareer[2],'돈과 관련해서는 '+HX.money[sunS%4]+'을 돌아볼 수 있어요.','수입·고정 지출·예정된 큰 지출을 구분하면 나에게 맞는 관리 기준을 세우기 쉬워요.'],'지출 예정표를 확인하고 계약·결제 조건을 다시 읽어 보세요.',{caution:'풀이만으로 수익이나 투자 시점을 판단하지 마세요. 실제 비용과 감당 가능한 손실 범위를 먼저 확인하세요.'});
   const helpGroup=good.slice().sort((a,b)=>ng[a]-ng[b])[0]??4;
-  const support=section('support','사람의 도움과 기회','도움은 '+GRX.gen[helpGroup]+'을 나누는 관계에서 찾아볼 수 있어요.',
-   ['나에게 상대적으로 부족한 역할을 편하게 해내는 사람과 협업해 보세요. 같은 성향의 사람만 찾기보다 서로 보완할 일을 구체적으로 정하는 것이 좋아요.','도움을 받을 사람의 외모나 등장 날짜를 확정하는 풀이가 아니에요. 실제로 신뢰할 수 있는 행동과 약속을 기준으로 관계를 살펴보세요.'], '도움을 구할 질문 하나와 내가 나눌 수 있는 경험 하나를 정리해 보세요.');
+  const guiRows=sysScan(ch,'gui').filter(r=>r.S.length).sort((a,b)=>b.v-a.v||a.y-b.y).slice(0,3).sort((a,b)=>a.y-b.y);
+  const sp=actionProfile(ch).support;
+  const helpScenes=[
+   ['동료·같은 분야에서 경험을 쌓은 사람','함께 문제를 해결하거나 공동 작업을 맡는 과정','역할을 나누고 필요한 사람을 소개하며 혼자 처리하던 일의 부담을 줄이는 도움'],
+   ['실무 기술을 가진 제작자·표현과 기획에 능한 사람','작업물을 공개하거나 결과에 대한 피드백을 주고받는 과정','아이디어를 실제 결과물로 만드는 방법과 전달 방식을 다듬는 도움'],
+   ['고객·거래 경험이 많은 실무자','견적·정산·거래 조건을 구체적으로 이야기하는 과정','수입으로 연결할 접점과 현실적인 비용 기준을 알려 주는 도움'],
+   ['책임자·조직의 절차를 잘 아는 선배','지원·협업·담당 업무를 공식적으로 협의하는 과정','필요한 절차와 기준을 알려 주고 맡을 역할을 분명하게 만드는 도움'],
+   ['스승·전문 지식을 가진 조언자','교육·상담·배움의 자리에서 질문을 나누는 과정','막혀 있던 문제를 이해할 관점과 학습 경로를 정리해 주는 도움']
+  ];
+  const hs=helpScenes[helpGroup];
+  const support=section('support','나에게 오는 귀인들','나에게 부족한 역할을 보완해 주는 사람과, 그 인연이 열릴 시기를 함께 읽어요.',
+   guiRows.map(r=>{const ms=r.months.map(m=>m[0]+'월').join('·');return r.y+'년'+(ms?' '+ms+' 무렵':'')+' — '+hs[0]+'이 귀인으로 다가오기 쉬운 흐름이에요. 만날 환경은 '+QWHERE[sp]+' 쪽으로 읽으며, '+hs[1]+'에서 연결될 수 있어요. 이 사람은 '+hs[2]+'을 줄 수 있어요. 먼저 지금 막힌 문제 하나와 이미 해 본 시도를 구체적으로 전하면, 막연한 응원보다 실질적인 조언을 받는 데 도움이 돼요.';}),
+   '좋은 말을 많이 하는 사람보다, 작은 약속을 지키고 도움의 조건을 분명히 설명하는 사람인지 확인해 보세요.');
+  support.paragraphs=[...support.paragraphs.slice(0,1),...guiRows.slice(1).map(r=>r.y+'년 '+r.months.map(m=>m[0]+'월').join('·')+' 무렵에도 비슷한 도움의 인연을 살펴볼 수 있어요. 첫 시기의 만남이 이어지고 있다면, 새 사람만 찾기보다 이미 조언을 주고받은 사람에게 진행 상황을 공유해 보세요.')];
+  support.benefactorTiming=guiRows.map(r=>({year:r.y,months:r.months.map(m=>m[0])}));
   const roles={
    비견:{title:'내 기준으로 독립하기',focus:'스스로 선택하고 책임질 영역을 넓혀 가는 흐름',care:'모든 일을 혼자 떠안거나 내 방식만 고집하기',act:'내가 결정할 일과 함께 의논할 일을 나누어 보세요.'},
    겁재:{title:'경쟁 속에서 협력하기',focus:'동료와 역할을 나누고 서로의 자원을 조율하는 흐름',care:'비교와 승부에 몰입해 돈·시간의 경계를 흐리기',act:'함께하는 일은 역할과 비용 부담을 먼저 정해 두세요.'},
@@ -2121,8 +2134,8 @@ function buildRichReport(ch,key){
   const annual=section('annual-overview',firstYear+'년, 분야별로 깊이 읽기','가까운 한 해를 돈·사랑·일과 배움·생활 리듬으로 나누어 읽어요.',CATS.map((cat,k)=>{const row=summarize(ORC.map(fn=>fn(ch,{y:firstYear,frac:firstYear+.5},k)),1.8);return ['금전','연애·애정','직업·학업','생활 리듬'][k]+' · '+D(row.mean)+'점 — '+strip0(HEAD[cat.k][tier(row.mean)])+' '+annualRest[k];}), '네 분야 중 지금 가장 마음이 쓰이는 한 가지를 골라 이번 달 계획에 반영해 보세요.');
   const cautionPlaces=['큰 금액의 결제·투자·대출 계약을 바로 권하는 자리','감정이 격해진 채 연락하거나 공개적으로 다투는 상황','준비 없이 답을 요구받는 면접·협상과 과밀한 일정','잠과 휴식 시간을 계속 줄이는 일정'];
   const cautionActions=['계약 조건과 비용을 다시 읽고, 큰 지출은 시간을 두고 결정해요.','연락을 몰아 보내기보다 차분하게 대화할 시간을 정해요.','현재 조건과 필요한 준비를 적고, 결정을 작은 단계로 나누어요.','휴식 시간을 먼저 확보하고 생활 리듬을 정돈해요.'];
-  const watchRows=CATS.map((cat,k)=>{const lowRow=Y4[k].reduce((a,b)=>b.score<a.score?b:a);return [lowRow.year+'년 · '+['금전','연애·애정','직업·학업','생활 리듬'][k],strip0(CAUTION[k]),cautionPlaces[k],cautionActions[k]];});
-  const watch=section('watchpoints','시기별로 살펴볼 습관과 선택','분야별로 속도를 조절하며 지나갈 구간을 정리했어요.',[], '해당 시기에 예정된 일이 있다면 표에서 필요한 점검 한 가지를 골라 미리 준비해 보세요.',{table:{cap:'시기별 주의점과 대처',head:['시기·분야','살펴볼 점','상황','대처'],rows:watchRows}});
+  const watchRows=CATS.map((cat,k)=>{const lowRow=Y4[k].reduce((a,b)=>b.score<a.score?b:a);return [lowRow.year+'년\n'+['금전','연애·애정','직업·학업','생활 리듬'][k],strip0(CAUTION[k]),cautionPlaces[k],cautionActions[k]];});
+  const watch=section('watchpoints','시기별로 살펴볼 습관과 선택','분야별로 속도를 조절하며 지나갈 구간을 정리했어요.',[], '해당 시기에 예정된 일이 있다면 표에서 필요한 점검 한 가지를 골라 미리 준비해 보세요.',{table:{cap:'시기별 주의점과 대처',head:['시기\n분야','살펴볼 점','상황','대처'],rows:watchRows.sort((a,b)=>parseInt(a[0])-parseInt(b[0]))}});
   const excerpts=[];
   for(const [topic,label] of [['money','재물과 돈'],['love','연애와 인연'],['marry','결혼과 배우자'],['work','직업과 진로'],['study','학업과 성취']]){
    const report=buildRichReport(ch,topic),sec=report.sections.find(x=>!['limit','fun'].includes(x.kind)&&(x.lead||x.paragraphs.length));if(!sec)continue;
@@ -2147,21 +2160,29 @@ function buildRichReport(ch,key){
    '누구·어디서: 업무 담당자·동료·배움을 도와줄 사람과 작업물이나 학습 결과를 함께 검토할 수 있는 자리에서 시작하세요. 어떻게: 완성한 결과 하나와 필요한 피드백을 정리해 보여 주세요.',
    '누구·어디서: 일정을 함께 정하는 가족·동료와 생활 공간이나 일정표를 보며 조율하세요. 어떻게: 줄일 약속 하나와 지킬 휴식 시간을 먼저 정하세요.'
   ];
+  const fullMeans=[0,1,2,3].map(k=>calendar.months.reduce((n,m)=>n+m.scores[k],0)/12);
   calendar.months.forEach(m=>{
-   const f=m.focus.field,r=m.reading,label=m.year+'년 '+m.month+'월';
-   m.theme=['지출과 약속을 정돈하는 달','관계의 의도를 확인하는 달','결과물을 보여 주는 달','생활의 여유를 확보하는 달'][f];
-   r.opportunity=label+'에는 '+['돈 관리','관계와 대화','일과 배움','생활 리듬'][f]+'를 중심으로 계획을 살펴보세요. 이 달 안의 상대적으로 높은 구간은 같은 분야의 12개월 기준보다 '+m.focus.delta.toFixed(1)+'점 높아 활용 분야로 골랐어요.';
-   r.timing='실행 방법은 위의 분야별 안내에서 확인하고, 이번 달에 실제로 예정된 일에 적용해 보세요.';r.change='';
-   r.caution=r.caution.replace(/\d+~\d+일에는 /,'').replace('더 살펴보세요.','점검하세요.');
+   const diff=m.scores.map((v,k)=>v-fullMeans[k]),f=diff.indexOf(Math.max(...diff)),low=diff.indexOf(Math.min(...diff)),r=m.reading;
+   m.theme=['돈의 흐름과 거래 조건','관계의 거리와 대화','일의 기회와 배움','일정과 생활 리듬'][f];
+   const label=['돈 관리','관계와 대화','일과 배움','생활 리듬'];
+   r.change='';r.opportunity=label[f]+'의 월평균은 '+m.scores[f].toFixed(1)+'점이에요. 같은 분야의 열두 달 월평균과 비교하면 '+Math.abs(diff[f]).toFixed(1)+'점 '+(diff[f]>=0?'높은':'낮은')+' 흐름이에요.';
+   r.timing=contexts[f];
+   r.caution=[
+    '거래를 서두르게 하거나 추가 비용을 모호하게 말하는 상대라면 조건부터 다시 확인하세요. 예정 지출과 결제 내역을 비교해 빠진 비용을 찾아보세요.',
+    '답장이 늦거나 표현 방식이 다르다는 이유만으로 마음을 단정하기 쉬워요. 가까운 상대에게 바라는 연락 방식과 약속을 직접 확인하세요.',
+    '요청을 모두 받아들이면 정작 중요한 마감이 밀릴 수 있어요. 일을 맡기려는 사람과 범위·완료 기준·기한을 먼저 맞추세요.',
+    '일정이 늘어날 때 휴식부터 줄이면 집중력이 떨어질 수 있어요. 함께 일정을 정하는 사람에게 조정할 약속과 비워 둘 시간을 미리 알려 주세요.'
+   ][low];
    r.action=contexts[f];m.action=r.action;
   });
-  calendar.overview=[...annual.paragraphs,...contexts.map((t,i)=>['돈 관리','관계와 대화','일과 배움','생활 리듬'][i]+' · '+t)];
-  calendar.paragraphs=[calendar.paragraphs[0],...calendar.months.map(m=>m.year+'년 '+m.month+'월 · '+m.theme+' — '+m.reading.opportunity+' '+m.reading.timing+' 살펴볼 점: '+m.reading.caution),calendar.paragraphs.at(-1)];
+  calendar.overview=[];calendar.lead='';calendar.action='';
+  calendar.paragraphs=calendar.months.map(m=>m.year+'년 '+m.month+'월 · '+m.theme+' — '+m.reading.opportunity+' '+m.reading.timing+' 살펴볼 점: '+m.reading.caution);
   calendar.table=null;
   advice.action='월말에 실행 여부와 실제로 달라진 점을 한 줄씩 기록해 보세요.';
   advice.paragraphs=['먼저, 사랑·일·돈 중 지금 해결할 문제 하나를 골라요. 여러 조언을 한꺼번에 실천하려 하면 무엇이 도움이 됐는지 알기 어려워요.','다음으로, 해당 챕터에서 제안한 행동을 내 일정과 상대에 맞춰 한 가지로 좁히세요. 누구에게 무엇을 요청할지, 어디에 결과를 남길지 적어 두세요.','마지막으로, 월말에 기대했던 변화와 실제 경험을 비교해요. 잘 맞았던 행동은 이어 가고, 효과가 없었던 방법은 다음 달에 조정하세요.'];
   letter.paragraphs=[...(original.advice.originalLetter||[]).slice(1,3),'이 보고서에서 나와 닮았다고 느낀 모습 하나와 바꾸고 싶은 습관 하나를 골라 보세요. 다시 펼쳤을 때 그 선택이 어떻게 달라졌는지 살펴보면, 내 경험이 쌓인 해설서로 읽을 수 있어요.'];
-  S.splice(0,S.length,summary,personality,partner,career,money,support,perspectives,dw,flow,calendar,watch,advice,letter);
+  summary.paragraphs=[...summary.paragraphs,...perspectives.paragraphs];
+  S.splice(0,S.length,summary,personality,partner,career,money,support,dw,flow,calendar,watch,advice,letter);
   const seen=new Set();S.forEach(sec=>{sec.paragraphs=sec.paragraphs.filter(text=>{const k=String(text).replace(/\s+/g,' ').trim();if(seen.has(k))return false;seen.add(k);return true;});});
 
  }
@@ -2192,7 +2213,7 @@ function buildRichReport(ch,key){
  const summary=[sumHi?'앞으로 10년 중 '+(key==='comprehensive'?'네 분야를 합친 흐름':['금전','애정','직업·학업'][ci]+' 흐름')+'이 가장 밝은 해는 '+sumHi.year+'년('+kage(sumHi.year)+'살, '+sumHi.score+'점)이에요.':'',sumLo&&sumLo!==sumHi?'속도를 늦추고 다지기 좋은 해는 '+sumLo.year+'년('+sumLo.score+'점)이에요.':'',...(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(s=>{const l=firstLine(s.lead||(s.paragraphs||[])[0]);return l?s.question+' — '+l:''})].filter(Boolean);
  S.forEach(s=>{if(s.kind==='yearly')s.paragraphs=s.paragraphs.map(p=>p.split(' [사주]')[0]);s.answer=[...(s.overview||[]),...s.paragraphs].join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
- return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts:[],sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:null,version:'reader-2026-11-11-v7',
+ return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'결혼 운명':NAMES[key])+' 리포트',summary,facts:[],sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:null,version:'reader-2026-11-11-v8',
   body:S.map((r,i)=>(i+1)+'장 · '+r.question+'\n\n핵심: '+r.lead+(r.basis.length?'\n근거: '+r.basis.join(' / '):'')+'\n\n'+r.answer+(r.action?'\n\n실천 · '+r.action:'')).join('\n\n────────────────\n\n')};
 }
 
