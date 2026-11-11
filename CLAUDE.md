@@ -1,11 +1,15 @@
 # 운명탐정 (Oracle Network)
 
 다섯 가지 점술(사주, 서양 점성술, 인도 점성술, 수비학, 마야력)을 실제 규칙으로 계산해서
-1~10년 뒤의 금전·애정·직업·건강운을 종합해 보여주는 단일 HTML 페이지.
+1~10년 뒤의 금전·애정·직업·건강운을 종합해 보여주는 웹 서비스(GitHub Pages + Cloudflare Worker).
 재미용이며, 페이지 안에 "예측력 없음" 안내를 유지한다.
 
-## 파일
-- `index.html` — 전부 이 파일 하나. 외부 라이브러리 없음(구글 폰트만 사용). 브라우저로 바로 열면 동작.
+## 파일 (2026-11-11 기준)
+- `index.html` — 마크업과 작은 인라인 스크립트. 본 스크립트 `app.<해시>.js`, 스타일 `app.<해시>.css`(해시는 내용이 바뀔 때 새로 붙인다).
+- 덧붙이는 스크립트: `relationship-context.js`, `navigation.js`, `navigation-history.js`, `input-experience.js`, `product-flow.js`, `profile-controls.js`, `install-app.js`, `year-format.js`, `social-card.js`. 스타일: `companion.css`, `glass-system.css`, `product-flow.css`, `ui-unify.css`(마지막).
+- `admin.html` + `admin-*.js/css`(관리자), `sample.html`(샘플 리포트), `sitemap.xml`, `img/`.
+- `server/` — Cloudflare Worker(`worker.js` + `narrative.js`, 배포용 묶음 `worker.single.js`), D1 스키마. 리포트 생성기 `buildRichReport`는 앱과 worker 양쪽에 있다(수정 시 둘 다).
+- 아래 '코드 구조'의 순서 설명은 `app.<해시>.js` 안의 순서다.
 
 ## 코드 구조 (`<script>` 안, 위에서 아래 순서)
 1. **constants** — 빠른 선택 도시(PLACES), 음력 표(LUNAR: 1920~2049, 한국천문연구원 기준 korean-lunar-calendar(MIT)에서 생성), 지도 경로(MAPS: 시군구는 KOSTAT 2013, 세계는 Natural Earth 기반 world.geo.json), 국가별 시간대(TZC), 천간·지지, 십신 가중치(TGW),
@@ -238,7 +242,7 @@
 - 단일 HTML 원칙을 성능 때문에 바꿨다. `index.html`(약 45KB)은 마크업과 작은 인라인 스크립트만 두고, 본 스크립트는 `app.<해시>.js`, 스타일은 `app.<해시>.css`로 뺐다. 이미지는 `img/<해시>.jpg|png|webp`.
 - 수정 방법: `app.*.js`/`app.*.css`를 직접 고친 뒤 파일 이름의 해시를 새로 바꾸고 `index.html`의 참조도 같이 바꾼다(캐시 무효화용, `md5sum` 앞 8자리).
 - 카카오톡 등 인앱 브라우저는 `html.lite`: backdrop-filter와 배경 그림 애니메이션을 끈다. 배경 canvas는 모바일·인앱에서 노드 26개, 약 11fps, 화면이 숨겨지면 멈추고, 주소창 높이 변화로는 다시 만들지 않는다.
-- 로그인 흔적(localStorage oracle-session)이 있으면 `html.boot`로 `/me` 응답 전까지 랜딩을 숨긴다(최대 4초). 관리자 여부는 localStorage `oracle-admin`에 캐시.
+- 로그인 흔적(localStorage oracle-session)이 있으면 `html.boot`로 `/me` 응답 전까지 강아지 로딩 화면(`#bootLoader`, 돌아가는 금색 원)을 보여 준다(최대 3초). 관리자 여부는 localStorage `oracle-admin`에 캐시.
 - 관리자 목록 API `/admin/users`는 100명 단위, 회원마다 `active`(승인된 리포트 키 배열)를 준다. worker 재배포 전에는 admin.html이 회원별 조회로 대신한다.
 - 2026-11-07: 월·일 입력에서 앞자리 0(09월) 허용(`clampNum`). 결과를 본 뒤(비로그인) 상단 로그인을 누르면 `#loginSaveDialog`가 떠서 출생 정보 저장 동의를 받는다. sessionStorage `oracle-pending`·`oracle-pending-run`·`oracle-save-intent`로 넘기고, 로그인 후 `restoreSavedResult`로 결과를 이어서 보여 주며 동의했으면 `/profile`에 저장한다. 좁은 화면(≤400px)에서 리포트 인연 프로필이 넘치지 않게 했다.
 
