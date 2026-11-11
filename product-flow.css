@@ -109,3 +109,16 @@ body.nav-edit #guestProfile{display:none!important}
 #report .report-month .month-theme{font-weight:600;margin:0 0 10px}
 #report .report-month p:last-child{margin-bottom:0}
 @media print{#report .report-month{break-inside:avoid}}
+
+/* Dasha table: preserve the two-character pillar and readable age ranges. */
+#report .rv3-table:has(caption) tbody th{min-width:3em}
+#report .daewoon-table tbody th{white-space:nowrap;word-break:keep-all}
+#report .daewoon-table{table-layout:fixed;width:100%}
+#report .daewoon-table th:nth-child(1){width:18%}
+#report .daewoon-table th:nth-child(2){width:31%}
+#report .daewoon-table th:nth-child(3){width:51%}
+#report .daewoon-table td{word-break:keep-all;overflow-wrap:anywhere}
+
+#report .daewoon-table .current-tag{display:block;font-size:11px;line-height:1.5;color:var(--report-accent);margin-bottom:4px}#report .daewoon-table .pillar-label{white-space:nowrap}
+
+.report-print-appendix{display:none}@media print{.report-print-appendix{display:block;break-before:page}}
