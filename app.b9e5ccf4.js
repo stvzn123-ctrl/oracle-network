@@ -2400,7 +2400,7 @@ function approvedReportHTML(data,key,sourceChart=null){
  const chapterPose=(s,i)=>{if(i%3!==0||s.kind==='partner'||(s.kind==='partner-detail'))return '';const want=/건강|휴식/.test(s.question)?'rest':/주의|조심/.test(s.question)?'care':/돈|재물|투자|사업/.test(s.question)?'money':/사랑|인연|결혼|연애/.test(s.question)?'heart':/공부|학업|시험|계산|방법/.test(s.question)?'note':'lucky';const pick=[want,...POSE_POOL].find(p=>!usedPoses.has(p));if(!pick)return '';usedPoses.add(pick);return mascotPoseHTML(pick,'report-chapter-pose')};
  const chapter=(s,i)=>{
   const face=s.kind==='partner'&&!comp?faceHTML():null;
-  const body=(s.caution?'<aside class="report-caution"><b>살펴볼 점</b><p>'+E(s.caution)+'</p></aside>':'')+(["love","marry"].includes(key)&&s.kind==='meet'&&ch?encounterHTML(ch):paraHTML(s))+lineHTML(s.line)+(s.kind==='calendar'&&Array.isArray(s.months)?'':s.kind==='daewoon'?'':tableHTML(s.table))+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
+  const body=(s.cast?socialCastHTML(s.cast):'')+(s.caution?'<aside class="report-caution"><b>살펴볼 점</b><p>'+E(s.caution)+'</p></aside>':'')+(["love","marry"].includes(key)&&s.kind==='meet'&&ch?encounterHTML(ch):paraHTML(s))+lineHTML(s.line)+(s.kind==='calendar'&&Array.isArray(s.months)?'':s.kind==='daewoon'?'':tableHTML(s.table))+barsHTML(s.bars)+(s.action?'<p class="rv3-act"><b>실천</b>'+E(s.action)+'</p>':'');
   return '<section class="r-page rv3-ch" id="chapter-'+i+'"><header class="rv3-hd"><span class="rv3-no">'+(v3?'CHAPTER '+n2(i):(i+1)+'장')+'</span><h2>'+E(s.question)+'</h2></header>'+chapterPose(s,i)+
    (s.lead&&(comp||readingParts(s.lead).main)&&!(ch&&['love','marry'].includes(key)&&['meet','partner'].includes(s.kind))?interpretationHTML(s.lead,'rv3-lead',comp):'')+
 
@@ -4187,6 +4187,16 @@ async function openGroupReport(trigger){
  try{const ac=await accountAPI('/access');if(ac.isAdmin||ac.reports.includes('group')||ac.reports.includes('all'))return show()}catch(_){}
  showLaunchReport('group',{me:me.inp,members:list.slice(1).map(c=>c.inp)},trigger,show)
 }
+const SOCIAL_DOGS=[
+ ['a',0,'혼자 평온한 애'],['a',1,'취했는데 안 취했대'],['a',2,'먹을 때만 빠른 애'],['a',3,'일단 의심하는 애'],['a',4,'꾸미다 지각한 애'],['a',5,'이불 밖은 무리인 애'],['a',6,'정산엔 진심인 애'],['a',7,'읽씹하고 다 아는 애'],['a',8,'웃다가 집 못 가는 애'],
+ ['b',0,'약속 잡고 후회하는 애'],['b',1,'메뉴는 얘가 정함'],['b',2,'썰에 살 붙이는 애'],['b',3,'여행 가면 팀장인 애'],['b',4,'일단 가자는 애'],['b',5,'남 얘기에 우는 애'],['b',6,'사진 검사하는 애'],['b',7,'나오자마자 집 가재'],['b',8,'네 편부터 드는 애']
+];
+function socialDogCast(list){
+ // Existing dominant element and strong/weak roles choose the pool; duplicates are valid.
+ const pools=[[[13,12],[9,0]],[[8,11,1],[17,14]],[[10,2],[17,5]],[[6,12],[3,15,4]],[[7,0],[16,5]]];
+ return list.map((c,i)=>{const dom=c.cnt.indexOf(Math.max(...c.cnt)),pool=pools[dom][c.strong?0:1],id=pool[mod(c.stems.d, pool.length)],dog=SOCIAL_DOGS[id];return {name:groupName(c,i),sheet:dog[0],index:dog[1],label:dog[2]};});
+}
+function socialCastHTML(cast){return '<div class="social-cast">'+cast.map(c=>'<figure class="social-dog"><figcaption class="social-dog-label">'+topicEsc(c.label)+'</figcaption><div class="social-dog-window social-dog-row-'+Math.floor(c.index/3)+'" role="img" aria-label="'+topicEsc(c.label)+' 강아지 캐릭터"><span class="social-dog-sprite" style="background-image:url(img/social-dogs-'+c.sheet+'-v2.png);background-position:'+(c.index%3*50)+'% '+(Math.floor(c.index/3)*50)+'%"></span></div><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>').join('')+'</div>';}
 function socialPlayData(list){
  const style=[['개척 대장','아이디어 씨앗'],['분위기 점화자','리액션 요정'],['든든한 중심','안부 지킴이'],['계획 해결사','취향 감별사'],['대화 수집가','조용한 연결자']];
  const activity=['처음 가 보는 동네 산책과 작은 체험 수업','노래 맞히기나 몸으로 설명하는 팀 게임','각자 좋아하는 간식 하나씩 가져오는 소풍','규칙이 간단한 보드게임과 취향별 맛집 투표','서로 고른 음악을 듣고 이유를 나누는 카페 시간'];
@@ -4207,7 +4217,7 @@ function friendReportData(a,b,res){
  ];
  const play=socialPlayData([a,b]);
  sections.push(
-  {kind:'friend-chemistry',question:'우리 둘의 우정 별명',lead:play.nick.join(' × '),paragraphs:[play.same?'닮은 리듬으로 웃음 포인트가 통하는 조합이에요. 취향이 겹칠 때는 함께 깊게 파보고, 의견이 갈리면 먼저 양보할 항목을 하나씩 정해 보세요.':'서로 다른 재주가 만나는 조합이에요. 한 사람이 시작한 아이디어를 다른 사람이 어떻게 살려 주는지 찾아보세요.',...names.map((n,i)=>n+'님의 오늘 역할: '+play.nick[i]+' — '+roles[i][1])]},
+  {kind:'friend-chemistry',question:'우리 둘이 친구인 이유',lead:'닮은 듯 다른 우리, 강아지로 보면 이런 조합이에요.',cast:socialDogCast([a,b]),paragraphs:[play.same?'닮은 리듬으로 웃음 포인트가 통하는 조합이에요. 취향이 겹칠 때는 함께 깊게 파보고, 의견이 갈리면 먼저 양보할 항목을 하나씩 정해 보세요.':'서로 다른 재주가 만나는 조합이에요. 한 사람이 시작한 아이디어를 다른 사람이 어떻게 살려 주는지 찾아보세요.',...names.map((n,i)=>n+'님이 함께할 때의 강점: '+roles[i][1])]},
   {kind:'friend-play',question:'둘이 만나면 해 볼 것',lead:'다음 약속에 하나만 골라 보세요.',paragraphs:play.activities,action:'각자 하고 싶은 활동에 한 표씩 주고, 의견이 다르면 이번과 다음 약속에 번갈아 해 보세요.'},
   {kind:'friend-mission',question:'친구 사용 설명서 맞혀보기',lead:'서로 답을 적은 뒤 동시에 공개해 보세요.',paragraphs:['친구가 지쳤을 때 원하는 것은? 조용히 듣기 / 해결책 찾기 / 함께 놀기','약속이 취소되면 더 반가운 것은? 바로 다음 날짜 잡기 / 편하게 쉬라고 하기','친구가 생각하는 내 장점 하나를 먼저 예상하고, 실제 답과 비교해 보세요.'],action:'틀린 답은 놀릴 소재보다 새로 알게 된 취향으로 기억해 주세요.'}
  );
@@ -4225,7 +4235,7 @@ function groupReportData(list,r){
  ];
  const play=socialPlayData(list);
  sections.push(
-  {kind:'group-cast',question:'우리 모임 예능 캐스팅',lead:'차트의 강점을 별명과 오늘의 미션으로 바꿔 봤어요.',paragraphs:[],table:{cap:'이번 모임 캐릭터와 미션',head:['이름','별명','오늘의 미션'],rows:nm.map((n,i)=>[n,play.nick[i],play.missions[i]])},action:'별명이 마음에 안 들면 서로 더 잘 맞는 이름을 붙여 주세요. 다음 모임에는 역할도 바꿔 보세요.'},
+  {kind:'group-cast',question:'우리 모임 예능 캐스팅',lead:'이 조합으로 모이면 이런 장면이 떠올라요.',cast:socialDogCast(list),paragraphs:[],table:{cap:'이번 모임 캐릭터와 미션',head:['이름','별명','오늘의 미션'],rows:nm.map((n,i)=>[n,socialDogCast(list)[i].label,play.missions[i]])},action:'별명이 마음에 안 들면 서로 더 잘 맞는 이름을 붙여 주세요. 다음 모임에는 역할도 바꿔 보세요.'},
   {kind:'group-play',question:'우리 모임에 어울리는 놀거리',lead:play.same?'취향이 모이는 활동 하나를 깊게 즐겨 보세요.':'서로 다른 취향을 번갈아 즐길 코스를 만들어 보세요.',paragraphs:play.activities,action:'각자 활동 하나를 더 제안하고, 모두가 참여할 수 있는 난이도와 예산으로 골라 보세요.'},
   {kind:'group-mission',question:'단톡방에서 시작하는 10분 미션',lead:'다음 모임 전에 한 번씩 답해 보세요.',paragraphs:['취향 빙고: 좋아하는 음식·휴일 활동·듣는 음악을 하나씩 적고 가장 많이 겹친 취향을 찾아요.','칭찬 이어달리기: 명단 순서대로 다음 사람에게 함께해서 좋았던 순간 하나를 전해요. 마지막 사람은 첫 사람에게 전해요.','숨은 공통점 찾기: 처음에는 달라 보이는 두 사람이 대화해 의외의 공통점 세 개를 찾아요.'],action:'답하기 어려운 질문은 패스해도 좋아요. 모든 사람이 한 번씩 말할 수 있게 차례를 나눠 주세요.'}
  );
