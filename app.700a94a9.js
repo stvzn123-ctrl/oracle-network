@@ -919,7 +919,7 @@ function fillForm(v){$("in-name").value=v.name||"";$("in-roman").value=v.roman||
   $("in-time").value=v.time;$("in-notime").checked=!!v.notime;$("in-time").disabled=!!v.notime;
   if(v.place&&v.place.none){setNoPlace(true)}else{setNoPlace(false);place=typeof v.place==="number"?placeFromIdx(v.place):v.place;showPlace();syncSel()}}
 function renderWho(v){const [y,m,d]=v.date.split("-");const dt=v.cal==="l"?`음 ${v.ly}.${String(v.lm).padStart(2,"0")}.${String(v.ld).padStart(2,"0")}${v.leap?"(윤)":""}`:`${y}.${m}.${d}`;
-  $("whoSum").innerHTML=[v.name||"이름 미입력",`${dt} ${v.notime?"시각 모름":v.time}`,v.place.name,v.sex==="f"?"여":"남"].map(t=>`<span>${t}</span>`).join("")}
+  $("whoSum").innerHTML=[v.name||"이름 미입력",`${dt} ${v.notime?"시각 모름":v.time}`,v.place.name,v.sex==="f"?"여":"남"].map(t=>`<span>${String(t??"").replace(/[&<>"']/g,c=>"&#"+c.charCodeAt(0)+";")}</span>`).join("")}
 function run(v,animate){renderWho(v);CH=buildChart(v);compute();selDec=clamp(Math.floor(nowAge()/10),0,DECS-1);if(animate)cast();renderAll()}
 /* 관리자 검토용: 이 출생 정보로 확인하면 공유 없이 잠금 영역을 연다. 저장소에 기록하지 않아 이 화면에서만 유지된다. */
 function adminReview(){if(typeof accountUser!=='undefined'&&accountUser?.isAdmin){graphUnlocked=true;applyGraphLock();$('unlock-status').textContent='관리자 계정: 전체 결과를 확인할 수 있어요.'}}
@@ -4037,7 +4037,7 @@ $('profileSave').addEventListener('click',async()=>{
 function restoreSavedResult(profile){
  profileFill(profile);
  const error=checkForm(),v=readForm(),year=Number((v.date||'').slice(0,4));
- if(error||v.err||!Number.isFinite(year)||year<1920||year>2026){$('err').textContent=error||v.err||'저장된 생년월일을 확인해주세요.';return false}
+ if(error||v.err||!Number.isFinite(year)||year<1920||year>new Date().getFullYear()){$('err').textContent=error||v.err||'저장된 생년월일을 확인해주세요.';return false}
  const fresh=document.body.classList.contains('fresh');
  try{$('askbox').open=false;document.body.classList.remove('fresh');run(v,false);$('landingStart').innerHTML='내 결과 바로보기 <span aria-hidden="true">→</span>';document.body.classList.add('app-entered');window.scrollTo({top:0,behavior:'instant'});return true}
  catch(_){if(fresh)document.body.classList.add('fresh');$('askbox').open=true;$('err').textContent='저장된 정보를 확인한 뒤 다시 시도해주세요.';return false}
