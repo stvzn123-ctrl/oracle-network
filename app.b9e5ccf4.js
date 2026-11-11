@@ -4172,7 +4172,7 @@ function groupListHTML(){
  return '<ul class="cmp-group-list">'+all.map((c,i)=>'<li><b>'+topicEsc(groupName(c,i))+'</b><small>'+topicEsc(c.inp.date)+(i===0?' · 나':'')+'</small>'+(i?'<button type="button" class="cmp-del" data-gdel="'+(i-1)+'" aria-label="'+topicEsc(groupName(c,i))+' 빼기">빼기</button>':'')+'</li>').join('')+'</ul>'+
   '<p class="cmp-priv">'+(all.length<3?'모임 궁합은 3명부터 볼 수 있어요. '+(3-all.length)+'명 더 넣어 주세요.':'지금 '+all.length+'명이에요. 8명까지 넣을 수 있어요.')+'</p>'+
   '<button type="button" class="cmp-open" data-gcalc'+(all.length<3?' disabled':'')+'>모임 역할 보기 →</button>'}
-function groupRefresh(){const b=document.getElementById('cmpGroupList');if(b)b.innerHTML=groupListHTML();const out=document.getElementById('cmpGroupOut');if(out)out.innerHTML='';partnerRefresh();}
+function groupRefresh(){const b=document.getElementById('cmpGroupList');if(b)b.innerHTML=groupListHTML();const out=document.getElementById('cmpGroupOut');if(out)out.innerHTML=socialPlaceholderHTML(3);partnerRefresh();}
 
 function groupRender(){
  const all=[CH,...GROUP],out=document.getElementById('cmpGroupOut');if(!out)return;
@@ -4225,18 +4225,16 @@ function socialContext(list){
 }
 function socialDogCast(list){return socialContext(list).map(x=>x.cast);}
 function socialCastHTML(cast){return '<div class="social-cast">'+cast.map(c=>'<figure class="social-dog"><figcaption class="social-dog-label">'+topicEsc(c.label)+'</figcaption><div class="social-dog-window social-dog-row-'+Math.floor(c.index/3)+'" role="img" aria-label="'+topicEsc(c.label)+' 강아지 캐릭터"><span class="social-dog-sprite" style="background-image:url(img/social-dogs-'+c.sheet+'-v4.png)'+';background-position:'+(c.index%3*50)+'% '+(Math.floor(c.index/3)*50)+'%"></span></div><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>').join('')+'</div>';}
+function socialPlaceholderHTML(count){return '<div class="social-placeholder"><h4>'+ (count===2?'우리 둘의 관계는 어떤 캐릭터일까요?':'우리 모임에서 나는 어떤 캐릭터일까요?')+'</h4><div class="mystery-line" style="--count:'+count+'">'+Array.from({length:count},(_,i)=>'<div class="mystery-character"><b aria-hidden="true">?</b><span class="mystery-dog" style="--mystery-image:url(img/pose-white-'+(i%2?'rest':'happy')+'.webp)" role="img" aria-label="아직 공개되지 않은 강아지 캐릭터"></span></div>').join('')+'</div></div>';}
 function collapseFriendInputs(out){
- const panel=out.closest('.cmp-form');if(!panel)return;
+ const panel=out.closest('.cmp-form')||document.querySelector('#cmpOne .cmp-form');if(!panel)return;
  let toggle=panel.querySelector('.friend-input-toggle');
  if(!toggle){toggle=document.createElement('details');toggle.className='friend-input-toggle';toggle.innerHTML='<summary>친구 선택하기 · 변경</summary>';const saved=panel.querySelector('.cmp-saved');const form=panel.querySelector('form');if(form)form.prepend(toggle);else out.before(toggle);const manual=panel.querySelector('.group-manual');if(saved)toggle.append(saved);if(manual)toggle.append(manual);}
  toggle.open=false;toggle.querySelectorAll('details').forEach(d=>d.open=false);
  const h=panel.querySelector('.cmp-head h4');if(h)h.hidden=true;
 }
 function collapseGroupMembers(){
- const list=document.getElementById('cmpGroupList');if(!list)return;
- let toggle=list.querySelector('.group-members-toggle');
- if(!toggle){toggle=document.createElement('details');toggle.className='group-members-toggle';toggle.innerHTML='<summary>모임 구성원 · 확인 및 변경</summary>';const members=list.querySelector('.cmp-group-list');if(members){members.before(toggle);toggle.append(members);}}
- toggle.open=false;
+ document.querySelectorAll('#cmpGroup > details').forEach(d=>{d.open=false;d.querySelectorAll('details').forEach(n=>n.open=false);});
 }
 function socialResultHTML(list){
  const context=socialContext(list);
@@ -4326,7 +4324,7 @@ async function cmpPairCheck(code,msgEl){
  return true}
 
 function cmpShowOne(label,scroll=true){
- if(COMPAT?.kind==='friend'){const out=document.querySelector('#cmpOne .cmp-result');if(out){out.innerHTML=socialResultHTML([CH,COMPAT.b]);collapseFriendInputs(out);if(scroll)out.scrollIntoView({behavior:soft(),block:'nearest'});}return;}
+ if(COMPAT?.kind==='friend'){const out=document.getElementById('friendRoleOut')||document.querySelector('#cmpOne .cmp-result');if(out){out.innerHTML=socialResultHTML([CH,COMPAT.b]);collapseFriendInputs(out);if(scroll)out.scrollIntoView({behavior:soft(),block:'nearest'});}return;}
  const res=COMPAT.res,out=document.querySelector('#cmpOne .cmp-result');if(!out)return;
  const lv=res.total>=88?'아주 잘 맞는 편':res.total>=80?'잘 맞는 편':res.total>=74?'서로 편안한 사이':'맞춰 갈수록 좋아지는 사이';
  out.innerHTML='<div class="cmp-score"><span>'+topicEsc(J(label,'과','와'))+' 나의 '+(COMPAT.kind==='friend'?'우정 ':'')+'궁합</span><em>'+lv+'</em></div>'+
@@ -4344,21 +4342,21 @@ function cmpSetKind(k){
  document.querySelectorAll('[data-ck]').forEach(b=>{const visible=b.dataset.ck!=='love';b.hidden=!visible;b.style.display=visible?'':'none';b.setAttribute('aria-pressed',String(b.dataset.ck===k))});
  const note=document.getElementById('cmpKindNote');if(note)note.textContent=CMP_NOTE[k];
  const one=document.getElementById('cmpOne'),g=document.getElementById('cmpGroup');
- if(one)one.hidden=k==='group';if(g)g.hidden=k!=='group';
+ if(one)one.hidden=k==='group';if(g)g.hidden=k!=='group';const friendOut=document.getElementById('friendRoleOut');if(friendOut){friendOut.hidden=k!=='friend';if(k==='friend'&&!COMPAT)friendOut.innerHTML=socialPlaceholderHTML(2);}
  if(k==='group')groupRefresh()}
 
 function matchPanelHTML(){
  return '<div class="cmp-kind" role="group" aria-label="우정 궁합 종류"'+(CMPKIND==='love'?' hidden':'')+'>'+Object.keys(CMP_KIND).map(k=>'<button type="button" data-ck="'+k+'" aria-pressed="'+(k===CMPKIND)+'">'+CMP_KIND[k]+'</button>').join('')+'</div>'+
   '<p class="cmp-kind-note" id="cmpKindNote">'+CMP_NOTE[CMPKIND]+'</p>'+
-  '<div id="cmpOne" class="'+(CMPKIND==='friend'?'friend-controls':'')+'"'+(CMPKIND==='group'?' hidden':'')+'>'+compatFormHTML('match')+'</div>'+
-  '<div id="cmpGroup"'+(CMPKIND==='group'?'':' hidden')+'><section class="chart-form cmp-form"><h4>모임 구성원</h4><div id="cmpGroupList">'+groupListHTML()+'</div><div id="cmpGroupOut" class="chart-feedback" aria-live="polite"></div></section>'+compatFormHTML('group')+'</div>'}
+  '<div id="cmpOne" class="'+(CMPKIND==='friend'?'friend-controls':'')+'"'+(CMPKIND==='group'?' hidden':'')+'>'+'<div id="friendRoleOut" aria-live="polite"'+(CMPKIND==='friend'?'':' hidden')+'>'+socialPlaceholderHTML(2)+'</div>'+compatFormHTML('match')+'</div>'+
+  '<div id="cmpGroup"'+(CMPKIND==='group'?'':' hidden')+'><div id="cmpGroupOut" aria-live="polite">'+socialPlaceholderHTML(3)+'</div><details class="group-members-panel" open><summary>모임 구성원</summary><section class="chart-form cmp-form"><div id="cmpGroupList">'+groupListHTML()+'</div></section></details><details class="group-add-panel" open><summary>모임에 사람 추가하기</summary>'+compatFormHTML('group')+'</details></div>'}
 
 document.addEventListener('click',e=>{
  const k=e.target.closest('[data-ck]');if(k){cmpSetKind(k.dataset.ck);return}
  const mk=e.target.closest('[data-pmake]');if(mk){cmpMakeLink(mk);return}
  const pc=e.target.closest('[data-pcheck]');if(pc){const msg=pc.parentNode.querySelector('.cmp-pair-msg');pc.disabled=true;if(msg)msg.textContent='확인하고 있어요…';
   cmpPairCheck(pc.dataset.pcheck,msg).catch(err=>{if(msg)msg.textContent=err.message||'확인하지 못했어요.'}).finally(()=>{pc.disabled=false});return}
- const gd=e.target.closest('[data-gdel]');if(gd){GROUP.splice(+gd.dataset.gdel,1);GROUPRES=null;groupRefresh();const o=document.getElementById('cmpGroupOut');if(o)o.innerHTML='';return}
+ const gd=e.target.closest('[data-gdel]');if(gd){GROUP.splice(+gd.dataset.gdel,1);GROUPRES=null;groupRefresh();const o=document.getElementById('cmpGroupOut');if(o)o.innerHTML=socialPlaceholderHTML(3);return}
  if(e.target.closest('[data-gcalc]')){groupRender();return}
  if(e.target.closest('[data-gopen]')){openGroupReport(e.target.closest('[data-gopen]'));return}
 });
@@ -4405,3 +4403,5 @@ TOPIC_REPORT_CONTENTS.friend=['우리 우정의 핵심','대화 방식과 편안
 TOPIC_REPORT_CONTENTS.group=['모임의 조합','구성원별 역할 제안','전체 두 사람 비교','돈·시간·역할의 약속'];
 
 function natalReadingHTML(ch){return natalReadingOriginalHTML(ch)+'<p>'+topicEsc(constructiveCaution(ch))+'</p>'}
+
+document.addEventListener('input',e=>{if(e.target.closest('.friend-controls form')&&e.target.name!=='partnerSave'){const out=document.getElementById('friendRoleOut');if(out)out.innerHTML=socialPlaceholderHTML(2);COMPAT=null;}});
