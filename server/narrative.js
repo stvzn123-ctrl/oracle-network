@@ -138,6 +138,8 @@ const CLOSE_CARE = [
 
 /* ctx: worker.js buildRichReport에서 계산해 넘겨주는 값 */
 export function narrativeComprehensive(c) {
+  /* 2026-11-12: 결혼·연애 중이면 새 만남 대신 두 사람의 관계, 썸이면 호감으로 읽는다. */
+  const relTaken = c.rel === "married" || c.rel === "dating", relCrush = c.rel === "crush";
   const v = { name: c.name };
   const F = t => fill(t, v);
   const out = [];
@@ -148,7 +150,7 @@ export function narrativeComprehensive(c) {
     lead: F(ONELINE[c.dom]),
     paras: [
       "다섯 가지 점술이 공통으로 말하는 건, " + c.common,
-      fill(SUM_YEAR, { cat: CAT_KO[c.bestCat], y: c.bestYear }) + (c.mateYears.length ? " 사랑에서는 새 인연이나 약속의 신호가 가장 많이 겹치는 해가 " + c.mateYears[0].y + "년이에요." + (c.loveYear && c.loveYear !== c.mateYears[0].y ? " 이미 곁에 있는 관계가 가장 따뜻해지는 해는 " + c.loveYear + "년이에요." : "") : ""),
+      fill(SUM_YEAR, { cat: CAT_KO[c.bestCat], y: c.bestYear }) + (c.mateYears.length ? (relTaken ? " 사랑에서는 두 사람의 관계가 깊어지는 신호가 가장 많이 겹치는 해가 " : " 사랑에서는 새 인연이나 약속의 신호가 가장 많이 겹치는 해가 ") + c.mateYears[0].y + "년이에요." + (c.loveYear && c.loveYear !== c.mateYears[0].y ? " 이미 곁에 있는 관계가 가장 따뜻해지는 해는 " + c.loveYear + "년이에요." : "") : ""),
       "이 리포트는 사주, 서양 점성술, 베딕 점성술, 수비학, 마야력 다섯 가지로 {name}님을 함께 읽고, 여러 점술이 공통으로 가리키는 이야기를 중심으로 풀어 썼어요.".replace(/\{name\}/g, c.name)
     ],
     basis: c.basis.summary
@@ -165,14 +167,18 @@ export function narrativeComprehensive(c) {
 
   /* 3. 사랑과 인연 */
   const mateWhen = c.mateYears.length
-    ? "시기로 보면 " + c.mateYears.map(m => m.y + "년(" + m.age + "살)").join("과 ") + "에 인연의 기운이 가장 뚜렷해요. 이 무렵 새로운 만남이 시작되거나, 만나던 사람과 미래를 약속하게 될 가능성이 커요. 이미 함께하는 사람이 있다면 관계가 한층 단단해지는 해로 읽어 주세요."
+    ? "시기로 보면 " + c.mateYears.map(m => m.y + "년(" + m.age + "살)").join("과 ") + (relTaken
+      ? "에 두 사람의 관계가 가장 깊어지는 기운이 뚜렷해요. " + (c.rel === "married" ? "이 무렵 배우자와 함께 준비하던 계획이 구체적으로 움직이기 쉬워요." : "이 무렵 지금 만나는 사람과 미래를 약속하게 될 가능성이 커요.") + " 함께 보내는 시간을 조금 더 늘려 보세요."
+      : relCrush ? "에 인연의 기운이 가장 뚜렷해요. 이 무렵 마음이 가는 사람과 거리가 가까워지거나, 호감이 연인으로 이어질 가능성이 커요."
+      : "에 인연의 기운이 가장 뚜렷해요. 이 무렵 새로운 만남이 시작되거나, 만나던 사람과 미래를 약속하게 될 가능성이 커요. 이미 함께하는 사람이 있다면 관계가 한층 단단해지는 해로 읽어 주세요.")
+    : relTaken ? "앞으로 10년 안에서는 관계가 깊어지는 시기가 한 해에 몰리기보다 고르게 열려 있어요. 특정한 해를 기다리기보다, 평소의 대화와 작은 약속을 꾸준히 지키는 것이 관계를 단단하게 하는 가장 확실한 방법이에요."
     : "앞으로 10년 안에서는 인연의 시기가 한 해에 몰리기보다 고르게 열려 있어요. 특정한 해를 기다리기보다, 마음이 가는 자리에 꾸준히 나가는 것이 좋은 인연을 만나는 가장 확실한 방법이에요.";
   out.push({
     kind: "partner", title: "사랑과 인연",
     lead: "",
     /* 2026-11-10: 성격(일간·오행)과 사랑(금성) 문단이 부딪힐 때 잇는 문장, 인연 신호 해와 애정 점수 최고 해를 구분하는 문장. */
-    paras: [([2, 3, 4].includes(c.dom) && c.venusEl % 2 === 0 ? "평소에는 차분하고 신중해 보여도, 마음이 움직이면 달라져요. " : [0, 1].includes(c.dom) && c.venusEl % 2 === 1 ? "평소에는 앞장서고 활발한 편이지만, 마음을 여는 데는 시간이 걸려요. " : "") + F(LOVE[c.venusEl]), F(MATE[c.mateEl]), MEETP[c.descEl] + " " + mateWhen + (c.loveYear && !c.mateYears.some(m => m.y === c.loveYear) ? " 한편 애정 점수만 보면 " + c.loveYear + "년이 가장 높아요. 새로운 만남보다 지금 있는 관계가 따뜻해지는 해로 읽어 주세요." : "")],
-    action: "만나는 사람이 있다면 이번 달에 둘이 가 본 적 없는 곳에 함께 가 보세요. 혼자라면 평소 가지 않던 모임이나 자리에 한 번 나가 보세요.",
+    paras: [([2, 3, 4].includes(c.dom) && c.venusEl % 2 === 0 ? "평소에는 차분하고 신중해 보여도, 마음이 움직이면 달라져요. " : [0, 1].includes(c.dom) && c.venusEl % 2 === 1 ? "평소에는 앞장서고 활발한 편이지만, 마음을 여는 데는 시간이 걸려요. " : "") + F(LOVE[c.venusEl]), (relTaken ? F(MATE[c.mateEl]).replace(/^(.+?)님과 잘 맞는 사람은 (.+?) 사람이에요\..*$/, (m, n, x) => "차트로 보면 " + n + "님은 " + x + " 사람과 마음이 잘 맞아요. 지금 곁에 있는 " + (c.rel === "married" ? "배우자" : "연인") + "에게서 이런 모습을 찾아 고마움을 표현해 보면 관계가 한결 따뜻해져요.") : F(MATE[c.mateEl])), (relTaken ? DEEPP : relCrush ? CRUSHP : MEETP)[c.descEl] + " " + mateWhen + (c.loveYear && !c.mateYears.some(m => m.y === c.loveYear) ? " 한편 애정 점수만 보면 " + c.loveYear + "년이 가장 높아요. " + (relTaken ? "두 사람의 관계가 가장 따뜻해지는 해로 읽어 주세요." : "새로운 만남보다 지금 있는 관계가 따뜻해지는 해로 읽어 주세요.") : "")],
+    action: relTaken ? "이번 달에 둘이 가 본 적 없는 곳에 함께 가 보세요. 새로운 경험을 나눌수록 관계가 깊어져요." : relCrush ? "마음이 가는 사람에게 이번 달 부담 없는 약속 하나를 먼저 제안해 보세요." : "이번 달에 평소 가지 않던 모임이나 자리에 한 번 나가 보세요. 인연은 늘 새로운 문 하나에서 시작돼요.",
     basis: c.basis.partner
   });
 
@@ -456,7 +462,7 @@ export function narrativeWork(c) {
     action: "지금 하는 일에서 가장 신났던 순간 세 가지를 적어 보세요. 그 순간들의 공통점이 {name}님에게 맞는 일의 방향이에요.".replace("{name}", c.name),
     basis: c.basis.fit });
   out.push({ kind: "gui", title: "일에서 만나는 귀인", lead: "",
-    paras: ["일에서 {name}님을 도와줄 사람은 ".replace("{name}", c.name) + c.guiWho + "일 가능성이 커요. " + c.guiWhere + " 같은 곳에서 인연이 닿기 쉬우니, 이런 자리에 꾸준히 얼굴을 비춰 두세요." + (c.guiYear ? " 특히 " + c.guiYear + "년 무렵에 결정적인 도움을 주는 사람이 나타나기 쉬워요." : ""),
+    paras: ["일에서 {name}님을 도와줄 사람은 ".replace("{name}", c.name) + c.guiWho + "일 가능성이 커요. " + c.guiWhere + " 같은 곳에서 도움이 될 사람과 연결되기 쉬우니, 이런 자리에 꾸준히 얼굴을 비춰 두세요." + (c.guiYear ? " 특히 " + c.guiYear + "년 무렵에 결정적인 도움을 주는 사람이 나타나기 쉬워요." : ""),
       "귀인은 갑자기 나타나는 게 아니라, 평소에 쌓아 둔 관계에서 나와요. 지금 함께 일하는 사람에게 한 번 더 고맙다고 말하고, 도움을 받았을 때 작게라도 갚아 두면 그 인연이 중요한 순간에 돌아와요."],
     basis: c.basis.gui });
   const ys = c.workYears.map((k, i) => ({ y: k.y, t: fill(WYEAR[i % 3], { name: c.name, y: k.y, age: k.age }) }));

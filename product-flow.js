@@ -89,6 +89,8 @@
     if(section.kind==='partner'&&!(section.paragraphs||[]).length){section.lead=person.vibe+' 사람과의 관계를 살펴봐요.';section.paragraphs=[person.vibe+' 사람과 잘 맞는 흐름이에요.','사랑의 표현 방식은 '+person.style+' 모습으로 읽어요.']}
    }
   }
+  /* 관계 상태 장(relationship-context.js)을 더한 뒤에도 나이·관계 상태 문장 점검을 한 번 더 한다. */
+  if(typeof fitReport==="function")fitReport(data,ch,key);
   /* 핵심 요약은 buildRichReport가 만든 2~3문장짜리를 그대로 쓴다(한 줄 lead만 모으던 덮어쓰기 제거, 2026-11-10). */
   for(const section of data.sections)section.answer=(section.paragraphs||[]).join('\n\n');
   data.body=data.sections.map(s=>s.question+'\n'+s.lead+'\n'+s.answer).join('\n\n');

@@ -2712,6 +2712,8 @@ const CLOSE_CARE = [
 
 /* ctx: worker.js buildRichReport에서 계산해 넘겨주는 값 */
 function narrativeComprehensive(c) {
+  /* 2026-11-12: 결혼·연애 중이면 새 만남 대신 두 사람의 관계, 썸이면 호감으로 읽는다. */
+  const relTaken = c.rel === "married" || c.rel === "dating", relCrush = c.rel === "crush";
   const v = { name: c.name };
   const F = t => fill(t, v);
   const out = [];
@@ -2722,7 +2724,7 @@ function narrativeComprehensive(c) {
     lead: F(ONELINE[c.dom]),
     paras: [
       "다섯 가지 점술이 공통으로 말하는 건, " + c.common,
-      fill(SUM_YEAR, { cat: CAT_KO[c.bestCat], y: c.bestYear }) + (c.mateYears.length ? " 사랑에서는 새 인연이나 약속의 신호가 가장 많이 겹치는 해가 " + c.mateYears[0].y + "년이에요." + (c.loveYear && c.loveYear !== c.mateYears[0].y ? " 이미 곁에 있는 관계가 가장 따뜻해지는 해는 " + c.loveYear + "년이에요." : "") : ""),
+      fill(SUM_YEAR, { cat: CAT_KO[c.bestCat], y: c.bestYear }) + (c.mateYears.length ? (relTaken ? " 사랑에서는 두 사람의 관계가 깊어지는 신호가 가장 많이 겹치는 해가 " : " 사랑에서는 새 인연이나 약속의 신호가 가장 많이 겹치는 해가 ") + c.mateYears[0].y + "년이에요." + (c.loveYear && c.loveYear !== c.mateYears[0].y ? " 이미 곁에 있는 관계가 가장 따뜻해지는 해는 " + c.loveYear + "년이에요." : "") : ""),
       "이 리포트는 사주, 서양 점성술, 베딕 점성술, 수비학, 마야력 다섯 가지로 {name}님을 함께 읽고, 여러 점술이 공통으로 가리키는 이야기를 중심으로 풀어 썼어요.".replace(/\{name\}/g, c.name)
     ],
     basis: c.basis.summary
@@ -2739,14 +2741,18 @@ function narrativeComprehensive(c) {
 
   /* 3. 사랑과 인연 */
   const mateWhen = c.mateYears.length
-    ? "시기로 보면 " + c.mateYears.map(m => m.y + "년(" + m.age + "살)").join("과 ") + "에 인연의 기운이 가장 뚜렷해요. 이 무렵 새로운 만남이 시작되거나, 만나던 사람과 미래를 약속하게 될 가능성이 커요. 이미 함께하는 사람이 있다면 관계가 한층 단단해지는 해로 읽어 주세요."
+    ? "시기로 보면 " + c.mateYears.map(m => m.y + "년(" + m.age + "살)").join("과 ") + (relTaken
+      ? "에 두 사람의 관계가 가장 깊어지는 기운이 뚜렷해요. " + (c.rel === "married" ? "이 무렵 배우자와 함께 준비하던 계획이 구체적으로 움직이기 쉬워요." : "이 무렵 지금 만나는 사람과 미래를 약속하게 될 가능성이 커요.") + " 함께 보내는 시간을 조금 더 늘려 보세요."
+      : relCrush ? "에 인연의 기운이 가장 뚜렷해요. 이 무렵 마음이 가는 사람과 거리가 가까워지거나, 호감이 연인으로 이어질 가능성이 커요."
+      : "에 인연의 기운이 가장 뚜렷해요. 이 무렵 새로운 만남이 시작되거나, 만나던 사람과 미래를 약속하게 될 가능성이 커요. 이미 함께하는 사람이 있다면 관계가 한층 단단해지는 해로 읽어 주세요.")
+    : relTaken ? "앞으로 10년 안에서는 관계가 깊어지는 시기가 한 해에 몰리기보다 고르게 열려 있어요. 특정한 해를 기다리기보다, 평소의 대화와 작은 약속을 꾸준히 지키는 것이 관계를 단단하게 하는 가장 확실한 방법이에요."
     : "앞으로 10년 안에서는 인연의 시기가 한 해에 몰리기보다 고르게 열려 있어요. 특정한 해를 기다리기보다, 마음이 가는 자리에 꾸준히 나가는 것이 좋은 인연을 만나는 가장 확실한 방법이에요.";
   out.push({
     kind: "partner", title: "사랑과 인연",
     lead: "",
     /* 2026-11-10: 성격(일간·오행)과 사랑(금성) 문단이 부딪힐 때 잇는 문장, 인연 신호 해와 애정 점수 최고 해를 구분하는 문장. */
-    paras: [([2, 3, 4].includes(c.dom) && c.venusEl % 2 === 0 ? "평소에는 차분하고 신중해 보여도, 마음이 움직이면 달라져요. " : [0, 1].includes(c.dom) && c.venusEl % 2 === 1 ? "평소에는 앞장서고 활발한 편이지만, 마음을 여는 데는 시간이 걸려요. " : "") + F(LOVE[c.venusEl]), F(MATE[c.mateEl]), MEETP[c.descEl] + " " + mateWhen + (c.loveYear && !c.mateYears.some(m => m.y === c.loveYear) ? " 한편 애정 점수만 보면 " + c.loveYear + "년이 가장 높아요. 새로운 만남보다 지금 있는 관계가 따뜻해지는 해로 읽어 주세요." : "")],
-    action: "이번 달에 평소 가지 않던 모임이나 자리에 한 번 나가 보세요. 인연은 늘 새로운 문 하나에서 시작돼요.",
+    paras: [([2, 3, 4].includes(c.dom) && c.venusEl % 2 === 0 ? "평소에는 차분하고 신중해 보여도, 마음이 움직이면 달라져요. " : [0, 1].includes(c.dom) && c.venusEl % 2 === 1 ? "평소에는 앞장서고 활발한 편이지만, 마음을 여는 데는 시간이 걸려요. " : "") + F(LOVE[c.venusEl]), (relTaken ? F(MATE[c.mateEl]).replace(/^(.+?)님과 잘 맞는 사람은 (.+?) 사람이에요\..*$/, (m, n, x) => "차트로 보면 " + n + "님은 " + x + " 사람과 마음이 잘 맞아요. 지금 곁에 있는 " + (c.rel === "married" ? "배우자" : "연인") + "에게서 이런 모습을 찾아 고마움을 표현해 보면 관계가 한결 따뜻해져요.") : F(MATE[c.mateEl])), (relTaken ? DEEPP : relCrush ? CRUSHP : MEETP)[c.descEl] + " " + mateWhen + (c.loveYear && !c.mateYears.some(m => m.y === c.loveYear) ? " 한편 애정 점수만 보면 " + c.loveYear + "년이 가장 높아요. " + (relTaken ? "두 사람의 관계가 가장 따뜻해지는 해로 읽어 주세요." : "새로운 만남보다 지금 있는 관계가 따뜻해지는 해로 읽어 주세요.") : "")],
+    action: relTaken ? "이번 달에 둘이 가 본 적 없는 곳에 함께 가 보세요. 새로운 경험을 나눌수록 관계가 깊어져요." : relCrush ? "마음이 가는 사람에게 이번 달 부담 없는 약속 하나를 먼저 제안해 보세요." : "이번 달에 평소 가지 않던 모임이나 자리에 한 번 나가 보세요. 인연은 늘 새로운 문 하나에서 시작돼요.",
     basis: c.basis.partner
   });
 
@@ -3030,7 +3036,7 @@ function narrativeWork(c) {
     action: "지금 하는 일에서 가장 신났던 순간 세 가지를 적어 보세요. 그 순간들의 공통점이 {name}님에게 맞는 일의 방향이에요.".replace("{name}", c.name),
     basis: c.basis.fit });
   out.push({ kind: "gui", title: "일에서 만나는 귀인", lead: "",
-    paras: ["일에서 {name}님을 도와줄 사람은 ".replace("{name}", c.name) + c.guiWho + "일 가능성이 커요. " + c.guiWhere + " 같은 곳에서 인연이 닿기 쉬우니, 이런 자리에 꾸준히 얼굴을 비춰 두세요." + (c.guiYear ? " 특히 " + c.guiYear + "년 무렵에 결정적인 도움을 주는 사람이 나타나기 쉬워요." : ""),
+    paras: ["일에서 {name}님을 도와줄 사람은 ".replace("{name}", c.name) + c.guiWho + "일 가능성이 커요. " + c.guiWhere + " 같은 곳에서 도움이 될 사람과 연결되기 쉬우니, 이런 자리에 꾸준히 얼굴을 비춰 두세요." + (c.guiYear ? " 특히 " + c.guiYear + "년 무렵에 결정적인 도움을 주는 사람이 나타나기 쉬워요." : ""),
       "귀인은 갑자기 나타나는 게 아니라, 평소에 쌓아 둔 관계에서 나와요. 지금 함께 일하는 사람에게 한 번 더 고맙다고 말하고, 도움을 받았을 때 작게라도 갚아 두면 그 인연이 중요한 순간에 돌아와요."],
     basis: c.basis.gui });
   const ys = c.workYears.map((k, i) => ({ y: k.y, t: fill(WYEAR[i % 3], { name: c.name, y: k.y, age: k.age }) }));
@@ -3299,7 +3305,7 @@ function buildRichReport(ch,key){
   const COMMON=['새로운 길을 먼저 여는 힘이 {name}님의 중심에 있다는 것이에요.','사람의 마음을 밝히는 따뜻함이 {name}님의 가장 큰 재산이라는 것이에요.','한결같이 버티고 쌓아 가는 힘이 결국 {name}님을 멀리 데려간다는 것이에요.','분명한 기준과 판단력이 {name}님을 믿음직한 사람으로 만든다는 것이에요.','깊이 생각하고 읽어 내는 힘이 {name}님만의 무기라는 것이에요.'];
   const nm=ch.inp.name||'당신';
   narrativeComprehensive({
-   name:nm,d,dom:maxEl,lack,moonEl:moonS%4,venusEl:pl.venus%4,descEl:(base+6)%12%4,topG,strong:!!ch.strong,mateEl,mateYears,
+   name:nm,rel:ch.inp.relationship||'private',d,dom:maxEl,lack,moonEl:moonS%4,venusEl:pl.venus%4,descEl:(base+6)%12%4,topG,strong:!!ch.strong,mateEl,mateYears,
    oneLine:strip(traitDescription(ch)),bestCat,worstCat,bestYear:peak(Y4[bestCat]).year,loveYear:peak(Y4[1]).year,
    jobs:job?strip(job.a):'',moneyTier:Math.min(2,ng[2]),workYear:peak(Y4[2]).year,
    keyYears,restYear,turnYear:dwK&&dwNextY>y0&&dwNextY<=y0+10?dwNextY:null,
@@ -3607,7 +3613,7 @@ function buildRichReport(ch,key){
    return {year:r.y,months:max>0&&best.length<12?best.slice(0,2).map(x=>x.month):[],candidates};
   });
   const support=section('support','나에게 오는 귀인들','나에게 부족한 역할을 보완해 주는 사람과, 그 인연이 열릴 시기를 함께 읽어요.',
-   guiRows.map((r,i)=>{const timing=guiTiming[i],ms=timing.months.map(m=>m+'월').join('·');return r.y+'년'+(ms?' 중 '+ms+' 무렵':'에는 한 달에 한정하기보다 연중')+' — '+hs[0]+'과의 연결을 주목할 흐름이에요. '+(i===0?'만날 환경은 '+QWHERE[sp]+' 쪽으로 읽으며, '+hs[1]+'에서 연결될 수 있어요. 이 사람은 '+hs[2]+'을 줄 수 있어요.':'이미 조언을 주고받는 사람이 있다면 진행한 결과와 남은 문제를 보여 주세요. 새로운 소개를 받는 자리에서는 필요한 도움의 범위부터 구체적으로 전해 보세요.');}),
+   guiRows.map((r,i)=>{const timing=guiTiming[i],ms=timing.months.map(m=>m+'월').join('·');return r.y+'년'+(ms?' 중 '+ms+' 무렵':'에는 한 달에 한정하기보다 연중')+(i===0?' — '+hs[0]+'과의 연결을 주목할 흐름이에요. 만날 환경은 '+QWHERE[sp]+' 쪽으로 읽으며, '+hs[1]+'에서 연결될 수 있어요. 이 사람은 '+hs[2]+'을 줄 수 있어요.':[' — 앞서 맺은 도움이 다시 이어지기 쉬운 해예요. 이미 조언을 주고받는 사람이 있다면 진행한 결과와 남은 문제를 보여 주세요.',' — 오래 연락하지 못한 사람에게 먼저 안부를 전해 보세요. 도움은 이미 아는 사람에게서 오기 쉬워요.',' — 새로운 소개를 받기 좋은 해예요. 소개 자리에서는 필요한 도움의 범위부터 구체적으로 전해 보세요.',' — 받은 도움에 작은 결과로 답해 두기 좋은 해예요. 그 답례가 다음 도움으로 이어져요.'][(i-1)%4]);}),
    '좋은 말을 많이 하는 사람보다, 작은 약속을 지키고 도움의 조건을 분명히 설명하는 사람인지 확인해 보세요.');
   support.benefactorTiming=guiTiming.map(r=>({year:r.year,months:r.months}));
   const roles={
@@ -3625,9 +3631,12 @@ function buildRichReport(ch,key){
   const dwRows=[],dwReadings=[];
   for(let k=1;k<=9;k++){
    const from=ch.dwStart+10*(k-1),to=from+10,idx=mod(ch.mIdx+(ch.fwd?k:-k),60),stemRole=tenGod(d,idx%10),branchRole=tenGod(d,BMAIN[idx%12]),front=roles[stemRole],baseRole=roles[branchRole],current=ageNow>=from&&ageNow<to;
-   const age=from.toFixed(1)+'세~'+to.toFixed(1)+'세 전',title=front.title+(stemRole===branchRole?' · 같은 방향을 깊게': ' · '+baseRole.title);
+   const age=from.toFixed(1)+'세~'+to.toFixed(1)+'세 전',title=front.title+(stemRole===branchRole?' · 한 방향으로 깊어지기': ' · '+baseRole.title);
    dwRows.push([(current?'현재 · ':'')+pillar(idx),age,title]);
-   dwReadings.push({pillar:pillar(idx),from,to,current,stemRole,branchRole,title,paragraph:(current?'지금 지나는 ':'')+pillar(idx)+' 대운 · 만 '+age+' — '+front.focus+'이에요. '+(stemRole===branchRole?'겉으로 드러내는 방향과 생활의 바탕이 같은 쪽으로 모여, 한 가지 주제를 깊게 이어 가는 모습으로 읽어요.':'밖으로는 '+front.title+'에 힘을 쓰고, 생활의 바탕에서는 '+baseRole.title+'도 함께 다루는 시기로 읽어요.')+' 살펴볼 패턴은 '+front.care+'예요. '+front.act});
+   dwReadings.push({pillar:pillar(idx),from,to,current,stemRole,branchRole,title,paragraph:(()=>{const prev=dwReadings.find(r=>r.stemRole===stemRole),past=to<=ageNow,head=(current?'지금 지나는 ':past?'지나온 ':'')+pillar(idx)+' 대운 · 만 '+age+' — ';
+    const both=stemRole===branchRole?'겉으로 드러내는 방향과 생활의 바탕이 같은 쪽으로 모여, 한 가지 주제를 깊게 이어 가는 모습으로 읽어요.':'밖으로는 '+front.title+'에 힘을 쓰고, 생활의 바탕에서는 '+baseRole.title+'도 함께 다루는 시기로 읽어요.';
+    const body=prev?front.title+'의 주제가 '+prev.pillar+' 대운에 이어 다시 돌아와요. '+(past?'그때 익힌 방식을 한 번 더 다듬은 시기였어요.':'앞서 겪은 경험을 바탕으로 같은 주제를 한 단계 넓혀 쓰는 시기예요.'):front.focus+'이에요. '+(past?['지금의 바탕이 된 시기예요.','그때 익힌 감각이 지금도 남아 있어요.','이 시기의 경험이 지금의 판단 기준이 됐어요.','돌아보면 한 단계 단단해진 시기예요.'][dwReadings.filter(r=>r.to<=ageNow).length%4]:both);
+    return head+body+((current||(!prev&&!past))?' 살펴볼 패턴은 '+front.care+'예요. '+front.act:'')})()});
   }
   const currentCycle=dwReadings.find(r=>r.current),nextCycle=dwReadings.find(r=>r.from>ageNow);
   const dw=section('daewoon','대운수와 인생의 큰 흐름','첫 대운은 만 '+ch.dwStart.toFixed(1)+'세 전후에 시작하는 '+(ch.fwd?'순행':'역행')+' 흐름이에요.',
@@ -3908,8 +3917,72 @@ function buildRichReport(ch,key){
  const summary=[sumHi?'앞으로 '+(sum3?'3':'10')+'년 중 '+(key==='comprehensive'?'네 분야를 합친 흐름':['금전','애정','직업·학업'][ci]+' 흐름')+'이 가장 밝은 해는 '+sumHi.year+'년('+kage(sumHi.year)+'살, '+sumHi.score+'점)이에요.':'',sumLo&&sumLo!==sumHi?'속도를 늦추고 다지기 좋은 해는 '+sumLo.year+'년('+sumLo.score+'점)이에요.':'',...(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(s=>{const l=firstLine(s.lead||(s.paragraphs||[])[0]);return l?s.question+' — '+l:''})].filter(Boolean);
  S.forEach(s=>{if(s.kind==='yearly')s.paragraphs=s.paragraphs.map(p=>p.split(' [사주]')[0]);s.answer=[...(s.overview||[]),...s.paragraphs].join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
- return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'인연 운명':NAMES[key])+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'reader-2026-11-11-v16',
-  body:S.map((r,i)=>(i+1)+'장 · '+r.question+'\n\n핵심: '+r.lead+(r.basis.length?'\n근거: '+r.basis.join(' / '):'')+'\n\n'+r.answer+(r.action?'\n\n실천 · '+r.action:'')).join('\n\n────────────────\n\n')};
+ return fitReport({title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'인연 운명':NAMES[key])+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'reader-2026-11-11-v16',
+  body:S.map((r,i)=>(i+1)+'장 · '+r.question+'\n\n핵심: '+r.lead+(r.basis.length?'\n근거: '+r.basis.join(' / '):'')+'\n\n'+r.answer+(r.action?'\n\n실천 · '+r.action:'')).join('\n\n────────────────\n\n')},ch,key);
+}
+/* 2026-11-12: 리포트 맨 끝에서 나이·관계 상태에 맞지 않는 문장을 상식에 맞게 고친다(앱·worker 동일 코드).
+   결혼·연애 중이면 '새 인연·소개·모임' 대신 두 사람의 관계로, 60살 이상이면 이력서·승진·면접 대신 경력과 활동으로,
+   21살 이상이면 '대입·수능'을 '시험'으로, 19살 이하면 결혼 생활 조건 이야기를 미래의 바람으로 바꾼다.
+   계산·점수는 건드리지 않고 문자열만 바꾼다. 여러 번 적용해도 결과가 같다. */
+function fitReport(r,ch,key){
+ if(!r||typeof r!=='object')return r;
+ const inp=(ch&&ch.inp)||{},rel=inp.relationship||'private',taken=rel==='married'||rel==='dating';
+ const by=+String(inp.date||'').slice(0,4),age=by?new Date().getFullYear()-by+1:30;
+ const sp=rel==='married'?'배우자와':'연인과';
+ const R=[];const on=(c,re,to)=>{if(c)R.push([re,to])};
+ /* 결혼·연애 중 */
+ on(taken,/새 인연을 서두르기보다 지금 곁에 있는 사람과의 일상을 돌보세요\./g,sp+'의 일상을 먼저 돌보세요. 익숙한 하루가 관계를 가장 단단하게 해요.');
+ on(taken,/새 인연을 위한 소개·모임이나, 가까운 사람과 미래를 의논할 대화를 계획해 보세요\./g,sp+' 앞으로의 계획을 의논할 시간을 따로 잡아 보세요.');
+ on(taken,/사람을 많이 만나고 인연이 활발해(?:져요|집니다)/g,'함께 밖으로 나가 새로운 경험을 쌓기 좋아요');
+ on(taken,/진지하고 안정적인 인연이 들어(?:와요|옵니다)/g,'생활을 함께 꾸리는 안정감이 커져요');
+ on(taken,/강렬하게 끌리는 인연이 나타(?:나요|납니다)/g,'강렬한 감정이 오가며 관계가 깊어져요');
+ on(taken,/나를 아껴 주는 사람이 곁에 (?:와요|옵니다)/g,'서로를 아끼고 돌보는 마음이 커져요');
+ on(taken,/경쟁자가 생길 만큼 매력이 드러나는 해(?:예요|입니다)/g,'주변의 관심이 늘어도 둘의 믿음을 확인하며 더 단단해지는 해예요');
+ on(taken,/나를 깊이 이해해 주는 사람과 통하는 해(?:예요|입니다)/g,'서로를 깊이 이해하는 대화가 늘어나는 해예요');
+ on(taken,/여유와 다정함이 살아나 사람이 모여들(?:어요|ㅂ니다|니다)/g,'여유와 다정함이 살아나 함께하는 시간이 즐거워져요');
+ on(rel==='married',/공식적인 관계, 결혼의 신호로 (?:봐요|봅니다)/g,'가족으로서의 약속과 역할이 단단해지는 신호로 봐요');
+ on(taken,/사진이나 소개 글을 새로 다듬기 좋아요\./g,'함께 사진을 남기거나 고마운 마음을 표현하기 좋아요.');
+ on(taken,/새로운 인연이 들어오는 흐름이 더 뚜렷해요/g,'지금의 관계와 주변 사람들을 돌보는 흐름이 더 뚜렷해요');
+ on(taken,/다른 사람을 만날 시기 대신, /g,'');
+ on(rel==='married',/그게 맞을 때 비로소 마음 편히 결혼을 결심해요\./g,'그게 맞을 때 결혼 생활도 마음 편히 이어 가요.');
+ /* 혼자·썸·고르지 않음: 곁에 있는 사람을 전제하지 않는다 */
+ on(!taken,/새 인연을 서두르기보다 지금 곁에 있는 사람과의 일상을 돌보세요\./g,'새 인연을 서두르기보다 가까운 사람들과의 일상과 나 자신을 먼저 돌보세요.');
+ on(!taken,/(^|[\s.])곁에 있는 사람과의 일상이 가장 큰 복이 되는 시기예요\./g,'$1가까운 사람들과의 일상이 가장 큰 복이 되는 시기예요.');
+ on(rel==='crush',/지금 곁에 있는 사람, 차트로 다시 읽기/g,'마음이 가는 사람, 차트로 다시 읽기');
+ on(rel==='single',/\s*이미 함께하는 사람이 있다면 관계가 한층 단단해지는 해로 읽어 주세요\./g,'');
+ on(rel==='single'||rel==='private',/서로 원하는 표현의 속도와 빈도를 확인해 보세요\./g,'가까워지는 사람과는 서로 편한 표현의 속도를 천천히 맞춰 가 보세요.');
+ on(rel==='single'||rel==='private',/고마운 점과 바라는 점을 하나씩 적고, 상대와 이야기할 수 있는 시간을 정해 보세요\./g,'관계에서 내가 바라는 점과 줄 수 있는 점을 하나씩 적어 보세요.');
+ /* 60살 이상: 구직·승진 표현 대신 경력과 활동 */
+ const old=age>=60;
+ on(old,/이력서·포트폴리오와 필요한 자격 준비/g,'그동안의 경력 정리와 필요한 준비');
+ on(old,/이력서와 포트폴리오를 새로 정리하고, 원하는 자리 세 곳에 먼저 지원하거나 제안해 보세요\./g,'해 온 일과 경험을 한 장으로 정리하고, 해 보고 싶은 일이나 활동 세 곳에 먼저 연락해 보세요.');
+ on(old,/이직이나 큰 변화는 다음 해로 미루고, 그 준비\(자격·저축·포트폴리오\)/g,'큰 변화는 다음 해로 미루고, 그 준비(배움·저축·경험 정리)');
+ on(old,/승진과 직책, 좋은 평가의 글자/g,'맡은 역할과 책임, 좋은 평가의 글자');
+ on(old,/승진·평가·조직 안의 역할 변화/g,'맡은 역할과 평가의 변화');
+ on(old,/면접·협상/g,'중요한 만남·협상');
+ on(old,/면접에서는 /g,'새 일을 구할 때는 ');
+ on(old,/포트폴리오 폴더/g,'기록 폴더');
+ on(old,/이직, 이동, 새로운 경험/g,'이동, 새로운 경험');
+ on(old,/이직의 실제 판단은 연봉·직무·성장 가능성 같은 조건 비교가 우선이에요\./g,'일의 변화를 판단할 때는 보수·건강·하고 싶은 일 같은 조건 비교가 우선이에요.');
+ on(old,/\[종합\] 이직 준비 후/g,'[종합] 일의 변화는 준비 후');
+ on(old,/\[종합\] 이직 (\d{4}년)이 좋아요/g,'[종합] 새 활동은 $1이 좋아요');
+ /* 65살 이상: 결혼 시기 표현은 오래 함께할 인연으로 */
+ on(age>=65,/결혼으로 이어질 인연을 만날/g,"오래 곁에 둘 인연을 만날");
+ on(age>=65,/두 사람의 관계가 결혼으로 이어질/g,"두 사람의 관계가 한층 단단해질");
+ /* 21살 이상: 대입·수능 → 시험 */
+ on(age>=21,/대입·수능/g,'시험');
+ /* 19살 이하: 결혼 생활 조건 대신 미래의 바람 */
+ const young=age<=19;
+ on(young,/결혼을 생각하는 사람과 '돈, 집, 가족, 혼자만의 시간'에 대해 한 번씩 이야기해 보세요\.(?:\s*미리 나눈 대화가 결혼 후의 다툼을 크게 줄여 줘요\.)?/g,'나중에 함께하고 싶은 사람의 모습과 지키고 싶은 생활 습관을 한 번 적어 보세요.');
+ on(young,/미리 나눈 대화가 결혼 후의 다툼을 크게 줄여 줘요\.\s*/g,'');
+ on(young,/결혼·동거·장거리 등 실제 조건을 함께 확인해 보세요\./g,'서로 지키고 싶은 약속을 함께 정해 보세요.');
+ if(!R.length)return r;
+ const fix=t=>{let u=t;for(const [re,to] of R)u=u.replace(re,to);return u===t?t:u.replace(/ {2,}/g,' ').replace(/ +([.,])/g,'$1').trim()};
+ const SKIP={id:1,kind:1,key:1,version:1};
+ const walk=o=>{if(Array.isArray(o)){for(let i=0;i<o.length;i++){if(typeof o[i]==='string')o[i]=fix(o[i]);else if(o[i]&&typeof o[i]==='object')walk(o[i])}return}
+  for(const k in o){if(SKIP[k])continue;const v=o[k];if(typeof v==='string')o[k]=fix(v);else if(v&&typeof v==='object')walk(v)}};
+ walk(r);
+ return r;
 }
 
 function topicReportPageLegacy(ch,k){const name=TOPICS.find(x=>x[0]===k)?.[1]||'나의 운명',rows=reportTopicRows(ch,k),relationship=['love','marry','reunion','match'].includes(k),ci=relationship?1:['money','invest','property','business'].includes(k)?0:2,dom=ch.cnt.indexOf(Math.max(...ch.cnt));
