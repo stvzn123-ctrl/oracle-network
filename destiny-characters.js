@@ -26,15 +26,21 @@ function html(ch){
  const tags=reportTags(ch),c=select(tags),primary=RTAG[c.primary],secondary=RTAG[c.secondary];
  const index=c.id-1,x=(index%6)*20,y=Math.floor(index/6)*20;
  const evidence=tags.find(t=>t.k===c.primary);
- return '<section class="destiny-character" aria-label="나의 운명 캐릭터" data-character-id="'+c.id+'"><p class="character-eyebrow">나의 운명 캐릭터</p><div class="character-art" role="img" aria-label="'+c.name+'" style="background-position:'+x+'% '+y+'%"></div><h2>'+c.name+'</h2><p class="character-description">'+primary.s+'을 가진 당신.<br>'+secondary.t+'.</p><div class="character-tags"><span>'+primary.kw+'</span><span>'+secondary.kw+'</span></div><details class="character-basis"><summary>이 캐릭터가 나온 이유</summary>'+fateTraitsHTML(ch)+'<p>'+primary.t+'. '+(evidence?evidence.sys.join(" · ")+"에서 이 성향을 함께 읽었어요.":"")+'</p><p>타고난 성향을 조합한 재미용 캐릭터예요. 오늘 운세나 접속 날짜에 따라 바뀌지 않아요.</p></details></section>';
+ return '<section class="destiny-character" aria-label="나의 운명 캐릭터" data-character-id="'+c.id+'"><p class="character-eyebrow">나의 운명 캐릭터</p><div class="character-art" data-loading role="img" aria-label="'+c.name+'" style="background-position:'+x+'% '+y+'%"></div><h2>'+c.name+'</h2><p class="character-description">'+primary.s+'을 가진 당신.<br>'+secondary.t+'.</p><div class="character-tags"><span>'+primary.kw+'</span><span>'+secondary.kw+'</span></div><details class="character-basis"><summary>이 캐릭터가 나온 이유</summary>'+fateTraitsHTML(ch)+'<p>'+primary.t+'. '+(evidence?evidence.sys.join(" · ")+"에서 이 성향을 함께 읽었어요.":"")+'</p><p>타고난 성향을 조합한 재미용 캐릭터예요. 오늘 운세나 접속 날짜에 따라 바뀌지 않아요.</p></details></section>';
 }
 window.OracleCharacters={version:1,select,names,groups};
+/* 2026-11-12: 캐릭터 그림을 받는 동안 칸을 비워 두고 메모하는 강아지를 보여 준 뒤 캐릭터로 바꾼다(우정 캐릭터 확인과 같은 방식). */
+let spriteReady=null;
+function loadSprite(){return spriteReady||(spriteReady=new Promise(r=>{const i=new Image();i.onload=i.onerror=()=>r();i.src="img/characters-v1.webp";}));}
+function reveal(){const els=[...document.querySelectorAll(".character-art[data-loading]")];if(!els.length)return;const wait=matchMedia("(prefers-reduced-motion: reduce)").matches?0:900;Promise.all([loadSprite(),new Promise(r=>setTimeout(r,wait))]).then(()=>els.forEach(e=>e.removeAttribute("data-loading")));}
+loadSprite();
 const original=resultIntroHTML;
 resultIntroHTML=function(ch){
  const quadrant=fateTraitsHTML(ch);
  const content=original(ch).split(quadrant).join("");
  const card=html(ch);
  const lead=/(<p class="res-lead">[\s\S]*?<\/p>)/;
+ setTimeout(reveal,0);
  return lead.test(content)?content.replace(lead,match=>match+card):content+card;
 };
 if(typeof CH!=="undefined"&&CH&&CH.inp&&document.getElementById("resIntro"))document.getElementById("resIntro").innerHTML=resultIntroHTML(CH);
