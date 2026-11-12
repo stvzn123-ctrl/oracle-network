@@ -56,4 +56,12 @@ body:not(.app-entered) #brandbar .brandbar-mark,body.fresh:not(.app-entered) .br
 .places-back{background:none!important;border:0!important;box-shadow:none!important;color:var(--gold-ink)!important;font:600 14px var(--body);padding:4px 0!important;margin:0 0 10px;width:auto!important;min-height:0!important;cursor:pointer}
 @media(max-width:620px){.habit-split{grid-template-columns:1fr}.habit-split>section{padding:0!important;border:0!important}.habit-split>section+section{margin-top:22px;padding-top:22px!important;border-top:1px solid var(--line2)!important}}
 .places-week p{font-size:15px;line-height:1.75;margin:0 0 8px;word-break:keep-all}.places-week .places-sub{font-size:13px;color:var(--muted)}
-#tab-places{margin-top:12px!important}#tab-places .places-tab{margin-top:0!important;padding-top:4px!important}
+
+
+/* 2026-11-12: 습관|장소 두 칸 위쪽 선은 하나만 */
+#tab-natal .habit-split{border-top:1px solid var(--line);padding-top:6px;margin-top:8px}
+#tab-natal .habit-split .res-h{border:0!important;padding-top:0!important;margin-top:14px!important}
+@media(max-width:620px){#tab-natal .habit-split>section+section{margin-top:18px!important;padding-top:4px!important}}
+/* 장소 페이지(전체 화면) */
+#tab-places.places-page{position:fixed;inset:0;z-index:60;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg,#FFF9F4);padding:72px max(16px,calc(50vw - 380px)) 110px;margin:0!important}
+#tab-places.places-page .places-tab{margin:0!important;padding:0!important;border:0;background:transparent}

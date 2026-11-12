@@ -354,3 +354,4 @@
 - 2026-11-12 f: 나의 운명 캐릭터 그림 위아래 간격 축소(destiny-characters.css 끝), 성향 사분면 그래프 위 유형 이름(figcaption) 삭제.
 - 2026-11-12 g: 장소는 '이번 주' 옆 작은 지도 아이콘 상자(`#tb-places`, `.res-row` 안 `.res-map`, 탭 묶음과 별도 유리 상자)로 열리는 `#tab-places`로 옮겼다(`placesTabHTML`: 이번 주 가장 밝은 날·그날 행운 기운과 맞는 장소 유형 + 기존 장소 지도 `fengCompactPlacesHTML`). '나의 운명' 탭의 장소 영역은 뺐다. TABS에 places 추가.
 - 2026-11-12 h: 지도 아이콘 탭은 없앴다. '나의 운명' 탭의 습관 영역을 두 칸(`.habit-split`, 폰은 위아래)으로: 왼쪽 '운을 높이는 세 가지 습관', 오른쪽 '나의 기운을 좋게 만드는 장소'(`FENG_SITUATION_PICKS` 3곳) + '더 많은 장소 보기'(`data-open-places`) → `#tab-places` 페이지(돌아가기 버튼, 이번 주 한 줄 + 장소 지도).
+- 2026-11-12 i: 습관|장소 두 칸은 위쪽 선 하나(`.habit-split` border-top, 제목 선 제거). '더 많은 장소 보기'는 전체 화면 페이지(`openPlacesPage`/`closePlacesPage`, `#tab-places.places-page`, Esc·상단 ←·'결과로 돌아가기'로 닫기, TABS에서 places 제거). 성능: 지도 중심 좌표 KC/WC 지연 계산(`lazyArr`), 우정 캐릭터 시트 PNG 1.6MB×4 → WebP 약 110KB, 운명 캐릭터 시트 JPG 611KB → WebP 316KB, 배경 그림 fetchpriority low, 쓰지 않는 Gowun Dodum 글꼴 요청 제거.
