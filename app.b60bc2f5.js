@@ -3974,7 +3974,7 @@ function openReport(){if(!requireSavedProfile())return;if(!CH)return;showLaunchR
 $('reportPurchaseClose').onclick=()=>$('reportPurchase').close();$('reportCheckout').onclick=()=>startCheckout(purchaseReportKey);$('reportCheckoutAll').onclick=()=>startCheckout('all');
 /* 페이앱 결제 (2026-11-12): 주문은 서버(/pay/start)가 만들고 가격도 서버가 정한다. 결제 완료는 서버가 페이앱 통보로만 반영한다. */
 let payappLoading=null;
-function loadPayApp(){if(window.PayApp)return Promise.resolve();if(payappLoading)return payappLoading;payappLoading=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://lite.payapp.kr/public/api/v2/payapp-lite.js';s.onload=()=>window.PayApp?ok():no(new Error('payapp'));s.onerror=()=>{payappLoading=null;no(new Error('payapp'))};document.head.append(s)});return payappLoading}
+function loadPayApp(){if(window.PayApp&&window.PayApp.$)return Promise.resolve();if(payappLoading)return payappLoading;payappLoading=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://lite.payapp.kr/public/api/v2/payapp-lite.js';s.onload=()=>{const P=window.PayApp;if(P&&!P.$&&window.jQuery&&window.jQuery.extend){P.$=P.jQuery=window.jQuery}P&&P.$?ok():no(new Error('payapp'))};s.onerror=()=>{payappLoading=null;no(new Error('payapp'))};document.head.append(s)});return payappLoading}
 async function startCheckout(key){
  const st=$('purchaseStatus'),btns=[$('reportCheckout'),$('reportCheckoutAll')];
  if(!key)return;if(!accountUser){needLogin();return}if(!requireSavedProfile())return;
