@@ -1993,8 +1993,9 @@ function buildRichReport(ch,key){
   const put=(kind,title,lead,basis,paras,action,extra)=>{const n=S.length;add(kind,title,lead,basis,paras,action,extra);const s=S.pop();S.splice(at(),0,s);return n};
   const YS=years.map((r,i)=>{const sc=Y4.map(a=>a[i].score),k=comp?sc.indexOf(Math.max(...sc)):ci;return {y:r.year,i,k,s:comp?Math.round(sc.reduce((a,b)=>a+b,0)/4):sc[ci]}});
   const mY=Math.round(YS.reduce((a,r)=>a+r.s,0)/YS.length),hiY=YS.reduce((a,b)=>b.s>a.s?b:a),loY=YS.reduce((a,b)=>b.s<a.s?b:a);
-  const yPara=r=>{const w=why(r.y,r.k),up=w.up.map(x=>x[0]+'의 '+x[1]).join(', '),tone=r.s>=mY+3?'평소보다 밝은 해':r.s<=mY-3?'속도를 늦추고 다지기 좋은 해':'평소 흐름을 이어 가는 해';
-   return r.y+'년('+kage(r.y)+'살) · '+r.s+'점 — '+(ch.inp.name||'당신')+'님에게 '+tone+'예요.'+(comp?' 이 해에 가장 밝은 분야는 '+CN[r.k]+'이에요.':'')+
+  const yRot=[0,0,0],YT=[['평소보다 밝은 해','흐름이 한결 가벼워지는 해','하고 싶던 일을 꺼내기 좋은 해','바라던 일을 앞당겨 볼 만한 해','기회가 눈에 잘 띄는 해'],['평소 흐름을 이어 가는 해','큰 오르내림 없이 이어지는 해','하던 일을 꾸준히 이어 가기 좋은 해','지금의 리듬을 지키기 좋은 해','무리 없이 한 걸음씩 나아가는 해'],['속도를 늦추고 다지기 좋은 해','안쪽을 단단히 채우는 해','쉬어 가며 힘을 모으는 해','기초를 손보기 좋은 해','다음 도약을 준비하는 해']];
+  const yPara=(r,i)=>{const w=why(r.y,r.k),up=w.up.map(x=>x[0]+'의 '+x[1]).join(', '),tb=r.s>=mY+3?0:r.s<=mY-3?2:1,tone=YT[tb][yRot[tb]++%5],tp=TGP[tenGod(d,ys(r.y))]?.[CATS[r.k].k]||'';
+   return r.y+'년('+kage(r.y)+'살) · '+r.s+'점 — '+(i?'':(ch.inp.name||'당신')+'님에게 ')+tone+'예요.'+(tp?' '+tp.replace(/[.!?]?$/,'.'):'')+(comp?' 이 해에 가장 밝은 분야는 '+CN[r.k]+'이에요.':'')+
     (r===hiY?' 비교한 10년 중 가장 높은 자체 지표예요. 계획은 실제 여건을 함께 살펴 결정하세요.':r===loY?' 새로 벌이기보다 지금 가진 것을 다지는 데 힘을 쓰면 다음 해가 가벼워져요.':'')+
     ' [사주] 그해의 세운은 '+ST[ys(r.y)]+BR[yb(r.y)]+'이고 천간은 나에게 '+(w=>w+(((w.charCodeAt(w.length-1)-0xac00)%28)?'이에요':'예요'))(tenGod(d,ys(r.y)))+'.'+(up?' 이 해에는 '+J(up,'이','가')+' 점수를 올렸어요.':'')};
   put('yearly','앞으로 10년, 연도별 운명',hiY.y+'년이 가장 밝고, '+loY.y+'년은 다지기 좋은 해예요.',[(comp?'네 분야 평균':CN[ci])+' 10년 평균 '+mY+'점','세운(해마다의 간지)'],
@@ -2017,6 +2018,10 @@ function buildRichReport(ch,key){
   const opportunities=['예산 조정이나 미뤄 둔 정산처럼 돈의 흐름을 정리할 일을 배치해 보세요.','안부를 전하거나 함께 의논할 대화를 잡아 보세요.','지원·제안·발표처럼 준비한 것을 보여 줄 일을 배치해 보세요.','활동과 휴식 시간을 균형 있게 배치해 보세요.'];
   const checks=['작은 지출이 쌓이지 않도록 결제 내역과 예정 비용을 확인하세요.','상대의 뜻을 짐작해 결론 내리기보다 직접 묻고 답할 시간을 주세요.','일을 더 맡기 전에 마감과 현재 업무량부터 조율하세요.','일정을 빽빽하게 채우지 말고 회복할 시간을 먼저 남겨 두세요.'];
   months.forEach((o,i)=>{
+   /* 2026-11-12: 달마다 다른 풀이를 위한 값(읽기만): 그달의 특별한 날(초순·중순·하순), 수비학 개인월, 사주 월건(15일 기준 절기월)과 그 천간 십성 */
+   o.sig={};o.list.forEach(x=>[...x.f.sj,...x.f.my].forEach(n=>{if(!(n in o.sig))o.sig[n]=Math.min(2,Math.floor((x.f.d-1)/10))}));
+   o.pm=reduceNum(pyOf(ch,o.y)+o.m,false);
+   {const mb=o.m%12,sy=o.m===1?o.y-1:o.y,mst=((ys(sy)%5)*2+2+mod(mb-2,12))%10;o.mpil=ST[mst]+BR[mb];o.mtg=tenGod(d,mst)}
    const phases=[0,1,2].map(k=>{const list=o.list.filter(x=>Math.min(2,Math.floor((x.f.d-1)/10))===k);return {from:list[0].f.d,to:list.at(-1).f.d,score:list.reduce((n,x)=>n+x.v,0)/list.length,sc:[0,1,2,3].map(c=>list.reduce((n,x)=>n+x.f.sc[c],0)/list.length)};});
    const allowed=comp?[0,1,2,3]:[ci];
    const options=phases.flatMap(p=>allowed.map(c=>({p,c,delta:p.sc[c]-baseline[c]})));
@@ -2040,7 +2045,7 @@ function buildRichReport(ch,key){
     ...months.map(o=>monthLabel(o)+' · '+o.theme+' — '+o.reading.change+' '+o.reading.opportunity+' '+o.reading.timing+' '+o.reading.caution+' 실천: '+o.act),
     '사주·서양 점성술·베딕 점성술·수비학·마야력의 기존 일별 흐름을 양력 월 단위로 모은 자체 해석이에요. 절기월 자체를 뜻하지 않으며, 건강 점수는 질병이나 건강 상태의 예측이 아니라 생활 리듬을 돌아보는 참고로 읽어 주세요.'],
    '이번 달에 해당하는 실천 한 가지를 고르고, 월말에 실제 경험과 비교해 보세요.',
-   {period,months:months.map(o=>({year:o.y,month:o.m,days:o.list.length,score:Number(o.av.toFixed(1)),scores:o.sc.map(v=>Number(v.toFixed(1))),theme:o.theme,action:o.act,reading:o.reading,phases:o.phases,focus:o.focus})),table:{cap:'월별 흐름 한눈에 보기 · '+period,head:['연월','흐름과 실천'],cols:['30%','70%'],rows:months.map(o=>[monthLabel(o),o.theme+' · '+o.av.toFixed(1)+'점 / '+o.act])}});
+   {period,months:months.map(o=>({year:o.y,month:o.m,days:o.list.length,score:Number(o.av.toFixed(1)),scores:o.sc.map(v=>Number(v.toFixed(1))),theme:o.theme,action:o.act,reading:o.reading,phases:o.phases,focus:o.focus,sig:o.sig,pm:o.pm,mpil:o.mpil,mtg:o.mtg})),table:{cap:'월별 흐름 한눈에 보기 · '+period,head:['연월','흐름과 실천'],cols:['30%','70%'],rows:months.map(o=>[monthLabel(o),o.theme+' · '+o.av.toFixed(1)+'점 / '+o.act])}});
   /* 2026-11-10 G3: 모두에게 같던 마무리 장·실천·재회 성찰을 나이대·신강/신약·오행·금성·십성과 달력 날짜로 조립한다. */
   const nm3=ch.inp.name||'당신',F3=t=>t.replace(/\{name\}/g,nm3),ac=key==='comprehensive'?3:ci,ka=kage(y0),band=ka<30?0:ka<45?1:ka<60?2:3,tg3=ng.indexOf(Math.max(...ng));
   const AGE=[['지금 시기의 돈은 크기보다 습관이 먼저예요. 지금 만든 저축 습관 하나가 몇 년 뒤의 선택지를 넓혀 줘요.','지금은 여러 사람을 만나며 나에게 맞는 사람을 알아 가는 시기예요. 서두르지 않아도 괜찮아요.','지금은 한 우물보다 여러 경험이 자산이 되는 시기예요. 해 본 일의 목록이 다음 기회의 지도가 돼요.','지금의 {name}님에게는 많이 시도해 보는 것 자체가 운을 키우는 일이에요.'],
@@ -2158,6 +2163,13 @@ function buildRichReport(ch,key){
   flow.table=yearly.table;flow.table.hideScores=true;flow.line=null;flow.years=yearly.years;
   flow.lead='해마다 달라지는 기회와 조정할 일을 한 해의 이야기로 이어 읽어요.';
   flow.action='다가오는 해의 해설에서 먼저 준비할 일 하나를 골라, 올해의 계획에 연결해 보세요.';
+  /* 2026-11-12: 같은 말이 해마다 반복되지 않도록 흐름 표현·실천을 분야별로 돌려 쓴다(점수·판정 기준은 그대로). */
+  const TONEV={hi:['특히 기회를 살펴볼 흐름','10년 중 가장 힘이 실리는 흐름'],lo:['무리한 확장보다 점검을 우선할 흐름','10년 중 가장 차분히 다지기 좋은 흐름'],up:['앞뒤 해에 비해 힘을 실어 볼 흐름','앞뒤 해보다 한결 밝아지는 흐름','잠시 숨을 고른 뒤 다시 올라서는 흐름'],dn:['앞뒤 해에 비해 속도를 조절할 흐름','앞뒤 해보다 한 박자 쉬어 가는 흐름','올라온 흐름을 정리하며 지나가는 흐름']};
+  const ACTV=[[['거래나 수입원을 넓힐 제안을 준비하되, 필요한 자금과 비용을 함께 정하세요.','수입이 될 일을 하나 골라 시작 시점과 목표 금액을 정해 보세요.','모아 둔 자금의 쓰임을 정하고, 늘릴 곳과 지킬 곳을 나눠 두세요.'],['큰 지출과 거래 조건을 다시 살피고, 수입이 늦어져도 버틸 여유를 확보하세요.','새 투자보다 고정비와 빚을 먼저 정리해 두세요.','큰 결정은 다음 해로 미루고 비상금을 한 번 더 채워 두세요.']],
+   [['새 인연을 위한 소개·모임이나, 가까운 사람과 미래를 의논할 대화를 계획해 보세요.','함께하고 싶은 사람에게 먼저 시간을 내어 주세요. 표현한 만큼 가까워지는 해예요.','관계의 다음 단계를 이야기해 보기 좋은 해예요. 바라는 모습을 솔직하게 나눠 보세요.'],['관계의 결론을 재촉하기보다 기대와 약속을 확인할 시간을 주세요.','연락의 양보다 약속을 지키는 데 마음을 써 주세요.','새 인연을 서두르기보다 지금 곁에 있는 사람과의 일상을 돌보세요.']],
+   [['지원·발표·역할 확대를 준비하며 성과물과 이력을 미리 정리하세요.','맡고 싶은 역할을 분명히 말하고, 보여 줄 결과물 하나를 끝내 두세요.','배우던 것을 실제 일에 적용해 보는 해예요. 작은 프로젝트로 시작해 보세요.'],['새 책임을 늘리기 전에 마감과 준비 상태, 함께하는 사람의 역할부터 조율하세요.','일을 늘리기보다 지금 하는 일의 완성도를 높이는 데 힘을 쓰세요.','다음 도약을 위한 공부나 자격 준비에 시간을 나눠 두세요.']],
+   [['잘 맞는 생활 습관을 정착시키고 일과 휴식의 균형을 이어 가세요.','새 운동이나 생활 습관을 시작하기 좋아요. 석 달만 꾸준히 이어 가 보세요.','미뤄 둔 몸 관리 계획을 하나 실행해 보세요.'],['과밀한 일정을 줄이고 회복할 시간을 먼저 확보하세요.','잠과 식사 시간을 먼저 지키고, 약속은 조금 덜어 내세요.','쉬는 날을 달력에 먼저 적어 두고 그날은 지켜 주세요.']]];
+  const rot={},pick=(arr,key)=>{rot[key]=(rot[key]||0);return arr[rot[key]++%arr.length]},dot=t=>t&&!/[.!?]$/.test(t)?t+'.':t;
   flow.paragraphs=years.map((row,i)=>{
    const insights=[];
    Y4.forEach((rows,k)=>{
@@ -2165,9 +2177,9 @@ function buildRichReport(ch,key){
     const local=prev&&next&&((r.score>prev.score&&r.score>next.score)||(r.score<prev.score&&r.score<next.score));
     if(!local&&r.score!==hi&&r.score!==lo)return;
     const high=r.score===hi||(local&&r.score>prev.score);
-    const tone=r.score===hi?'특히 기회를 살펴볼 흐름':r.score===lo?'무리한 확장보다 점검을 우선할 흐름':high?'앞뒤 해에 비해 힘을 실어 볼 흐름':'앞뒤 해에 비해 속도를 조절할 흐름';
-    const action=high?['거래나 수입원을 넓힐 제안을 준비하되, 필요한 자금과 비용을 함께 정하세요.','새 인연을 위한 소개·모임이나, 가까운 사람과 미래를 의논할 대화를 계획해 보세요.','지원·발표·역할 확대를 준비하며 성과물과 이력을 미리 정리하세요.','잘 맞는 생활 습관을 정착시키고 일과 휴식의 균형을 이어 가세요.'][k]:['큰 지출과 거래 조건을 다시 살피고, 수입이 늦어져도 버틸 여유를 확보하세요.','관계의 결론을 재촉하기보다 기대와 약속을 확인할 시간을 주세요.','새 책임을 늘리기 전에 마감과 준비 상태, 함께하는 사람의 역할부터 조율하세요.','과밀한 일정을 줄이고 회복할 시간을 먼저 확보하세요.'][k];
-    insights.push(['돈과 거래는 ','사람과의 관계는 ','일과 배움은 ','일상의 균형은 '][k]+tone+'이에요. '+(TGP[tenGod(d,ys(r.year))]?.[CATS[k].k]||'')+' '+action);
+    const tk=r.score===hi?'hi':r.score===lo?'lo':high?'up':'dn',tone=pick(TONEV[tk],tk+k);
+    const action=pick(ACTV[k][high?0:1],'a'+k+high);
+    insights.push(['돈과 거래는 ','사람과의 관계는 ','일과 배움은 ','일상의 균형은 '][k]+tone+'이에요. '+dot(TGP[tenGod(d,ys(r.year))]?.[CATS[k].k]||'')+' '+action);
    });
    if(!insights.length){const values=Y4.map(r=>r[i].score),focus=values.indexOf(Math.max(...values));insights.push(['수입과 지출의 구조를 정리하며 다음 거래를 준비해 보세요.','주변 사람과의 만남을 이어 가며 서로의 기대를 확인해 보세요.','진행 중인 작업과 배움의 결과를 쌓아 다음 기회에 보여 줄 준비를 하세요.','지킬 수 있는 생활 습관을 정하고 일정에 여유를 남겨 두세요.'][focus]);}
    return row.year+'년 — '+insights.join(' ');
@@ -2242,20 +2254,42 @@ function buildRichReport(ch,key){
   const calendar=S.find(s=>s.kind==='calendar');
   if(calendar){
    const mean=[0,1,2,3].map(k=>calendar.months.reduce((n,m)=>n+m.scores[k],0)/12);
-   const advice=[
-    ['예정 지출과 정산부터 마무리해 돈의 여유를 만드세요.','견적이나 거래 조건을 비교하고, 수입으로 이어질 제안 하나를 준비하세요.','좋아 보이는 제안도 총비용을 확인한 뒤 결정하세요. 서두르는 결제는 잠시 보류해도 괜찮아요.'],
-    ['가까운 사람에게 고마웠던 행동 하나를 말로 전해 보세요. 작은 표현이 쌓이면 대화가 편해져요.','미뤄 둔 대화나 만남을 제안해 보세요. 상대의 답을 들을 여유도 함께 남겨 두세요.','서운할 때 바로 결론을 내리지 마세요. 마음을 짐작하기보다 바라는 행동을 하나씩 말해 보세요.'],
-    ['끝내지 못한 작업 하나를 마무리하고 결과를 기록하세요. 작게 완성해도 다음 준비에 도움이 돼요.','준비한 결과물을 보여 주고 피드백을 구하세요. 혼자 더 다듬기만 하면 기회를 놓칠 수 있어요.','할 수 있다는 이유로 일을 더 맡지 마세요. 마감과 현재 업무량을 먼저 조율할 필요가 있어요.'],
-    ['지킬 수 있는 취침 시간과 휴식 시간을 일정에 먼저 넣어 보세요.','잘 맞는 생활 습관을 이어 가세요. 여유가 생겼다고 약속을 모두 채울 필요는 없어요.','피곤한 상태에서 중요한 결정을 밀어붙이지 마세요. 쉬어 가는 것도 계획을 지키는 방법이에요.']
-   ];
-   const cautions=['함께 쓰는 돈은 각자 부담할 몫을 미리 정하세요.','말이 줄어든 이유를 무관심으로 단정하지 말고 직접 확인하세요.','중요한 일의 완료 기준을 먼저 맞춰 불필요한 재작업을 줄이세요.','계속 참으며 버티기보다 조정할 일정 하나를 주변에 알려 주세요.'];
+   /* 2026-11-12: 12문장 고정 목록 대신 그달의 월건 십성(5그룹)×분야×밝음/주의, 열두 달 중 위치, 특별한 날·개인월로 조립해 달마다 다르게 읽힌다. */
+   const FN=['돈','사랑','일과 배움','생활 리듬'],PH=['초순','중순','하순'],single=key==='love'&&ch.inp.relationship==='single';
+   const MTH={비견:'내 페이스를 지키며 스스로 정하는 힘이 커져요',겁재:'경쟁심과 추진력이 함께 올라와요',식신:'하고 싶은 일을 편하게 풀어내는 힘이 살아나요',상관:'말과 아이디어가 날카롭게 빛나요',편재:'바깥의 기회와 사람을 넓게 만나는 기운이 강해져요',정재:'꾸준히 모으고 지키는 힘이 살아나요',편관:'해내야 할 과제와 책임이 또렷해져요',정관:'약속과 역할이 분명해지고 신뢰가 쌓여요',편인:'혼자 생각하고 깊이 파고드는 시간이 늘어요',정인:'배우고 도움받는 일이 자연스럽게 이어져요'};
+   const MACT=[
+    [['내 기준으로 예산을 다시 짜고, 미뤄 둔 정산을 직접 챙겨 보세요.','친구·동료와 돈이 얽힌 약속은 금액과 기한을 글로 남겨 두세요.'],['좋아하는 활동을 함께할 사람을 먼저 불러 보세요. 편한 자리에서 마음이 열려요.','내 뜻이 앞서기 쉬운 때라, 상대의 일정과 속도를 한 번 물어봐 주세요.'],['혼자 끝낼 수 있는 작업 하나를 정해 끝까지 밀어 보세요.','동료와 역할이 겹치기 쉬우니 맡을 범위를 먼저 나눠 두세요.'],['혼자 할 수 있는 운동 하나를 정해 같은 시간에 이어 가 보세요.','승부욕에 무리하기 쉬우니 운동 강도는 평소대로 지켜 주세요.']],
+    [['잘하는 일을 작은 서비스나 판매로 내놓을 방법을 적어 보세요.','기분 따라 쓰는 지출이 늘기 쉬우니 사기 전에 하루만 미뤄 보세요.'],['고마운 마음을 메시지나 작은 선물로 표현해 보세요. 표현이 관계를 데워요.','말이 앞서기 쉬운 달이라, 서운한 말은 하루 지난 뒤에 꺼내 주세요.'],['만든 결과물을 발표하거나 공유할 날짜를 정해 보세요.','윗사람의 방식에 바로 반박하기보다 대안을 글로 정리해 전해 보세요.'],['좋아하는 취미로 머리를 식히는 시간을 일주일에 두 번 넣어 보세요.','늦게까지 무언가에 빠지기 쉬우니 잠드는 시간을 정해 두세요.']],
+    [['수입이 될 만한 제안이나 거래를 하나 골라 조건을 비교해 보세요.','큰 결제는 견적을 두 곳 이상 받아 본 뒤 결정하세요.'],['함께 갈 장소나 여행을 먼저 제안해 보세요. 구체적인 계획이 마음을 전해요.','관계를 조건으로 재기 쉬운 달이라, 계산보다 마음을 먼저 물어봐 주세요.'],['한 일을 숫자로 정리해 두면 평가나 협상 때 힘이 돼요.','일을 넓히기 전에 지금 맡은 일의 마감부터 확인해 보세요.'],['식사 시간을 일정하게 지키는 것부터 챙겨 보세요.','바쁜 일정에 끼니를 거르기 쉬우니 간단한 식사라도 챙겨 주세요.']],
+    [['고정 지출과 보험·계약 조건을 한 번에 점검해 두세요.','책임질 일이 늘며 지출도 따라오기 쉬우니 예비비를 따로 떼어 두세요.'],['서로 지킬 약속 하나를 정해 보세요. 믿음이 관계를 단단하게 해요.','바라는 역할을 말하지 않고 기다리면 서운함이 쌓여요. 먼저 꺼내 주세요.'],['맡고 싶은 역할이나 책임을 윗사람에게 분명히 말해 보세요.','요구가 많아지는 달이라 우선순위 세 가지만 정하고 나머지는 조율하세요.'],['정해진 시간에 자고 일어나는 리듬을 만들어 보세요.','긴장이 몸에 쌓이기 쉬우니 어깨와 목을 푸는 시간을 하루 한 번 가져 보세요.']],
+    [['돈 공부에 쓸 책이나 강의 하나를 골라 이번 달 안에 끝내 보세요.','결정을 미루다 기회를 놓치기 쉬우니 정할 날짜를 먼저 적어 두세요.'],['상대의 이야기를 끝까지 들어 주는 대화 시간을 마련해 보세요.','혼자 생각만 길어지기 쉬운 달이라, 궁금한 것은 직접 물어보세요.'],['배우고 싶던 기술이나 자격 공부를 시작하기 좋아요. 첫 수업 날짜를 정해 보세요.','준비만 길어지기 쉬우니 지금 수준의 결과물을 먼저 보여 주세요.'],['조용히 쉬는 시간을 일정에 넣어 보세요. 산책이나 명상이 잘 맞아요.','생각이 많아 잠이 얕아지기 쉬우니 자기 전 화면 보는 시간을 줄여 보세요.']]];
+   const MEETA=[['친구 모임에 한 번 더 나가 보세요. 아는 사람의 소개가 인연이 되기 쉬워요.','내 스타일만 고집하기보다 처음 보는 사람의 다른 점에 호기심을 가져 보세요.'],['취미나 관심사를 드러내는 자리에 나가 보세요. 표현하는 모습이 매력이 돼요.','첫 만남에서는 말을 많이 하기보다 상대의 이야기를 들어 주세요.'],['새로운 모임이나 행사에 참여해 보세요. 만나는 사람의 폭이 넓어지는 달이에요.','조건부터 따지기보다 대화가 편한 사람인지 먼저 보세요.'],['지인에게 소개를 부탁해 보세요. 믿을 만한 연결에서 인연이 오기 쉬워요.','기준을 너무 많이 대기 전에 한 번 더 만나 보세요.'],['배움 모임이나 스터디처럼 꾸준히 만나는 자리를 찾아보세요.','혼자 고민만 하기보다 마음에 드는 사람에게 먼저 짧게 연락해 보세요.']];
+   const SIGT={'마야 탄생일':[p=>p+'에 마야력의 탄생일이 돌아와요. 새로 시작할 일을 그 무렵에 두어 보세요.',p=>'마야력의 탄생일이 '+p+'에 있어요. 한 해의 다짐을 다시 적어 보기 좋은 때예요.'],'귀인일':[p=>p+'에 사주의 귀인일이 있어요. 도움을 청하거나 소개를 부탁하기 좋은 때예요.',p=>'사주의 귀인일이 '+p+'에 들어요. 조언을 구할 사람에게 그 무렵 연락해 보세요.'],'도화일':[p=>p+'의 도화일에는 사람들의 눈길이 모이기 쉬워요. 만남이나 발표를 그 무렵에 잡아 보세요.',p=>'도화일이 '+p+'에 있어 매력이 잘 드러나요. 사진이나 소개 글을 새로 다듬기 좋아요.'],'일지와 합':[p=>p+'에는 일지와 합이 드는 날이 있어 가까운 사람과 마음을 맞추기 편해요.',p=>'일지와 합이 드는 날이 '+p+'에 있어요. 미뤄 둔 화해나 부탁을 그 무렵에 꺼내 보세요.'],'일지와 충':[p=>p+'에 일지와 충이 드는 날이 있어요. 중요한 약속은 앞뒤로 여유를 두세요.',p=>'일지와 충이 드는 날이 '+p+'에 있어요. 그 무렵에는 이사·계약 같은 큰일을 하루 이틀 비켜 두세요.']};
+   const NPM=['','새로운 시작을 놓기 좋은 흐름이에요','함께하는 사람과 보조를 맞추기 좋아요','말과 표현으로 사람을 끌어당기는 달이에요','기초를 다지고 정리하기 좋은 달이에요','변화와 이동이 반가운 달이에요','가족과 가까운 사람을 돌보기 좋은 달이에요','혼자 생각을 정리하고 배우기 좋은 달이에요','성과와 결과를 챙기기 좋은 달이에요','마무리하고 덜어내기 좋은 달이에요'];
+   const MX=[['이번 달 쓸 돈과 모을 돈을 통장부터 나눠 두세요.','혼자만의 시간과 함께하는 시간을 미리 나눠 두면 서로 편해져요.','비슷한 일을 하는 사람의 방식을 하나 골라 내 일에 적용해 보세요.','걷기처럼 매일 할 수 있는 움직임을 하나 정해 두세요.'],['이번 달 산 것 중 만족스러웠던 것과 아까웠던 것을 하나씩 적어 보세요.','함께 웃을 수 있는 계획을 하나 세워 보세요. 가벼운 즐거움이 관계를 가깝게 해요.','떠오른 아이디어를 한 장짜리 메모로 정리해 두면 다음 기회에 꺼내 쓸 수 있어요.','가벼운 스트레칭이나 몸을 쓰는 취미로 하루의 긴장을 풀어 주세요.'],['한 달 수입과 지출을 한눈에 보는 표를 만들어 두세요.','상대가 좋아하는 것을 하나 기억해 두었다가 작게 챙겨 주세요.','새로 만난 사람과 이어질 수 있도록 연락처와 나눈 이야기를 정리해 두세요.','장보기 목록에 몸에 좋은 재료를 하나씩 더해 보세요.'],['자동 이체와 구독 결제를 훑어보고 하나는 정리해 보세요.','서로의 바쁜 날을 미리 알려 주면 서운함이 줄어요.','이번 달 꼭 지킬 마감 하나를 정하고 그 앞에 여유일을 두세요.','일정 사이에 10분씩 쉬는 칸을 넣어 두세요.'],['돈 문제로 조언을 구할 수 있는 사람 한 명에게 이야기를 들어 보세요.','고민이 있을 때 믿을 만한 사람에게 털어놓으면 마음이 한결 가벼워져요.','도움을 준 선배나 동료에게 고마움을 전하고 조언 하나를 청해 보세요.','푹 쉬는 날을 하루 정하고 그날은 약속을 비워 두세요.']],MXM=['아는 사람이 많은 자리에서 먼저 인사를 건네 보세요.','내가 즐기는 모습을 보여 줄 수 있는 활동을 골라 보세요.','평소 가지 않던 장소나 행사에 한 번 들러 보세요.','믿을 만한 지인 모임에 꾸준히 얼굴을 비춰 보세요.','같은 관심사를 가진 사람과 이야기를 나눌 수 있는 모임을 찾아보세요.'];MACT.forEach((g,gi)=>g.forEach((f,fi)=>f.push(MX[gi][fi])));MEETA.forEach((g,gi)=>g.push(MXM[gi]));
+   const usedAct=new Set();
+   const SIGO=['마야 탄생일','귀인일','도화일','일지와 합','일지와 충'];
+   let lastSig='';const used={},openUse={},pmUse={};
+   const NPM2=['','작은 첫걸음을 떼기 좋은 달이에요','혼자보다 둘이 할 때 일이 수월해요','즐거운 자리에서 기회가 생기기 쉬워요','계획표를 손보고 기본을 챙기기 좋아요','익숙한 틀을 조금 바꿔 보기 좋은 달이에요','책임감과 다정함이 함께 빛나는 달이에요','조용히 공부하고 돌아보기 좋은 달이에요','노력한 만큼 결과를 확인하기 좋은 달이에요','정리하고 비워 다음을 준비하기 좋은 달이에요'];
    calendar.months.forEach((m,i)=>{
     const delta=m.scores.map((v,k)=>v-mean[k]);
     const allowed=key==='comprehensive'?[0,1,2,3]:['love','marry','reunion','match'].includes(key)?[1]:['money','invest','property','business'].includes(key)?[0]:[2];
-    const focus=allowed.reduce((a,b)=>Math.abs(delta[b])>Math.abs(delta[a])?b:a),low=delta.indexOf(Math.min(...delta));
+    const focus=allowed.reduce((a,b)=>Math.abs(delta[b])>Math.abs(delta[a])?b:a);
     const change=i?m.scores[focus]-calendar.months[i-1].scores[focus]:0;
     const mode=delta[focus]<=-.5||change<=-.5?2:delta[focus]>=.5||change>=.5?1:0;
-    m.brief=advice[focus][mode]+(low!==focus&&delta[low]<=-.5?' '+cautions[low]:'');
+    const F=FN[focus],vals=calendar.months.map(x=>x.scores[focus]),top=Math.max(...vals),bot=Math.min(...vals),g=Math.max(0,Math.floor(TG.indexOf(m.mtg)/2));
+    const OPV={top:[()=>'열두 달 중 '+J(F,'이','가')+' 가장 밝은 달이에요.'],bot:[()=>'열두 달 중 '+J(F,'을','를')+' 가장 차분히 다지기 좋은 달이에요.'],
+     upc:[()=>J(F,'이','가')+' 지난달보다 한결 살아나는 달이에요.',()=>'지난달보다 '+F+' 쪽 기운이 올라오는 달이에요.',()=>'지난달에 비해 '+F+' 흐름이 밝아지는 달이에요.'],
+     up:[()=>F+'에 힘이 실리는 달이에요.',()=>'열두 달 평균보다 '+F+' 흐름이 밝은 달이에요.',()=>F+'에서 반가운 소식을 기대해 볼 만한 달이에요.'],
+     dnc:[()=>J(F,'은','는')+' 지난달보다 잠시 숨을 고르는 달이에요.',()=>'지난달보다 '+F+' 흐름이 한 걸음 물러나는 달이에요.',()=>'지난달의 기세를 정리하며 '+J(F,'을','를')+' 돌보는 달이에요.'],
+     dn:[()=>F+'에서는 속도를 조금 늦추면 좋은 달이에요.',()=>J(F,'을','를')+' 점검하며 지나가기 좋은 달이에요.',()=>F+'에서는 새로 벌이기보다 지키는 쪽이 편한 달이에요.'],
+     st:[()=>J(F,'은','는')+' 잔잔하게 이어지는 달이에요.',()=>'큰 오르내림 없이 '+J(F,'을','를')+' 다지는 달이에요.',()=>F+' 흐름이 평소의 결을 지키는 달이에요.',()=>'특별한 기복 없이 '+F+'의 기본기를 챙기기 좋은 달이에요.']};
+    const ok=top-bot>=1&&m.scores[focus]===top&&!openUse['top'+focus]?'top':top-bot>=1&&m.scores[focus]===bot&&!openUse['bot'+focus]?'bot':mode===1?(change>=.5?'upc':'up'):mode===2?(change<=-.5?'dnc':'dn'):'st',oc=(openUse[ok+focus]=(openUse[ok+focus]||0)+1)-1,open=OPV[ok][oc%OPV[ok].length]();
+    const s2=m.mtg&&MTH[m.mtg]?'사주로는 '+m.mpil+'월, '+m.mtg+'의 달이라 '+MTH[m.mtg]+'.':'';
+    const opts=(single&&focus===1?MEETA[g]:MACT[g][focus]),pref=mode===2?1:0,act=[opts[pref],opts[2],opts[1-pref]].find((t,j)=>!usedAct.has(t)&&(j<2||mode===0))||opts[pref];usedAct.add(act);
+    const cand=SIGO.filter(n=>m.sig&&n in m.sig&&n!==lastSig&&(n!=='도화일'||focus===1)).sort((a,b)=>(used[a]||0)-(used[b]||0)||(a==='마야 탄생일'?-1:b==='마야 탄생일'?1:0));
+    let s4='';if(cand.length&&(i%2===0||!m.pm||cand[0]==='마야 탄생일')){const n=cand[0];lastSig=n;used[n]=(used[n]||0)+1;s4=SIGT[n][(used[n]-1)%2](PH[m.sig[n]])}else if(m.pm){lastSig='';const u=(pmUse[m.pm]=(pmUse[m.pm]||0)+1)-1;s4=u%2?'수비학의 개인월 숫자도 '+m.pm+'로, '+NPM2[m.pm]+'.':'수비학으로는 개인월 '+J(String(m.pm),'이라','라')+' '+NPM[m.pm]+'.'}
+    m.brief=[open,s2,act,s4].filter(Boolean).join(' ');
     m.guidance={field:focus,mode,change:Number(change.toFixed(1))};
    });
    calendar.compactMonthly=true;calendar.lead='';calendar.action='';calendar.table=null;
@@ -2320,12 +2354,14 @@ function buildRichReport(ch,key){
  S.forEach((s,i)=>{s.id=key+'-'+(i+1);s.basis=[];delete s.originalLetter;s.lead=readerText(s.lead);s.paragraphs=s.paragraphs.map(readerText).filter(Boolean);s.action=readerText(s.action);s.caution=readerText(s.caution);});
 
  /* 2026-11-10: 투자·시험 계열 문장의 '~합니다'를 해요체로 바꾼다(고지 note는 그대로). */
- const haeyo=(()=>{const EX={'이끕니다':'이끌어요','엽니다':'열어요','압니다':'알아요','만듭니다':'만들어요','삽니다':'살아요','아닙니다':'아니에요','입니다':'이에요','보입니다':'보여요','움직입니다':'움직여요','줄입니다':'줄여요','높입니다':'높여요','쌓입니다':'쌓여요','기울입니다':'기울여요','붙입니다':'붙여요','섞입니다':'섞여요','놓입니다':'놓여요'},
+ const haeyo=(()=>{const EX={'이끕니다':'이끌어요','엽니다':'열어요','압니다':'알아요','만듭니다':'만들어요','삽니다':'살아요','아닙니다':'아니에요','입니다':'이에요','보입니다':'보여요','움직입니다':'움직여요','줄입니다':'줄여요','높입니다':'높여요','쌓입니다':'쌓여요','기울입니다':'기울여요','붙입니다':'붙여요','섞입니다':'섞여요','놓입니다':'놓여요','돋보입니다':'돋보여요'},
   B=0xac00,I=c=>(c-B)/588|0,V=c=>((c-B)%588)/28|0,T=c=>(c-B)%28,mk=(i,v,t)=>String.fromCharCode(B+i*588+v*28+t),IRR=/(쉽|어렵|스럽|가볍|무겁|즐겁|반갑|고맙|새롭|가깝|귀엽|부드럽|외롭|두렵|무섭|뜨겁|차갑|롭)$/,
   open=w=>{const c=w.charCodeAt(w.length-1),i=I(c),v=V(c),pre=w.slice(0,-1),p=pre?V(pre.charCodeAt(pre.length-1)):-1;if(w.endsWith('하'))return pre+'해요';if(v===18)return pre+mk(i,(p===0||p===8)?0:4,0)+'요';if(v===16||v===19)return w+'어요';const m={8:9,13:14,20:6,11:10}[v];return m!=null?pre+mk(i,m,0)+'요':w+'요'},
   one=tok=>{if(EX[tok])return EX[tok];const w=tok.slice(0,-2);if(!w)return tok;
    if(w.endsWith('습')){const s=w.slice(0,-1),c=s.charCodeAt(s.length-1);if(!s)return tok;if(T(c)===20)return s+'어요';if(IRR.test(s))return s.slice(0,-1)+mk(I(c),V(c),0)+'워요';const v=V(c);return s+((v===0||v===8)?'아요':'어요')}
    if(w.endsWith('입')){const s=w.slice(0,-1);return s+(T(s.charCodeAt(s.length-1))?'이에요':'예요')}
+   if(w.endsWith('듭'))return w.slice(0,-1)+'들어요';
+   if(w.endsWith('릅')&&!/(따|치|들)릅$/.test(w)){const s=w.slice(0,-1),c=s.charCodeAt(s.length-1);if(s&&c>=B&&T(c)===0){const v=V(c);return s.slice(0,-1)+mk(I(c),v,8)+((v===0||v===8)?'라요':'러요')}}
    const c=w.charCodeAt(w.length-1);if(T(c)!==17)return tok;return open(w.slice(0,-1)+mk(I(c),V(c),0))};
   return t=>typeof t==='string'?t.replace(/[가-힣]+니다(?![가-힣])/g,one):t})();
  S.forEach(s=>{s.question=haeyo(s.question);s.lead=haeyo(s.lead);s.paragraphs=(s.paragraphs||[]).map(haeyo);s.action=haeyo(s.action);s.caution=haeyo(s.caution);if(s.table&&Array.isArray(s.table.rows))s.table.rows=s.table.rows.map(r=>r.map(haeyo))});

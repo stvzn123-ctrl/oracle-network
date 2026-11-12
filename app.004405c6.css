@@ -2067,3 +2067,8 @@ body.show-topics .topic-fold{display:block}
 #report .r-page .rv3-tw .rv3-table.fixed th,#report .r-page .rv3-tw .rv3-table.fixed td{padding:8px 5px}
 #report .r-page .rv3-tw .rv3-table.fixed tbody th{overflow-wrap:normal;word-break:keep-all}
 #report .r-page .rv3-tw .rv3-table.fixed tbody th{white-space:pre-line}
+/* 2026-11-12: 10년 흐름 장은 그래프·표를 위에 두고 해마다 해설은 아래에. 표와 해설 사이 여백. */
+#report .rv3-flowtop{margin:0 0 40px;padding-bottom:24px;border-bottom:1px dashed var(--line2)}
+#report .rv3-flowtop .annual-score-grid{margin-top:8px}
+#report .rv3-flowtop .rv3-tw{margin-bottom:0}
+#report .annual-line-chart .year-axis{font-size:15px}
