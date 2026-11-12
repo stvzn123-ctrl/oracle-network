@@ -126,3 +126,7 @@ body.nav-edit #guestProfile{display:none!important}
 #report .daewoon-table .current-tag{display:block;font-size:11px;line-height:1.5;color:var(--report-accent);margin-bottom:4px}#report .daewoon-table .pillar-label{white-space:nowrap}
 
 .report-print-appendix{display:none}@media print{.report-print-appendix{display:block;break-before:page}}
+
+/* Landing copy: keep the complete promise on one centered line. */
+#landing #landing-title.landing-headline{display:block!important;width:100%!important;max-width:none!important;text-align:center!important;font-size:clamp(14px,5.3cqw,32px)!important;white-space:nowrap!important;line-height:1.5!important;letter-spacing:-.05em!important;text-wrap:nowrap!important}
+#landing .landing-lead.landing-one{max-width:none!important;width:100%!important;text-align:center!important;font-size:clamp(11px,3.15cqw,15px)!important;line-height:1.85!important;word-break:keep-all!important}
