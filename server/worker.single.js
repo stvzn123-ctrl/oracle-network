@@ -766,18 +766,24 @@ async function paymentRoute(req,env,url){
  if(path==='/payapp/feedback'&&req.method==='POST'){
   // 페이앱 서버가 부른다. 무엇이든 'SUCCESS'로 답하되, 검증을 통과한 것만 반영한다(검증 실패는 FAIL로 재시도 유도하지 않음).
   const text=t=>new Response(t,{status:200,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
-  let f;try{f=await req.formData()}catch{return text('FAIL')}
-  const g=k=>String(f.get(k)??'');
-  if(!env.PAYAPP_USERID||!env.PAYAPP_REQUESTKEY)return text('FAIL');
-  const hashOK=g('hash').toLowerCase()===await sha256hex(env.PAYAPP_USERID+g('responsedate')+env.PAYAPP_REQUESTKEY);
-  if(!sameSecret(g('userid'),env.PAYAPP_USERID)||!sameSecret(g('linkkey'),env.PAYAPP_LINKKEY||'')||!sameSecret(g('linkval'),env.PAYAPP_LINKVAL||'')||!hashOK)return text('FAIL');
+  let f;try{f=await req.formData()}catch{return text('SUCCESS')}
+  const g=k=>String(f.get(k)??'').trim(),E=k=>String(env[k]||'').trim();
+  // 검증 실패도 SUCCESS로 답한다(그래야 결제창이 막히지 않음). 권한은 검증을 통과한 결제에만 준다.
+  const why=[];
+  if(!E('PAYAPP_USERID')||!E('PAYAPP_REQUESTKEY')||!E('PAYAPP_LINKKEY')||!E('PAYAPP_LINKVAL'))why.push('secret_missing');
+  if(g('userid')!==E('PAYAPP_USERID'))why.push('userid');
+  if(!sameSecret(g('linkkey'),E('PAYAPP_LINKKEY')))why.push('linkkey');
+  if(!sameSecret(g('linkval'),E('PAYAPP_LINKVAL')))why.push('linkval');
+  if(g('hash').toLowerCase()!==await sha256hex(E('PAYAPP_USERID')+g('responsedate')+E('PAYAPP_REQUESTKEY')))why.push('hash');
+  const verified=!why.length;
   const order=g('var1'),state=Number(g('pay_state')),mul=g('mul_no');
   if(!/^[a-f0-9]{32}$/.test(order))return text('SUCCESS');
   const o=await env.DB.prepare('SELECT order_id,user_id,report_key,price,status,mul_no FROM payments WHERE order_id=?').bind(order).first();
   if(!o)return text('SUCCESS');
   const now=Date.now();
+  if(!verified){console.log('payapp feedback unverified',JSON.stringify({state,why,keys:[...f.keys()]}));if(o.status==='ready'||String(o.status).startsWith('check:'))await env.DB.prepare('UPDATE payments SET status=? WHERE order_id=?').bind(('check:'+state+':'+why.join(',')).slice(0,60),order).run();return text('SUCCESS')}
   if(state===4){
-   if(Number(g('price'))!==o.price)return text('FAIL');
+   if(Number(g('price'))!==o.price){await env.DB.prepare("UPDATE payments SET status='check:price' WHERE order_id=?").bind(order).run();return text('SUCCESS')}
    if(o.status==='paid')return text('SUCCESS');
    await env.DB.batch([
     env.DB.prepare("UPDATE payments SET status='paid',mul_no=?,paid_at=?,pay_type=? WHERE order_id=?").bind(mul,now,g('pay_type'),order),
@@ -793,9 +799,10 @@ async function paymentRoute(req,env,url){
    ]);
    return text('SUCCESS');
   }
-  if([8,32].includes(state)&&o.status==='ready')await env.DB.prepare("UPDATE payments SET status='canceled',canceled_at=? WHERE order_id=?").bind(now,order).run();
+  if([8,32].includes(state)&&o.status!=='paid')await env.DB.prepare("UPDATE payments SET status='canceled',canceled_at=? WHERE order_id=?").bind(now,order).run();
   return text('SUCCESS');
  }
+ if(path==='/pay/status'&&req.method==='GET'){const user=await member(req,env);if(!user)return json(req,env,{error:'unauthorized'},401);const r=await env.DB.prepare('SELECT report_key,price,status,created FROM payments WHERE user_id=? ORDER BY created DESC LIMIT 5').bind(user.id).all();return json(req,env,{orders:r.results})}
  if(path==='/pay/start'){
   if(req.method!=='POST')return json(req,env,{error:'method'},405);
   if(!ORIGINS.includes(req.headers.get('Origin')))return json(req,env,{error:'origin'},403);
