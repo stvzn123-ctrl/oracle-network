@@ -3873,8 +3873,9 @@ function renderHook(){const h=$("hook");if(h&&CH)h.innerHTML=reportHook(CH)}
 
 /* Share a fixed introduction and site URL only; never include birth input or personal results. */
 const SHARE_URL="https://stvzn123-ctrl.github.io/oracle-network/";
-const SHARE_TITLE="운명탐정 - 다섯 점술로 찾는 나의 운명";
-function resultShareText(){return SHARE_TITLE+"\n"+SHARE_URL}
+const SHARE_TITLE="운명탐정 - 당신의 운명의 단서를 찾아드려요!";
+const SHARE_DESCRIPTION="사주, 서양 점성술, 베딕 점성술, 수비학, 마야력을 한 번에 분석해서 정교하게 알려드릴게요!";
+function resultShareText(){return SHARE_TITLE+"\n"+SHARE_DESCRIPTION+"\n"+SHARE_URL}
 
 /* 초대 링크 잠금: INVITE_API가 있으면 친구가 내 링크(?r=코드)로 들어와야 열린다. 비어 있으면 예전 방식(공유 완료·복사 후 열림). */
 const INVITE_API="https://oracle-api.stvzn123.workers.dev";
@@ -3912,7 +3913,7 @@ async function openShare(){
   const useInvite=INVITE_LOCK&&!graphUnlocked&&typeof CH!=="undefined"&&CH;
   let url=SHARE_URL;
   if(useInvite){try{await ensureInvite();url=inviteUrl();startPoll();checkInvite()}catch(_){}}
-  $("share-preview").value=SHARE_TITLE+"\n"+url;
+  $("share-preview").value=SHARE_TITLE+"\n"+SHARE_DESCRIPTION+"\n"+url;
   if(typeof navigator.share==="function"){
     try{await navigator.share({url});
       if(useInvite&&url!==SHARE_URL)return;
@@ -3931,11 +3932,11 @@ function afterShare(msg){if(inviteMode()){$("share-status").textContent=(msg?msg
 async function copyFor(app){const area=$("share-preview");
   try{if(!navigator.clipboard?.writeText)throw 0;await navigator.clipboard.writeText(area.value);$("share-status").textContent=`링크를 복사했어요. ${app}에 붙여 넣어 보내 주세요. 복사만으로는 열리지 않고, 공유를 완료하면 열려요.`}
   catch(_){area.focus();area.select();$("share-status").textContent=`글을 길게 눌러 복사한 뒤 ${app}에 붙여 넣어 주세요.`}}
-async function systemShare(app){if(typeof navigator.share==="function"){try{await navigator.share({title:SHARE_TITLE,text:SHARE_TITLE,url:shareLink()});afterShare();return}catch(e){if(e.name==="AbortError"){$("share-status").textContent="공유를 취소했어요.";return}}}copyFor(app)}
+async function systemShare(app){if(typeof navigator.share==="function"){try{await navigator.share({title:SHARE_TITLE,text:SHARE_TITLE+"\n"+SHARE_DESCRIPTION,url:shareLink()});afterShare();return}catch(e){if(e.name==="AbortError"){$("share-status").textContent="공유를 취소했어요.";return}}}copyFor(app)}
 let kakaoReady=null;
 function loadKakao(){if(kakaoReady)return kakaoReady;kakaoReady=new Promise((ok,no)=>{const sc=document.createElement("script");sc.src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.4/kakao.min.js";sc.crossOrigin="anonymous";sc.onload=()=>{try{if(!Kakao.isInitialized())Kakao.init(KAKAO_JS_KEY);ok()}catch(e){no(e)}};sc.onerror=no;document.head.appendChild(sc)}).catch(e=>{kakaoReady=null;throw e});return kakaoReady}
-async function shareTo(k){const url=shareLink(),text=SHARE_TITLE;
-  if(k==="kakao"){if(KAKAO_JS_KEY){try{await loadKakao();Kakao.Share.sendDefault({objectType:"feed",content:{title:"운명탐정",description:"다섯 점술로 나의 성향과 연애·결혼·일과 돈의 흐름을 함께 살펴봐요.",imageUrl:SHARE_URL+"og-share-v6.png",imageWidth:1200,imageHeight:630,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:"나의 운명 확인하기",link:{mobileWebUrl:url,webUrl:url}}]});afterShare();return}catch(_){}}return systemShare("카카오톡")}
+async function shareTo(k){const url=shareLink(),text=SHARE_TITLE+"\n"+SHARE_DESCRIPTION;
+  if(k==="kakao"){if(KAKAO_JS_KEY){try{await loadKakao();Kakao.Share.sendDefault({objectType:"feed",content:{title:"운명탐정",description:SHARE_DESCRIPTION,imageUrl:SHARE_URL+"og-share-v7.png",imageWidth:1200,imageHeight:630,link:{mobileWebUrl:url,webUrl:url}},buttons:[{title:"나의 운명 확인하기",link:{mobileWebUrl:url,webUrl:url}}]});afterShare();return}catch(_){}}return systemShare("카카오톡")}
   if(k==="insta")return systemShare("인스타그램 DM이나 스토리");
   const href=k==="threads"?"https://www.threads.net/intent/post?text="+encodeURIComponent(text+"\n"+url):"https://x.com/intent/tweet?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(url);
   window.open(href,"_blank","noopener,noreferrer");afterShare()}
