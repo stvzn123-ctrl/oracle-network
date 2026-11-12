@@ -1550,8 +1550,8 @@ function answerCards(rows){return '<div class="topic-answers">'+rows.map(([q,a])
 function matchFormHTML(){return `<section class="chart-form"><h4>상대방 정보를 입력하고 궁합 맞춰보기</h4><p>상대의 생년월일과 영문 이름을 입력하면 두 사람의 다섯 점술을 비교해요.</p><form id="compatibility-form"><div class="chart-fields"><label>상대 이름<input name="partnerName" maxlength="40" required autocomplete="off"></label><label>상대 영문 이름<input name="partnerRoman" maxlength="80" pattern=".*[A-Za-z].*" title="영문 알파벳을 포함해 입력해 주세요" required autocomplete="off"></label><label>상대 생년월일 (양력)<input name="partnerDate" type="date" min="1920-01-01" required></label><label>상대 출생 시각 기준<select name="partnerZone"><option value="9">대한민국 표준시</option><option value="0">UTC</option><option value="8">UTC+8</option><option value="-5">UTC−5</option><option value="-8">UTC−8</option></select></label></div><p>해외 출생은 출생 당시의 UTC 기준을 선택해 주세요. 해외 서머타임은 자동 보정하지 않아요.</p><button type="submit">두 사람의 궁합 보기</button><div id="compatibility-result" class="chart-feedback" aria-live="polite"></div></form></section>`}
 function compatibilityRows(a,b){const ae=SE[a.stems.d],be=SE[b.stems.d],ab=a.brs.d,bb=b.brs.d;const relation=ae===be?'비슷한 기질을 알아보기 쉬운 조합':(ae+1)%5===be||(be+1)%5===ae?'서로의 강점을 북돋는 상생 상징의 조합':'서로 다른 기준을 설명하며 맞춰볼 조합';const num=reduceNum(a.lp,false),num2=reduceNum(b.lp,false);return [['사주 · 두 사람의 기질',`${ST[a.stems.d]}${EL[ae]}와 ${ST[b.stems.d]}${EL[be]}는 ${relation}이에요. ${mod(ab-bb,12)===6?'일지 충의 상징이 있어 생활 리듬과 갈등 때의 대화 방식을 미리 맞춰보세요.':ab===bb?'같은 일지여서 익숙한 방식에 공감할 수 있지만 서로의 고집도 살펴보세요.':'같이 있을 때 편한 생활 방식과 서로 다른 기준을 직접 이야기해보세요.'}`,'오행 상생·동일 기질, 일지 동일·충 비교'],['서양 점성술 · 태양의 성향',`${ZOD[sign(a.sun)]}자리와 ${ZOD[sign(b.sun)]}자리예요. ${sign(a.sun)%4===sign(b.sun)%4?'같은 원소의 별자리라 기본적인 표현 방식에 공통점이 있어요.':'원소가 달라 활력을 얻는 방식과 관계의 속도를 맞춰보는 것이 좋아요.'}`,'태양 별자리 원소 비교 · 상승궁·하우스 미비교'],['베딕 점성술 · 달의 리듬',`달의 낙샤트라는 ${NAK[a.nk]}와 ${NAK[b.nk]}예요. ${a.nk===b.nk?'같은 낙샤트라로 정서적인 주제에 공통점이 있어요.':'서로의 감정을 처리하는 방식과 필요한 휴식의 차이를 살펴보세요.'}`,'항성황도 달의 낙샤트라 비교 · 전통 36점 궁합 미적용'],['수비학 · 삶의 방향',`두 사람의 인생 수는 각각 ${a.lp} / ${b.lp}, 표현 수는 ${a.expr??'미계산'} / ${b.expr??'미계산'}예요. ${num===num2?'축약 인생 수가 같아 삶의 주제에 공통점을 떠올릴 수 있어요.':'삶에서 우선하는 목표가 다를 수 있으니 장기 계획을 나누어보세요.'}`,'두 생년월일의 구간 축약과 영문 이름 계산'],['마야력 · 탄생 상징',`두 사람의 탄생 조합은 ${a.tone} ${MS[a.msign][0]} / ${b.tone} ${MS[b.msign][0]}예요. 각각의 주제인 「${MS[a.msign][2]}」, 「${MS[b.msign][2]}」를 함께 읽어보세요.`,'전통 촐킨의 탄생 기호 비교 · 궁합 의미는 자체 해석']];}
 const TOPIC_REPORT_CONTENTS={"study":["나에게 맞는 공부 방식과 집중 습관","시험·자격증·진학을 준비할 시기","학업을 돕는 귀인과 배움의 환경","성취를 방해하는 습관과 실천 계획"],"money":["타고난 재물 구조와 돈을 다루는 방식","투자 습관·집과 부동산·사업과 부수입","앞으로 10년의 재물 흐름과 주의할 패턴"],"marry":["사랑할 때 드러나는 나의 매력과 연애 성향","나와 잘 맞는 연인·배우자의 모습과 생활 방식","인연의 시작부터 관계가 깊어지고 결혼을 생각할 시기","오래가는 관계를 위한 대화와 현실적인 준비"],"love":["새 인연을 만날 시기와 장소","예상 연애 상대의 외모·분위기 일러스트","내 매력과 상대가 끌리는 포인트","연애 상대의 성격·직업·경제관","관계가 깊어지는 시기와 연애 패턴"],"reunion":["관계를 다시 돌아볼 시기","연락과 대화의 흐름","다시 만났을 때 맞춰볼 점","새로운 인연으로 나아가는 방향"],"work":["나에게 맞는 직업과 업무 방식","이직·승진·도전을 준비할 시기","귀인을 만날 때·장소·인물상","기회를 만드는 준비와 실천"],"match":["두 사람의 다섯 점술 궁합","잘 맞는 성향과 서로 끌리는 차이","대화·감정·생활·경제관 비교","관계를 깊게 만드는 시기와 실천"],"ask":["내 질문에 대한 개인별 풀이","사주·별자리·베딕·수비학·마야력의 관련 근거","주목할 시기와 구체적인 실천 제안"]};
-const FREE_LAUNCH=false,ALL_ACCESS_PRICE=990,LAUNCH_PRICE=p=>'<b>'+ALL_ACCESS_PRICE.toLocaleString()+'원</b> <small class="launch">한 번 결제로 모든 리포트 열람</small>';
-const TOPIC_REPORT_PRICE=990,FREE_QUESTION_PRICE=3900,COMPREHENSIVE_REPORT_PRICE=990;
+const FREE_LAUNCH=false,ALL_ACCESS_PRICE=2990,LAUNCH_PRICE=p=>'<b>'+p.toLocaleString()+'원</b>';
+const TOPIC_REPORT_PRICE=1000,FREE_QUESTION_PRICE=1900,COMPREHENSIVE_REPORT_PRICE=1900;
 function topicReportHTML(k){const name=TOPICS.find(t=>t[0]===k)[1],ask=k==='ask';return '<section class="topic-offer"><span class="eyebrow">'+(ask?'나의 질문에 대한 리포트':'더 구체적인 나의 리포트')+'</span><h4>'+name+' 리포트에서 볼 내용</h4><ul>'+TOPIC_REPORT_CONTENTS[k].map(x=>'<li>'+x+'</li>').join('')+'</ul>'+(['love','marry'].includes(k)?'<p class="relationship-report-note" role="note">운명은 같아도 현재 상태에 따라 해석이 달라질 수 있어요. 현재 상태를 입력해 주시면 내 상황을 더 정확하게 반영한 해석을 받아보실 수 있어요. 리포트를 보기 전, 내 정보에서 현재 상태를 확인해 주세요.</p>':'')+(ask?'':'<div class="topic-offer-action"><strong>'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</strong><button type="button" data-buy="'+k+'">나의 리포트 보기</button></div><p class="buy-msg" aria-live="polite"></p>')+'</section>'}
 
 function mascotPoseHTML(p,cls=''){return '<span class="pose pose-'+p+' '+cls+'" aria-hidden="true"></span>'}
@@ -2299,7 +2299,7 @@ function showLaunchReport(key,identity,trigger,show){
  if(accountUser?.isAdmin){show();return}
  if(!accountUser){needLogin();return}
  if(!FREE_LAUNCH){
-  // 990원 전체 열람: 서버 /access에 'all'(또는 해당 리포트) 권한이 있을 때만 연다.
+  // 리포트별 결제 또는 전체 열람(2,990원): 서버 /access에 'all'(또는 해당 리포트) 권한이 있을 때만 연다.
   if(!requireSavedProfile())return;
   accountAPI('/access').then(a=>{if(a.isAdmin||a.reports.includes('all')||a.reports.includes(key)){if($('reportPurchase').open)$('reportPurchase').close();show()}else showReportPurchase(key,trigger)}).catch(e=>{showReportPurchase(key,trigger);$('purchaseStatus').textContent=e.message});
   return;
@@ -2313,7 +2313,7 @@ function showLaunchReport(key,identity,trigger,show){
  }catch(error){alert('무료 이용 기록을 저장하거나 리포트를 열지 못했어요. 브라우저 저장 설정을 확인한 뒤 다시 시도해 주세요.')}
 }
 
-function showReportPurchase(key,trigger){purchaseReportKey=key;purchaseTrigger=trigger;const name=key==='comprehensive'?'종합':key==='group'?'모임':key==='friend'?'우정':TOPICS.find(x=>x[0]===key)?.[1]||'나의 운명';$('purchaseTitle').textContent=name+' 리포트';const price=key==='comprehensive'?COMPREHENSIVE_REPORT_PRICE:key==='ask'?FREE_QUESTION_PRICE:TOPIC_REPORT_PRICE;let used=false;try{used=!!(accountUser&&localStorage.getItem(launchTrialSlot(key)))}catch(_){}$('purchasePrice').innerHTML=key==='ask'?price.toLocaleString()+'원':LAUNCH_PRICE(price);$('purchaseContents').replaceChildren();const items=key==='comprehensive'?['타고난 성향과 강점·주의점','연애·재물·직업의 개인별 풀이','앞으로 10년의 분야별 흐름']:TOPIC_REPORT_CONTENTS[key]||[];for(const t of items){const li=document.createElement('li');li.textContent=t;$('purchaseContents').append(li)}$('purchaseStatus').textContent='990원 한 번 결제로 종합·주제별·궁합·재회 리포트를 모두 열람할 수 있어요. 온라인 결제는 준비 중이에요.';$('reportPurchase').showModal();}
+function showReportPurchase(key,trigger){purchaseReportKey=key;purchaseTrigger=trigger;const name=key==='comprehensive'?'종합':key==='group'?'모임':key==='friend'?'우정':TOPICS.find(x=>x[0]===key)?.[1]||'나의 운명';$('purchaseTitle').textContent=name+' 리포트';const price=key==='comprehensive'?COMPREHENSIVE_REPORT_PRICE:key==='ask'?FREE_QUESTION_PRICE:TOPIC_REPORT_PRICE;let used=false;try{used=!!(accountUser&&localStorage.getItem(launchTrialSlot(key)))}catch(_){}$('purchasePrice').innerHTML=key==='ask'?price.toLocaleString()+'원':LAUNCH_PRICE(price);$('purchaseContents').replaceChildren();const items=key==='comprehensive'?['타고난 성향과 강점·주의점','연애·재물·직업의 개인별 풀이','앞으로 10년의 분야별 흐름']:TOPIC_REPORT_CONTENTS[key]||[];for(const t of items){const li=document.createElement('li');li.textContent=t;$('purchaseContents').append(li)}$('purchaseStatus').textContent='전부 열기(2,990원)를 고르면 종합·주제별·궁합·재회 리포트를 모두 볼 수 있어요.';$('reportPurchase').showModal();}
 function needLogin(){if(confirm('리포트는 로그인한 뒤 볼 수 있어요.\n카카오로 로그인할까요?')){const b=$('accountLogin');if(b)b.click()}}
 function requireSavedProfile(){if(!accountUser){$('saveLogin').click();return false}if(!accountUser.profile){accountNotice('출생 정보를 입력하고 내 정보 저장을 눌러주세요.');document.body.classList.add('app-entered');$('askbox').open=true;document.querySelector('[data-bottom=account]')?.click();$('accountMember').open=true;return false}return true}
 async function requestReport(key,trigger){if(!requireSavedProfile())return;if(accountUser?.isAdmin){if(key==='comprehensive')openReport();else openTopicReport(key,trigger);return}if(!accountUser){needLogin();return}try{const access=await accountAPI('/access');if(access.isAdmin||access.reports.includes(key)||access.reports.includes('all')){if($('reportPurchase').open)$('reportPurchase').close();await loadPrivateReport(key,trigger);return}showReportPurchase(key,trigger);}catch(e){showReportPurchase(key,trigger);$('purchaseStatus').textContent=e.message;}}
@@ -3971,7 +3971,35 @@ const COMPASS='<div class="r-compass" aria-hidden="true"><span></span><svg viewB
 function renderReport(){const ch=CH;$("reportBody").innerHTML=approvedReportHTML(buildRichReport(ch,"comprehensive"),"comprehensive",ch);
   $("reportBody").querySelectorAll(".rv3-toc a").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const t=document.getElementById(a.getAttribute("href").slice(1));if(t)t.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})}))}
 function openReport(){if(!requireSavedProfile())return;if(!CH)return;showLaunchReport("comprehensive",CH.inp,$("reportOpen"),()=>{reportReturnFocus=null;renderReport();$("report").hidden=false;document.documentElement.classList.add("rep-lock");$("report").scrollTop=0;$("reportClose").focus({preventScroll:true})})}
-$('reportPurchaseClose').onclick=()=>$('reportPurchase').close();$('reportCheckout').onclick=()=>{$('purchaseStatus').textContent='온라인 결제 연결을 준비 중이에요. 지금은 관리자에게 결제 방법과 열람 승인을 문의해주세요. 결제나 청구는 발생하지 않아요.'};
+$('reportPurchaseClose').onclick=()=>$('reportPurchase').close();$('reportCheckout').onclick=()=>startCheckout(purchaseReportKey);$('reportCheckoutAll').onclick=()=>startCheckout('all');
+/* 페이앱 결제 (2026-11-12): 주문은 서버(/pay/start)가 만들고 가격도 서버가 정한다. 결제 완료는 서버가 페이앱 통보로만 반영한다. */
+let payappLoading=null;
+function loadPayApp(){if(window.PayApp)return Promise.resolve();if(payappLoading)return payappLoading;payappLoading=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://lite.payapp.kr/public/api/v2/payapp-lite.js';s.onload=()=>window.PayApp?ok():no(new Error('payapp'));s.onerror=()=>{payappLoading=null;no(new Error('payapp'))};document.head.append(s)});return payappLoading}
+async function startCheckout(key){
+ const st=$('purchaseStatus'),btns=[$('reportCheckout'),$('reportCheckoutAll')];
+ if(!key)return;if(!accountUser){needLogin();return}if(!requireSavedProfile())return;
+ btns.forEach(b=>b.disabled=true);st.textContent='결제창을 준비하고 있어요…';
+ try{
+  const [o]=await Promise.all([accountAPI('/pay/start',{key}),loadPayApp()]);
+  try{sessionStorage.setItem('oracle-paying',JSON.stringify({o:o.orderId,k:key,t:Date.now()}))}catch(_){}
+  PayApp.setDefault('userid',o.userid);PayApp.setDefault('shopname',o.shopname);PayApp.setTarget('_self');
+  PayApp.payrequest({goodname:o.goodname,price:String(o.price),var1:o.orderId,feedbackurl:o.feedbackurl,checkretry:'y',smsuse:'n',redirectpay:'1',returnurl:o.returnurl,redirect:'self'});
+ }catch(e){st.textContent=e?.message==='payapp'?'결제창을 불러오지 못했어요. 잠시 뒤 다시 시도해 주세요.':'결제를 시작하지 못했어요. '+(e?.message||'잠시 뒤 다시 시도해 주세요.')}
+ finally{setTimeout(()=>btns.forEach(b=>b.disabled=false),1500)}
+}
+async function paymentReturnCheck(){
+ const q=new URLSearchParams(location.search),paid=q.get('paid');let saved=null;try{saved=JSON.parse(sessionStorage.getItem('oracle-paying')||'null')}catch(_){}
+ if(!paid&&!saved)return;
+ if(paid){q.delete('paid');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash)}
+ if(!saved||Date.now()-saved.t>36e5){try{sessionStorage.removeItem('oracle-paying')}catch(_){}return}
+ if(!accountUser)return;
+ accountNotice('결제를 확인하고 있어요…');
+ for(let i=0;i<10;i++){
+  try{const a=await accountAPI('/access');if(a.reports.includes(saved.k)||a.reports.includes('all')){try{sessionStorage.removeItem('oracle-paying')}catch(_){}accountNotice('결제가 완료됐어요! 리포트 버튼을 누르면 바로 열려요.');return}}catch(_){}
+  await new Promise(r=>setTimeout(r,2000));
+ }
+ if(paid)accountNotice('결제 확인이 늦어지고 있어요. 잠시 뒤 리포트 버튼을 다시 눌러 주세요.');else{try{sessionStorage.removeItem('oracle-paying')}catch(_){}accountNotice('')}
+}
 /* Local export of the currently opened, authorized report. Korean text is drawn
    with the loaded page fonts, so PDF viewers do not need external fonts. */
 async function downloadReportPDF(){
@@ -4274,7 +4302,7 @@ $('ask').addEventListener('submit',async()=>{
   try{await accountAPI('/profile',{profile:v,consent:true});accountUser.profile=v;accountStatus('카카오 계정에 내 정보를 저장했어요. 다음 방문 때 자동으로 채워져요.')}catch(e){accountStatus(e.message)}finally{accountBusy=false;accountPaint()}
 });
 document.addEventListener('click',e=>{const m=$('accountMember');if(m.open&&!m.contains(e.target))m.open=false});
-accountPaint();accountInit();
+accountPaint();accountInit().then(paymentReturnCheck).catch(()=>{});
 
 
 document.getElementById('landingStart').addEventListener('click',()=>{document.body.classList.add('app-entered');if(document.body.classList.contains('fresh')){document.getElementById('askbox').open=true;document.getElementById('in-name').focus({preventScroll:true})}window.scrollTo({top:0,behavior:'instant'})});

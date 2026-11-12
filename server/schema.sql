@@ -29,3 +29,5 @@ CREATE INDEX IF NOT EXISTS partners_user ON partners(user_id,updated);
 CREATE TABLE IF NOT EXISTS pairs(code TEXT PRIMARY KEY,owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,kind TEXT NOT NULL DEFAULT 'love',created INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS pair_members(code TEXT NOT NULL,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,joined INTEGER NOT NULL,PRIMARY KEY(code,user_id));
 CREATE INDEX IF NOT EXISTS pairs_owner ON pairs(owner_id,created);
+CREATE TABLE IF NOT EXISTS payments(order_id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,report_key TEXT NOT NULL,price INTEGER NOT NULL,status TEXT NOT NULL,mul_no TEXT,pay_type TEXT,created INTEGER NOT NULL,paid_at INTEGER,canceled_at INTEGER);
+CREATE INDEX IF NOT EXISTS payments_user ON payments(user_id,created);

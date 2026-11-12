@@ -657,7 +657,7 @@ async function authRoute(req,env,url,ctx){
     await env.DB.prepare('DELETE FROM partners WHERE user_id IN (SELECT id FROM users WHERE kakao_id=?)').bind(uid).run();
     await env.DB.prepare('DELETE FROM users WHERE kakao_id=?').bind(uid).run();return json(req,env,{ok:true});
   }
-  if(req.method==='POST'&&origin!==ORIGINS[0])return json(req,env,{error:'origin'},403);
+  if(req.method==='POST'&&!ORIGINS.includes(origin))return json(req,env,{error:'origin'},403);
   if(req.method==='GET'&&path==='/auth/config')return json(req,env,{enabled:!!env.KAKAO_CLIENT_ID});
   if(req.method==='POST'&&path==='/auth/start'){
     if(!env.KAKAO_CLIENT_ID)return json(req,env,{error:'login_not_configured'},503);
@@ -753,13 +753,73 @@ function validPartner(p){if(!p||typeof p!=='object')return null;const s=(x,n)=>t
  return {name:p.name.trim(),roman:p.roman.trim(),sex:p.sex,date:p.date,time:notime?'':p.time,notime,pi,score,at:new Date().toISOString().slice(0,10)}}
 const REPORT_KEYS=["comprehensive","money","marry","love","reunion","work","match","study","employment","move","invest","property","business","exam","cert"];
 function isAdmin(user,env){return !!user&&(env.ADMIN_USER_IDS||'').split(',').map(x=>x.trim()).filter(Boolean).includes(user.id)}
+
+// ── 페이앱 결제 (2026-11-12) ─────────────────────────────────────────────
+// 가격은 서버가 정한다. 낱개 리포트 1,000원 · 종합 1,900원 · 전체 열람 2,990원.
+// 결제 완료는 페이앱이 /payapp/feedback 으로 알려 줄 때만 인정한다(userid·연동KEY·연동VALUE·hash·금액·주문 확인).
+const PAY_SINGLE_KEYS=REPORT_KEYS.filter(k=>k!=='comprehensive').concat(['group','friend']);
+const PAY_PRICE=k=>k==='all'?2990:k==='comprehensive'?1900:PAY_SINGLE_KEYS.includes(k)?1000:0;
+const PAY_NAME={all:'전체 리포트 열람권',comprehensive:'종합 리포트',money:'재물운 리포트',marry:'결혼 리포트',love:'연애 리포트',reunion:'재회 리포트',work:'직업 리포트',match:'궁합 리포트',study:'학업 리포트',employment:'취업 리포트',move:'이사 리포트',invest:'투자 리포트',property:'부동산 리포트',business:'사업 리포트',exam:'시험 리포트',cert:'자격증 리포트',group:'모임 리포트',friend:'우정 리포트'};
+const sha256hex=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+async function paymentRoute(req,env,url){
+ const path=url.pathname.replace(/\/+$/,'');
+ if(path==='/payapp/feedback'&&req.method==='POST'){
+  // 페이앱 서버가 부른다. 무엇이든 'SUCCESS'로 답하되, 검증을 통과한 것만 반영한다(검증 실패는 FAIL로 재시도 유도하지 않음).
+  const text=t=>new Response(t,{status:200,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
+  let f;try{f=await req.formData()}catch{return text('FAIL')}
+  const g=k=>String(f.get(k)??'');
+  if(!env.PAYAPP_USERID||!env.PAYAPP_REQUESTKEY)return text('FAIL');
+  const hashOK=g('hash').toLowerCase()===await sha256hex(env.PAYAPP_USERID+g('responsedate')+env.PAYAPP_REQUESTKEY);
+  if(!sameSecret(g('userid'),env.PAYAPP_USERID)||!sameSecret(g('linkkey'),env.PAYAPP_LINKKEY||'')||!sameSecret(g('linkval'),env.PAYAPP_LINKVAL||'')||!hashOK)return text('FAIL');
+  const order=g('var1'),state=Number(g('pay_state')),mul=g('mul_no');
+  if(!/^[a-f0-9]{32}$/.test(order))return text('SUCCESS');
+  const o=await env.DB.prepare('SELECT order_id,user_id,report_key,price,status,mul_no FROM payments WHERE order_id=?').bind(order).first();
+  if(!o)return text('SUCCESS');
+  const now=Date.now();
+  if(state===4){
+   if(Number(g('price'))!==o.price)return text('FAIL');
+   if(o.status==='paid')return text('SUCCESS');
+   await env.DB.batch([
+    env.DB.prepare("UPDATE payments SET status='paid',mul_no=?,paid_at=?,pay_type=? WHERE order_id=?").bind(mul,now,g('pay_type'),order),
+    env.DB.prepare("INSERT INTO report_entitlements(user_id,report_key,granted_at,granted_by,revoked_at) VALUES(?,?,?,?,NULL) ON CONFLICT(user_id,report_key) DO UPDATE SET granted_at=excluded.granted_at,granted_by=excluded.granted_by,revoked_at=NULL").bind(o.user_id,o.report_key,now,'payapp:'+mul),
+   ]);
+   return text('SUCCESS');
+  }
+  if([9,64,70,71].includes(state)){
+   if(o.status!=='paid'||(o.mul_no&&mul&&o.mul_no!==mul))return text('SUCCESS');
+   await env.DB.batch([
+    env.DB.prepare("UPDATE payments SET status='canceled',canceled_at=? WHERE order_id=?").bind(now,order),
+    env.DB.prepare("UPDATE report_entitlements SET revoked_at=? WHERE user_id=? AND report_key=? AND granted_by=?").bind(now,o.user_id,o.report_key,'payapp:'+o.mul_no),
+   ]);
+   return text('SUCCESS');
+  }
+  if([8,32].includes(state)&&o.status==='ready')await env.DB.prepare("UPDATE payments SET status='canceled',canceled_at=? WHERE order_id=?").bind(now,order).run();
+  return text('SUCCESS');
+ }
+ if(path==='/pay/start'){
+  if(req.method!=='POST')return json(req,env,{error:'method'},405);
+  if(!ORIGINS.includes(req.headers.get('Origin')))return json(req,env,{error:'origin'},403);
+  const user=await member(req,env);if(!user)return json(req,env,{error:'unauthorized'},401);
+  if(!env.PAYAPP_USERID)return json(req,env,{error:'checkout_disabled'},503);
+  let b;try{b=await authBody(req)}catch{return json(req,env,{error:'input'},400)}
+  const key=String(b?.key||''),price=PAY_PRICE(key);if(!price)return json(req,env,{error:'input'},400);
+  const now=Date.now();
+  const {n}=await env.DB.prepare("SELECT COUNT(*) AS n FROM payments WHERE user_id=? AND created>?").bind(user.id,now-36e5).first();
+  if(n>=20)return json(req,env,{error:'too_many'},429);
+  const orderId=authRandom().slice(0,32);
+  await env.DB.prepare("INSERT INTO payments(order_id,user_id,report_key,price,status,created) VALUES(?,?,?,?,'ready',?)").bind(orderId,user.id,key,price,now).run();
+  const api=url.origin;
+  return json(req,env,{orderId,userid:env.PAYAPP_USERID,shopname:'운명탐정',goodname:PAY_NAME[key]||'운명 리포트',price,feedbackurl:api+'/payapp/feedback',returnurl:SITE+'?paid='+orderId});
+ }
+ return null;
+}
 async function accessRoute(req,env,url){
  const path=url.pathname.replace(/\/+$/,'');if(!path.startsWith('/admin/')&&path!='/access'&&path!='/reports')return null;
  const user=await member(req,env);if(!user)return json(req,env,{error:'unauthorized'},401);
  if(req.method!=='GET'&&req.method!=='POST')return json(req,env,{error:'method'},405);
- if(req.method==='POST'&&req.headers.get('Origin')!==ORIGINS[0])return json(req,env,{error:'origin'},403);
+ if(req.method==='POST'&&!ORIGINS.includes(req.headers.get('Origin')))return json(req,env,{error:'origin'},403);
  const admin=isAdmin(user,env);
- if(path==='/access'&&req.method==='GET'){const rows=await env.DB.prepare('SELECT report_key FROM report_entitlements WHERE user_id=? AND revoked_at IS NULL').bind(user.id).all();return json(req,env,{id:user.id,isAdmin:admin,reports:rows.results.map(x=>x.report_key),checkoutEnabled:false});}
+ if(path==='/access'&&req.method==='GET'){const rows=await env.DB.prepare('SELECT report_key FROM report_entitlements WHERE user_id=? AND revoked_at IS NULL').bind(user.id).all();return json(req,env,{id:user.id,isAdmin:admin,reports:rows.results.map(x=>x.report_key),checkoutEnabled:!!(env.PAYAPP_USERID&&env.PAYAPP_LINKKEY&&env.PAYAPP_LINKVAL&&env.PAYAPP_REQUESTKEY)});}
  if(path==='/reports'&&req.method==='GET'){
   const key=url.searchParams.get('key');if(!REPORT_KEYS.includes(key))return json(req,env,{error:'input'},400);
   if(!admin){const grant=await env.DB.prepare('SELECT report_key FROM report_entitlements WHERE user_id=? AND revoked_at IS NULL AND report_key IN (?,?) LIMIT 1').bind(user.id,key,'all').first();if(!grant)return json(req,env,{error:'payment_required'},403);}
@@ -791,7 +851,7 @@ async function accessRoute(req,env,url){
   if(b.name!==(profile?.name||target.nickname||'회원'))return json(req,env,{error:'name_mismatch'},409);
   await questionTable(env);await pairTables(env);
   await env.DB.batch([
-   ...['questions','partners','sessions','auth_grants','private_reports','report_entitlements','pair_members'].map(t=>env.DB.prepare('DELETE FROM '+t+' WHERE user_id=?').bind(b.userId)),
+   ...['questions','partners','sessions','auth_grants','private_reports','report_entitlements','pair_members','payments'].map(t=>env.DB.prepare('DELETE FROM '+t+' WHERE user_id=?').bind(b.userId)),
    env.DB.prepare('DELETE FROM pairs WHERE owner_id=?').bind(b.userId),
    env.DB.prepare('DELETE FROM users WHERE id=?').bind(b.userId),
    env.DB.prepare('INSERT INTO admin_audit(actor_id,target_id,action,report_key,created) VALUES(?,?,?,?,?)').bind(user.id,b.userId,'delete_member',null,Date.now())
@@ -2478,7 +2538,7 @@ async function questionTable(env){if(questionTableReady)return;await env.DB.prep
 async function questionRoute(req,env,url,ctx){
   const path=url.pathname.replace(/\/+$/,"");
   if(path!=="/question"&&path!=="/admin/questions"&&path!=="/admin/question")return null;
-  if(req.method==="POST"&&req.headers.get("Origin")!==ORIGINS[0])return json(req,env,{error:"origin"},403);
+  if(req.method==="POST"&&!ORIGINS.includes(req.headers.get("Origin")))return json(req,env,{error:"origin"},403);
   await questionTable(env);
   const user=await member(req,env),now=Date.now();
   if(path==="/question"&&req.method==="POST"){
@@ -2526,6 +2586,7 @@ export default {
     try {
       const shared=await sharedResultRoute(req,env,url);if(shared)return shared;
       const q=await questionRoute(req,env,url,ctx);if(q)return q;
+      const pay=await paymentRoute(req,env,url);if(pay)return pay;
       const access=await accessRoute(req,env,url);if(access)return access;
       const auth=await authRoute(req,env,url,ctx);if(auth)return auth;
       if (req.method === "POST" && path === "/invite") {
