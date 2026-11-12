@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ko">
+<head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://t1.kakaocdn.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.kakaocdn.net; connect-src 'self' https://oracle-api.stvzn123.workers.dev https://*.kakao.com; frame-src https://*.kakao.com; form-action 'self' https://*.kakao.com; base-uri 'none'; object-src 'none'">
 <meta name="color-scheme" content="dark light">
@@ -41,6 +42,8 @@
 #bootLoader img{position:absolute;inset:14px;width:104px;height:104px;object-fit:contain;animation:blbob 1.6s ease-in-out infinite}
 @keyframes blspin{to{transform:rotate(360deg)}}@keyframes blbob{50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){#bootLoader *,#bootLoader .bl-ring::before{animation-duration:3s}}</style>
+</head>
+<body>
 <div id="bootLoader" role="status" aria-live="polite"><div class="bl-ring"><img src="img/pose-white-detective.webp" alt="" fetchpriority="high"></div><span>운명을 분석하는 중이에요…</span></div>
 <canvas id="sky" aria-hidden="true"></canvas>
 <!-- Supplied artwork, compressed to WebP and embedded to keep a single HTML. -->

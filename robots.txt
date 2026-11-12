@@ -3,3 +3,5 @@ Allow: /
 Disallow: /admin.html
 
 Sitemap: https://fatedog.co.kr/sitemap.xml
+
+#DaumWebMasterTool:c2da68c3e532a40c56fbe5c87a89f6aad2707f76a1418ec48057d811afa67410:VC4npJliHmrJLtJDnWYFDA==
