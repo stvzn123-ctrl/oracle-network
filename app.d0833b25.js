@@ -492,7 +492,7 @@ function fateTraitsHTML(ch){
  const positive=a=>a.side?a.right:a.left,negative=a=>a.side?a.left:a.right;
  const xp=positive(x),xn=negative(x),yp=positive(y),yn=negative(y);
  const axisLabel=(v,x,y,anchor)=>{const words=v.split(' ');return `<text x="${x}" y="${y}" text-anchor="${anchor}">${words.map((w,i)=>`<tspan x="${x}" dy="${i?14:0}">${w}</tspan>`).join('')}</text>`};
- return `<figure class="trait-quadrant"><figcaption>${t.name}</figcaption><svg viewBox="0 0 360 300" role="img" aria-label="${x.name}: ${xp}, ${y.name}: ${yp}. 본인의 성향이 오른쪽과 위쪽에 오도록 축 이름을 배치한 사분면"><rect x="62" y="38" width="236" height="216" rx="16" class="quadrant-paper"/><path d="M180 38V254M62 146H298" class="quadrant-axis"/>${axisLabel(yp,180,16,'middle')}${axisLabel(yn,180,274,'middle')}${axisLabel(xn,52,144,'end')}${axisLabel(xp,308,144,'start')}<circle cx="234" cy="92" r="9" class="quadrant-point"/></svg></figure>`;
+ return `<figure class="trait-quadrant"><svg viewBox="0 0 360 300" role="img" aria-label="${x.name}: ${xp}, ${y.name}: ${yp}. 본인의 성향이 오른쪽과 위쪽에 오도록 축 이름을 배치한 사분면"><rect x="62" y="38" width="236" height="216" rx="16" class="quadrant-paper"/><path d="M180 38V254M62 146H298" class="quadrant-axis"/>${axisLabel(yp,180,16,'middle')}${axisLabel(yn,180,274,'middle')}${axisLabel(xn,52,144,'end')}${axisLabel(xp,308,144,'start')}<circle cx="234" cy="92" r="9" class="quadrant-point"/></svg></figure>`;
 }
 function renderFateTraits(){const el=document.getElementById("fate-traits");if(el&&CH)el.innerHTML=fateTraitsHTML(CH)}
 
