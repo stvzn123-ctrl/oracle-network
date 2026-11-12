@@ -597,7 +597,7 @@ function constructiveCaution(ch,area='natal'){
 }
 // 운명탐정 공용 API (Cloudflare Worker + D1)
 // 초대 기록 및 카카오 로그인 회원의 명시적으로 저장한 출생 정보를 다룬다.
-const ORIGINS = ["https://stvzn123-ctrl.github.io"];
+const ORIGINS = ["https://stvzn123-ctrl.github.io", "https://fatedog.co.kr", "https://www.fatedog.co.kr"];
 const ABC = "abcdefghjkmnpqrstuvwxyz23456789";
 
 const rand = n => { const b = crypto.getRandomValues(new Uint8Array(n)); return [...b].map(x => ABC[x % ABC.length]).join(""); };
@@ -623,7 +623,7 @@ const json = (req, env, body, status = 200) =>
 const sigOf = req => sha((req.headers.get("CF-Connecting-IP") || "") + "|" + (req.headers.get("User-Agent") || ""));
 
 // 카카오 토큰은 저장하지 않는다. 자체 세션은 SHA-256 해시로만 D1에 보관한다.
-const SITE = "https://stvzn123-ctrl.github.io/oracle-network/";
+const SITE = "https://fatedog.co.kr/";
 const authHash = async value => [...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,"0")).join("");
 const authRandom = () => [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,"0")).join("");
 const redirectSite = (key,value) => new Response(null,{status:303,headers:{Location:SITE+"#"+new URLSearchParams({[key]:value}),"Cache-Control":"no-store","Referrer-Policy":"no-referrer"}});

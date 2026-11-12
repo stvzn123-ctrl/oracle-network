@@ -37,7 +37,7 @@ const json = (req, env, body, status = 200) =>
 const sigOf = req => sha((req.headers.get("CF-Connecting-IP") || "") + "|" + (req.headers.get("User-Agent") || ""));
 
 // 카카오 토큰은 저장하지 않는다. 자체 세션은 SHA-256 해시로만 D1에 보관한다.
-const SITE = "https://stvzn123-ctrl.github.io/oracle-network/";
+const SITE = "https://fatedog.co.kr/";
 const authHash = async value => [...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,"0")).join("");
 const authRandom = () => [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,"0")).join("");
 const redirectSite = (key,value) => new Response(null,{status:303,headers:{Location:SITE+"#"+new URLSearchParams({[key]:value}),"Cache-Control":"no-store","Referrer-Policy":"no-referrer"}});
