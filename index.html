@@ -30,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap"></noscript>
 <!-- 첫 화면 강아지(LCP)는 CSS 배경이라 CSS를 다 받은 뒤에야 요청된다: 미리 받는다. -->
-<link rel="preload" href="img/main-character.webp" as="image" type="image/webp" fetchpriority="high">
+<link rel="preload" href="img/pose-white-detective.webp" as="image" type="image/webp" fetchpriority="high">
 <link rel="icon" href="img/app-icon-192.png" type="image/png">
 <link rel="stylesheet" href="app.004405c6.css">
 <link rel="stylesheet" href="companion.css?v=7">
@@ -77,8 +77,8 @@
     <span class="sr-who" hidden><span id="whoName">당신의</span><span id="whoSfx"></span></span>
     <section class="intro" aria-labelledby="intro-title">
       <div class="intro-top">
-        <img class="intro-dog intro-main" src="img/main-character.webp" width="400" height="400" alt="운명탐정의 메인 캐릭터 운탐이" fetchpriority="high" decoding="async">
-        <h1 id="intro-title">생일만 넣으면<br><span class="intro-accent">나의 운명 캐릭터</span>와<br>앞으로 10년이 나와요</h1>
+        <span class="pose pose-detective intro-dog" role="img" aria-label="돋보기를 든 운탐정 강아지"></span>
+        <h1 id="intro-title">당신의 <span class="intro-accent">운명의 단서</span>를<br>찾아드려요!</h1>
         <p class="intro-sub">사주·별자리·수비학 등 다섯 가지 점술을 한 번에 계산해요.</p>
         <a class="intro-cta" href="#ask" id="introStart" data-open-ask>내 정보로 확인하기</a>
       </div>
@@ -259,5 +259,5 @@ $("brandbar").addEventListener("keydown",e=>{if(e.target!==e.currentTarget)retur
 <script defer src="penguin-social.js?v=2"></script>
 <script defer src="social-card.js?v=6"></script>
 <script defer src="destiny-characters.js?v=5"></script>
-<script defer src="demo-home.js?v=2"></script>
+<script defer src="demo-home.js?v=3"></script>
 
