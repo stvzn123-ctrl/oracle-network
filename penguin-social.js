@@ -26,7 +26,7 @@
  socialCastHTML=function(cast){return '<div class="social-cast">'+cast.map(c=>{
   if(c.sheet!=='p')return original([c]).replace(/^<div class="social-cast">/,'').replace(/<\/div>$/,'');
   const index=Math.max(0,Math.min(8,c.index|0)),label=labels[index];
-  return '<figure class="social-dog" data-character-kind="penguin"><figcaption class="social-dog-label">'+topicEsc(label)+'</figcaption><img class="social-penguin-image" src="img/penguins-v1/social-'+String(index+1).padStart(2,'0')+'.jpg" width="360" height="360" loading="lazy" decoding="async" alt="'+topicEsc(label)+' 펭귄 캐릭터"><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>';
+  return '<figure class="social-dog" data-character-kind="penguin"><figcaption class="social-dog-label">'+topicEsc(label)+'</figcaption><img class="social-penguin-image" src="img/penguins-v1/social-'+String(index+1).padStart(2,'0')+'.webp" width="360" height="360" loading="lazy" decoding="async" alt="'+topicEsc(label)+' 펭귄 캐릭터"><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>';
  }).join('')+'</div>'};
  window.OracleSocialPenguins={version:1,labels,pools};
 })();
