@@ -11,7 +11,7 @@ function constructiveCaution(ch,area='natal'){
 // 운명탐정 공용 API (Cloudflare Worker + D1)
 // 초대 기록 및 카카오 로그인 회원의 명시적으로 저장한 출생 정보를 다룬다.
 import { narrativeComprehensive, narrativeRelation, narrativeMoney, narrativeWork, narrativeStudy, narrativeReunion, narrativeMatch } from "./narrative.js";
-const ORIGINS = ["https://stvzn123-ctrl.github.io"];
+const ORIGINS = ["https://stvzn123-ctrl.github.io", "https://fatedog.co.kr", "https://www.fatedog.co.kr"];
 const ABC = "abcdefghjkmnpqrstuvwxyz23456789";
 
 const rand = n => { const b = crypto.getRandomValues(new Uint8Array(n)); return [...b].map(x => ABC[x % ABC.length]).join(""); };

@@ -4060,7 +4060,7 @@ let bigW=0;addEventListener("resize",()=>{const w=$("bigchart")?.clientWidth||0;
 function renderHook(){const h=$("hook");if(h&&CH)h.innerHTML=reportHook(CH)}
 
 /* Share a fixed introduction and site URL only; never include birth input or personal results. */
-const SHARE_URL="https://stvzn123-ctrl.github.io/oracle-network/";
+const SHARE_URL="https://fatedog.co.kr/";
 const SHARE_TITLE="당신의 운명의 단서를 찾아드려요!";
 const SHARE_DESCRIPTION="사주 서양점성술 베딕 점성술 수비학 마야력 한 번에 분석";
 function resultShareText(){return SHARE_TITLE+"\n"+SHARE_DESCRIPTION+"\n"+SHARE_URL}
