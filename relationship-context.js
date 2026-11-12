@@ -58,7 +58,8 @@
     const sections=data.sections.map(s=>{
       if(s.kind==='partner'&&state==='married')return {...s,question:'배우자를 이렇게 읽었어요',lead:'함께하는 배우자를 차트의 상징으로 다시 읽어 본 모습이에요. '+(s.lead||'')};
       if(s.kind==='partner'&&taken)return {...s,question:'지금 곁에 있는 사람, 차트로 다시 읽기',lead:'현재 관계 상태와 별개로, 차트가 그리는 잘 맞는 상대의 모습이에요. 지금 곁의 사람과 겹치는 점을 찾아보세요. '+(s.lead||'')};
-      if(s.kind==='meet'&&taken)return {kind:'relationship-next',question:c.next,lead:'',paragraphs:[(s.paragraphs||[]).find(p=>/시기로 보면/.test(p))||'',c.detail],basis:s.basis||[],action:c.action};
+      /* 2026-11-12: 만남 장은 buildRichReport가 관계 상태에 맞춰 '언제·어디서 사랑이 깊어질까'로 쓴다. 여기서는 종류만 바꾼다. */
+      if(s.kind==='meet'&&taken)return {...s,kind:'relationship-next',question:/언제·어디서/.test(s.question||'')?s.question:c.next,action:c.action};
       return s;
     });
     if(key!=='marry')sections.unshift(section);

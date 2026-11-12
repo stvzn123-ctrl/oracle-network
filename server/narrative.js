@@ -268,44 +268,97 @@ const LOVE_DATE = [
   "둘이 함께하는 모습을 그려 보면, 서로를 존중하는 깔끔한 커플이에요. 약속을 잘 지키고 각자의 시간도 아껴 주는 관계라, 다툼이 적고 오래 가요.",
   "둘이 함께하는 모습을 그려 보면, 깊은 대화가 있는 커플이에요. 조용한 카페나 밤 산책길에서 오래 이야기를 나누고, 말없이 같이 있어도 편안한 사이가 될 거예요."
 ];
+/* 2026-11-12: 관계 상태별 표현. 연애 중·결혼·썸은 '언제·어디서 사랑이 깊어질까', 혼자는 '언제·어디서 인연을 만날 수 있을까'. */
+const DEEPP = [
+  "두 사람의 사랑은 함께 움직일 때 깊어지기 쉬워요. 여행이나 운동, 처음 해 보는 활동을 같이 할 때 서로의 새로운 모습을 보고 더 가까워져요.",
+  "두 사람의 사랑은 평범한 일상에서 깊어지기 쉬워요. 함께 장을 보거나 집에서 밥을 해 먹는 날, 익숙한 동네를 걷는 시간에 마음이 가장 단단해져요.",
+  "두 사람의 사랑은 대화가 많은 자리에서 깊어지기 쉬워요. 서로의 친구나 가족을 만나는 자리, 오래 이야기할 수 있는 저녁 시간에 관계가 한 단계 가까워져요.",
+  "두 사람의 사랑은 감성을 나누는 자리에서 깊어지기 쉬워요. 전시나 공연, 분위기 좋은 카페처럼 같은 것을 보고 느낌을 나눌 수 있는 곳에서 마음이 깊어져요."
+];
+const CRUSHP = [
+  "호감은 함께 움직이는 자리에서 커지기 쉬워요. 운동이나 짧은 나들이처럼 부담 없이 같이 할 수 있는 활동을 제안해 보세요.",
+  "호감은 자주 마주치는 일상에서 자라기 쉬워요. 일이나 자주 가는 곳에서 짧은 대화를 이어 가며 편안함을 쌓아 보세요.",
+  "호감은 여럿이 함께하는 자리에서 자연스럽게 커지기 쉬워요. 지인과의 모임이나 대화가 많은 자리에서 먼저 말을 걸어 보세요.",
+  "호감은 취향을 나누는 자리에서 깊어지기 쉬워요. 전시나 공연, 분위기 좋은 카페처럼 함께 보고 이야기할 거리가 있는 곳을 골라 보세요."
+];
+const LYEAR_BY = {
+  taken: [
+    "{y}년, {age}살의 {name}님에게는 사랑이 한층 깊어질 가능성이 높아요. 함께 보내는 시간이 늘고 서로를 더 믿게 되는 해예요. 미뤄 둔 계획이 있다면 이 해에 함께 꺼내 보세요.",
+    "{y}년({age}살)은 관계가 따뜻해지는 해예요. 오해가 있던 부분도 자연스럽게 풀리기 쉽고, 두 사람의 미래를 이야기하기 좋은 시기예요.",
+    "{y}년({age}살)에는 함께하는 새로운 경험이 사랑을 깊게 해요. 둘이 평소 안 가 본 곳으로 여행을 떠나거나 새로운 일을 같이 시작해 보기 좋은 해예요."
+  ],
+  crush: [
+    "{y}년, {age}살의 {name}님에게는 호감이 연인으로 이어질 가능성이 높아요. 마음이 가는 사람이 있다면 이 해에 조금 더 용기를 내 보세요.",
+    "{y}년({age}살)은 서로의 마음을 확인하기 좋은 해예요. 짧은 연락과 만남이 자연스럽게 이어지고, 관계에 이름을 붙이기 편해져요.",
+    "{y}년({age}살)에는 뜻밖의 자리에서 두 사람의 거리가 가까워질 수 있어요. 함께 여행이나 모임에 갈 기회가 오면 놓치지 마세요."
+  ],
+  single: [
+    "{y}년, {age}살의 {name}님은 새로운 인연을 만날 가능성이 높아요. 사람 복이 크게 들어오니, 마음이 가는 사람이 있다면 조금 더 용기를 내 보세요.",
+    "{y}년({age}살)은 따뜻한 인연이 찾아오는 해예요. 지인의 소개나 오래 알던 사람에게서 마음이 움직이기 쉬워요.",
+    "{y}년({age}살)에는 뜻밖의 자리에서 인연을 만날 수 있어요. 평소와 다른 모임이나 여행에 초대받으면 한 번 더 나가 보세요."
+  ]
+};
+const LREST_BY = {
+  taken: "{y}년({age}살)은 사랑에서 조금 쉬어 가는 해예요. 마음이 식는다는 뜻이 아니라, 각자의 생활을 돌보며 관계의 기본을 다지기 좋은 시기라는 뜻이에요. 이 해에 서로의 속도를 존중해 주면 그다음 해에 더 가까워져요.",
+  crush: "{y}년({age}살)은 관계를 서두르지 않는 편이 좋은 해예요. 호감이 사라진다는 뜻이 아니라, 상대를 천천히 알아 가기 좋은 시기라는 뜻이에요.",
+  single: "{y}년({age}살)은 새 인연보다 나를 돌보기 좋은 해예요. 인연이 없다는 뜻이 아니라, 내가 원하는 관계를 정리해 두면 그다음 만남이 훨씬 편안해진다는 뜻이에요."
+};
+const REL_ACT = {
+  dating: "이번 달에 둘이 가 본 적 없는 곳에 함께 가 보세요. 새로운 경험을 나누는 날 사랑이 깊어져요.",
+  married: "이번 달에 둘만의 저녁 시간을 하루 정해 보세요. 일상에서 벗어난 대화가 두 사람의 정을 깊게 해요.",
+  crush: "이번 달에 부담 없는 만남을 한 번 제안해 보세요. 상대가 편하게 답할 여유를 주는 것이 호감을 키워요.",
+  single: "이번 달에 평소 가지 않던 모임이나 자리에 한 번 나가 보세요. 인연은 늘 새로운 문 하나에서 시작돼요."
+};
+
 const LYEAR = [
   "{y}년, {age}살의 {name}님에게는 사람 복이 크게 들어와요. 새로운 인연이 시작되거나, 만나던 사람과의 관계가 한 단계 깊어지기 쉬운 해예요. 마음이 가는 사람이 있다면 이 해에 조금 더 용기를 내 보세요.",
   "{y}년({age}살)은 관계가 따뜻해지는 해예요. 소중한 사람과 함께하는 시간이 늘고, 오해가 있던 관계도 자연스럽게 풀리기 쉬워요. 연인이 있다면 미래를 이야기하기 좋은 시기예요.",
-  "{y}년({age}살)에는 뜻밖의 자리에서 마음이 움직일 수 있어요. 평소와 다른 모임이나 여행, 새로운 일을 시작한 곳에서 인연이 닿기 쉬우니, 이 해에는 초대를 거절하지 말고 한 번 더 나가 보세요. 만나는 사람이 있다면 함께 평소 안 가 본 곳에 가 보기 좋은 해예요."
+  "{y}년({age}살)에는 뜻밖의 자리에서 마음이 움직일 수 있어요. 평소와 다른 모임이나 여행, 새로운 일을 시작한 곳에서 인연이 닿기 쉬우니, 이 해에는 초대를 거절하지 말고 한 번 더 나가 보세요."
 ];
-const DATING_NOTE = "이미 만나는 사람이 있다면 새로운 사람이 들어온다는 뜻이 아니라, 지금 그 관계가 결실을 맺는 때로 읽어 주세요.";
 const LREST = "{y}년({age}살)은 사랑에서 조금 쉬어 가는 해예요. 인연이 없다는 뜻이 아니라, 나를 돌보고 내가 원하는 관계가 무엇인지 정리하기 좋은 시기라는 뜻이에요. 이 해에 마음을 잘 정리해 두면 그다음 만남이 훨씬 편안해져요.";
 
 export function narrativeRelation(c, key) {
   const v = { name: c.name }, F = t => fill(t, v), marry = key === "marry";
+  const rel = c.rel || "private", taken = rel === "dating" || rel === "married", grp = taken ? "taken" : rel;
   const out = [];
+  const yTx = c.mateYears.map(m => m.y + "년(" + m.age + "살)").join("과 ");
   const when = c.mateYears.length
-    ? c.mateYears.map(m => m.y + "년(" + m.age + "살)").join("과 ") + "에 " + (marry ? "결혼 인연" : "인연") + "의 기운이 가장 뚜렷해요."
+    ? yTx + "에 " + (marry ? "결혼 인연" : "인연") + "의 기운이 가장 뚜렷해요."
     : "앞으로 10년 안에서는 인연의 시기가 한 해에 몰리기보다 고르게 열려 있어요.";
+  const whenRel = !c.mateYears.length ? (taken ? "앞으로 10년 동안 사랑이 깊어질 기회가 한 해에 몰리기보다 고르게 열려 있어요." : rel === "crush" ? "앞으로 10년 동안 호감이 이어질 기회가 고르게 열려 있어요." : "앞으로 10년 안에서는 인연을 만날 기회가 한 해에 몰리기보다 고르게 열려 있어요.")
+    : rel === "married" ? yTx + "에 두 사람의 정이 한층 깊어질 가능성이 높아요."
+    : rel === "dating" ? yTx + "에 " + (marry ? "두 사람의 관계가 결혼으로 이어질 가능성이 높아요." : "두 사람의 사랑이 한층 깊어질 가능성이 높아요.")
+    : rel === "crush" ? yTx + "에 호감이 연인으로 이어질 가능성이 높아요."
+    : yTx + "에 " + (marry ? "결혼으로 이어질 인연을 만날 가능성이 높아요." : "새로운 인연을 만날 가능성이 높아요.");
 
-  out.push({ kind: "core", title: marry ? "결혼을 대하는 나" : "사랑할 때의 나",
+  out.push({ kind: "core", title: marry ? "사랑할 때의 나와 오래가는 관계" : "사랑할 때의 나",
     lead: marry ? F(MARRY_VIEW[c.topG]).split(/(?<=[.!?])\s+/)[0] : F(LOVE[c.venusEl]).split(/(?<=[.!?])\s+/)[0],
-    paras: marry ? [F(MARRY_VIEW[c.topG]), F(LOVE_SELF[c.topG]), F(FEEL[c.moonEl])] : [F(LOVE[c.venusEl]), F(LOVE_SELF[c.topG]), F(FEEL[c.moonEl])],
+    paras: marry ? [F(LOVE[c.venusEl]), F(LOVE_SELF[c.topG]), F(FEEL[c.moonEl]), F(MARRY_VIEW[c.topG])] : [F(LOVE[c.venusEl]), F(LOVE_SELF[c.topG]), F(FEEL[c.moonEl])],
     basis: c.basis.core });
 
-  out.push({ kind: "partner", title: marry ? "배우자가 될 사람" : "나와 잘 맞는 사람",
+  out.push({ kind: "partner", title: marry ? "나와 잘 맞는 연인과 함께하는 삶" : "나와 잘 맞는 사람",
     lead: F(MATE[c.mateEl]).split(/(?<=[.!?])\s+/)[0],
-    paras: marry ? [F(MATE[c.mateEl]), SPOUSE_LIFE[c.mateEl]] : [F(MATE[c.mateEl]), LOVE_DATE[c.mateEl]],
+    paras: marry ? [F(MATE[c.mateEl]), LOVE_DATE[c.mateEl], SPOUSE_LIFE[c.mateEl]] : [F(MATE[c.mateEl]), LOVE_DATE[c.mateEl]],
     basis: c.basis.partner });
 
-  out.push({ kind: "meet", title: "인연은 언제·어디서·어떻게 만날까요?", lead: "",
-    paras: [MEETP[c.descEl] + " 시기로 보면 " + when + " " + DATING_NOTE], basis: c.basis.meet });
+  if (rel === "private")
+    out.push({ kind: "meet", title: "인연은 언제·어디서·어떻게 만날까요?", lead: "",
+      paras: [MEETP[c.descEl] + " 시기로 보면 " + when], basis: c.basis.meet });
+  else
+    out.push({ kind: "meet", title: taken ? (rel === "married" ? "언제·어디서 두 사람의 정이 깊어질까요?" : marry ? "언제·어디서 결혼 이야기가 무르익을까요?" : "언제·어디서 사랑이 깊어질까요?") : rel === "crush" ? "언제·어디서 호감이 사랑으로 이어질까요?" : "언제·어디서 인연을 만날 수 있을까요?", lead: "",
+      paras: [(taken ? DEEPP : rel === "crush" ? CRUSHP : MEETP)[c.descEl] + " 시기로 보면 " + whenRel], basis: c.basis.meet });
 
-  const ys = c.loveYears.map((k, i) => ({ y: k.y, t: fill(LYEAR[i % 3], { name: c.name, y: k.y, age: k.age }) }));
-  if (c.loveRest) ys.push({ y: c.loveRest.y, t: fill(LREST, { y: c.loveRest.y, age: c.loveRest.age }) });
-  out.push({ kind: "timing", title: marry ? "앞으로 10년, 결혼의 흐름" : "앞으로 10년, 사랑의 흐름", lead: "",
-    paras: [(marry ? "결혼은 한 해의 운만으로 결정되지 않지만, 마음을 열기 좋은 해와 쉬어 갈 해는 분명히 있어요. " : "사랑에도 계절이 있어요. 마음이 활짝 열리는 해가 있고, 나를 돌보며 준비하는 해가 있어요. ") + F("{name}님에게 특히 중요한 해들을 순서대로 짚어 볼게요."),
+  const LY = LYEAR_BY[grp] || LYEAR, LR = LREST_BY[grp] || LREST;
+  const ys = c.loveYears.map((k, i) => ({ y: k.y, t: fill(LY[i % 3], { name: c.name, y: k.y, age: k.age }) }));
+  if (c.loveRest) ys.push({ y: c.loveRest.y, t: fill(LR, { y: c.loveRest.y, age: c.loveRest.age }) });
+  out.push({ kind: "timing", title: marry ? "앞으로 10년, 사랑과 결혼의 흐름" : "앞으로 10년, 사랑의 흐름", lead: "",
+    paras: [(marry ? "결혼은 한 해의 운만으로 결정되지 않지만, 마음을 열기 좋은 해와 쉬어 갈 해는 분명히 있어요. " : taken ? "사랑에도 계절이 있어요. 두 사람이 더 가까워지는 해가 있고, 각자를 돌보며 관계를 다지는 해가 있어요. " : "사랑에도 계절이 있어요. 마음이 활짝 열리는 해가 있고, 나를 돌보며 준비하는 해가 있어요. ") + F("{name}님에게 특히 중요한 해들을 순서대로 짚어 볼게요."),
       ...ys.sort((a, b) => a.y - b.y).map(x => x.t),
-      c.mateYears.length && marry ? "그중에서도 " + when.replace("가장 뚜렷해요.", "가장 뚜렷하니, 결혼을 생각하는 사람이 있다면 이 시기를 눈여겨보세요.") : ""],
+      c.mateYears.length && marry ? (rel === "private" ? "그중에서도 " + when.replace("가장 뚜렷해요.", "가장 뚜렷하니, 결혼을 생각하는 사람이 있다면 이 시기를 눈여겨보세요.") : "그중에서도 " + whenRel) : ""],
     basis: c.basis.timing });
 
   out.push({ kind: "caution", title: "사랑에서 조심할 점", lead: "", paras: [F(LOVE_CARE[c.dom]), F(CLOSE_CARE[1])],
-    action: marry ? "결혼을 생각하는 사람과 '돈, 집, 가족, 혼자만의 시간'에 대해 한 번씩 이야기해 보세요. 미리 나눈 대화가 결혼 후의 다툼을 크게 줄여 줘요." : "만나는 사람이 있다면 이번 달에 둘이 가 본 적 없는 곳에 함께 가 보세요. 혼자라면 평소 가지 않던 모임이나 자리에 한 번 나가 보세요.",
+    action: marry && rel !== "married" ? "결혼을 생각하는 사람과 '돈, 집, 가족, 혼자만의 시간'에 대해 한 번씩 이야기해 보세요. 미리 나눈 대화가 결혼 후의 다툼을 크게 줄여 줘요." : REL_ACT[rel] || REL_ACT.single,
     basis: [] });
 
   out.push({ kind: "advice", title: F("{name}님에게 전하는 이야기"), lead: "",
