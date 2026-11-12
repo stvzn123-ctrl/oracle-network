@@ -47,11 +47,12 @@ body:not(.app-entered) #brandbar .brandbar-mark,body.fresh:not(.app-entered) .br
 #landing h1#landing-title.landing-headline{font-size:clamp(28px,8.4cqw,42px)!important;line-height:1.32!important;white-space:normal!important;text-wrap:balance;color:#3E2A20!important;letter-spacing:-.03em!important;word-break:keep-all!important}
 #landing .landing-title-accent{color:#A8641E!important}
 #landing p.landing-lead.landing-one{font-size:clamp(16px,4.6cqw,19px)!important;line-height:1.75!important;color:#4A352B!important;font-weight:500!important;word-break:keep-all!important}
-/* 2026-11-12: 이번 주 옆 지도 아이콘(별도 상자). 유리 상자는 탭 묶음과 지도 버튼에 각각 */
-.res-nav:has(.res-row){background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0!important}
-.res-row{display:flex;align-items:stretch;gap:8px;width:100%}
-.res-nav .res-row>.res-tabs{flex:1 1 auto!important;width:auto!important;min-width:0;background:var(--ui-glass)!important;border:1px solid var(--ui-glass-edge)!important;box-shadow:var(--ui-glass-shadow)!important;backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);border-radius:23px!important;padding:4px 6px!important}
-.res-nav .res-row>.res-map{flex:0 0 52px!important;width:52px!important;min-height:44px;display:grid;place-items:center;padding:0!important;border-radius:18px!important;background:var(--ui-glass)!important;border:1px solid var(--ui-glass-edge)!important;box-shadow:var(--ui-glass-shadow)!important;color:var(--gold-ink)!important;backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%)}
-.res-map svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
-.res-nav .res-row>.res-map[aria-selected=true]{background:#fff!important;border-color:var(--gold-ink)!important;box-shadow:0 0 0 1px var(--gold-ink) inset!important}
+/* 2026-11-12: '나의 운명' 탭 습관 | 장소 두 칸, 장소 더보기는 #tab-places 페이지 */
+.habit-split{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.habit-split>section{min-width:0;padding:0 20px}.habit-split>section:first-child{padding-left:0;border-right:1px solid var(--line2)}.habit-split>section:last-child{padding-right:0}
+.home-places-mini .place-when{display:block;font-size:12.5px;color:var(--gold-ink);font-weight:600;margin-bottom:2px}
+.home-places-mini b{display:block}.home-places-mini small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.places-more{display:block;width:100%;min-height:44px;margin:14px 0 0;padding:10px;border-radius:12px;border:1px solid var(--gold-ink);background:var(--panel);color:var(--gold-ink);font:700 14px/1.5 var(--body);cursor:pointer}
+.places-back{background:none!important;border:0!important;box-shadow:none!important;color:var(--gold-ink)!important;font:600 14px var(--body);padding:4px 0!important;margin:0 0 10px;width:auto!important;min-height:0!important;cursor:pointer}
+@media(max-width:620px){.habit-split{grid-template-columns:1fr}.habit-split>section{padding:0!important;border:0!important}.habit-split>section+section{margin-top:22px;padding-top:22px!important;border-top:1px solid var(--line2)!important}}
 .places-week p{font-size:15px;line-height:1.75;margin:0 0 8px;word-break:keep-all}.places-week .places-sub{font-size:13px;color:var(--muted)}
