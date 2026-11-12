@@ -365,3 +365,10 @@
 - narrativeComprehensive(앱·server/narrative.js)는 `c.rel`을 받는다: 결혼·연애 중이면 '사랑과 인연' 장의 만남 장소(MEETP)를 DEEPP, 썸이면 CRUSHP로, 인연 시기·실천·'잘 맞는 사람' 문단도 두 사람 기준. 일 귀인 문장의 '인연이 닿기' → '도움이 될 사람과 연결되기'.
 - 대운 문단: 같은 십성 대운이 다시 오면 '…의 주제가 ○○ 대운에 이어 다시 돌아와요'로, 지나온 대운은 짧게(맺음말 4개 순환), '살펴볼 패턴'은 지금 대운과 처음 나오는 앞으로의 대운에만. 표 제목 '같은 방향을 깊게' → '한 방향으로 깊어지기'. 귀인 시기 2번째 해부터는 문장 4개 순환.
 - 점검 방법: 무작위 120명 × 14종 리포트를 만들어 조사 오류·관계/나이 부적합 문장·반복 문장을 세는 스크립트로 확인했다(오류 0).
+
+## 로딩 성능 (2026-11-12 점검)
+- index.html의 외부 스크립트는 모두 `defer`(순서 유지). 안 그러면 작은 스크립트 11개가 하나씩 차례로 받아져 느린 4G에서 DOMContentLoaded가 13초였다(→ 약 6초). 인라인 스크립트는 DOM만 쓰고 app.js 전역에 기대지 않는다. `.wrap dialog`를 body로 옮기는 인라인은 DOMContentLoaded에서 실행한다. 새 인라인 스크립트가 app.js 함수를 부르면 DOMContentLoaded 안에 넣을 것.
+- 첫 화면 강아지(`img/pose-white-detective.webp`, LCP)는 CSS 배경이라 `<link rel=preload fetchpriority=high>`로 미리 받는다(LCP 2.7→2.0초). 그림을 바꾸면 preload도 같이 바꾼다.
+- `#oracle-dream` 배경 그림은 지금 어디서도 보이지 않는다(display:none). `loading="lazy"`라 받지 않는다(185KB 절약).
+- 결과 화면의 리포트 미리보기(`renderReportCTA`, 종합 리포트 1권 생성)는 requestIdleCallback으로 미룬다. 제출 직후 멈춤 약 1.5초 → 0.5초(CPU 4배 느림 기준).
+- 측정: Lighthouse(모바일, devtools 방식 느린 4G·CPU 4배, gzip 로컬 서버) 성능 87~89 → 94~95, 접근성·SEO 100, 모범 사례 96(로컬 CORS 오류만).
