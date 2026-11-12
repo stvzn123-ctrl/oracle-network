@@ -65,3 +65,6 @@ body:not(.app-entered) #brandbar .brandbar-mark,body.fresh:not(.app-entered) .br
 /* 장소 페이지(전체 화면) */
 #tab-places.places-page{position:fixed;inset:0;z-index:60;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg,#FFF9F4);padding:72px max(16px,calc(50vw - 380px)) 110px;margin:0!important}
 #tab-places.places-page .places-tab{margin:0!important;padding:0!important;border:0;background:transparent}
+
+/* 2026-11-12: 출생지 '지도로 보기' 제거(검색·드롭다운만) */
+#mapBtn,#mapbox{display:none!important}
