@@ -733,9 +733,21 @@ function resultIntroHTML(ch){const tags=reportTags(ch);
   const ag=tags.filter(t=>t.n>=2).slice(0,4);
   const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><small>5개 점술 중 ${t.n}개 점술이 같은 성향을 이야기해요.</small></div></li>`).join("");
   return `<p class="res-lead">${mainDestinyIntroHTML(ch)}</p>
+  ${tenYearMiniHTML()}
   <h3 class="res-h">여러 운세에서 발견한 나의 매력</h3><ul class="r-agree">${agl}</ul>
-  <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${natalReadingHTML(ch)}</div>${fateTraitsHTML(ch)}
-  ${pastReadingHTML(ch)}` }
+  <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${foldProse(natalReadingHTML(ch),2)}</div>${fateTraitsHTML(ch)}
+  ${foldPast(pastReadingHTML(ch))}` }
+/* 2026-11-12 결과 홈 정리: '나의 운명' 탭 캐릭터 아래 분야별 작은 10년 그래프(공통 60~100 눈금), 기질 글은 앞 두 문단만 펼치고, 지나온 날은 접어 둔다. */
+function tenYearMiniHTML(){if(typeof R==='undefined'||!R||!R.length)return '';
+ const y0=new Date().getFullYear()+1,W=150,H=56,P=6,NM=['금전','애정','일·학업','건강'],CV=['--money','--love','--work','--health'];
+ const X=k=>P+(W-2*P)*k/(R.length-1),Yv=v=>P+(100-Math.max(60,Math.min(100,v)))/40*(H-2*P);
+ const cells=[0,1,2,3].map(ci=>{const a=R.map(r=>D(r[ci].mean)),best=a.indexOf(Math.max(...a)),p=a.map((v,k)=>[X(k),Yv(v)]);
+  const d=p.map((q,i)=>i?'C'+((p[i-1][0]+q[0])/2).toFixed(1)+','+p[i-1][1].toFixed(1)+' '+((p[i-1][0]+q[0])/2).toFixed(1)+','+q[1].toFixed(1)+' '+q[0].toFixed(1)+','+q[1].toFixed(1):'M'+q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ');
+  return '<div class="ty-cell"><div class="ty-head"><b>'+NM[ci]+'</b><span>'+(y0+best)+'년</span></div><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+NM[ci]+' 10년 흐름, '+(y0+best)+'년이 가장 밝아요"><line x1="'+P+'" x2="'+(W-P)+'" y1="'+Yv(80).toFixed(1)+'" y2="'+Yv(80).toFixed(1)+'" class="ty-mid"/><path d="'+d+'" fill="none" stroke="var('+CV[ci]+')" stroke-width="2.6" stroke-linecap="round"/><circle cx="'+p[best][0].toFixed(1)+'" cy="'+p[best][1].toFixed(1)+'" r="4.5" fill="var('+CV[ci]+')"/></svg></div>'}).join('');
+ return '<section class="ty-mini" aria-labelledby="tyMiniTitle"><p class="ty-eyebrow">앞으로 10년 한눈에</p><h3 id="tyMiniTitle">분야마다 가장 밝은 해</h3><div class="ty-grid">'+cells+'</div><div class="ty-foot"><span>'+y0+'년~'+(y0+R.length-1)+'년</span><button type="button" class="ty-more" data-goto-flow>자세히 보기 →</button></div></section>'}
+function foldProse(html,keep){const ps=String(html).match(/<p>[\s\S]*?<\/p>/g)||[];if(ps.length<=keep)return html;return ps.slice(0,keep).join('')+'<details class="prose-more"><summary>더 읽기</summary>'+ps.slice(keep).join('')+'</details>'}
+function foldPast(html){return String(html).replace('<section class="past-reading"><h3 class="res-h">당신이 지나온 날에 대한 해석</h3>','<details class="past-reading past-fold"><summary class="res-h">당신이 지나온 날 돌아보기</summary>').replace(/<\/section>\s*$/,'</details>')}
+document.addEventListener('click',e=>{if(!e.target.closest('[data-goto-flow]'))return;const t=document.getElementById('tb-flow');if(!t)return;t.click();const nav=document.querySelector('.res-nav')||t;window.scrollTo({top:Math.max(0,nav.getBoundingClientRect().top+scrollY-70),behavior:reduceM?'auto':'smooth'})});
 function renderResult(){const ch=CH,name=ch.inp.name;
   const wn=$("whoName");wn.textContent=name||"당신의";$("whoSfx").textContent=name?"님의":"";wn.classList.toggle("noname",!name);
   wn.setAttribute("role","button");wn.setAttribute("tabindex","0");wn.title=name?"눌러서 내 정보 수정":"눌러서 이름 입력"
@@ -946,7 +958,7 @@ function checkForm(){const y=+$("in-y").value,m=+$("in-m").value,d=+$("in-d").va
   if(!$("sx-m").checked&&!$("sx-f").checked)return "성별을 골라 주세요.";
   if(!$("in-notime").checked && /\d/.test($("in-time").value) && !/^([01]?\d|2[0-3]):[0-5]\d$/.test($("in-time").value))return "출생 시각은 00:00~23:59로 입력해 주세요. 예: 14:30";
   if(!/\d/.test($("in-time").value)&&!$("in-notime").checked)return "출생 시각을 입력하거나 '시각을 몰라요'를 체크해 주세요.";
-  if(place.unset&&!$("in-noplace").checked)return "출생지의 시·도를 고르거나 '출생지를 고르지 않을래요'를 체크해 주세요.";return ""}
+  if(place.unset&&!$("in-noplace").checked)return "출생지의 시·도를 고르거나 '태어난 곳을 몰라요'를 체크해 주세요.";return ""}
 $("ask").addEventListener("submit",e=>{e.preventDefault();const ce=checkForm();if(ce){$("err").textContent=ce;return}const v=readForm();
   if(v.err){$("err").textContent=v.err;return}
   const [y]=v.date.split("-").map(Number);
@@ -954,7 +966,7 @@ $("ask").addEventListener("submit",e=>{e.preventDefault();const ce=checkForm();i
   {const t=new Date(),td=t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0");if(v.date>td){$("err").textContent="오늘 이후의 날짜는 입력할 수 없어요.";return}}
   $("err").textContent="";toggleMap(false);
   const ab=$("askbox"),btn=$("ask").querySelector("button[type=submit]");if(ab.classList.contains("casting"))return;
-  const finish=()=>{ab.classList.remove("casting");btn.textContent="나의 운명 확인하기";ab.open=false;document.body.classList.remove("fresh");run(v,true);
+  const finish=()=>{ab.classList.remove("casting");btn.textContent="내 운명 보기";ab.open=false;document.body.classList.remove("fresh");run(v,true);
     requestAnimationFrame(()=>{const nb=$("result");if(nb.getBoundingClientRect().top<0)nb.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})})};
   if(reduceM){finish();return}
   ab.classList.add("casting");btn.textContent="운명을 읽는 중…";setTimeout(finish,1100)});
@@ -4360,9 +4372,9 @@ async function accountInit(){
     let pending=null,intent=false,runAfter=false;try{pending=JSON.parse(sessionStorage.getItem('oracle-pending')||'null');intent=sessionStorage.getItem('oracle-save-intent')==='1';runAfter=sessionStorage.getItem('oracle-pending-run')==='1';sessionStorage.removeItem('oracle-pending');sessionStorage.removeItem('oracle-save-intent');sessionStorage.removeItem('oracle-pending-run')}catch(_){}
     $('profileConsent').checked=intent||!!user.profile;
     if(pending&&formVersion===startVersion&&runAfter){const ok=restoreSavedResult(pending);if(intent&&ok){try{await accountAPI('/profile',{profile:pending,consent:true});accountUser.profile=pending;$('profileConsent').checked=true;accountNotice('로그인했어요. 지금 본 출생 정보를 카카오 계정에 저장했어요.')}catch(e){accountNotice('로그인했어요. 출생 정보 저장은 실패했어요: '+(e.message||''))}}else accountNotice(ok?'로그인했어요. 보던 결과를 그대로 이어서 보여 드려요.':'로그인했어요.')}
-    else if(pending&&formVersion===startVersion){profileFill(pending);accountStatus('로그인했어요. ‘나의 운명 확인하기’를 누르면 입력한 정보가 카카오 계정에 저장돼요.')}
+    else if(pending&&formVersion===startVersion){profileFill(pending);accountStatus('로그인했어요. ‘내 운명 보기’를 누르면 입력한 정보가 카카오 계정에 저장돼요.')}
     else if(user.profile&&formVersion===startVersion){const ready=restoreSavedResult(user.profile);accountStatus(ready?'저장한 정보로 운명 결과를 불러왔어요.':'저장된 정보를 확인해주세요.')}
-    else accountStatus(intent?'로그인했어요. 정보를 입력하고 ‘나의 운명 확인하기’를 누르면 저장돼요.':user.profile?'저장한 정보가 있어요. 하단 내 정보에서 불러올 수 있어요.':'');
+    else accountStatus(intent?'로그인했어요. 정보를 입력하고 ‘내 운명 보기’를 누르면 저장돼요.':user.profile?'저장한 정보가 있어요. 하단 내 정보에서 불러올 수 있어요.':'');
   }catch(e){if(!accountToken)accountChecking=false;const message=(e instanceof TypeError||e?.name==='AbortError')?'로그인 서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.':(e.message||'내 정보를 불러오지 못했어요.');if(code||error)accountNotice(message);else accountStatus(message)}finally{accountPaint();document.documentElement.classList.remove('boot');try{cmpPairBoot()}catch(_){}}
 }
 $('loginSaveGo')?.addEventListener('click',()=>{try{const v=readForm();if(!v.err&&!checkForm()){sessionStorage.setItem('oracle-pending',JSON.stringify(v));sessionStorage.setItem('oracle-pending-run','1')}sessionStorage.setItem('oracle-save-intent',$('loginSaveAgree').checked?'1':'')}catch(_){}$('loginSaveDialog').close();window.__loginAsked=true;$('accountLogin').click()});

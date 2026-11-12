@@ -36,7 +36,7 @@
 <link rel="stylesheet" href="companion.css?v=7">
 <link rel="stylesheet" href="glass-system.css?v=44">
 <link rel="stylesheet" href="product-flow.css?v=20261112-v8">
-<link rel="stylesheet" href="ui-unify.css?v=10"><link rel="stylesheet" href="destiny-characters.css?v=4">
+<link rel="stylesheet" href="ui-unify.css?v=13"><link rel="stylesheet" href="destiny-characters.css?v=4">
 <style>html.lite *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}html.lite #oracle-dream img,html.lite #oracle-dream *{animation:none!important}</style>
 
 <style>#bootLoader{display:none}html.boot #bootLoader{display:flex;position:fixed;inset:0;z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#FFF9F4;color:#4A352B;font:600 15px/1.4 system-ui,sans-serif}
@@ -48,7 +48,7 @@
 <style>.purchase-buttons{display:grid;gap:8px;margin:10px 0 4px}.purchase-buttons button{min-height:48px}#reportCheckoutAll{background:#8A5A1E;color:#fff;border:0;border-radius:14px;font:inherit;cursor:pointer}#reportCheckoutAll small{opacity:.85;font-size:.8em}.free-ask{margin:10px 0 4px}#freeAskBtn{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 14px;border-radius:14px;border:1.5px dashed rgba(138,90,30,.45);background:rgba(255,248,237,.7);color:inherit;font:inherit;cursor:pointer;opacity:.85}#freeAskBtn:hover{opacity:1}.free-ask-badge{font-size:.78em;padding:2px 8px;border-radius:999px;background:#8A5A1E;color:#fff}.free-ask-note{margin:6px 0 0;text-align:center;font-size:.9em;opacity:.8}html.rd #freeAskBtn{background:rgba(255,255,255,.06);border-color:rgba(217,168,92,.5)}</style>
 <script>document.addEventListener("click",function(e){if(e.target.closest&&e.target.closest("#freeAskBtn")){var n=document.getElementById("freeAskNote");if(n)n.hidden=false}});</script>
 </head>
-<body>
+<body class="fresh">
 <div id="bootLoader" role="status" aria-live="polite"><div class="bl-ring"><img src="img/pose-white-detective.webp" alt="" fetchpriority="high"></div><span>운명을 분석하는 중이에요…</span></div>
 <canvas id="sky" aria-hidden="true"></canvas>
 <!-- Supplied artwork, compressed to WebP and embedded to keep a single HTML. -->
@@ -76,37 +76,52 @@
   <div class="sigil" aria-hidden="true"><svg id="sigil" viewBox="0 0 500 500"></svg></div>
   <div class="hero-in">
     <span class="sr-who" hidden><span id="whoName">당신의</span><span id="whoSfx"></span></span>
-    <p class="lede">사주, 서양 점성술, 베딕 점성술, 수비학, 마야력을 계산해서<br>다섯 점술이 함께 가리키는 당신의 운명을 알려 드려요.</p>
+    <section class="intro" aria-labelledby="intro-title">
+      <div class="intro-top">
+        <span class="pose pose-detective intro-dog" role="img" aria-label="돋보기를 든 운명탐정 강아지"></span>
+        <h1 id="intro-title">생일만 넣으면<br><span class="intro-accent">나의 운명 캐릭터</span>와<br>앞으로 10년이 나와요</h1>
+        <p class="intro-sub">사주·별자리·수비학 등 다섯 가지 점술을 한 번에 계산해요.</p>
+        <a class="intro-cta" href="#ask" id="introStart">1분 만에 내 운명 보기</a>
+      </div>
+      <div class="intro-ex-wrap">
+        <h2 class="intro-ex-h">이런 결과를 볼 수 있어요 <small>예시 · 가상 인물 ‘한별’</small></h2>
+        <div class="intro-ex">
+          <article class="ex-card" aria-label="예시: 나의 운명 캐릭터"><p class="ex-k">나의 운명 캐릭터</p><img src="img/example-character.webp" width="160" height="160" loading="lazy" decoding="async" alt="영감의 예술가 캐릭터 예시"><h3>영감의 예술가</h3><p class="ex-d">생각을 말과 작품으로 꺼내는 재능을 가진 당신.</p><div class="ex-tags"><span>표현과 창의</span><span>공감과 관계</span></div></article>
+          <article class="ex-card" aria-label="예시: 앞으로 10년 분야별 흐름"><p class="ex-k">앞으로 10년 한눈에</p><h3>분야마다 가장 밝은 해</h3><div class="ty-grid"><div class="ty-cell"><div class="ty-head"><b>금전</b><span data-ex-year="4"></span></div><svg viewBox="0 0 150 56" aria-hidden="true"><path d="M6.0,28.0 C13.7,28.0 13.7,24.7 21.3,24.7 C29.0,24.7 29.0,23.6 36.7,23.6 C44.3,23.6 44.3,36.8 52.0,36.8 C59.7,36.8 59.7,21.4 67.3,21.4 C75.0,21.4 75.0,45.6 82.7,45.6 C90.3,45.6 90.3,35.7 98.0,35.7 C105.7,35.7 105.7,48.9 113.3,48.9 C121.0,48.9 121.0,41.2 128.7,41.2 C136.3,41.2 136.3,30.2 144.0,30.2" fill="none" stroke="var(--money)" stroke-width="2.6" stroke-linecap="round"/><circle cx="67.3" cy="21.4" r="4.5" fill="var(--money)"/></svg></div><div class="ty-cell"><div class="ty-head"><b>애정</b><span data-ex-year="4"></span></div><svg viewBox="0 0 150 56" aria-hidden="true"><path d="M6.0,26.9 C13.7,26.9 13.7,33.5 21.3,33.5 C29.0,33.5 29.0,20.3 36.7,20.3 C44.3,20.3 44.3,35.7 52.0,35.7 C59.7,35.7 59.7,7.1 67.3,7.1 C75.0,7.1 75.0,24.7 82.7,24.7 C90.3,24.7 90.3,26.9 98.0,26.9 C105.7,26.9 105.7,25.8 113.3,25.8 C121.0,25.8 121.0,12.6 128.7,12.6 C136.3,12.6 136.3,34.6 144.0,34.6" fill="none" stroke="var(--love)" stroke-width="2.6" stroke-linecap="round"/><circle cx="67.3" cy="7.1" r="4.5" fill="var(--love)"/></svg></div><div class="ty-cell"><div class="ty-head"><b>일·학업</b><span data-ex-year="8"></span></div><svg viewBox="0 0 150 56" aria-hidden="true"><path d="M6.0,43.4 C13.7,43.4 13.7,36.8 21.3,36.8 C29.0,36.8 29.0,41.2 36.7,41.2 C44.3,41.2 44.3,45.6 52.0,45.6 C59.7,45.6 59.7,30.2 67.3,30.2 C75.0,30.2 75.0,41.2 82.7,41.2 C90.3,41.2 90.3,42.3 98.0,42.3 C105.7,42.3 105.7,45.6 113.3,45.6 C121.0,45.6 121.0,26.9 128.7,26.9 C136.3,26.9 136.3,28.0 144.0,28.0" fill="none" stroke="var(--work)" stroke-width="2.6" stroke-linecap="round"/><circle cx="128.7" cy="26.9" r="4.5" fill="var(--work)"/></svg></div><div class="ty-cell"><div class="ty-head"><b>건강</b><span data-ex-year="8"></span></div><svg viewBox="0 0 150 56" aria-hidden="true"><path d="M6.0,30.2 C13.7,30.2 13.7,43.4 21.3,43.4 C29.0,43.4 29.0,33.5 36.7,33.5 C44.3,33.5 44.3,39.0 52.0,39.0 C59.7,39.0 59.7,37.9 67.3,37.9 C75.0,37.9 75.0,41.2 82.7,41.2 C90.3,41.2 90.3,43.4 98.0,43.4 C105.7,43.4 105.7,43.4 113.3,43.4 C121.0,43.4 121.0,28.0 128.7,28.0 C136.3,28.0 136.3,41.2 144.0,41.2" fill="none" stroke="var(--health)" stroke-width="2.6" stroke-linecap="round"/><circle cx="128.7" cy="28.0" r="4.5" fill="var(--health)"/></svg></div></div></article>
+          <article class="ex-card" aria-label="예시: 이번 주 운세"><p class="ex-k">이번 주 운세</p><h3>가장 좋은 날은 목·토요일</h3><div class="ex-week"><span class="ex-day"><i style="height:50%"></i><em>월</em></span><span class="ex-day"><i style="height:40%"></i><em>화</em></span><span class="ex-day"><i style="height:45%"></i><em>수</em></span><span class="ex-day best"><i style="height:53%"></i><em>목</em></span><span class="ex-day"><i style="height:33%"></i><em>금</em></span><span class="ex-day best"><i style="height:53%"></i><em>토</em></span><span class="ex-day"><i style="height:25%"></i><em>일</em></span></div><p class="ex-d">날마다 점수와 한 줄 조언, 행운의 색·숫자를 알려 드려요.</p></article>
+        </div>
+      </div>
+    </section>
 
 
     <div class="watercolor-welcome" aria-hidden="true"></div>
     <dialog id="loginSaveDialog" class="login-save-dialog" aria-labelledby="loginSaveTitle"><h2 id="loginSaveTitle">카카오로 로그인할게요</h2><p>로그인한 뒤에도 지금 보던 결과를 그대로 이어서 보여 드려요.</p><label><input type="checkbox" id="loginSaveAgree"><span>나의 정보를 카카오 계정에 저장하는 데 동의해요.</span></label><div class="login-save-btns"><button type="button" id="loginSaveCancel">취소</button><button type="button" id="loginSaveGo">카카오로 로그인</button></div></dialog>
     <dialog id="profileDeleteDialog" aria-labelledby="profileDeleteTitle"><h2 id="profileDeleteTitle">저장한 출생 정보를 삭제할까요?</h2><p>계정에 저장한 본인의 출생 정보와 현재 화면의 입력·분석 결과를 삭제합니다. 계정과 로그인, 궁합·재회 상대 정보는 유지됩니다.</p><p id="profileDeleteError" role="alert"></p><div class="account-buttons"><button type="button" id="profileDeleteCancel">취소</button><button type="button" id="profileDeleteConfirm">삭제하기</button></div></dialog>
 
-    <details class="askbox" id="askbox">
+    <details class="askbox" id="askbox" open>
     <summary><span class="who-sum" id="whoSum"></span><span class="edit">정보 수정 <span class="chev">⌄</span></span></summary>
-    <form class="ask" id="ask" novalidate>
+    <form class="ask" id="ask" novalidate aria-labelledby="askTitle"><h2 class="ask-title" id="askTitle">내 정보 입력</h2>
       <div class="f s2"><label for="in-name">이름</label><input id="in-name" autocomplete="off" placeholder="홍길동" required></div>
       <div class="f s2"><div class="roman-label-row"><label for="in-roman">영문 이름</label><button type="button" id="romanHelpToggle" aria-label="영문 이름 입력 안내" aria-expanded="false" aria-controls="romanHelpText">ⓘ</button></div><p id="romanHelpText" class="roman-help" hidden>대소문자와 띄어쓰기는 계산에 영향을 주지 않아요.</p><input id="in-roman" autocomplete="off" placeholder="영문 이름 (예: Hong Gildong)"><small class="fnote" id="romanNote"></small></div>
-      <div class="f s2"><span class="lb">성별 (사주 대운)</span><div class="seg"><label><input type="radio" name="sex" value="m" id="sx-m"><span>남</span></label><label><input type="radio" name="sex" value="f" id="sx-f"><span>여</span></label></div></div>
+      <div class="f s2"><span class="lb">성별</span><div class="seg"><label><input type="radio" name="sex" value="m" id="sx-m"><span>남</span></label><label><input type="radio" name="sex" value="f" id="sx-f"><span>여</span></label></div></div>
       <div class="f s2"><span class="lb">달력</span><div class="seg"><label><input type="radio" name="cal" value="s" id="cal-s" checked><span>양력</span></label><label><input type="radio" name="cal" value="l" id="cal-l"><span>음력</span></label></div></div>
       <div class="f s2 wm birth-date-field"><span class="lb" id="dateLb">생년월일 (양력)</span><div class="ymd ymd1"><input id="in-ymd" type="text" inputmode="numeric" autocomplete="bday" maxlength="8" placeholder="예: 19981122" aria-label="생년월일 8자리, 예: 19960514"><input id="in-y" type="hidden"><input id="in-m" type="hidden"><input id="in-d" type="hidden"></div>
         <div class="sub"><label class="chk" id="leapWrap" hidden><input type="checkbox" id="in-leap">윤달</label><span class="conv" id="conv"></span></div></div>
-      <div class="f s2 birth-time-field"><label for="in-time">출생 시각 (24시간제)</label><input id="in-time" type="text" inputmode="numeric" autocomplete="off" placeholder="예: 15:00" maxlength="5" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]"><label class="chk"><input type="checkbox" id="in-notime">시각을 몰라요</label></div>
-      <div class="f full"><span class="lb">출생지</span>
-        <label class="chk noplace"><input type="checkbox" id="in-noplace">출생지를 고르지 않을래요 <small>(대한민국 표준시로 계산)</small></label>
-        <div id="placeBox"><div class="psearch"><input id="placeQ" type="text" autocomplete="off" placeholder="시·도, 도시·구·군 검색 (예: 경기도, 성남, 도쿄)" role="combobox" aria-expanded="false" aria-controls="placeList" aria-label="출생지 검색"><ul id="placeList" class="plist" role="listbox" hidden></ul></div>
-        <div class="psel"><select id="sido" aria-label="시·도"></select><select id="sgg" aria-label="시·군·구"></select></div><small class="fnote" id="placeNote">시·도까지만 골라도 확인할 수 있어요. 시·군·구까지 고르면 출생지에 더 맞춰 계산해요.</small>
+      <div class="f s2 birth-time-field"><label for="in-time">태어난 시각 <small>(24시간제)</small></label><input id="in-time" type="text" inputmode="numeric" autocomplete="off" placeholder="예: 15:00" maxlength="5" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]"><label class="chk"><input type="checkbox" id="in-notime">시각을 몰라요</label></div>
+      <div class="f full"><span class="lb">태어난 곳</span>
+        <label class="chk noplace"><input type="checkbox" id="in-noplace">태어난 곳을 몰라요 <small>(한국 기준으로 계산해요)</small></label>
+        <div id="placeBox"><div class="psearch"><input id="placeQ" type="text" autocomplete="off" placeholder="도시 이름으로 찾기 (예: 성남, 부산, 도쿄)" role="combobox" aria-expanded="false" aria-controls="placeList" aria-label="출생지 검색"><ul id="placeList" class="plist" role="listbox" hidden></ul></div>
+        <div class="psel"><select id="sido" aria-label="시·도"></select><select id="sgg" aria-label="시·군·구"></select></div><small class="fnote" id="placeNote">시·도만 골라도 돼요. 시·군·구까지 고르면 더 정확해요.</small>
         <div class="placebar"><span class="pin" aria-hidden="true"></span><span class="pname" id="placeName">경기도 성남시</span><span class="coords" id="placeCoord"></span><button type="button" id="mapBtn" hidden aria-expanded="false" aria-controls="mapbox">지도로 보기</button></div>
         <div class="mapbox" id="mapbox" hidden>
           <div class="maptabs" role="group" aria-label="지도 범위"><button type="button" data-v="kr" aria-pressed="true">대한민국</button><button type="button" data-v="w" aria-pressed="false">세계</button><span class="maphint" id="mapHint">지도를 눌러 태어난 곳을 고르세요</span></div>
           <div class="mapwrap"><svg id="map" role="img" aria-label="출생지 선택 지도"></svg><div class="maptip" id="mapTip" hidden></div></div>
           <div class="mapfoot"><div class="quick" id="quick"></div><label class="tz" for="in-tz">UTC<input id="in-tz" type="number" step="0.25" min="-12" max="14" value="9"></label><button type="button" class="done" id="mapDone">완료</button></div>
         </div></div></div>
-      <div class="f full"><label for="in-relationship">현재 관계 상태 <small>(선택)</small></label><select id="in-relationship" aria-describedby="relationshipHelp"><option value="private">고르고 싶지 않음</option><option value="married">결혼</option><option value="dating">연애 중</option><option value="crush">썸·호감</option><option value="single">혼자에요</option></select><small id="relationshipHelp" class="fnote">현재 상황을 알려주시면 새로운 만남, 관계의 발전, 사랑의 결실 등 상황에 맞는 풀이를 제공해요. 선택하지 않아도 이용할 수 있어요.</small></div>
+      <div class="f full"><label for="in-relationship">지금 관계 상태 <small>(선택)</small></label><select id="in-relationship" aria-describedby="relationshipHelp"><option value="private">고르고 싶지 않음</option><option value="married">결혼</option><option value="dating">연애 중</option><option value="crush">썸·호감</option><option value="single">혼자예요</option></select><small id="relationshipHelp" class="fnote">고르면 연애·결혼 풀이가 지금 상황에 맞춰져요.</small></div>
       <div class="go"><button type="submit">내 운명 보기</button>
         <div class="save-opt">
-          <div class="save-guest" id="saveGuest"><span>로그인하지 않으면 입력한 정보는 저장되지 않아요.</span><button type="button" id="saveLogin" class="kakao-login kakao-mini">카카오로 로그인하고 저장하기</button></div>
+          <div class="save-guest" id="saveGuest"><span>로그인하면 다음에 다시 입력하지 않아도 돼요.</span><button type="button" id="saveLogin" class="kakao-login kakao-mini">카카오로 로그인하고 저장하기</button></div>
           <label class="save-chk" id="saveMember" hidden><input type="checkbox" id="profileConsent"><span><b>카카오 계정에 자동 저장</b>운명을 확인할 때 이름·영문 이름·성별·생년월일·시각·출생지를 저장하고, 다음 방문 때 자동으로 채워요. 저장 정보는 언제든 삭제할 수 있어요.</span></label>
           <p id="accountStatus" class="account-note" role="status" aria-live="polite"></p>
           <details class="account-privacy"><summary>로그인·정보 저장 안내</summary><p>운영: 트리웨이브 · 서비스: 운명탐정. 카카오에서는 회원 구분용 식별값과 동의한 닉네임만 받아요. 이메일·전화번호·프로필 사진·현재 거주지는 요청하지 않아요. 입력한 출생 정보는 ‘카카오 계정에 자동 저장’을 켜고 운명을 확인할 때 Cloudflare 서버에 저장하고, 다음 로그인 시 입력창에 불러와요. 궁합에서 ‘내 계정에 저장’을 체크하면 상대방의 이름·생년월일·출생 시각·출생지와 궁합 점수도 저장돼요(상대방 동의가 있는 경우에만 저장해 주세요). 저장 정보 보기에서 내 출생 정보와 상대 정보를 각각 삭제할 수 있고, 카카오 연결을 끊어도 모두 삭제돼요. 로그인은 이 브라우저에서 최대 7일 유지되며 공용 기기에서는 로그아웃해 주세요.</p></details>
@@ -154,7 +169,7 @@
       <div class="report-cta" id="reportCta"><span class="eyebrow">종합 리포트</span><h3><span id="rcName">당신의</span> 운명, 리포트에서는 이렇게 읽어 드려요</h3>
         <ul class="rc-toc" id="rcPreview"><li><b>한눈에 보는 나</b><span>다섯 점술이 공통으로 가리키는 나의 중심과 가장 밝은 해</span></li><li><b>타고난 성격과 기질</b><span>사람을 대하는 방식, 결정하는 습관, 힘이 빠질 때의 모습</span></li><li><b>사랑과 인연</b><span>사랑할 때의 나, 잘 맞는 사람의 모습, 인연이 뚜렷한 해</span></li><li><b>일과 돈</b><span>잘 맞는 일의 방식, 돈이 붙는 습관, 도약할 해</span></li><li><b>앞으로 10년의 흐름</b><span>크게 나아갈 해와 숨 고를 해, 전환점</span></li><li><b>다섯 점술이 본 나와 제언</b><span>사주·별자리·낙샤트라·수비학·마야력의 시선과 실천</span></li></ul>
         <div class="rc-only"><b>무료 결과에는 없고 리포트에만 있는 것</b><ul><li>앞으로 10년, 해마다 점수와 그 해를 밝게·조심스럽게 본 이유</li><li>사랑·일·돈의 방향과 우선순위를 함께 읽기</li><li>각 장의 핵심 해설과 나에게 맞는 실천</li><li>대운·연도별·월별 흐름과 PDF 저장</li></ul></div>
-        <div class="comprehensive-price"><span>종합 리포트</span><strong><b>1,900원</b> <small class="launch">전부 열기 2,990원</small></strong></div><button type="button" id="reportOpen">종합 리포트 보기</button><p class="rc-fine">인생 해설서 · 대운·연별·월별 흐름 · PDF로 저장할 수 있어요 · 리포트 종류와 차이는 <button type="button" class="linklike" data-policy="products">리포트 안내</button>에서 확인하세요 · <a href="sample.html" target="_blank" rel="noopener">샘플 리포트 보기</a></p></div>
+        <div class="comprehensive-price"><span>종합 리포트</span><strong><b>1,900원</b> <small class="launch">전부 열기 2,990원</small></strong></div><button type="button" id="reportOpen">종합 리포트 보기</button><p class="rc-fine"><a href="sample.html" target="_blank" rel="noopener">샘플 리포트 보기</a> · <button type="button" class="linklike" data-policy="products">리포트 종류 안내</button></p></div>
     </div>
     <div class="graph-gate" id="graph-gate"><div class="gate-card"><h3>운을 높이는 법과 운명 리포트가 궁금하다면</h3><p>친구에게 운명탐정을 소개하고<br>나에게 맞는 운을 높이는 법, 추천 장소, 운명 리포트를 열어 보세요.</p><button type="button" id="gate-share">친구에게 공유하고 전체 결과 보기 ↗</button><small id="gate-note">친구에게 공유하면 바로 열려요.</small></div></div>
   </div><p id="unlock-status" role="status" aria-live="polite"></p>
@@ -195,8 +210,8 @@
 </template>
 
 <dialog id="reportPurchase" class="report-purchase"><button type="button" id="reportPurchaseClose" class="purchase-close" aria-label="리포트 안내 닫기">닫기 ×</button><span class="eyebrow">나의 운명 리포트</span><h2 id="purchaseTitle"></h2><p>이 리포트에서 볼 수 있어요</p><ul id="purchaseContents"></ul><div class="purchase-price"><span>리포트 가격</span><strong id="purchasePrice"></strong></div><p id="purchaseStatus" role="status"></p><div class="purchase-buttons"><button type="button" id="reportCheckout">이 리포트 결제하기</button><button type="button" id="reportCheckoutAll" class="buy-all">전부 열기 <b>2,990원</b> <small>모든 리포트</small></button></div><p class="fine">결제는 페이앱 결제창에서 안전하게 진행돼요. 결제가 끝나면 이 화면으로 돌아와요.</p></dialog><section hidden id="accountSheet" class="account-sheet account-page" aria-labelledby="accountSheetTitle"><header><h2 id="accountSheetTitle">내 정보</h2></header><p>로그인과 저장한 정보, 계정 설정을 한곳에서 관리해요.</p><section id="guestProfile" class="saved-record"><h3>이 탭에서 입력한 내 정보</h3><p id="guestProfileNote">로그인 없이 수정할 수 있어요. 새로고침하면 입력 정보는 사라지며 서버에 저장되지 않아요.</p><button type="button" id="guestProfileEdit">내 정보 입력·수정</button></section><button type="button" id="accountLogin" class="kakao-login acct-login">카카오 로그인</button><div class="acct" id="accountMember" hidden><summary id="accountName" class="top-icon" aria-label="계정 메뉴" title="개인 설정"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></summary><div class="acct-pop"><p class="acct-hello" id="accountHello"></p><p id="accountIdLabel" class="fine"></p><button type="button" id="profileEdit">내 정보 수정</button><button type="button" id="profileDeleteVisible">저장한 내 정보 삭제</button><button type="button" id="savedProfileView">저장 정보 보기</button><a id="adminPageLink" class="acct-item" href="admin.html" hidden>관리자 페이지</a><button type="button" id="accountLogout">로그아웃</button><button type="button" data-open-guides>안내와 약관</button><button type="button" id="accountWithdraw">탈퇴</button><p id="accountMenuStatus" role="status"></p><span hidden><button type="button" id="profileLoad"></button><button type="button" id="profileSave"></button></span></div></div><section id="savedRecordsPanel" hidden aria-labelledby="savedRecordsTitle"><div class="saved-head"><h3 id="savedRecordsTitle">저장한 정보</h3><button type="button" id="savedRecordsClose" class="saved-close" aria-label="저장한 정보 닫기">닫기</button></div><div id="savedPersonalRecord"></div><h3>궁합·재회에 저장한 상대</h3><p id="savedPartnersStatus" role="status"></p><div id="savedPartnerRecords"></div></section><p class="acct-guide-link"><button type="button" data-open-guides>안내와 약관 <small>리포트 안내 · 이용 안내 · 결제·환불 · 개인정보 · 약관 · 사업자 정보</small><span aria-hidden="true">→</span></button></p><div hidden><button type="button" id="profileDelete">내 출생 정보 삭제</button></div></section><section hidden id="guidePage" class="account-sheet account-page guide-page" aria-labelledby="guidePageTitle"><header><button type="button" class="guide-back" data-guide-back>← 내 정보</button><h2 id="guidePageTitle">안내와 약관</h2></header><p>리포트 종류, 이용 방법, 결제·환불, 개인정보 처리 등 서비스 안내를 모았어요.</p><div class="acct-guide-list"><button type="button" data-policy="products" aria-label="리포트 안내"><b>리포트 안내</b><span>종합·주제별·자유질문은 어떻게 다른가요?</span></button><button type="button" data-policy="usage" aria-label="이용 안내"><b>이용 안내</b><span>해석과 점수를 읽는 법, 서비스 범위</span></button><button type="button" data-policy="payment" aria-label="결제·환불 안내"><b>결제·환불 안내</b><span>가격, 전체 열람권, 환불 기준</span></button><button type="button" data-policy="privacy" aria-label="개인정보 처리방침"><b>개인정보 처리방침</b><span>수집 항목, 보관, 삭제 방법</span></button><button type="button" data-policy="terms" aria-label="이용약관"><b>이용약관</b><span>서비스 이용 조건과 책임 범위</span></button><button type="button" data-policy="business" aria-label="사업자 정보"><b>사업자 정보</b><span>운영사, 대표, 연락처</span></button></div></section>
-<script defer src="app.2c9fe234.js?v=landing-20261112-v34"></script>
-<script defer src="relationship-context.js?v=11"></script>
+<script defer src="app.e24f7bf5.js?v=landing-20261112-v34"></script>
+<script defer src="relationship-context.js?v=12"></script>
 
 <script>
 (function(){const $=id=>document.getElementById(id);
@@ -240,9 +255,10 @@ $("brandbar").addEventListener("keydown",e=>{if(e.target!==e.currentTarget)retur
 <script defer src="input-experience.js?v=6"></script>
 
 
-<script defer src="product-flow.js?v=20261112-fit1"></script>
+<script defer src="product-flow.js?v=20261112-home1"></script>
 
 <script defer src="profile-controls.js?v=2"></script>
+<script>(function(){var y=new Date().getFullYear()+1;document.querySelectorAll('[data-ex-year]').forEach(function(e){e.textContent=(y+ +e.getAttribute('data-ex-year'))+'년'});var b=document.getElementById('introStart');if(b)b.addEventListener('click',function(e){e.preventDefault();document.body.classList.add('app-entered');var a=document.getElementById('askbox');if(a)a.open=true;var f=document.getElementById('ask');if(f)f.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});var n=document.getElementById('in-name');if(n)setTimeout(function(){n.focus({preventScroll:true})},350)})})();</script>
 <script>/* 숨겨진 .wrap 안의 대화상자는 열려도 보이지 않으면서 화면을 막는다: body로 옮긴다. 외부 스크립트가 defer라서 모두 실행된 뒤(DOMContentLoaded)에 옮긴다. */document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".wrap dialog").forEach(function(d){document.body.appendChild(d)})});</script>
 <script defer src="install-app.js?v=1"></script>
 

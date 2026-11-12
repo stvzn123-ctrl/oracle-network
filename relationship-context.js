@@ -1,6 +1,6 @@
 /* Relationship context changes interpretation, never birth-chart scores. */
 (() => {
-  const OPTIONS = {married:'결혼', dating:'연애 중', crush:'썸·호감', single:'혼자에요', private:'고르고 싶지 않음'};
+  const OPTIONS = {married:'결혼', dating:'연애 중', crush:'썸·호감', single:'혼자예요', private:'고르고 싶지 않음'};
   const normalize = value => Object.hasOwn(OPTIONS,value) ? value : 'private';
   const storageKey = () => accountUser ? 'oracle-relationship-v1:'+accountUser.id : null;
   function savedRelationship(){try{return normalize(localStorage.getItem(storageKey()))}catch(_){return 'private'}}

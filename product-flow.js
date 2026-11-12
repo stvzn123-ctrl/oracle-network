@@ -74,7 +74,8 @@
    const text=[s.lead,...(s.paragraphs||[])].filter(Boolean).map(x=>readingParts(x).main).filter(Boolean).join(' ').split(/(?<=[.!?])\s+/)[0]||'';
    const short=text.length>72?text.slice(0,70).replace(/[,\s]+$/,'')+'…':text;
    return '<li><b>'+E(s.question)+'</b><span>'+E(short)+'</span></li>'});
-  if(items.length>=3)list.innerHTML=compactReportHTML(items.join(''));
+  /* 2026-11-12: 홈이 길어지지 않게 앞 3장만 보이고 나머지는 접어 둔다. */
+  if(items.length>=3)list.innerHTML=compactReportHTML(items.slice(0,3).join('')+(items.length>3?'<li class="rc-rest"><details><summary>전체 목차 보기 ('+items.length+'장)</summary><ul class="rc-toc">'+items.slice(3).join('')+'</ul></details></li>':''));
  }
  /* 리포트 미리보기는 종합 리포트 한 권을 만들어야 해서 무겁다(중간급 폰에서 약 0.4초+). 결과 화면을 먼저 그린 뒤 한가할 때 채운다. */
  const idle=window.requestIdleCallback?f=>requestIdleCallback(f,{timeout:1500}):f=>setTimeout(f,60);
