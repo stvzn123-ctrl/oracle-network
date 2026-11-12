@@ -114,3 +114,5 @@ body:is(.fresh,.demo) #askbox>summary{font-weight:700;color:var(--gold-ink)}
 body.fresh #result{display:block}
 body.fresh:not(.demo) #result{min-height:130vh}
 body.fresh #result-gate,body.fresh #unlock-status{display:none!important}
+.intro img.intro-main{display:block;width:min(200px,50vw);height:auto;aspect-ratio:1;margin:0 auto 6px;border-radius:28px;mix-blend-mode:multiply}
+body.demo #askbox:not([open]){display:none}
