@@ -41,3 +41,9 @@ input[type=checkbox],input[type=radio]{accent-color:var(--gold-ink)}
 
 @media(prefers-reduced-transparency:reduce){.res-nav{background:#fffaf4!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 @media(prefers-reduced-motion:reduce){:is(.bottom-nav button,.res-tabs button,.res-topics button):active{transform:none}}
+
+/* 2026-11-12: 첫 화면(랜딩) 가독성 + 상단 바 캐릭터 숨김 */
+body:not(.app-entered) #brandbar .brandbar-mark,body.fresh:not(.app-entered) .brandbar-mark{display:none!important}
+#landing h1#landing-title.landing-headline{font-size:clamp(28px,8.4cqw,42px)!important;line-height:1.32!important;white-space:normal!important;text-wrap:balance;color:#3E2A20!important;letter-spacing:-.03em!important;word-break:keep-all!important}
+#landing .landing-title-accent{color:#A8641E!important}
+#landing p.landing-lead.landing-one{font-size:clamp(16px,4.6cqw,19px)!important;line-height:1.75!important;color:#4A352B!important;font-weight:500!important;word-break:keep-all!important}
