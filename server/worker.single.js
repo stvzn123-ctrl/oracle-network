@@ -2363,6 +2363,40 @@ function buildRichReport(ch,key){
 
   }
  }
+ /* 2026-11-12: 직업·학업 리포트는 10년 흐름(timing·yearly) 대신 앞으로 3년을 해마다 자세히 본다. 점수는 기존 Y4[2], 근거는 why()·세운 십성·개인년·월별 dayFortune(3일 간격)·대운/다샤 교체. */
+ if(['work','study'].includes(key)){
+  const W=key==='work',Y3=Y4[2].slice(0,3),av3=Y3.reduce((a,r)=>a+r.score,0)/3,best3=Y3.reduce((a,b)=>b.score>a.score?b:a),low3=Y3.reduce((a,b)=>b.score<a.score?b:a),spread=best3.score-low3.score;
+  const TGTX=W?['동료와의 경쟁 속에서 내 몫을 분명히 하는 해예요. 독립 프로젝트나 내 이름을 건 일이 힘을 받아요.','아이디어와 결과물을 밖으로 보여 주는 해예요. 발표·기획·콘텐츠처럼 표현하는 일이 성과로 이어져요.','일의 범위가 넓어지고 성과가 숫자로 보이는 해예요. 영업·거래·새 고객처럼 바깥으로 뻗는 일이 잘 풀려요.','책임과 직책이 따라오는 해예요. 승진·평가·조직 안의 역할 변화를 눈여겨보세요.','배움과 자격이 경력의 무기가 되는 해예요. 교육·연구·윗사람의 지원이 길을 열어 줘요.']
+   :['함께 공부하는 사람과의 경쟁이 자극이 되는 해예요. 스터디나 경쟁 시험에서 힘을 내요.','배운 것을 말과 글로 풀어낼 때 실력이 느는 해예요. 발표·논술·실기처럼 표현하는 과목이 유리해요.','공부의 결과를 실제 기회로 바꾸기 좋은 해예요. 인턴·공모전·실무 경험을 함께 챙겨 보세요.','시험·평가·자격처럼 공식적인 결과가 따라오는 해예요. 일정과 규칙을 지키는 꾸준함이 점수로 이어져요.','깊이 파고드는 공부가 잘 되는 해예요. 이론·연구·자격 공부의 기초를 다지기 좋아요.'];
+  const ACT3=W?{hi:['이력서와 포트폴리오를 새로 정리하고, 원하는 자리 세 곳에 먼저 지원하거나 제안해 보세요.','맡고 싶은 역할을 상사나 담당자에게 분명히 말하고, 그 역할로 이어질 성과 하나를 이 해 안에 끝내 보세요.','사이드 프로젝트나 독립적인 일을 작게 시작해 반응을 확인해 보세요.'],
+    mid:['지금 하는 일의 성과를 숫자로 기록해 두세요. 다음 해의 협상 자료가 돼요.','업무에 바로 쓰이는 기술 하나를 골라 석 달 안에 익혀 보세요.','같은 분야 사람 다섯 명과 연락을 이어 두세요. 다음 기회는 사람에게서 와요.'],
+    lo:['새로 벌이기보다 맡은 일의 완성도를 높이고 마감을 지키는 데 힘을 쓰세요.','이직이나 큰 변화는 다음 해로 미루고, 그 준비(자격·저축·포트폴리오)를 이 해에 해 두세요.','줄일 수 있는 업무 하나를 정리하고, 쉬는 시간을 일정에 먼저 넣어 두세요.']}
+   :{hi:['미뤄 둔 시험이나 자격 도전을 이 해에 잡아 보세요. 접수 날짜부터 달력에 적어 두세요.','목표 점수나 합격선을 정하고 모의시험으로 지금 위치를 확인해 보세요.','공부한 내용을 자격·발표·작품 같은 결과물로 남기기 좋은 해예요.'],
+    mid:['하루 공부 시간을 고정하고 한 과목씩 끝내는 방식으로 이어 가세요.','틀린 문제만 모은 노트를 만들어 한 달에 한 번 다시 풀어 보세요.','함께 공부할 사람이나 스터디를 하나 찾아 꾸준함을 지켜 보세요.'],
+    lo:['새 과목을 늘리기보다 기초를 다시 다지는 해로 쓰세요.','큰 시험은 다음 해로 잡고, 이 해에는 약한 부분을 채우는 데 집중하세요.','공부량보다 잠과 회복을 먼저 지켜야 다음 해에 힘이 나요.']};
+  const TGTX2=W?['내 방식대로 일을 끌고 갈 힘이 커지는 해예요. 혼자 맡을 수 있는 일을 늘려 보세요.','말과 기획이 날카로워지는 해예요. 새 방식을 제안하면 주목받기 쉬워요.','기회가 여러 갈래로 들어오는 해예요. 수입과 연결되는 일을 먼저 고르세요.','평가와 기대가 커지는 해예요. 약속한 성과를 지키면 신뢰가 한 단계 올라가요.','조언해 주는 사람과 배움이 힘이 되는 해예요. 멘토나 교육 과정을 찾아보세요.']
+   :['스스로 정한 목표를 밀고 나갈 힘이 커지는 해예요. 혼자 공부하는 시간이 효과를 내요.','생각을 표현하는 힘이 커지는 해예요. 글쓰기·발표 연습이 실력이 돼요.','공부를 실전에 써 볼 기회가 많은 해예요. 대외 활동과 함께 묶어 보세요.','규칙적인 평가가 실력을 끌어올리는 해예요. 시험 일정을 먼저 정해 두세요.','선생님이나 선배의 도움이 크게 작용하는 해예요. 질문을 아끼지 마세요.'];
+  const used3={},rows3=[],paras3=[],gUse={};
+  Y3.forEach((r,i)=>{
+   const y=r.year,tg=tenGod(d,ys(y)),g=grpOf(tg),w=why(y,2),py=pyOf(ch,y);
+   const tone=spread>=2&&r===best3?'hi':spread>=2&&r===low3?'lo':r.score>=av3+2?'hi':r.score<=av3-2?'lo':'mid';
+   const lab=r===best3&&spread>=2?'3년 중 가장 힘이 실리는 해예요':tone==='hi'?'밝은 흐름이 이어지는 해예요':tone==='lo'?'속도를 늦추고 기반을 다지는 해예요':'꾸준히 쌓아 가는 해예요';
+   const mm=[];for(let m=1;m<=12;m++){let t=0,n=0;for(let dd=1;dd<=28;dd+=3){t+=dayFortune(ch,new Date(y,m-1,dd,12)).sc[2];n++}mm.push({m,v:t/n})}
+   const srt=mm.slice().sort((a,b)=>b.v-a.v||a.m-b.m),hiM=srt.slice(0,2).map(x=>x.m).sort((a,b)=>a-b),loM=srt.at(-1).m;
+   const act=ACT3[tone][(used3[tone]=(used3[tone]||0)+1)-1]||ACT3[tone][0];
+   const upTx=w.up.filter(x=>x[0]!=='수비학').map(x=>x[0]+'의 '+x[1]).join(', '),dnTx=w.down.length?w.down[0][0]+'의 '+w.down[0][1]:'';
+   const turn=[dwNextY===y?'이 해에 사주의 새 대운이 시작돼 '+(W?'일의 방향':'공부의 방향')+'이 바뀌기 쉬워요. 새로 시작하는 일은 이 무렵에 두면 좋아요.':'',nextD&&Math.floor(nextD.start)===y?'인도 점성술로는 '+PK[nextD.lord]+' 다샤가 시작되는 해라, 관심사와 목표가 새로 정리돼요.':''].filter(Boolean).join(' ');
+   paras3.push(y+'년('+kage(y)+'살) · '+r.score+'점 — '+lab+'. 사주로는 '+ST[ys(y)]+BR[yb(y)]+'년이고, 천간이 나에게 '+J(tg,'이에요','예요')+'. '+((gUse[g]=(gUse[g]||0)+1)>1?TGTX2[g]:TGTX[g]));
+   paras3.push((upTx?'이 해 '+(W?'일':'공부')+' 점수를 올린 것은 '+upTx+(dnTx?'이고, '+J(dnTx,'은','는')+' 조금 낮췄어요. ':'이에요. '):'')+'수비학 개인년은 '+py+'로, '+(W?String(NYP[py][2]).replace(/[.!?]?$/,'.'):{1:'새 공부를 시작하기 좋은 해예요.',2:'함께 공부할 사람이 힘이 되는 해예요.',3:'표현하는 과목과 발표가 잘 되는 해예요.',4:'기초를 단단히 다지기 좋은 해예요.',5:'새로운 분야를 넓게 경험하기 좋은 해예요.',6:'꾸준한 책임감이 결과로 이어지는 해예요.',7:'깊이 연구하고 몰입하기 좋은 해예요.',8:'시험·자격의 결과를 거두기 좋은 해예요.',9:'지금까지 한 공부를 마무리하기 좋은 해예요.'}[py])+' 한 해 안에서는 '+hiM.join('월과 ')+'월에 흐름이 가장 밝고, '+loM+'월은 쉬어 가기 좋아요.'+(turn?' '+turn:''));
+   paras3.push('먼저 할 일 — '+act);
+   rows3.push([y+'년',lab.replace(/예요$/,'').replace(/^3년 중 /,''),hiM.join('·')+'월',act.split(/(?<=[.요])\s/)[0]]);
+  });
+  const ti=S.findIndex(x=>x.kind==='timing');
+  for(let i=S.length-1;i>=0;i--)if(['timing','yearly'].includes(S[i].kind))S.splice(i,1);
+  const n0=S.length;add('three-year',W?'앞으로 3년, 일의 흐름':'앞으로 3년, 배움의 흐름',best3.year+'년이 3년 중 가장 밝고, '+(spread>=2?low3.year+'년은 기반을 다지기 좋은 해예요.':'세 해 모두 큰 차이 없이 이어져요.'),['직업·학업 점수','세운(해마다의 간지)','수비학 개인년'],paras3,
+   best3.year+'년 '+(W?'목표 자리나 역할':'목표 시험이나 자격')+'을 지금 한 줄로 적어 두고, 그해 밝은 달에 맞춰 준비 일정을 거꾸로 짜 보세요.',{table:{cap:'앞으로 3년 한눈에 보기',head:['연도','흐름','밝은 달','먼저 할 일'],cols:['16%','24%','16%','44%'],rows:rows3}});
+  const sec3=S.pop();S.splice(ti<0?Math.min(2,S.length):Math.min(ti,S.length),0,sec3);S.forEach((x,i)=>x.id=key+'-'+(i+1));
+ }
  if(key==='marry'){
   const timing=S.find(s=>s.kind==='timing'),yearly=S.find(s=>s.kind==='yearly');
   if(timing&&yearly){
@@ -2423,9 +2457,9 @@ function buildRichReport(ch,key){
  S.forEach(s=>{s.question=haeyo(s.question);s.lead=haeyo(s.lead);s.paragraphs=(s.paragraphs||[]).map(haeyo);s.action=haeyo(s.action);s.caution=haeyo(s.caution);if(s.table&&Array.isArray(s.table.rows))s.table.rows=s.table.rows.map(r=>r.map(haeyo))});
  /* 2026-11-10: 핵심 요약은 본문 세 문장을 복사하지 않고, 10년 숫자 결론 2줄 + 장마다 결론 한 줄(목차처럼)로 만든다. */
  const firstLine=t=>String(t||'').split(/(?<=[.!?])\s+/).map(x=>x.trim()).find(x=>x&&!/^\[/.test(x))||'';
- const sumArr=key==='comprehensive'?years.map((r,i)=>({year:r.year,score:Math.round(Y4.reduce((a,c)=>a+c[i].score,0)/4)})):years,sumYv=sumArr.map(r=>r.score),sumHi=sumArr[sumYv.indexOf(Math.max(...sumYv))],sumLo=sumArr[sumYv.indexOf(Math.min(...sumYv))];
+ const sum3=['work','study'].includes(key),sumArr=key==='comprehensive'?years.map((r,i)=>({year:r.year,score:Math.round(Y4.reduce((a,c)=>a+c[i].score,0)/4)})):sum3?years.slice(0,3):years,sumYv=sumArr.map(r=>r.score),sumHi=sumArr[sumYv.indexOf(Math.max(...sumYv))],sumLo=sumArr[sumYv.indexOf(Math.min(...sumYv))];
  const sumSecs=S.filter(s=>!['limit','fun','caution','weak','care','yearly','calendar'].includes(s.kind)&&(s.lead||(s.paragraphs||[]).length));
- const summary=[sumHi?'앞으로 10년 중 '+(key==='comprehensive'?'네 분야를 합친 흐름':['금전','애정','직업·학업'][ci]+' 흐름')+'이 가장 밝은 해는 '+sumHi.year+'년('+kage(sumHi.year)+'살, '+sumHi.score+'점)이에요.':'',sumLo&&sumLo!==sumHi?'속도를 늦추고 다지기 좋은 해는 '+sumLo.year+'년('+sumLo.score+'점)이에요.':'',...(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(s=>{const l=firstLine(s.lead||(s.paragraphs||[])[0]);return l?s.question+' — '+l:''})].filter(Boolean);
+ const summary=[sumHi?'앞으로 '+(sum3?'3':'10')+'년 중 '+(key==='comprehensive'?'네 분야를 합친 흐름':['금전','애정','직업·학업'][ci]+' 흐름')+'이 가장 밝은 해는 '+sumHi.year+'년('+kage(sumHi.year)+'살, '+sumHi.score+'점)이에요.':'',sumLo&&sumLo!==sumHi?'속도를 늦추고 다지기 좋은 해는 '+sumLo.year+'년('+sumLo.score+'점)이에요.':'',...(key==='comprehensive'?sumSecs.slice(0,5):sumSecs.slice(0,4)).map(s=>{const l=firstLine(s.lead||(s.paragraphs||[])[0]);return l?s.question+' — '+l:''})].filter(Boolean);
  S.forEach(s=>{if(s.kind==='yearly')s.paragraphs=s.paragraphs.map(p=>p.split(' [사주]')[0]);s.answer=[...(s.overview||[]),...s.paragraphs].join('\n\n')});
  const note=(noteMissing?noteMissing+' ':'')+'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.';
  return {title:(ch.inp.name||'당신')+'님의 '+(key==='love'?'연인 운명':key==='marry'?'인연 운명':NAMES[key])+' 리포트',summary,facts,sections:S,years,category:['금전','애정','직업·학업'][ci],note,appendix:key==='comprehensive'?{bars:{cap:'오행 분포(원국 여덟 글자 기준)',items:elementBars},tables:[pillarTable,westTable,{cap:'다샤(행성 주기) 흐름',head:['기간','연도','주제'],rows:dashaRows}]}:null,version:'reader-2026-11-11-v16',

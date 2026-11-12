@@ -363,3 +363,14 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 .cmp-load:active{transform:scale(.97);transition:transform .1s}
 .shared-result-ready{animation:shared-reveal .35s ease-out}@keyframes shared-reveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.shared-report-chapter{padding:16px 0;border-bottom:1px solid var(--line)}
 .askbox.casting form::after{background-image:url('img/pose-white-note.webp')!important}
+
+/* 2026-11-12: 우정(두 사람)도 모임과 같은 접기 배치 */
+#cmpOne>details{border:1px solid var(--line);border-radius:14px;margin:14px 0;overflow:hidden;background:var(--panel)}
+#cmpOne>details>summary{padding:14px 16px;font:600 14px/1.5 var(--body);color:var(--gold-ink);cursor:pointer}
+#cmpOne>details .cmp-form{margin:0!important;border:0;box-shadow:none}
+#cmpOne .friend-add-panel .cmp-head h4{display:none}
+.friend-empty{display:none;font-size:13px;color:var(--muted);margin:0}
+#cmpOne .cmp-saved:empty+.friend-empty{display:block}
+#cmpOne .cmp-saved:empty~[data-friend-result],#cmpOne .cmp-saved:empty~.friend-selection-status{display:none!important}
+.friend-controls .group-manual button[type=submit]{display:block!important;width:100%;min-height:42px!important;margin:12px 0 0!important}
+.friend-controls [data-friend-result]{margin:12px 0 0!important}
