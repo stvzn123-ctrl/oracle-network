@@ -734,8 +734,7 @@ function resultIntroHTML(ch){const tags=reportTags(ch);
   const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" role="img" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><small>5개 점술 중 ${t.n}개 점술이 같은 성향을 이야기해요.</small></div></li>`).join("");
   return `<p class="res-lead">${mainDestinyIntroHTML(ch)}</p>
   <h3 class="res-h">여러 운세에서 발견한 나의 매력</h3><ul class="r-agree">${agl}</ul>
-  <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${natalReadingHTML(ch)}</div>${fateTraitsHTML(ch)}
-  ${foldPast(pastReadingHTML(ch))}` }
+  <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${natalReadingHTML(ch)}</div>${fateTraitsHTML(ch)}` }
 /* 2026-11-12 결과 홈 정리: '지나온 날'은 접어 둔다. */
 function foldPast(html){return String(html).replace('<section class="past-reading"><h3 class="res-h">당신이 지나온 날에 대한 해석</h3>','<details class="past-reading past-fold"><summary class="res-h">당신이 지나온 날 돌아보기</summary>').replace(/<\/section>\s*$/,'</details>')}
 function renderResult(){const ch=CH,name=ch.inp.name;
