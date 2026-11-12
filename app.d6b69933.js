@@ -731,23 +731,13 @@ function pastReadingHTML(ch){
 function mainDestinyIntroHTML(ch){const text=traitDescription(ch).replace('같은 운명을 타고난 사람입니다.','같은 면모를 지닌 사람이에요.'),m=text.match(/^당신은 (.+?이지만),\s*(.+?)(이에요\.)$/);return m?'당신은 '+topicEsc(m[1])+', <span class="destiny-strength">'+topicEsc(m[2])+'</span>'+topicEsc(m[3]):topicEsc(text)}
 function resultIntroHTML(ch){const tags=reportTags(ch);
   const ag=tags.filter(t=>t.n>=2).slice(0,4);
-  const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><small>5개 점술 중 ${t.n}개 점술이 같은 성향을 이야기해요.</small></div></li>`).join("");
+  const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" role="img" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><small>5개 점술 중 ${t.n}개 점술이 같은 성향을 이야기해요.</small></div></li>`).join("");
   return `<p class="res-lead">${mainDestinyIntroHTML(ch)}</p>
-  ${tenYearMiniHTML()}
   <h3 class="res-h">여러 운세에서 발견한 나의 매력</h3><ul class="r-agree">${agl}</ul>
-  <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${foldProse(natalReadingHTML(ch),2)}</div>${fateTraitsHTML(ch)}
+  <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose">${natalReadingHTML(ch)}</div>${fateTraitsHTML(ch)}
   ${foldPast(pastReadingHTML(ch))}` }
-/* 2026-11-12 결과 홈 정리: '나의 운명' 탭 캐릭터 아래 분야별 작은 10년 그래프(공통 60~100 눈금), 기질 글은 앞 두 문단만 펼치고, 지나온 날은 접어 둔다. */
-function tenYearMiniHTML(){if(typeof R==='undefined'||!R||!R.length)return '';
- const y0=new Date().getFullYear()+1,W=150,H=56,P=6,NM=['금전','애정','일·학업','건강'],CV=['--money','--love','--work','--health'];
- const X=k=>P+(W-2*P)*k/(R.length-1),Yv=v=>P+(100-Math.max(60,Math.min(100,v)))/40*(H-2*P);
- const cells=[0,1,2,3].map(ci=>{const a=R.map(r=>D(r[ci].mean)),best=a.indexOf(Math.max(...a)),p=a.map((v,k)=>[X(k),Yv(v)]);
-  const d=p.map((q,i)=>i?'C'+((p[i-1][0]+q[0])/2).toFixed(1)+','+p[i-1][1].toFixed(1)+' '+((p[i-1][0]+q[0])/2).toFixed(1)+','+q[1].toFixed(1)+' '+q[0].toFixed(1)+','+q[1].toFixed(1):'M'+q[0].toFixed(1)+','+q[1].toFixed(1)).join(' ');
-  return '<div class="ty-cell"><div class="ty-head"><b>'+NM[ci]+'</b><span>'+(y0+best)+'년</span></div><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+NM[ci]+' 10년 흐름, '+(y0+best)+'년이 가장 밝아요"><line x1="'+P+'" x2="'+(W-P)+'" y1="'+Yv(80).toFixed(1)+'" y2="'+Yv(80).toFixed(1)+'" class="ty-mid"/><path d="'+d+'" fill="none" stroke="var('+CV[ci]+')" stroke-width="2.6" stroke-linecap="round"/><circle cx="'+p[best][0].toFixed(1)+'" cy="'+p[best][1].toFixed(1)+'" r="4.5" fill="var('+CV[ci]+')"/></svg></div>'}).join('');
- return '<section class="ty-mini" aria-labelledby="tyMiniTitle"><p class="ty-eyebrow">앞으로 10년 한눈에</p><h3 id="tyMiniTitle">분야마다 가장 밝은 해</h3><div class="ty-grid">'+cells+'</div><div class="ty-foot"><span>'+y0+'년~'+(y0+R.length-1)+'년</span><button type="button" class="ty-more" data-goto-flow>자세히 보기 →</button></div></section>'}
-function foldProse(html,keep){const ps=String(html).match(/<p>[\s\S]*?<\/p>/g)||[];if(ps.length<=keep)return html;return ps.slice(0,keep).join('')+'<details class="prose-more"><summary>더 읽기</summary>'+ps.slice(keep).join('')+'</details>'}
+/* 2026-11-12 결과 홈 정리: '지나온 날'은 접어 둔다. */
 function foldPast(html){return String(html).replace('<section class="past-reading"><h3 class="res-h">당신이 지나온 날에 대한 해석</h3>','<details class="past-reading past-fold"><summary class="res-h">당신이 지나온 날 돌아보기</summary>').replace(/<\/section>\s*$/,'</details>')}
-document.addEventListener('click',e=>{if(!e.target.closest('[data-goto-flow]'))return;const t=document.getElementById('tb-flow');if(!t)return;t.click();const nav=document.querySelector('.res-nav')||t;window.scrollTo({top:Math.max(0,nav.getBoundingClientRect().top+scrollY-70),behavior:reduceM?'auto':'smooth'})});
 function renderResult(){const ch=CH,name=ch.inp.name;
   const wn=$("whoName");wn.textContent=name||"당신의";$("whoSfx").textContent=name?"님의":"";wn.classList.toggle("noname",!name);
   wn.setAttribute("role","button");wn.setAttribute("tabindex","0");wn.title=name?"눌러서 내 정보 수정":"눌러서 이름 입력"
@@ -1958,7 +1948,7 @@ function rChart(){const S=R.map(r=>r.map(c=>D(c.mean))),y0=new Date().getFullYea
 
 function reportSummary(ch){const tags=reportTags(ch),b=bestCell(),d=ch.stems.d,dom=ch.cnt.indexOf(Math.max(...ch.cnt));const miss=ch.cnt.map((v,i)=>v?null:ELK[i]).filter(Boolean);
   const kw=tags.slice(0,3).map(t=>`<div><b>${RTAG[t.k].kw}</b><span>${RTAG[t.k].s}</span></div>`).join("");
-  const ag=tags.filter(t=>t.n>=2).slice(0,4);const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><span>${J(t.ev.join(", "),"이","가")} ${t.ev.length>1?"모두 같은 이야기를 해요":"이렇게 말해요"}.</span><small>${t.sys.join(" · ")}</small></div></li>`).join("");
+  const ag=tags.filter(t=>t.n>=2).slice(0,4);const agl=(ag.length?ag:tags.slice(0,3)).map(t=>`<li><span class="dots" role="img" aria-label="5개 중 ${t.n}개 일치">${[0,1,2,3,4].map(i=>`<i${i<t.n?' class="on"':""}></i>`).join("")}</span><div><b>${RTAG[t.k].t}</b><span>${J(t.ev.join(", "),"이","가")} ${t.ev.length>1?"모두 같은 이야기를 해요":"이렇게 말해요"}.</span><small>${t.sys.join(" · ")}</small></div></li>`).join("");
   const y0=new Date().getFullYear();
   const best=CATS.map((c,ci)=>{let bi=0;R.forEach((r,hi)=>{if(D(r[ci].mean)>D(R[bi][ci].mean))bi=hi});const sum=plain(catHorizon(ci,bi).sum).split(" · ")[0];
     return `<tr><td><span class="rc" style="color:var(--${c.k})">${SHORT[ci]}</span></td><td class="num">${y0+HZ[bi].off} · ${D(R[bi][ci].mean)}점</td><td>${sum}</td></tr>`}).join("");
@@ -4284,7 +4274,7 @@ applyGraphLock();
 
 fillDays();showPlace();syncSel();
 try{localStorage.removeItem("fate-input")}catch(_){}
-$("askbox").open=true;document.body.classList.add("fresh");$("whoSum").innerHTML="<span>입력해 주세요</span>";
+document.body.classList.add("fresh");$("whoSum").innerHTML="<span>내 정보 입력하기</span>";
 /* 카카오 로그인 + 명시적으로 저장한 내 출생 정보. 현재 거주지는 수집하지 않는다. */
 let accountToken=lsGet('oracle-session')||'',accountUser=null,accountBusy=false,formVersion=0,accountChecking=!!accountToken;
 const accountStatus=text=>{$('accountStatus').textContent=text};
