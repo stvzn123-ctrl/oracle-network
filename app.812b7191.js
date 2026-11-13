@@ -3026,7 +3026,7 @@ function narrativeMoney(c) {
   const phase = cuts.map((g, i) => fill(MPHASE[i === hiI ? "up" : i === loI && hiI !== loI ? "down" : "mid"][(i + seed) % 2],
     { a: g[0].y, b: g[g.length - 1].y, c: g[0].age, d: g[g.length - 1].age }));
   const shape = av.length < 3 ? "" : hiI === 2 && loI === 0 ? "rise" : hiI === 0 && loI === 2 ? "fall" : loI === 1 ? "valley" : hiI === 1 ? "peak" : hiI === 2 ? "rise" : "fall";
-  out.push({ kind: "timing", title: "앞으로 10년, 돈의 큰 그림", lead: "",
+  out.push({ kind: "timing", title: "돈을 키울 때와 지킬 때", lead: "",
     paras: [shape ? F(MSHAPE[shape]) : "", ...phase, "해마다의 점수와 그해에 할 일은 뒤의 '앞으로 10년, 연도별 운명'에서 이어서 짚어 드릴게요."].filter(Boolean),
     action: "가계부나 메모장 맨 위에 세 구간의 연도를 적고, 구간마다 '키우기·넓히기·지키기' 중 하나를 써 두세요.",
     basis: c.basis.timing });
