@@ -4112,7 +4112,7 @@ async function startCheckout(key){
  btns.forEach(b=>b.disabled=true);st.textContent='결제창을 준비하고 있어요…';
  try{
   const [o]=await Promise.all([accountAPI('/pay/start',{key}),loadPayApp()]);
-  try{sessionStorage.setItem('oracle-paying',JSON.stringify({o:o.orderId,k:key,t:Date.now()}))}catch(_){}
+  try{sessionStorage.setItem('oracle-paying',JSON.stringify({o:o.orderId,k:key,p:o.price,t:Date.now()}))}catch(_){}try{window.track&&track('begin_checkout',{character_type:window.oracleCharType?oracleCharType():'',value:Number(o.price)||0,currency:'KRW',report_key:key})}catch(_){}
   PayApp.setDefault('userid',o.userid);PayApp.setDefault('shopname',o.shopname);PayApp.setTarget('_self');
   PayApp.payrequest({goodname:o.goodname,price:String(o.price),var1:o.orderId,feedbackurl:o.feedbackurl,checkretry:'y',smsuse:'n',redirectpay:'1',returnurl:o.returnurl,redirect:'self'});
  }catch(e){st.textContent=e?.message==='payapp'?'결제창을 불러오지 못했어요. 잠시 뒤 다시 시도해 주세요.':'결제를 시작하지 못했어요. '+(e?.message||'잠시 뒤 다시 시도해 주세요.')}
@@ -4126,7 +4126,7 @@ async function paymentReturnCheck(){
  if(!accountUser)return;
  accountNotice('결제를 확인하고 있어요…');
  for(let i=0;i<10;i++){
-  try{const a=await accountAPI('/access');if(a.reports.includes(saved.k)||a.reports.includes('all')){try{sessionStorage.removeItem('oracle-paying')}catch(_){}accountNotice('결제가 완료됐어요! 리포트 버튼을 누르면 바로 열려요.');return}}catch(_){}
+  try{const a=await accountAPI('/access');if(a.reports.includes(saved.k)||a.reports.includes('all')){try{sessionStorage.removeItem('oracle-paying')}catch(_){}try{const tx=String(saved.o||''),done=JSON.parse(localStorage.getItem('oracle-tx-sent')||'[]');if(tx&&!done.includes(tx)&&window.track){track('purchase',{character_type:window.oracleCharType?oracleCharType():'',value:Number(saved.p)||0,currency:'KRW',transaction_id:tx,report_key:saved.k});done.push(tx);localStorage.setItem('oracle-tx-sent',JSON.stringify(done.slice(-50)))}}catch(_){}accountNotice('결제가 완료됐어요! 리포트 버튼을 누르면 바로 열려요.');return}}catch(_){}
   await new Promise(r=>setTimeout(r,2000));
  }
  if(paid)accountNotice('결제 확인이 늦어지고 있어요. 잠시 뒤 리포트 버튼을 다시 눌러 주세요.');else{try{sessionStorage.removeItem('oracle-paying')}catch(_){}accountNotice('')}
@@ -4654,7 +4654,7 @@ async function cmpMakeLink(btn){
  if(!requireSavedProfile())return;
  const out=btn.closest('.cmp-form').querySelector('.cmp-pair');btn.disabled=true;
  try{
-  const d=await accountAPI('/pair',{kind:CMPKIND}),url=pairUrl(d.code);
+  const d=await accountAPI('/pair',{kind:CMPKIND}),url=pairUrl(d.code);try{window.track&&track('create_invite_link',{character_type:window.oracleCharType?oracleCharType():'',source_page:CMPKIND||'match'})}catch(_){}
   out.innerHTML='<p class="cmp-note">아래 링크를 상대방에게 보내주세요. 상대방이 카카오 로그인 후 출생 정보를 저장하면 이 화면에 자동으로 입력돼요. 참여하면 서로의 출생 정보와 궁합이 공유돼요.</p><p class="cmp-link"><input type="text" readonly value="'+topicEsc(url)+'" aria-label="입력 요청 링크"></p><button type="button" data-pcopy>링크 복사</button> <button type="button" data-pcheck="'+d.code+'">입력 확인하기</button><p class="cmp-priv cmp-pair-msg" aria-live="polite">상대방의 입력을 기다리고 있어요…</p>';
   out.querySelector('[data-pcopy]').onclick=async()=>{const field=out.querySelector('input');try{await navigator.clipboard.writeText(url);out.querySelector('.cmp-pair-msg').textContent='링크를 복사했어요. 상대방에게 보내주세요.'}catch(_){field.focus();field.select();out.querySelector('.cmp-pair-msg').textContent='링크를 선택했어요. 직접 복사해 주세요.'}};
   cmpRemember(d.code);cmpWatch(d.code);

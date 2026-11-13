@@ -1,3 +1,16 @@
+/* 2026-11-13 공통 이벤트 헬퍼: GA4 + Clarity(녹화 필터용). 개인정보(이름·생년월일 등)는 넣지 않는다. */
+window.track=function(name,params){params=params||{};try{if(window.gtag)gtag('event',name,params)}catch(_){}
+ try{if(window.clarity){clarity('event',name);Object.keys(params).forEach(function(k){clarity('set',k,String(params[k]))})}}catch(_){}};
+/* 캐릭터 이름(36종 중 하나, 개인정보 아님). 결과 전이면 빈 값 */
+window.oracleCharType=function(){var h=document.querySelector('.destiny-character h2');return h?h.textContent.trim().slice(0,30):''};
+(function(){
+ /* view_paywall: 결제 화면이 열릴 때마다 1번(열린 상태에서 다시 그려져도 다시 보내지 않음) */
+ function src(){try{return typeof purchaseReportKey!=='undefined'&&purchaseReportKey||''}catch(_){return ''}}
+ function hook(){var d=document.getElementById('reportPurchase');if(!d){return}var was=d.open;
+  new MutationObserver(function(){if(d.open&&!was){track('view_paywall',{character_type:oracleCharType(),source_page:src()})}was=d.open}).observe(d,{attributes:true,attributeFilter:['open']})}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hook);else hook();
+ document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('#reportCheckoutAll'))track('click_unlock_all',{character_type:oracleCharType(),source_page:src()})},true);
+})();
 // 방문 분석: Microsoft Clarity(히트맵·세션 녹화) + Google Analytics 4(방문·체류시간·유입).
 // 입력값(이름·생년월일 등)은 보내지 않는다. 클릭 이벤트에는 버튼 문구/ID만 담는다.
 (function () {

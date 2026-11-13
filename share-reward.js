@@ -10,7 +10,7 @@ const api=(p,b)=>{try{return accountAPI(p,b)}catch(e){return Promise.reject(e)}}
 let state=null;
 function toast(msg){let t=document.getElementById('srToast');if(!t){t=document.createElement('div');t.id='srToast';t.className='sr-toast';t.setAttribute('role','status');document.body.append(t)}t.textContent=msg;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),4200)}
 async function claim(reason){const r=await api('/reward/claim',{reason});state=r;if(r.first)toast(reason==='invited'?'친구가 보낸 링크로 들어와서, 주제 리포트 1개를 무료로 볼 수 있어요.':'공유해 줘서 고마워요! 주제 리포트 1개를 무료로 볼 수 있어요.');return r}
-window.oracleShared=function(method){try{window.gtag&&gtag('event','share_done',{method:method||''})}catch(_){}
+window.oracleShared=function(method){try{window.track&&track('share_done',{method:method||'',character_type:window.oracleCharType?oracleCharType():''})}catch(_){}
  if(document.body.classList.contains('demo'))return;
  const u=user();if(u&&u.profile){claim('share').catch(()=>{LS('oracle-share-pending','1')});return}
  LS('oracle-share-pending','1');toast('로그인하고 내 정보를 저장하면 주제 리포트 1개를 무료로 볼 수 있어요.')};
@@ -31,5 +31,5 @@ async function paint(key,trigger){const box=document.querySelector('#reportPurch
  const b=document.createElement('button');b.type='button';b.className='sr-free';b.innerHTML='공유 혜택으로 <b>무료로 열기</b>';
  const note=document.createElement('p');note.className='sr-note';note.textContent='공유 혜택은 한 번, 주제 리포트 1개에 쓸 수 있어요.';
  const wrap=document.createElement('div');wrap.className='sr-free';wrap.append(b,note);box.prepend(wrap);
- b.addEventListener('click',async()=>{b.disabled=true;try{await api('/reward/use',{key});state={...state,available:false,used:key};const d=document.getElementById('reportPurchase');if(d&&d.open)d.close();try{window.gtag&&gtag('event','share_reward_used',{report:key})}catch(_){}requestReport(key,trigger)}catch(e){b.disabled=false;toast('무료로 열지 못했어요. 잠시 뒤 다시 시도해 주세요.')}})}
+ b.addEventListener('click',async()=>{b.disabled=true;try{await api('/reward/use',{key});state={...state,available:false,used:key};const d=document.getElementById('reportPurchase');if(d&&d.open)d.close();try{window.track&&track('share_reward_used',{report_key:key})}catch(_){}requestReport(key,trigger)}catch(e){b.disabled=false;toast('무료로 열지 못했어요. 잠시 뒤 다시 시도해 주세요.')}})}
 })();

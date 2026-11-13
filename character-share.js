@@ -3,7 +3,7 @@
    분석: GA4 'share_character'·Clarity 이벤트(사이트 도메인에서만 수집됨). */
 (()=>{"use strict";
 const W=1080,H=1920,INK='#4A352B',GOLD='#8A5A1E',SUB='#7a6253',LINE='#ecd6a8';
-const track=(n,p)=>{try{window.gtag&&gtag('event',n,p||{})}catch(_){}try{window.clarity&&clarity('event',n)}catch(_){}};
+const track=(n,p)=>{try{window.track&&window.track(n,p||{})}catch(_){}};
 function inject(sec){if(!sec||sec.querySelector('.cs-share'))return;const at=sec.querySelector('.character-tags')||sec.querySelector('.character-description');if(!at)return;
  const box=document.createElement('div');box.className='cs-share';
  box.innerHTML='<button type="button" class="cs-btn">이미지로 저장·공유하기</button><label class="cs-name"><input type="checkbox" checked> 이름 넣기</label><p class="cs-status" role="status"></p>';
