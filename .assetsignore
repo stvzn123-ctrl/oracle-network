@@ -1,0 +1,14 @@
+.git
+.github
+.claude
+.wrangler
+node_modules
+server
+*.md
+AGENTS.md
+scan.json
+wrangler.jsonc
+.assetsignore
+.gitignore
+.nojekyll
+CNAME
