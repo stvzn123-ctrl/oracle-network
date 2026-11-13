@@ -21,6 +21,7 @@ async function draw(sec,withName){
  const desc=descEl?descEl.innerHTML.split(/<br\s*\/?>/i).map(s=>s.replace(/<[^>]+>/g,'').trim()).filter(Boolean).map(s=>s.replace(/당신/g,name?name+'님':'나')):[];
  const art=sec.querySelector('.character-art img')||sec.querySelector('.character-art');
  const src=art?(art.tagName==='IMG'?art.src:(getComputedStyle(art).backgroundImage.match(/url\("?([^")]+)"?\)/)||[])[1]):null;
+ if(!document.querySelector('link[data-jua]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Jua&display=swap';l.dataset.jua='1';document.head.append(l);await new Promise(r=>{l.onload=r;l.onerror=r;setTimeout(r,2500)})}
  const allText='운명탐정입니다님은나는'+name+title+desc.join('')+'사주·서양점성술베딕수비학마야력다섯가지점술로읽은운명캐릭터fatedog.co.kr';
  try{await Promise.all([document.fonts.load('100px Jua',allText),document.fonts.load('600 40px "IBM Plex Sans KR"',allText),document.fonts.load('500 40px "IBM Plex Sans KR"',allText),document.fonts.load('400 30px "IBM Plex Sans KR"',allText)])}catch(_){}
  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
