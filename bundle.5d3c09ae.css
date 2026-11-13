@@ -2888,3 +2888,26 @@ p{text-wrap:pretty}
 /* 2026-11-13: '함께 살펴볼 점' 위아래 공백 줄임(답 카드 아래 여백 20px이 이미 있음) */
 #result .topic-candid{margin:4px 0 16px!important}
 #result .topic-candid+.topic-offer{margin-top:0!important}
+
+/* ==== purchase.css ==== */
+/* 2026-11-13 결제 화면 가독성(#reportPurchase 안에서만). 목차는 주제 화면에 이미 보이므로 접어 두고, 화면에는 제목·가격·결제 버튼만 먼저 보이게 한다. */
+#reportPurchase.report-purchase{max-width:420px;padding:22px 22px 18px;max-height:calc(100dvh - 120px);margin-top:auto;margin-bottom:calc(var(--tabbar-h,60px) + 24px)}
+#reportPurchase .eyebrow{display:block;font-size:12px;line-height:1.35;color:var(--gold-ink)}
+#reportPurchase h2{font-size:21px;line-height:1.35;margin:4px 0 16px}
+#reportPurchase #reportPurchaseClose{float:right;min-height:36px;padding:0 12px;font-size:14px;line-height:1;margin:-4px -4px 0 12px}
+#reportPurchase .purchase-toc{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+#reportPurchase .purchase-toc summary{display:flex;align-items:center;gap:6px;min-height:44px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;list-style:none}
+#reportPurchase .purchase-toc summary::-webkit-details-marker{display:none}
+#reportPurchase .purchase-toc summary::after{content:"";margin-left:auto;width:8px;height:8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .15s}
+#reportPurchase .purchase-toc[open] summary::after{transform:rotate(225deg) translateY(-2px)}
+#reportPurchase .purchase-toc ul{margin:0 0 12px;padding-left:20px;font-size:14px;line-height:1.6;color:var(--fg)}
+#reportPurchase .purchase-price{align-items:baseline;border-top:0;margin-top:16px;padding-top:0}
+#reportPurchase .purchase-price span{font-size:14px;color:var(--muted)}
+#reportPurchase .purchase-price strong{font-size:21px}
+#reportPurchase #purchaseStatus{margin:6px 0 16px;font-size:14px;line-height:1.5;color:var(--muted)}
+#reportPurchase .purchase-buttons{display:grid;gap:8px}
+#reportPurchase #reportCheckout{margin-top:0}
+#reportPurchase #reportCheckoutAll small{color:rgba(255,255,255,.85)!important;font-size:14px}
+#reportPurchase .fine{margin:12px 0 0;font-size:12px;line-height:1.5;color:var(--muted)}
+@media(prefers-reduced-motion:reduce){#reportPurchase .purchase-toc summary::after{transition:none}}
+#reportPurchase h2:focus{outline:none}

@@ -421,3 +421,4 @@
 - 2026-11-13 결제 목차: report-toc.js는 이제 approvedReportHTML로 실제 리포트를 그려 그 목차(.rv3-toc)를 그대로 읽는다(장 나누기·추가까지 동일, 이름 포함 '○○님에게 전하는 이야기').
 - 2026-11-13 금전 리포트 'timing' 장은 '돈을 키울 때와 지킬 때'로 바꿨다: 해마다 짚는 내용은 'yearly' 장과 겹쳐서, 10년을 세 구간(1~3·4~6·7~10년)으로 묶어 평균 1위 구간 '키우기'(MPHASE.up), 최하위 '지키기'(down), 나머지 '넓히기'(mid) + 전체 모양(MSHAPE: rise/fall/valley/peak). 입력은 `moneyAll`(Y4[0] 연도·나이·점수). 앱·server/narrative.js·worker.js 동일, worker.single.js 다시 만듦(서버 반영은 wrangler deploy 필요).
 - 2026-11-13 디자인 점검(ui-polish.css: 탭바 글자·버튼 둥글기·결제 화면 디자인)은 사용자 요청으로 되돌렸다. 결제 목차·금전 3장 수정은 유지.
+- 2026-11-13 결제 화면 가독성(`purchase.css`, #reportPurchase 안에서만, build-css ORDER 마지막): 목차는 주제 화면에 이미 보이므로 '리포트 목차 보기 (N장)' 접기(`.purchase-toc`, 열 때마다 닫힘)로 두고, 제목·가격·결제 버튼이 한 화면에 보이게 했다. 창은 하단 탭바 위에 붙고, 닫기 36px, '모든 리포트' 글자 흰색 85%, 열릴 때 초점은 제목. 버튼 모양·색은 그대로.
