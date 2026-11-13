@@ -1,0 +1,50 @@
+<style>
+/* 2026-11-13 주제 페이지: 사이트 묶음 CSS + 결과 화면 주제 패널과 같은 값(글꼴 IBM Plex Sans KR, 제목 18px 600 --gold-ink, 상자 흰 바탕·둥글기 14px·선 rgba(74,53,43,.14)) */
+body.tp{background:var(--bg,#FFF9F4);word-break:keep-all;overflow-wrap:anywhere}
+.tp .brandbar{position:sticky;top:0}
+.tp .brandbar a.tp-back{display:inline-grid;place-items:center;width:40px;height:40px;color:inherit}
+.tp main{max-width:640px;margin:0 auto;padding:20px 20px 32px}
+.tp .crumb{margin:0 0 4px;font-size:12px;color:var(--muted)}
+.tp .crumb a{color:inherit}
+.tp .tp-label{margin:0;font-size:14px;font-weight:600;color:var(--gold-ink)}
+.tp h1{margin:2px 0 0;font-size:21px;line-height:1.45;font-weight:600;color:var(--gold-ink)}
+.tp .lead{margin:8px 0 20px;font-size:16px;line-height:1.6;color:var(--fg)}
+.tp .tp-cta{display:flex;align-items:center;justify-content:center;width:100%;min-height:54px;border-radius:999px;background:linear-gradient(160deg,rgba(250,220,157,.96),rgba(232,185,100,.87));border:1px solid rgba(255,249,225,.95);color:#4a352b;font-size:17px;font-weight:600;text-decoration:none;box-shadow:0 8px 20px rgba(232,185,100,.28)}
+.tp .tp-note{margin:8px 0 0;text-align:center;font-size:14px;color:var(--muted)}
+.tp .box{margin:20px 0 0;padding:20px 16px;border-radius:14px;background:#fff;border:1px solid rgba(74,53,43,.14)}
+.tp h2{margin:32px 0 12px;font-size:18px;font-weight:600;color:var(--gold-ink)}
+.tp .box h2{margin:0 0 8px}
+.tp .ex{text-align:center}
+.tp .ex-tag{display:inline-block;padding:2px 10px;border-radius:999px;background:#fff4dc;font-size:12px;font-weight:600;color:var(--gold-ink)}
+.tp .pair{display:flex;justify-content:center;align-items:flex-end;gap:4px;margin:8px 0 0}
+.tp .pair img{width:110px;height:110px;object-fit:contain}
+.tp .pair span{padding-bottom:36px;font-size:24px;color:var(--gold-ink)}
+.tp .ex h3{margin:4px 0 0;font-size:18px;font-weight:600}
+.tp .ex .score{margin:2px 0 0;font-size:14px;color:var(--muted)}
+.tp .ex ul{margin:12px 0 0;padding:0;list-style:none;text-align:left}
+.tp .ex li{padding:10px 0;border-top:1px solid rgba(74,53,43,.1);font-size:16px}
+.tp .ex li b{display:block;font-weight:600}
+.tp .ex li small{font-size:14px;color:var(--muted)}
+.tp .ex-cap{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.tp table{width:100%;border-collapse:collapse;font-size:14px}
+.tp th,.tp td{padding:10px 8px;border-bottom:1px solid rgba(74,53,43,.1);text-align:left;vertical-align:top}
+.tp th{width:28%;font-weight:600;color:var(--gold-ink)}
+.tp tr:last-child th,.tp tr:last-child td{border-bottom:0}
+.tp .free{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tp .free .box{margin:0;padding:16px}
+.tp .free h3{margin:0 0 6px;font-size:16px;font-weight:600}
+.tp .free ul{margin:0;padding-left:18px;font-size:14px;color:var(--muted)}
+.tp .faq details{border-bottom:1px solid rgba(74,53,43,.1)}
+.tp .faq details:last-child{border-bottom:0}
+.tp .faq summary{display:flex;align-items:center;gap:8px;min-height:48px;cursor:pointer;font-weight:600;color:var(--gold-ink);list-style:none}
+.tp .faq summary::-webkit-details-marker{display:none}
+.tp .faq summary::before{content:"▶";font-size:11px;transition:transform .15s}
+.tp .faq details[open] summary::before{transform:rotate(90deg)}
+.tp .faq p{margin:0 0 14px;font-size:16px;line-height:1.6}
+.tp .more{display:flex;flex-wrap:wrap;gap:8px}
+.tp .more a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid rgba(74,53,43,.14);background:#fff;color:var(--fg);font-size:14px;text-decoration:none}
+.tp .bottom-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:44px;border-radius:17px;color:var(--muted);text-decoration:none}
+.tp .bottom-nav a[aria-current]{background:rgba(255,255,255,.94);color:var(--gold-ink)}
+@media(max-width:400px){.tp .free{grid-template-columns:1fr}.tp .pair img{width:96px;height:96px}}
+@media(prefers-reduced-motion:reduce){.tp .faq summary::before{transition:none}}
+</style>
