@@ -17,7 +17,7 @@ function toc(key){try{
   if(!list.length)list=(data.sections||[]).filter(s=>!['limit','fun'].includes(s.kind)).map(s=>clean(s.question||s.title)).filter(Boolean);
   cache.set(id,list.filter((t,i)=>list.indexOf(t)===i))}
  return cache.get(id)}catch(_){return null}}
-function fill(ul,list){ul.replaceChildren(...list.map((t,i)=>{const li=document.createElement('li'),n=document.createElement('b');n.textContent=String(i+1).padStart(2,'0');li.append(n,document.createTextNode(t));return li}));ul.classList.add('toc-real')}
+function fill(ul,list){ul.replaceChildren(...list.map(t=>{const li=document.createElement('li');li.textContent=t;return li}));ul.classList.add('toc-real')}
 function patchOffers(root){(root.querySelectorAll?root:document).querySelectorAll('.topic-offer').forEach(sec=>{const b=sec.querySelector('[data-buy]'),ul=sec.querySelector('ul');if(!b||!ul||ul.dataset.toc===b.dataset.buy+(CH&&CH.inp&&CH.inp.date))return;const list=toc(b.dataset.buy);if(!list||!list.length)return;fill(ul,list);ul.dataset.toc=b.dataset.buy+(CH&&CH.inp&&CH.inp.date);const h=sec.querySelector('h4');if(h&&!/목차/.test(h.textContent))h.textContent=h.textContent.replace(/에서 볼 내용$/,' 목차').replace(/ 리포트$/,' 리포트 목차')})}
 const orig=window.showReportPurchase;
 if(typeof orig==='function')window.showReportPurchase=function(key){const r=orig.apply(this,arguments);try{const list=key==='comprehensive'?toc('comprehensive'):toc(key),ul=document.getElementById('purchaseContents');if(list&&list.length&&ul)fill(ul,list)}catch(_){}return r};
