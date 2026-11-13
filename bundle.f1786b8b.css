@@ -2960,3 +2960,12 @@ p{text-wrap:pretty}
 @keyframes csSpark{0%{opacity:0;transform:scale(.6)}40%{opacity:1}100%{opacity:0;transform:scale(1.35)}}
 @keyframes csPulse{0%{box-shadow:0 0 0 0 rgba(232,185,100,.55)}100%{box-shadow:0 0 0 14px rgba(232,185,100,0)}}
 @media(prefers-reduced-motion:reduce){.destiny-character.cs-reveal,.destiny-character.cs-reveal *{animation:none!important}.destiny-character.cs-reveal::after{display:none}}
+/* 하단 사업자 정보·수집 안내 */
+.site-legal .sl-biz{margin:8px 0 0;line-height:1.7}
+.site-legal .sl-biz a{margin-left:6px;text-decoration:underline}
+.site-legal .sl-more{margin-top:8px}
+.site-legal .sl-more summary{cursor:pointer;min-height:36px;display:flex;align-items:center;list-style:none}
+.site-legal .sl-more summary::-webkit-details-marker{display:none}
+.site-legal .sl-more summary::after{content:"⌄";margin-left:6px}
+.site-legal .sl-more p{margin:4px 0 0}
+.site-legal .sl-more button{min-height:0;padding:0;text-decoration:underline}

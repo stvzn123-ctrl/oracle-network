@@ -1,3 +1,8 @@
+/* 2026-11-13 Clarity 화면 기록에서 개인 정보가 보이는 영역은 가린다(입력칸·결과·리포트·내 정보·궁합 상대). */
+(function(){var SEL='#askbox,#result,#report,#accountSheet,#savedRecordsPanel,#guestProfile,.cmp-wrap,#tab-match,#loginSaveDialog,#pairConsentDialog,.demo-note';
+ function m(){document.querySelectorAll(SEL).forEach(function(e){if(!e.hasAttribute('data-clarity-mask'))e.setAttribute('data-clarity-mask','true')})}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',m);else m();
+ var q=0;try{new MutationObserver(function(){if(q)return;q=setTimeout(function(){q=0;m()},500)}).observe(document.body||document.documentElement,{childList:true,subtree:true})}catch(_){}})();
 /* 2026-11-13 공통 이벤트 헬퍼: GA4 + Clarity(녹화 필터용). 개인정보(이름·생년월일 등)는 넣지 않는다. */
 window.track=function(name,params){params=params||{};try{if(window.gtag)gtag('event',name,params)}catch(_){}
  try{if(window.clarity){clarity('event',name);Object.keys(params).forEach(function(k){clarity('set',k,String(params[k]))})}}catch(_){}};
