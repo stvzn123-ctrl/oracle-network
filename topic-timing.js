@@ -39,7 +39,7 @@ ${chart(S,c.name,c.col)}
 <p class="tt-note">${c.note}</p>
 </section>`}
 function inject(h,ch,k){const c=CFG[k];if(c&&typeof h==='string'){
- try{const box=timingHTML(ch,k);if(box){h=h.replace('</header>','</header>'+box);if(c.drop)h=h.replace(new RegExp('<article class="topic-answer"><h4>'+c.drop.source+'</h4>[^]*?</article>'),'')}}catch(_){}}
+ try{const box=timingHTML(ch,k);if(box){h=/<section class="spouse-preview"[^]*?<\/section>/.test(h)?h.replace(/(<section class="spouse-preview"[^]*?<\/section>)/,'$1'+box):h.replace('</header>','</header>'+box);if(c.drop)h=h.replace(new RegExp('<article class="topic-answer"><h4>'+c.drop.source+'</h4>[^]*?</article>'),'')}}catch(_){}}
  return h}
 window.topicHTML=function(ch,k){return inject(orig.apply(this,arguments),ch,k)};
 /* 금전 탭은 moneyAllHTML로 그린다. */

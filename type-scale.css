@@ -25,3 +25,6 @@ p{text-wrap:pretty}
 #result .topic-candid{margin:var(--gap-section) 0!important;padding:var(--pad-card)!important;border:0!important;border-radius:16px;background:var(--field,#f6eee4)!important}
 #result .topic-intro h3{margin:0!important}
 #result .topic-intro p{margin:var(--gap-title-body) 0 0!important}
+/* 2026-11-13: '함께 살펴볼 점' 위아래 공백 줄임(답 카드 아래 여백 20px이 이미 있음) */
+#result .topic-candid{margin:4px 0 16px!important}
+#result .topic-candid+.topic-offer{margin-top:0!important}
