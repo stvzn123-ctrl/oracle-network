@@ -23,6 +23,8 @@
 .site-legal .sl-more{margin-top:8px}
 .site-legal .sl-more summary{cursor:pointer;min-height:36px;display:flex;align-items:center;list-style:none}
 .site-legal .sl-more summary::-webkit-details-marker{display:none}
-.site-legal .sl-more summary::after{content:"⌄";margin-left:6px}
+.site-legal .sl-more summary::before{content:"▸";margin-right:6px;transition:transform .15s}
+.site-legal .sl-more[open] summary::before{transform:rotate(90deg)}
+.site-legal .sl-biz-d summary{font-weight:600}
 .site-legal .sl-more p{margin:4px 0 0}
 .site-legal .sl-more button{min-height:0;padding:0;text-decoration:underline}

@@ -4,10 +4,10 @@
 (()=>{"use strict";
 const W=1080,H=1920,INK='#4A352B',GOLD='#8A5A1E',SUB='#7a6253',LINE='#ecd6a8';
 const track=(n,p)=>{try{window.track&&window.track(n,p||{})}catch(_){}};
-function inject(sec){if(!sec||sec.querySelector('.cs-share'))return;const at=sec.querySelector('.character-tags')||sec.querySelector('.character-description');if(!at)return;
+function inject(sec){if(!sec||sec.querySelector('.cs-share'))return;
  const box=document.createElement('div');box.className='cs-share';
- box.innerHTML='<button type="button" class="cs-btn">이미지로 저장·공유하기</button><label class="cs-name"><input type="checkbox" checked> 이름 넣기</label><p class="cs-status" role="status"></p>';
- at.after(box)}
+ box.innerHTML='<button type="button" class="cs-btn" aria-label="캐릭터 이미지 저장·공유" title="이미지 저장·공유"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg><span>공유</span></button><p class="cs-status" role="status"></p>';
+ sec.prepend(box)}
 new MutationObserver(ms=>{document.querySelectorAll('.destiny-character').forEach(inject);if(document.body.classList.contains('demo'))return;for(const m of ms)for(const n of m.addedNodes){const d=n.nodeType===1&&(n.matches('.destiny-character')?n:n.querySelector&&n.querySelector('.destiny-character'));if(d&&!d.dataset.revealed){d.dataset.revealed='1';d.classList.add('cs-reveal')}}}).observe(document.body,{childList:true,subtree:true});
 document.querySelectorAll('.destiny-character').forEach(inject);
 const img=src=>new Promise((ok,no)=>{const i=new Image();i.decoding='async';i.onload=()=>ok(i);i.onerror=no;i.src=src});
@@ -29,31 +29,31 @@ async function draw(sec,withName){
  /* 카드 상자 */
  const CX=70,CY=210,CW=W-140,CH2=1500;c.save();c.shadowColor='rgba(138,90,30,.14)';c.shadowBlur=60;c.shadowOffsetY=20;rr(c,CX,CY,CW,CH2,56);c.fillStyle='rgba(255,255,255,.82)';c.fill();c.restore();rr(c,CX,CY,CW,CH2,56);c.lineWidth=3;c.strokeStyle=LINE;c.stroke();
  c.textAlign='center';c.textBaseline='alphabetic';
- /* 운명탐정 꼬리표 */
  let mascot=null;try{mascot=await img('img/mascot.webp')}catch(_){}
- c.font='42px Jua, sans-serif';const bw=c.measureText('운명탐정').width,pw=bw+(mascot?100:60),px=W/2-pw/2,py=280;
- rr(c,px,py,pw,86,43);c.fillStyle='#fff';c.fill();c.lineWidth=2.5;c.strokeStyle=LINE;c.stroke();
- if(mascot)c.drawImage(mascot,px+18,py+12,62,62);c.fillStyle=GOLD;c.textAlign='left';c.fillText('운명탐정',px+(mascot?88:30),py+58);c.textAlign='center';
+ const py=CY+40;
  /* 제목 */
- let y=py+86+90;c.fillStyle=SUB;c.font='600 44px "IBM Plex Sans KR", sans-serif';c.fillText(name?name+'님은':'나는',W/2,y);
+ let y=py+90;c.fillStyle=SUB;c.font='600 44px "IBM Plex Sans KR", sans-serif';c.fillText(name?name+'님은':'나는',W/2,y);
  y+=118;let fs=104;c.font=fs+'px Jua, sans-serif';const tail='입니다';
  const fit=()=>{c.font=fs+'px Jua, sans-serif';const a=c.measureText(title).width;c.font='600 44px "IBM Plex Sans KR", sans-serif';return a+12+c.measureText(tail).width};
  while(fit()>CW-100&&fs>60)fs-=4;
  const total=fit();c.font=fs+'px Jua, sans-serif';const tw=c.measureText(title).width,sx=W/2-total/2;
  c.textAlign='left';c.fillStyle=INK;c.fillText(title,sx,y);c.font='600 44px "IBM Plex Sans KR", sans-serif';c.fillStyle=SUB;c.fillText(tail,sx+tw+12,y);c.textAlign='center';
  /* 캐릭터 원 */
- const R=300,cy=y+70+R;c.save();c.shadowColor='rgba(138,90,30,.16)';c.shadowBlur=70;c.shadowOffsetY=24;c.beginPath();c.arc(W/2,cy,R,0,7);c.fillStyle='#fff';c.fill();c.restore();
+ const R=250,cy=y+80+R;c.save();c.shadowColor='rgba(138,90,30,.16)';c.shadowBlur=70;c.shadowOffsetY=24;c.beginPath();c.arc(W/2,cy,R,0,7);c.fillStyle='#fff';c.fill();c.restore();
  c.fillStyle='#e8b964';c.font='58px sans-serif';c.fillText('✦',W/2-R-30,cy-R+70);c.fillText('✦',W/2+R+20,cy+R-50);
- if(src){try{const im=await img(src),[bx,by,bw2,bh]=bbox(im),s=Math.min(460/bw2,460/bh);c.drawImage(im,bx,by,bw2,bh,W/2-bw2*s/2,cy-bh*s/2,bw2*s,bh*s)}catch(_){}}
+ if(src){try{const im=await img(src),[bx,by,bw2,bh]=bbox(im),s=Math.min(360/bw2,360/bh);c.drawImage(im,bx,by,bw2,bh,W/2-bw2*s/2,cy-bh*s/2,bw2*s,bh*s)}catch(_){}}
  /* 소개 */
  y=cy+R+84;c.fillStyle=INK;c.font='500 40px "IBM Plex Sans KR", sans-serif';
  for(const p of desc)for(const l of wrap(c,p,CW-120)){c.fillText(l,W/2,y);y+=62}
  /* 근거·링크 */
- const by2=Math.max(y+40,CY+CH2-150);c.fillStyle=SUB;c.font='600 30px "IBM Plex Sans KR", sans-serif';c.fillText('사주 · 서양 점성술 · 베딕 점성술 · 수비학 · 마야력',W/2,by2);
+ const by2=Math.max(y+40,CY+CH2-260);c.fillStyle=SUB;c.font='600 30px "IBM Plex Sans KR", sans-serif';c.fillText('사주 · 서양 점성술 · 베딕 점성술 · 수비학 · 마야력',W/2,by2);
  c.fillStyle='#8c7565';c.font='400 30px "IBM Plex Sans KR", sans-serif';c.fillText('다섯 가지 점술로 읽은 운명 캐릭터',W/2,by2+46);
+ /* 운명탐정 표시(상자 없이 마스코트 + 글자) */
+ c.font='58px Jua, sans-serif';const bwd=c.measureText('운명탐정').width,mw=mascot?96:0,gx=W/2-(bwd+mw+(mascot?16:0))/2,gy=by2+150;
+ if(mascot)c.drawImage(mascot,gx,gy-74,mw,mw);c.textAlign='left';c.fillStyle=GOLD;c.fillText('운명탐정',gx+mw+(mascot?16:0),gy);c.textAlign='center';
  c.fillStyle=GOLD;c.font='600 32px "IBM Plex Sans KR", sans-serif';c.fillText('fatedog.co.kr',W/2,CY+CH2+70);
  return new Promise(ok=>cv.toBlob(ok,'image/jpeg',.9))}
-document.addEventListener('click',async e=>{const b=e.target.closest('.cs-btn');if(!b)return;const sec=b.closest('.destiny-character'),st=sec.querySelector('.cs-status'),withName=!!sec.querySelector('.cs-name input')?.checked;
+document.addEventListener('click',async e=>{const b=e.target.closest('.cs-btn');if(!b)return;const sec=b.closest('.destiny-character'),st=sec.querySelector('.cs-status'),withName=true;
  b.disabled=true;st.textContent='이미지를 만들고 있어요…';
  try{const blob=await draw(sec,withName),title=(sec.querySelector('h2')||{}).textContent||'캐릭터',file=new File([blob],'운명탐정-'+title.replace(/\s+/g,'')+'.jpg',{type:'image/jpeg'});
   if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});st.textContent='공유했어요.';track('share_character',{method:'share',character:title});try{window.oracleShared&&oracleShared('character')}catch(_){}}catch(err){st.textContent=err&&err.name==='AbortError'?'':'공유하지 못했어요. 다시 시도해 주세요.'}}
