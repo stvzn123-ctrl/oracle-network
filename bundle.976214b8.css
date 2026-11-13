@@ -2972,3 +2972,4 @@ p{text-wrap:pretty}
 .site-legal .sl-biz-d summary{font-weight:600}
 .site-legal .sl-more p{margin:4px 0 0}
 .site-legal .sl-more button{min-height:0;padding:0;text-decoration:underline}
+[aria-busy="true"]{opacity:.6;cursor:progress}

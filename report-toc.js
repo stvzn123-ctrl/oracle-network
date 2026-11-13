@@ -23,6 +23,7 @@ const orig=window.showReportPurchase;
 if(typeof orig==='function')window.showReportPurchase=function(key){const r=orig.apply(this,arguments);try{const list=key==='comprehensive'?toc('comprehensive'):toc(key),ul=document.getElementById('purchaseContents');if(list&&list.length&&ul)fill(ul,list)}catch(_){}try{const ul=document.getElementById('purchaseContents'),c=document.getElementById('purchaseCount'),d=ul&&ul.closest('details');if(c&&ul)c.textContent=ul.children.length?'('+ul.children.length+'장)':'';if(d)d.open=false}catch(_){}return r};
 new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1&&(n.matches?.('.topic-offer')||n.querySelector?.('.topic-offer')))patchOffers(n.parentNode||document)}).observe(document.body,{childList:true,subtree:true});
 patchOffers(document);
+addEventListener('oracle-report-ready',()=>{cache.clear();patchOffers(document)});
 })();
 
 /* 2026-11-13: 결제 화면에서 '전부 열기'의 값어치를 실제 합계로 보여 준다(앵커링).

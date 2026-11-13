@@ -79,7 +79,7 @@
  }
  /* 리포트 미리보기는 종합 리포트 한 권을 만들어야 해서 무겁다(중간급 폰에서 약 0.4초+). 결과 화면을 먼저 그린 뒤 한가할 때 채운다. */
  const idle=window.requestIdleCallback?f=>requestIdleCallback(f,{timeout:1500}):f=>setTimeout(f,60);
- const previousRenderAll=renderAll;renderAll=function(){previousRenderAll();idle(()=>{if(!document.body.classList.contains('demo'))renderReportCTA()})};
+ const previousRenderAll=renderAll;renderAll=function(){previousRenderAll();idle(()=>{if(!document.body.classList.contains('demo'))(typeof ensureReport==='function'?ensureReport():Promise.resolve()).then(()=>{if(!document.body.classList.contains('demo'))renderReportCTA()},()=>{})})};
  // Summary and body share the same section model, rather than separate generated claims.
  const previousRich=buildRichReport;
  buildRichReport=function(ch,key){
