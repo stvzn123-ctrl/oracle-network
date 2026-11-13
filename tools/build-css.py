@@ -22,4 +22,9 @@ else:
         assert m,f
         s=s[:m.start()]+(tag if first else '')+s[m.end():];first=False
 open(p,'w',encoding='utf-8',newline='').write(s)
+# sample.html도 같은 묶음을 쓴다(2026-11-13)
+sp='sample.html'
+if os.path.exists(sp):
+    t=open(sp,encoding='utf-8').read();t2=re.sub(r'bundle\.[0-9a-f]+\.css',name,t)
+    if t2!=t:open(sp,'w',encoding='utf-8',newline='').write(t2)
 print(name,len(css)//1024,'KB')
