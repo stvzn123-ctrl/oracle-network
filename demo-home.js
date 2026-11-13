@@ -4,7 +4,7 @@
    - 사용자가 자기 정보로 run()을 하면 demo가 풀린다. 다시 fresh가 되면(정보 삭제 등) 예시를 다시 보여 준다.
    - 예시 계산은 저장하지 않는다(저장은 폼 제출·저장 버튼에서 폼 값으로만 한다). */
 (()=>{"use strict";
-const DEMO=Object.freeze({name:'운탐정',roman:'UN TAMJEONG',sex:'f',cal:'s',ly:1993,lm:6,ld:3,leap:false,date:'1993-06-03',time:'09:15',notime:false,relationship:'private',place:{name:'서울',lat:37.57,lon:126.98,tz:9,kr:true}});
+const DEMO=Object.freeze({name:'운탐정',roman:'UN TAMJEONG',sex:'f',cal:'s',ly:2021,lm:11,ld:22,leap:false,date:'2021-11-22',time:'09:15',notime:false,relationship:'private',place:{name:'서울',lat:37.57,lon:126.98,tz:9,kr:true}});
 const B=document.body,$=id=>document.getElementById(id),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isDemo=()=>B.classList.contains('demo');
 let busy=false;
