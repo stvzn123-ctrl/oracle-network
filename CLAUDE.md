@@ -390,3 +390,7 @@
 - `img/characters-v1.webp`(강아지 36종 시트), `img/main-character.webp`(첫 화면 메인 캐릭터 운탐이 = 21번 인연의 연결자), `img/penguins-v1/*.webp`(펭귄 18종, 예전 .jpg는 삭제)는 배경을 투명하게 땄다. 방법: 윤곽선을 6px 두껍게 해 틈을 막고 네 모서리에서 배경을 채운 뒤 5px 되돌려 알파로 씀(윤곽 바깥에 얇은 크림색 테두리가 남음). 그림을 새로 받으면 같은 방법으로 처리한다.
 
 - 2026-11-13: 예시 결과를 스크롤하는 동안 위에 고정 띠 '👀 예시 · 운탐정의 결과예요 [내 결과 보기 →]'(`demo-ui.js`/`demo-ui.css`, `body.dui-show`는 #result가 화면에 있을 때). `sample.html`의 #reportBody는 새 생일로 다시 만들었다(approvedReportHTML(buildRichReport(CH,'comprehensive'),'comprehensive',CH)).
+
+## 직업·학업 시기 미리보기 (2026-11-13, 사용자 요청)
+- `topic-timing.js`/`topic-timing.css`: 직업·학업 주제 화면 맨 위에 무료 상자 "언제 잘 될까?". `window.topicHTML`을 감싸 header 뒤에 넣는다. 10년 막대(R[i][2] → D(), 상위 2개 금색, 최저 해), 가장 좋은 해 2개(나이), 앞으로 12개월 중 밝은 달 3개(dayFortune(ch,date).sc[2], 3일 간격 평균), 다지기 좋은 해. 같은 내용의 답 카드("일이 가장 잘 풀리는 해는?"/"성과가 나는 해는?")는 지운다. 계산은 바꾸지 않는다.
+- oracle-api의 Cloudflare 자동 배포(Builds)는 꺼 두었다(2026-11-13 사고: 비밀값 없는 버전이 이어짐). 서버 수정 시 `server/`에서 직접 `wrangler deploy` 후 `wrangler secret list`로 비밀값 8개 확인.
