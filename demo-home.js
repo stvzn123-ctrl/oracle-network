@@ -12,7 +12,10 @@ const run0=window.run;
 if(typeof run0==='function')window.run=function(v){if(v!==DEMO)B.classList.remove('demo');return run0.apply(this,arguments)};
 function showDemo(){
  if(busy||!B.classList.contains('fresh')||typeof run0!=='function')return;busy=true;
- try{B.classList.add('demo');window.run(DEMO,false);personalize();const ab=$('askbox');if(ab)ab.open=false;const ws=$('whoSum');if(ws)ws.innerHTML='<span>내 정보 입력하기</span>'}
+ try{B.classList.add('demo');const snapP=document.querySelector('#resIntro .res-lead');window.run(DEMO,false);personalize();
+ /* 2026-11-13: HTML에 미리 그려 둔 첫 문장(LCP)이 그대로면 원래 요소를 되돌려 놓아, 다시 그린 시점이 LCP로 잡히지 않게 한다. */
+ try{const nowP=document.querySelector('#resIntro .res-lead');if(snapP&&nowP&&snapP!==nowP&&snapP.textContent===nowP.textContent)nowP.replaceWith(snapP)}catch(_){}
+ const ab=$('askbox');if(ab)ab.open=false;const ws=$('whoSum');if(ws)ws.innerHTML='<span>내 정보 입력하기</span>'}
  catch(_){B.classList.remove('demo');const ab=$('askbox');if(ab)ab.open=true}
  finally{busy=false}
 }
