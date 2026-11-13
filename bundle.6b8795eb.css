@@ -2979,3 +2979,5 @@ p{text-wrap:pretty}
    공유 이미지(canvas)는 메모먼트 꾹꾹체를 따로 쓴다. 묶음 맨 끝. */
 :root{--body:"Jua",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;--display:var(--body);--serif:var(--body)}
 html body,html body *:not(svg):not(svg *),#report,#report *{font-family:var(--body)!important;font-synthesis:none}
+/* 2026-11-13 리포트처럼 긴 글은 예전 본문 글꼴(IBM Plex Sans KR). 제목·장 머리·표지 숫자는 주아 그대로. */
+#report p,#report li,#report td,#report dd,#report dt,#report small,#report blockquote,#report details,#report summary,#report .rv3-lead,#report p *,#report li *,#report td *,#report dd *{font-family:"IBM Plex Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif!important}
