@@ -2929,3 +2929,13 @@ p{text-wrap:pretty}
 /* 두 버튼은 같은 크기(54px·17px). 구분은 색으로만. */
 #reportPurchase #reportCheckoutAll.buy-all{font-size:17px;min-height:54px}
 #reportPurchase #reportCheckoutAll b{font-size:17px}
+
+/* ==== character-share.css ==== */
+.destiny-character .cs-share{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;margin:16px 0 4px}
+.destiny-character .cs-btn{min-height:44px;padding:0 20px;border-radius:999px;border:1.5px solid var(--gold-ink);background:var(--surface,#fffdf9);color:var(--gold-ink);font:600 16px/1 inherit;font-family:inherit;cursor:pointer}
+.destiny-character .cs-btn:disabled{opacity:.5}
+.destiny-character .cs-btn:active{opacity:.7;transform:scale(.97)}
+.destiny-character .cs-name{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted);min-height:44px}
+.destiny-character .cs-status{flex-basis:100%;margin:0;text-align:center;font-size:14px;color:var(--muted)}
+.destiny-character .cs-status:empty{display:none}
+@media(prefers-reduced-motion:reduce){.destiny-character .cs-btn:active{transform:none}}
