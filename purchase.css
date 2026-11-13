@@ -25,3 +25,10 @@
 #reportPurchase #reportCheckoutAll small{font-size:14px;font-weight:500;color:#fff;opacity:.9}
 #reportPurchase #reportCheckoutAll:active,#reportPurchase #reportPurchaseClose:active{opacity:.7;transform:scale(.97)}
 @media(prefers-reduced-motion:reduce){#reportPurchase #reportCheckoutAll:active,#reportPurchase #reportPurchaseClose:active{transform:none}}
+/* 전부 열기: 따로 살 때 합계(취소선) → 2,990원, 할인율 꼬리표 */
+#reportPurchase #reportCheckoutAll.buy-all{position:relative;align-items:center;line-height:1.2}
+#reportPurchase #reportCheckoutAll .ba-main{display:inline-flex;align-items:baseline;gap:6px}
+#reportPurchase #reportCheckoutAll s{font-size:14px;font-weight:500;opacity:.75}
+#reportPurchase #reportCheckoutAll b{font-size:18px;font-weight:700}
+#reportPurchase #reportCheckoutAll .ba-tag{position:absolute;top:-10px;right:16px;padding:3px 10px;border-radius:999px;background:#d9472b;color:#fff;font-size:12px;font-weight:700;line-height:1.35;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+#reportPurchase .purchase-buttons{gap:14px}

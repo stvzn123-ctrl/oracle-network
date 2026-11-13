@@ -24,3 +24,17 @@ if(typeof orig==='function')window.showReportPurchase=function(key){const r=orig
 new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1&&(n.matches?.('.topic-offer')||n.querySelector?.('.topic-offer')))patchOffers(n.parentNode||document)}).observe(document.body,{childList:true,subtree:true});
 patchOffers(document);
 })();
+
+/* 2026-11-13: 결제 화면에서 '전부 열기'의 값어치를 실제 합계로 보여 준다(앵커링).
+   합계 = 메뉴에서 따로 살 수 있는 리포트의 실제 가격 합: 종합 + 주제·관계 7종(재물·연인·직업·학업·궁합·재회·우정). 자유질문은 별도라 넣지 않는다. */
+(()=>{"use strict";
+const ITEMS=['재물','연인','직업','학업','궁합','재회','우정'];
+function sums(){try{const all=typeof ALL_ACCESS_PRICE!=='undefined'?ALL_ACCESS_PRICE:2990,c=typeof COMPREHENSIVE_REPORT_PRICE!=='undefined'?COMPREHENSIVE_REPORT_PRICE:1900,t=typeof TOPIC_REPORT_PRICE!=='undefined'?TOPIC_REPORT_PRICE:1000;const total=c+t*ITEMS.length;return {all,total,pct:Math.floor((1-all/total)*100)}}catch(_){return null}}
+const w=n=>n.toLocaleString()+'원';
+function paint(key){const s=sums(),btn=document.getElementById('reportCheckoutAll'),st=document.getElementById('purchaseStatus');if(!s||!btn)return;
+ btn.innerHTML='<span class="ba-tag">'+s.pct+'% 할인</span><span class="ba-main">전부 열기 <s>'+w(s.total)+'</s> <b>'+w(s.all)+'</b></span>';
+ btn.setAttribute('aria-label','전부 열기, 따로 사면 '+w(s.total)+'인데 '+w(s.all));
+ if(st&&/전부 열기\(2,990원\)/.test(st.textContent)||st&&!st.textContent)st.innerHTML='종합 리포트와 '+ITEMS.join('·')+' 리포트를 따로 사면 <b>'+w(s.total)+'</b>이에요. 전부 열기로 한 번에 모두 볼 수 있어요.'}
+const orig=window.showReportPurchase;
+if(typeof orig==='function')window.showReportPurchase=function(){const r=orig.apply(this,arguments);try{paint(arguments[0])}catch(_){}return r};
+})();
