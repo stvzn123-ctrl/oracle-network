@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>무료 궁합 보기 - 사주·별자리로 보는 두 사람의 관계 | 운명탐정</title>
+<meta name="description" content="두 사람의 생년월일로 사주(일간 합·일지 합·띠), 서양·베딕 점성술, 수비학, 마야력을 함께 계산해 궁합 점수와 관계 캐릭터, 서로 잘 지내는 법을 무료로 알려드려요.">
+<link rel="canonical" href="https://fatedog.co.kr/gunghap/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="운명탐정">
+<meta property="og:title" content="무료 궁합 보기 | 운명탐정">
+<meta property="og:description" content="사주·별자리·수비학·마야력으로 보는 두 사람의 관계 캐릭터와 궁합 점수">
+<meta property="og:url" content="https://fatedog.co.kr/gunghap/">
+<meta property="og:image" content="https://fatedog.co.kr/og-share-v11.png">
+<meta name="theme-color" content="#FFF9F4">
+<link rel="icon" href="../img/mascot.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#FFF9F4;--fg:#4A352B;--muted:#7a6253;--gold:#e8b964;--gold-ink:#8A5A1E;--line:#ecd6a8;--card:#fff;--soft:#fff4dc;--love:#d6457a}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 "IBM Plex Sans KR",system-ui,sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+a{color:var(--gold-ink)}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:center;height:52px;background:rgba(255,249,244,.92);border-bottom:1px solid #f1e3cf;backdrop-filter:blur(8px)}
+.top a{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--fg);font:20px Jua,sans-serif}
+.top img{width:32px;height:32px}
+main{max-width:640px;margin:0 auto;padding:24px 20px 56px}
+.crumb{font-size:12px;color:var(--muted);margin:0 0 8px}
+.crumb a{color:inherit}
+h1{margin:0;font:28px/1.35 Jua,sans-serif}
+h1 em{font-style:normal;color:var(--love)}
+.lead{margin:12px 0 20px;font-size:17px;color:var(--muted)}
+.cta{display:flex;align-items:center;justify-content:center;width:100%;min-height:54px;border-radius:999px;background:linear-gradient(160deg,#fadc9d,#e8b964);color:#4a352b;font:600 17px/1 inherit;font-family:inherit;text-decoration:none;box-shadow:0 8px 20px rgba(232,185,100,.35)}
+.cta-note{margin:8px 0 0;text-align:center;font-size:13px;color:var(--muted)}
+.ex{margin:28px 0 8px;padding:24px 20px;border:1px solid var(--line);border-radius:24px;background:var(--card);text-align:center}
+.ex-tag{display:inline-block;padding:2px 12px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:600;color:var(--gold-ink)}
+.pair{display:flex;justify-content:center;align-items:flex-end;gap:4px;margin:12px 0 4px}
+.pair img{width:120px;height:120px;object-fit:contain}
+.pair span{font-size:28px;color:var(--love);padding-bottom:40px}
+.ex h3{margin:4px 0 2px;font:22px Jua,sans-serif}
+.ex .score{font-size:14px;color:var(--muted)}
+.ex ul{margin:14px 0 0;padding:0;list-style:none;text-align:left}
+.ex li{padding:10px 0;border-top:1px dashed var(--line);font-size:15px}
+.ex li b{display:block}
+.ex li small{color:var(--muted);font-size:13px}
+.ex-cap{margin:10px 0 0;font-size:12px;color:var(--muted)}
+h2{margin:40px 0 12px;font:21px/1.4 Jua,sans-serif}
+.list{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.list li{padding:14px 16px;border-radius:16px;background:var(--card);border:1px solid #f1e3cf}
+.list b{display:block;margin-bottom:2px}
+.list span{font-size:14px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:14px;background:var(--card);border-radius:16px;overflow:hidden;border:1px solid #f1e3cf}
+th,td{padding:10px 12px;border-bottom:1px solid #f4e9d8;text-align:left;vertical-align:top}
+th{width:28%;color:var(--gold-ink);font-weight:600;background:#fffaf2}
+tr:last-child th,tr:last-child td{border-bottom:0}
+.free{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.free div{padding:14px;border-radius:16px;background:var(--card);border:1px solid #f1e3cf}
+.free h3{margin:0 0 6px;font-size:15px}
+.free ul{margin:0;padding-left:18px;font-size:14px;color:var(--muted)}
+details{border-bottom:1px solid #f1e3cf}
+summary{cursor:pointer;padding:14px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::after{content:"＋";color:var(--gold-ink)}
+details[open] summary::after{content:"－"}
+summary::-webkit-details-marker{display:none}
+details p{margin:0 0 14px;font-size:15px;color:var(--muted)}
+.more{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.more a{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);text-decoration:none;font-size:14px}
+.bottom{margin-top:40px}
+footer{max-width:640px;margin:0 auto;padding:24px 20px 40px;border-top:1px solid #f1e3cf;font-size:12px;color:var(--muted)}
+@media(max-width:400px){.pair img{width:100px;height:100px}.free{grid-template-columns:1fr}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"운명탐정","item":"https://fatedog.co.kr/"},{"@type":"ListItem","position":2,"name":"궁합 보기","item":"https://fatedog.co.kr/gunghap/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"궁합을 보려면 무엇이 필요한가요?","acceptedAnswer":{"@type":"Answer","text":"두 사람의 이름, 성별, 생년월일이 필요해요. 태어난 시각과 장소를 알면 별자리의 상승궁까지 계산해 더 자세해지고, 몰라도 궁합은 볼 수 있어요."}},{"@type":"Question","name":"궁합은 무료인가요?","acceptedAnswer":{"@type":"Answer","text":"궁합 점수, 두 사람의 관계 캐릭터, 관계를 위한 조언 3가지는 무료로 볼 수 있어요. 앞으로 3년과 12개월의 흐름, 주의할 점을 담은 궁합 리포트는 유료예요."}},{"@type":"Question","name":"상대방 정보를 몰래 넣어도 되나요?","acceptedAnswer":{"@type":"Answer","text":"계산은 브라우저에서 이뤄지지만 상대 정보를 저장하려면 그 사람의 동의가 필요해요. '공유해서 입력 요청하기'로 상대가 직접 넣게 할 수도 있어요."}}]}]}</script>
+</head>
+<body>
+<header class="top"><a href="../"><img src="../img/mascot.webp" alt="" width="32" height="32">운명탐정</a></header>
+<main>
+<p class="crumb"><a href="../">운명탐정</a> › 궁합 보기</p>
+<h1>무료 궁합 보기<br><em>우리 둘은 어떤 사이일까?</em></h1>
+<p class="lead">두 사람의 생년월일로 사주·서양 점성술·베딕 점성술·수비학·마야력을 함께 계산해서, 궁합 점수와 둘만의 관계 캐릭터, 서로 잘 지내는 법을 알려드려요.</p>
+<a class="cta" href="../">우리 궁합 보러 가기</a>
+<p class="cta-note">내 정보를 넣은 뒤 '궁합' 메뉴에서 상대 정보를 넣어요 · 약 1분</p>
+
+<section class="ex" aria-label="궁합 결과 예시">
+ <span class="ex-tag">결과 예시</span>
+ <div class="pair"><img src="../img/characters/21.webp" alt="인연의 연결자 캐릭터" width="120" height="120" loading="lazy"><span aria-hidden="true">♥</span><img src="../img/characters/05.webp" alt="상대 캐릭터" width="120" height="120" loading="lazy"></div>
+ <h3>서로를 키워 주는 단짝</h3>
+ <p class="score">궁합 점수 86점 · 다섯 점술 중 4개가 좋게 봤어요</p>
+ <ul>
+  <li><b>한 달에 한 번, 둘만의 새로운 곳에 가 보기</b><small>함께 처음 해 보는 일에서 가장 가까워지는 조합이에요.</small></li>
+  <li><b>서운한 건 그날 안에 짧게 말하기</b><small>쌓아 두면 서로의 기준 차이가 크게 느껴져요.</small></li>
+  <li><b>돈 쓰는 기준은 미리 하나 정해 두기</b><small>오래가는 관계의 열쇠는 생활 기준을 맞추는 거예요.</small></li>
+ </ul>
+ <p class="ex-cap">가상의 두 사람으로 만든 예시예요. 실제 결과는 생년월일에 따라 달라져요.</p>
+</section>
+
+<h2>무엇을 보고 궁합을 계산하나요?</h2>
+<table>
+ <tr><th>사주</th><td>두 사람의 일간(나를 뜻하는 글자)이 합을 이루는지, 서로 살려 주는지, 일지(배우자 자리)와 띠가 합인지 충인지, 한쪽에 없는 오행을 다른 쪽이 채워 주는지 봐요.</td></tr>
+ <tr><th>서양 점성술</th><td>태양·달 별자리의 원소(불·흙·공기·물)가 같은지, 서로 보완하는지 봐요.</td></tr>
+ <tr><th>베딕 점성술</th><td>인도식 달 별자리와 낙샤트라(27개 별자리 구역)로 감정의 결이 맞는지 봐요.</td></tr>
+ <tr><th>수비학</th><td>생년월일로 구한 인생 수끼리 잘 맞는 조합인지 봐요.</td></tr>
+ <tr><th>마야력</th><td>260일 주기 달력(촐킨)의 탄생 기호가 어떤 관계인지 봐요.</td></tr>
+</table>
+<p class="cta-note" style="text-align:left">다섯 점술의 결과를 정해진 비율로 합쳐 점수를 내요. 같은 두 사람이면 언제 봐도 같은 결과가 나와요.</p>
+
+<h2>무료로 볼 수 있는 것과 리포트</h2>
+<div class="free">
+ <div><h3>무료</h3><ul><li>궁합 점수</li><li>두 사람의 관계 캐릭터</li><li>관계를 위한 조언 3가지</li><li>이미지로 저장·공유</li></ul></div>
+ <div><h3>궁합 리포트</h3><ul><li>점술별 궁합 풀이</li><li>앞으로 3년의 관계 흐름</li><li>앞으로 12개월, 두 사람의 흐름</li><li>주의할 점과 대처법</li></ul></div>
+</div>
+
+<h2>자주 묻는 질문</h2>
+<details><summary>궁합을 보려면 무엇이 필요한가요?</summary><p>두 사람의 이름, 성별, 생년월일이 필요해요. 태어난 시각과 장소를 알면 별자리의 상승궁까지 계산해 더 자세해지고, 몰라도 궁합은 볼 수 있어요.</p></details>
+<details><summary>궁합은 무료인가요?</summary><p>궁합 점수, 두 사람의 관계 캐릭터, 관계를 위한 조언 3가지는 무료로 볼 수 있어요. 앞으로 3년과 12개월의 흐름, 주의할 점을 담은 궁합 리포트는 유료예요.</p></details>
+<details><summary>상대방 정보를 몰래 넣어도 되나요?</summary><p>계산은 브라우저에서 이뤄지지만 상대 정보를 저장하려면 그 사람의 동의가 필요해요. '공유해서 입력 요청하기'로 상대가 직접 넣게 할 수도 있어요.</p></details>
+<details><summary>궁합 점수가 낮으면 안 맞는 건가요?</summary><p>점수는 다섯 점술의 해석을 합친 참고 값이에요. 낮은 항목에는 왜 그런지와 함께 바로 해 볼 수 있는 대처법을 같이 보여 드려요. 재미로 즐겨 주세요.</p></details>
+
+<div class="bottom">
+<a class="cta" href="../">우리 궁합 보러 가기</a>
+<h2>다른 운세도 볼 수 있어요</h2>
+<nav class="more" aria-label="다른 운세"><a href="../">나의 운명 캐릭터</a><a href="../">앞으로 10년 운세</a><a href="../">재물운</a><a href="../">연애운</a><a href="../">직업운</a></nav>
+</div>
+</main>
+<footer>운명탐정 · 트리웨이브 · <a href="../">홈으로</a></footer>
+<script defer src="../analytics.js?v=4"></script>
+</body>
+</html>
