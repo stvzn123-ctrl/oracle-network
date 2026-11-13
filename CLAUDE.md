@@ -413,3 +413,4 @@
 - 2026-11-13 CSS 묶음: index.html은 원본 CSS 13개 대신 `bundle.<해시>.css` 하나만 불러온다(렌더링을 막는 요청 13개 → 1개). **CSS를 고친 뒤에는 반드시 `python tools/build-css.py`를 실행**해 묶음과 index.html 참조를 다시 만든다(순서는 스크립트의 ORDER, 새 CSS 파일은 ORDER에 추가). sample.html·admin.html은 원본 CSS를 그대로 쓴다.
 - 2026-11-13 Cloudflare Pages: `build.sh`(사이트 파일만 dist/로 복사, server·메모·.claude 제외)와 `_headers`(해시 파일 1년 immutable, ?v= 파일 7일, img 30일, HTML 매번 확인). Pages 프로젝트 빌드 명령은 `bash build.sh`, 출력 dist. 도메인이 Pages로 연결돼야 적용된다(2026-11-13 현재 fatedog.co.kr 응답은 아직 GitHub Pages).
 - 2026-11-13 성능(3) 측정: CSS 묶음 후 Lighthouse 모바일 5회 중앙값 점수 69(이전 66)·FCP 3.5s(4.2)·TBT 60ms·0.91MB. 시뮬레이션 LCP는 4.5~9.7s로 편차가 커서 판단 보류(실제 측정 LCP 0.6~1.3s, FCP 0.5~0.9s). Cloudflare Pages 전환 후 다시 잴 것.
+- 2026-11-13 도메인 Browser Cache TTL = Respect Existing Headers로 변경(사용자). 이후 캐시는 _headers가 정한다.
