@@ -3958,6 +3958,9 @@ function buildRichReport(ch,key){
    21살 이상이면 '대입·수능'을 '시험'으로, 19살 이하면 결혼 생활 조건 이야기를 미래의 바람으로 바꾼다.
    계산·점수는 건드리지 않고 문자열만 바꾼다. 여러 번 적용해도 결과가 같다. */
 function fitReport(r,ch,key){
+ /* 2026-11-13: '○○님에게 전하는 이야기' 장은 언제나 맨 끝(해석의 범위 장 바로 앞)에 둔다. */
+ try{const L=r&&r.sections;if(Array.isArray(L)){const i=L.findIndex(x=>/님에게 전하는 이야기$/.test(String(x.question||x.title||'')));if(i>=0){const [x]=L.splice(i,1),j=L.findIndex(y=>y.kind==='limit');L.splice(j<0?L.length:j,0,x)}}}catch(_){}
+
  if(!r||typeof r!=='object')return r;
  const inp=(ch&&ch.inp)||{},rel=inp.relationship||'private',taken=rel==='married'||rel==='dating';
  const by=+String(inp.date||'').slice(0,4),age=by?new Date().getFullYear()-by+1:30;
