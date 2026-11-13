@@ -4,16 +4,20 @@
 (()=>{"use strict";
 const cache=new Map();
 const clean=t=>String(t||'').replace(/^.{1,12}님에게 전하는 이야기$/,'나에게 전하는 이야기').replace(/^.{1,12}님의 /,'나의 ').trim();
+/* 2026-11-13 b: 실제 리포트를 approvedReportHTML로 그려 그 목차(.rv3-toc)를 그대로 읽는다. 장을 나누거나 더하는 변환까지 같아진다. */
+function realToc(data,key){const d=document.createElement('div');d.innerHTML=approvedReportHTML(data,key,CH);return [...d.querySelectorAll('.rv3-toc li a')].map(a=>{const b=a.querySelector('b');return (b?a.textContent.slice(b.textContent.length):a.textContent).trim()}).filter(Boolean)}
 function toc(key){try{
  if(typeof CH==='undefined'||!CH)return null;
- let secs=null,id=key+'|'+(CH.inp&&CH.inp.date)+'|'+(CH.inp&&CH.inp.name)+'|'+(CH.inp&&CH.inp.relationship);
- if(key==='match'){if(typeof COMPAT==='undefined'||!COMPAT||COMPAT.kind==='friend'||typeof compatReportData!=='function')return null;id+='|'+(COMPAT.b&&COMPAT.b.inp&&COMPAT.b.inp.date);if(!cache.has(id))cache.set(id,(compatReportData(CH,COMPAT.b,COMPAT.res).sections||[]))}
+ let id=key+'|'+(CH.inp&&CH.inp.date)+'|'+(CH.inp&&CH.inp.name)+'|'+(CH.inp&&CH.inp.relationship);
+ let data=null;
+ if(key==='match'){if(typeof COMPAT==='undefined'||!COMPAT||COMPAT.kind==='friend'||typeof compatReportData!=='function')return null;id+='|'+(COMPAT.b&&COMPAT.b.inp&&COMPAT.b.inp.date);if(!cache.has(id))data=compatReportData(CH,COMPAT.b,COMPAT.res)}
  else if(['friend','group','reunion','ask'].includes(key))return null;
- else if(!cache.has(id))cache.set(id,(buildRichReport(CH,key).sections||[]));
- secs=cache.get(id);
- const list=secs.filter(s=>!['limit','fun'].includes(s.kind)).map(s=>clean(s.question||s.title)).filter(Boolean);
- return list.filter((t,i)=>list.indexOf(t)===i)}catch(_){return null}}
-function fill(ul,list){ul.replaceChildren(...list.map(t=>{const li=document.createElement('li');li.textContent=t;return li}));ul.classList.add('toc-real')}
+ else if(!cache.has(id))data=buildRichReport(CH,key);
+ if(data&&!cache.has(id)){let list=[];try{list=realToc(data,key)}catch(_){}
+  if(!list.length)list=(data.sections||[]).filter(s=>!['limit','fun'].includes(s.kind)).map(s=>clean(s.question||s.title)).filter(Boolean);
+  cache.set(id,list.filter((t,i)=>list.indexOf(t)===i))}
+ return cache.get(id)}catch(_){return null}}
+function fill(ul,list){ul.replaceChildren(...list.map((t,i)=>{const li=document.createElement('li'),n=document.createElement('b');n.textContent=String(i+1).padStart(2,'0');li.append(n,document.createTextNode(t));return li}));ul.classList.add('toc-real')}
 function patchOffers(root){(root.querySelectorAll?root:document).querySelectorAll('.topic-offer').forEach(sec=>{const b=sec.querySelector('[data-buy]'),ul=sec.querySelector('ul');if(!b||!ul||ul.dataset.toc===b.dataset.buy+(CH&&CH.inp&&CH.inp.date))return;const list=toc(b.dataset.buy);if(!list||!list.length)return;fill(ul,list);ul.dataset.toc=b.dataset.buy+(CH&&CH.inp&&CH.inp.date);const h=sec.querySelector('h4');if(h&&!/목차/.test(h.textContent))h.textContent=h.textContent.replace(/에서 볼 내용$/,' 목차').replace(/ 리포트$/,' 리포트 목차')})}
 const orig=window.showReportPurchase;
 if(typeof orig==='function')window.showReportPurchase=function(key){const r=orig.apply(this,arguments);try{const list=key==='comprehensive'?toc('comprehensive'):toc(key),ul=document.getElementById('purchaseContents');if(list&&list.length&&ul)fill(ul,list)}catch(_){}return r};

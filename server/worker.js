@@ -1372,7 +1372,7 @@ function buildRichReport(ch,key){
   const topG=ng.indexOf(Math.max(...ng)),nm=ch.inp.name||'당신',job=lifeQ(ch).find(x=>x.k==='job');
   const moneyYears=[...Y4[0]].sort((a,b)=>b.score-a.score).slice(0,3).sort((a,b)=>a.year-b.year).map(r=>({y:r.year,age:kage(r.year)}));
   const lw=low(Y4[0]),moneyRest=moneyYears.some(k=>k.y===lw.year)?null:{y:lw.year,age:kage(lw.year)};
-  narrativeMoney({name:nm,dom:maxEl,topG,moneyTier:Math.min(2,ng[2]),jobs:job?strip(job.a):'',moneyYears,moneyRest,
+  narrativeMoney({name:nm,dom:maxEl,topG,moneyTier:Math.min(2,ng[2]),jobs:job?strip(job.a):'',moneyAll:Y4[0].map(r=>({y:r.year,age:kage(r.year),s:r.score})),
    basis:{core:['많은 십성 '+GN[topG],'재성 '+ng[2]+'개 · 식상 '+ng[1]+'개','2하우스 '+zs(hs(2)),'인생 수 '+ch.lp],
     earn:['10하우스 '+zs(hs(10)),'가장 많은 오행 '+ELN[maxEl]],
     timing:Y4[0].map(r=>r.year+'년 금전 '+r.score+'점')}}).forEach(s=>add(s.kind,s.title,s.lead||'',s.basis||[],s.paras,s.action||'',{}));
