@@ -22,3 +22,5 @@
 .tt-fix{margin:0 0 10px;padding:10px 12px;border-radius:12px;background:#FFF1EC;font-size:14px;line-height:1.6;color:#4A352B;word-break:keep-all}
 .tt-fix span{display:block;margin-top:4px;font-weight:600;color:#8A5A1E}
 .tt-chart{margin:0 0 12px}.tt-chart svg{display:block;width:100%;height:auto}
+/* 2026-11-13: 실제 리포트 목차 미리보기 */
+ul.toc-real{counter-reset:toc}
