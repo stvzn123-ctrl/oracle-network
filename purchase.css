@@ -34,8 +34,6 @@
 #reportPurchase .purchase-buttons{gap:14px}
 #reportPurchase .purchase-price{display:none}
 #reportPurchase #reportCheckout b{font-weight:700;margin-left:4px}
-#reportPurchase #reportCheckout:not(#_a):not(#_b):not(#_c):not(#_d):not(#_e){font-size:16px!important;min-height:48px!important;height:48px}
-#reportPurchase #reportCheckoutAll.buy-all{font-size:21px;min-height:60px}
-#reportPurchase #reportCheckoutAll b{font-size:21px}
-#reportPurchase #reportCheckoutAll s{font-size:16px}
-#reportPurchase #reportCheckout b{font-size:16px!important}
+/* 두 버튼은 같은 크기(54px·17px). 구분은 색으로만. */
+#reportPurchase #reportCheckoutAll.buy-all{font-size:17px;min-height:54px}
+#reportPurchase #reportCheckoutAll b{font-size:17px}
