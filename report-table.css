@@ -1,0 +1,7 @@
+/* 2026-11-13: 리포트 표 가독성. 셀 길이에 따라 nw(4자 이하, 줄바꿈 없음) / md(5~9자) / lg(10자 이상) 클래스를 붙이고(approvedReportHTML의 dataTableHTML),
+   글자 단위로 쪼개지지 않게 단어 단위 줄바꿈. 첫 칸(연도 등)은 줄바꿈 없이 좁게, '2026년'은 '26년'으로 표시. */
+#report .rv3-table th,#report .rv3-table td{overflow-wrap:normal!important;word-break:keep-all!important}
+#report .rv3-table .nw,#report .rv3-table tbody th{white-space:nowrap!important;width:1%}
+#report .rv3-table:not(.fixed) td.md{min-width:4.2em!important}
+#report .rv3-table:not(.fixed) td.lg{min-width:6.5em!important}
+#report .rv3-table thead th:not(.nw){white-space:normal}
