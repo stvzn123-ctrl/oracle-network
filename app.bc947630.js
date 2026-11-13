@@ -2460,10 +2460,13 @@ function reportReaderText(text){
  return String(text||'').split(/(?<=[.!?。])\s+/).filter(sentence=>!notice.test(sentence)).join(' ').trim();
 }
 function approvedReportHTML(data,key,sourceChart=null){
- if(['match','reunion'].includes(key)){
+ if(['match','reunion','group','friend'].includes(key)){
   const clean=t=>String(t||'').replace(/\[다섯 점술\][^.!?]*[.!?]?/g,'').replace(/두 사람의 기본 궁합은 \d+점이고, /g,'').replace(/\([^()]*\d+(?:\.\d+)?점[^()]*\)/g,'').replace(/\d+(?:\.\d+)?점[,，]?\s*/g,'').replace(/궁합 점수/g,'관계 흐름').replace(/기본 점수/g,'관계 흐름');
-  const scoreTables=(data.sections||[]).filter(s=>s.kind==='table'&&s.table?.head?.includes('점수')).map(s=>s.table);
-  data={...data,summary:(data.summary||[]).map(clean),sections:(data.sections||[]).filter(s=>!(s.kind==='table'&&s.table?.head?.includes('점수'))).map(s=>({...s,lead:clean(s.lead),paragraphs:(s.paragraphs||[]).map(clean),action:clean(s.action)})),appendix:{...(data.appendix||{}),tables:[...(data.appendix?.tables||[]),...scoreTables]}};
+  /* 2026-11-13: 점수 표는 숫자 대신 말로(잘 맞음/보통/맞춰 갈 점) 바꿔 부록에 둔다. 숫자 점수는 어디에도 보이지 않게. */
+  const word=v=>{const n=parseFloat(String(v));return isNaN(n)?clean(v):n>=80?'잘 맞음':n>=70?'보통':'맞춰 갈 점'};
+  const deScore=t=>{const i=(t.head||[]).indexOf('점수');return {...t,cap:clean(String(t.cap||'').replace(/\s*\(기본[^)]*\)/,'')),head:(t.head||[]).map(h=>h==='점수'?'흐름':clean(h)),rows:(t.rows||[]).map(r=>r.map((c,j)=>j===i?word(c):clean(c)))}};
+  const scoreTables=(data.sections||[]).filter(s=>s.kind==='table'&&s.table?.head?.includes('점수')).map(s=>deScore(s.table));
+  data={...data,summary:(data.summary||[]).map(clean),sections:(data.sections||[]).filter(s=>!(s.kind==='table'&&s.table?.head?.includes('점수'))).map(s=>({...s,lead:clean(s.lead),paragraphs:(s.paragraphs||[]).map(clean),action:clean(s.action),table:s.table?deScore(s.table):s.table})),appendix:{...(data.appendix||{}),tables:[...(data.appendix?.tables||[]).map(deScore),...scoreTables]}};
  }
 
  if(["employment","move"].includes(key)){key="work";data={...data,title:String(data.title||"").replace(/취업|이직/g,"직업")}}
