@@ -1791,6 +1791,7 @@ function buildRichReport(ch,key){
   const calendar=S.find(s=>s.kind==='calendar');
   if(calendar){
    const mean=[0,1,2,3].map(k=>calendar.months.reduce((n,m)=>n+m.scores[k],0)/12);
+   const NY=Y4[0][0].year,AN=[0,1,2,3].map(k=>Y4[k][0].score),RK=[0,1,2,3].map(k=>Y4[k].filter(x=>x.score>AN[k]).length+1);
    /* 2026-11-12: 12문장 고정 목록 대신 그달의 월건 십성(5그룹)×분야×밝음/주의, 열두 달 중 위치, 특별한 날·개인월로 조립해 달마다 다르게 읽힌다. */
    const FN=['돈','사랑','일과 배움','생활 리듬'],PH=['초순','중순','하순'],single=key==='love'&&ch.inp.relationship==='single';
    const MTH={비견:'내 페이스를 지키며 스스로 정하는 힘이 커져요',겁재:'경쟁심과 추진력이 함께 올라와요',식신:'하고 싶은 일을 편하게 풀어내는 힘이 살아나요',상관:'말과 아이디어가 날카롭게 빛나요',편재:'바깥의 기회와 사람을 넓게 만나는 기운이 강해져요',정재:'꾸준히 모으고 지키는 힘이 살아나요',편관:'해내야 할 과제와 책임이 또렷해져요',정관:'약속과 역할이 분명해지고 신뢰가 쌓여요',편인:'혼자 생각하고 깊이 파고드는 시간이 늘어요',정인:'배우고 도움받는 일이 자연스럽게 이어져요'};
@@ -1811,17 +1812,21 @@ function buildRichReport(ch,key){
    calendar.months.forEach((m,i)=>{
     const delta=m.scores.map((v,k)=>v-mean[k]);
     const allowed=key==='comprehensive'?[0,1,2,3]:['love','marry','reunion','match'].includes(key)?[1]:['money','invest','property','business'].includes(key)?[0]:[2];
-    const focus=allowed.reduce((a,b)=>Math.abs(delta[b])>Math.abs(delta[a])?b:a);
-    const change=i?m.scores[focus]-calendar.months[i-1].scores[focus]:0;
-    const mode=delta[focus]<=-.5||change<=-.5?2:delta[focus]>=.5||change>=.5?1:0;
+    /* 2026-11-13: 그해(다음 해) 분야 점수를 반영한다. 다음 해 달에는 짝수 번째마다 그해 가장 밝은 분야를 다루고, 밝음/주의는 열두 달 중 순위(위 3·아래 3)로도 정한다. */
+    let focus=allowed.reduce((a,b)=>Math.abs(delta[b])>Math.abs(delta[a])?b:a);
+    const yTop=allowed.reduce((a,b)=>AN[b]>AN[a]?b:a);if(m.year===NY&&allowed.length>1&&(i%2===0||m.month===1))focus=yTop;
+    const change=i?m.scores[focus]-calendar.months[i-1].scores[focus]:0,rk=calendar.months.filter(x=>x.scores[focus]>m.scores[focus]).length;
+    let mode=delta[focus]<=-.5||change<=-.5||rk>=9?2:delta[focus]>=.5||change>=.5||rk<=2?1:0;if(mode===0&&m.year===NY&&RK[focus]<=3)mode=1;
     const F=FN[focus],vals=calendar.months.map(x=>x.scores[focus]),top=Math.max(...vals),bot=Math.min(...vals),g=Math.max(0,Math.floor(TG.indexOf(m.mtg)/2));
     const OPV={top:[()=>'열두 달 중 '+J(F,'이','가')+' 가장 밝은 달이에요.'],bot:[()=>'열두 달 중 '+J(F,'을','를')+' 가장 차분히 다지기 좋은 달이에요.'],
      upc:[()=>J(F,'이','가')+' 지난달보다 한결 살아나는 달이에요.',()=>'지난달보다 '+F+' 쪽 기운이 올라오는 달이에요.',()=>'지난달에 비해 '+F+' 흐름이 밝아지는 달이에요.'],
      up:[()=>F+'에 힘이 실리는 달이에요.',()=>'열두 달 평균보다 '+F+' 흐름이 밝은 달이에요.',()=>F+'에서 반가운 소식을 기대해 볼 만한 달이에요.'],
      dnc:[()=>J(F,'은','는')+' 지난달보다 잠시 숨을 고르는 달이에요.',()=>'지난달보다 '+F+' 흐름이 한 걸음 물러나는 달이에요.',()=>'지난달의 기세를 정리하며 '+J(F,'을','를')+' 돌보는 달이에요.'],
      dn:[()=>F+'에서는 속도를 조금 늦추면 좋은 달이에요.',()=>J(F,'을','를')+' 점검하며 지나가기 좋은 달이에요.',()=>F+'에서는 새로 벌이기보다 지키는 쪽이 편한 달이에요.'],
+     yr:[()=>NY+'년은 '+J(F,'이','가')+' 10년 중 '+(RK[focus]===1?'가장':'손꼽히게')+' 밝은 해예요. 이 달은 그 흐름에 올라타기 좋아요.',()=>F+' 흐름이 한 해 내내 밝은 해예요. 이 달에 계획한 일을 한 걸음 더 밀어 보세요.',()=>'밝은 '+F+' 흐름이 이어지는 달이에요. 미뤄 둔 결정을 이 무렵 꺼내 보세요.'],
      st:[()=>J(F,'은','는')+' 잔잔하게 이어지는 달이에요.',()=>'큰 오르내림 없이 '+J(F,'을','를')+' 다지는 달이에요.',()=>F+' 흐름이 평소의 결을 지키는 달이에요.',()=>'특별한 기복 없이 '+F+'의 기본기를 챙기기 좋은 달이에요.']};
-    const ok=top-bot>=1&&m.scores[focus]===top&&!openUse['top'+focus]?'top':top-bot>=1&&m.scores[focus]===bot&&!openUse['bot'+focus]?'bot':mode===1?(change>=.5?'upc':'up'):mode===2?(change<=-.5?'dnc':'dn'):'st',oc=(openUse[ok+focus]=(openUse[ok+focus]||0)+1)-1,open=OPV[ok][oc%OPV[ok].length]();
+    const yr=m.year===NY&&focus===yTop&&RK[focus]<=3&&(openUse['yr'+focus]||0)<3?'yr':null;
+    const ok=yr?yr:top-bot>=1&&m.scores[focus]===top&&!openUse['top'+focus]?'top':top-bot>=1&&m.scores[focus]===bot&&!openUse['bot'+focus]?'bot':mode===1?(change>=.5?'upc':'up'):mode===2?(change<=-.5?'dnc':'dn'):'st',oc=(openUse[ok+focus]=(openUse[ok+focus]||0)+1)-1,open=OPV[ok][oc%OPV[ok].length]();
     const s2=m.mtg&&MTH[m.mtg]?'사주로는 '+m.mpil+'월, '+m.mtg+'의 달이라 '+MTH[m.mtg]+'.':'';
     const opts=(single&&focus===1?MEETA[g]:MACT[g][focus]),pref=mode===2?1:0,act=[opts[pref],opts[2],opts[1-pref]].find((t,j)=>!usedAct.has(t)&&(j<2||mode===0))||opts[pref];usedAct.add(act);
     const cand=SIGO.filter(n=>m.sig&&n in m.sig&&n!==lastSig&&(n!=='도화일'||focus===1)).sort((a,b)=>(used[a]||0)-(used[b]||0)||(a==='마야 탄생일'?-1:b==='마야 탄생일'?1:0));
@@ -1830,6 +1835,8 @@ function buildRichReport(ch,key){
     m.guidance={field:focus,mode,change:Number(change.toFixed(1))};
    });
    calendar.compactMonthly=true;calendar.lead='';calendar.action='';calendar.table=null;
+   {const FN2=['돈','사랑','일과 배움','생활 리듬'],al=key==='comprehensive'?[0,1,2,3]:['love','marry','reunion','match'].includes(key)?[1]:['money','invest','property','business'].includes(key)?[0]:[2],srt=al.slice().sort((a,b)=>AN[b]-AN[a]),t=srt[0],lo=srt.at(-1);
+    calendar.lead=NY+'년, '+J(FN2[t],'이','가')+' '+AN[t]+'점으로 '+(RK[t]===1?'앞으로 10년 중 가장 밝은 해예요.':RK[t]<=3?'앞으로 10년 중 손꼽히게 밝은 해예요.':'그해 가장 밝은 분야예요.')+(al.length>1&&AN[lo]<AN[t]-8?' '+FN2[lo]+'('+AN[lo]+'점)은 무리하지 말고 쉬는 시간을 먼저 챙겨 주세요.':'')}
    calendar.paragraphs=calendar.months.map(m=>m.year+'년 '+m.month+'월 — '+m.brief);
    if(key==='love'&&ch.inp.relationship==='single'){
     const all=calendar.months;
