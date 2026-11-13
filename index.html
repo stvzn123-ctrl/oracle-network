@@ -8,7 +8,7 @@
 <script>try{if(localStorage.getItem("oracle-session"))document.documentElement.classList.add("boot");setTimeout(function(){document.documentElement.classList.remove("boot")},3000)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>운명탐정</title>
-<link rel="stylesheet" href="bundle.44070c77.css">
+<link rel="stylesheet" href="bundle.03e025a8.css">
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#fff8ed"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="운명탐정"><link rel="apple-touch-icon" href="img/app-icon-180.png">
 
 <meta name="google-site-verification" content="hDlgATX6jNkm8rRhC-r43nHmwxPeC2CUx5Z0nj9HTnw">
@@ -52,6 +52,7 @@
 @keyframes blspin{to{transform:rotate(360deg)}}@keyframes blbob{50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){#bootLoader *,#bootLoader .bl-ring::before{animation-duration:3s}}</style>
 <style>.purchase-buttons{display:grid;gap:8px;margin:10px 0 4px}.purchase-buttons button{min-height:48px}#reportCheckoutAll{background:#8A5A1E;color:#fff;border:0;border-radius:14px;font:inherit;cursor:pointer}#reportCheckoutAll small{opacity:.85;font-size:.8em}.free-ask{margin:10px 0 4px}#freeAskBtn{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 14px;border-radius:14px;border:1.5px dashed rgba(138,90,30,.45);background:rgba(255,248,237,.7);color:inherit;font:inherit;cursor:pointer;opacity:.85}#freeAskBtn:hover{opacity:1}.free-ask-badge{font-size:.78em;padding:2px 8px;border-radius:999px;background:#8A5A1E;color:#fff}.free-ask-note{margin:6px 0 0;text-align:center;font-size:.9em;opacity:.8}html.rd #freeAskBtn{background:rgba(255,255,255,.06);border-color:rgba(217,168,92,.5)}</style>
+<script>try{if(/[?&](r|c)=/.test(location.search))sessionStorage.setItem("oracle-invited","1")}catch(_){}</script>
 </head>
 <body class="fresh demo">
 <div id="bootLoader" role="status" aria-live="polite"><div class="bl-ring"><img src="img/pose-white-detective.webp" alt="" fetchpriority="high"></div><span>운명을 분석하는 중이에요…</span></div>
@@ -268,8 +269,9 @@ $("brandbar").addEventListener("keydown",e=>{if(e.target!==e.currentTarget)retur
 <script defer src="social-card.js?v=6"></script>
 <script defer src="destiny-characters.js?v=8"></script>
 <script defer src="pair-characters.js?v=4"></script>
-<script defer src="pair-share.js?v=6"></script>
-<script defer src="character-share.js?v=1"></script>
+<script defer src="pair-share.js?v=7"></script>
+<script defer src="character-share.js?v=2"></script>
+<script defer src="share-reward.js?v=1"></script>
 <script defer src="touch-card.js?v=5"></script>
 <script defer src="demo-home.js?v=6"></script>
 <script defer src="demo-ui.js?v=1"></script>

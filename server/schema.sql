@@ -31,3 +31,6 @@ CREATE TABLE IF NOT EXISTS pair_members(code TEXT NOT NULL,user_id TEXT NOT NULL
 CREATE INDEX IF NOT EXISTS pairs_owner ON pairs(owner_id,created);
 CREATE TABLE IF NOT EXISTS payments(order_id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,report_key TEXT NOT NULL,price INTEGER NOT NULL,status TEXT NOT NULL,mul_no TEXT,pay_type TEXT,created INTEGER NOT NULL,paid_at INTEGER,canceled_at INTEGER);
 CREATE INDEX IF NOT EXISTS payments_user ON payments(user_id,created);
+
+-- 2026-11-13 공유 혜택(계정마다 한 번, 주제 리포트 1개)
+CREATE TABLE IF NOT EXISTS share_rewards(user_id TEXT PRIMARY KEY,reason TEXT NOT NULL,created INTEGER NOT NULL,used_key TEXT,used_at INTEGER);

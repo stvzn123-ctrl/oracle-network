@@ -2939,3 +2939,24 @@ p{text-wrap:pretty}
 .destiny-character .cs-status{flex-basis:100%;margin:0;text-align:center;font-size:14px;color:var(--muted)}
 .destiny-character .cs-status:empty{display:none}
 @media(prefers-reduced-motion:reduce){.destiny-character .cs-btn:active{transform:none}}
+
+/* ==== share-reward.css ==== */
+.sr-toast{position:fixed;left:50%;bottom:calc(var(--tabbar-h,60px) + 28px);transform:translate(-50%,16px);max-width:min(92vw,420px);padding:12px 18px;border-radius:16px;background:#4A352B;color:#fff;font-size:14px;line-height:1.5;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:13000}
+.sr-toast.on{opacity:1;transform:translate(-50%,0)}
+#reportPurchase div.sr-free{display:grid;gap:6px;margin-bottom:6px}
+#reportPurchase button.sr-free{width:100%;min-height:54px;border-radius:999px;border:2px dashed var(--gold-ink);background:#fff4dc;color:var(--gold-ink);font:600 17px/1 inherit;font-family:inherit;cursor:pointer}
+#reportPurchase .sr-note{margin:0;text-align:center;font-size:12px;color:var(--muted)}
+@media(prefers-reduced-motion:reduce){.sr-toast{transition:none}}
+/* 결과를 받은 순간: 캐릭터 카드 등장(새로 계산한 결과에만, 예시 제외) */
+.destiny-character.cs-reveal{animation:csCard .6s cubic-bezier(.2,.8,.2,1) both}
+.destiny-character.cs-reveal .character-art{animation:csArt .7s .15s cubic-bezier(.3,1.5,.5,1) both}
+.destiny-character.cs-reveal h2{animation:csUp .45s .35s ease-out both}
+.destiny-character.cs-reveal .cs-btn{animation:csPulse 1.2s .9s ease-out 1}
+.destiny-character{position:relative}
+.destiny-character.cs-reveal::after{content:"✦  ✦  ✦";position:absolute;left:0;right:0;top:120px;text-align:center;font-size:28px;letter-spacing:40px;color:#e8b964;pointer-events:none;animation:csSpark .9s .25s ease-out both}
+@keyframes csCard{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes csArt{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+@keyframes csUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes csSpark{0%{opacity:0;transform:scale(.6)}40%{opacity:1}100%{opacity:0;transform:scale(1.35)}}
+@keyframes csPulse{0%{box-shadow:0 0 0 0 rgba(232,185,100,.55)}100%{box-shadow:0 0 0 14px rgba(232,185,100,0)}}
+@media(prefers-reduced-motion:reduce){.destiny-character.cs-reveal,.destiny-character.cs-reveal *{animation:none!important}.destiny-character.cs-reveal::after{display:none}}

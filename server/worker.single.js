@@ -712,6 +712,21 @@ async function authRoute(req,env,url,ctx){
     const session=authRandom();await env.DB.prepare('INSERT INTO sessions(token_hash,user_id,expires) VALUES(?,?,?)').bind(await authHash(session),row.user_id,now+7*86400000).run();return json(req,env,{token:session,expires:now+7*86400000});
   }
   const user=await member(req,env);if(!user)return json(req,env,{error:'unauthorized'},401);
+  /* 2026-11-13 공유 혜택: 계정마다 한 번, 주제 리포트 1개(종합·자유질문 제외) 무료 열람권. 공유를 마치거나(share) 공유 링크로 들어와 정보를 저장하면(invited) 받는다. */
+  if(path==='/reward'||path==='/reward/claim'||path==='/reward/use'){
+   await env.DB.prepare('CREATE TABLE IF NOT EXISTS share_rewards(user_id TEXT PRIMARY KEY,reason TEXT NOT NULL,created INTEGER NOT NULL,used_key TEXT,used_at INTEGER)').run();
+   const row=await env.DB.prepare('SELECT reason,used_key FROM share_rewards WHERE user_id=?').bind(user.id).first();
+   if(req.method==='GET'&&path==='/reward')return json(req,env,{earned:!!row,available:!!row&&!row.used_key,used:row?row.used_key:null});
+   if(req.method==='POST'&&path==='/reward/claim'){const b=await authBody(req).catch(()=>({}));const reason=b&&b.reason==='invited'?'invited':'share';
+    if(!row)await env.DB.prepare('INSERT OR IGNORE INTO share_rewards(user_id,reason,created) VALUES(?,?,?)').bind(user.id,reason,Date.now()).run();
+    const r2=await env.DB.prepare('SELECT used_key FROM share_rewards WHERE user_id=?').bind(user.id).first();return json(req,env,{earned:true,available:!r2.used_key,used:r2.used_key||null,first:!row});}
+   if(req.method==='POST'&&path==='/reward/use'){const b=await authBody(req).catch(()=>({}));const key=b&&b.key;
+    if(!REPORT_KEYS.includes(key)||key==='comprehensive')return json(req,env,{error:'invalid_key'},400);
+    if(!row)return json(req,env,{error:'no_reward'},409);if(row.used_key)return json(req,env,{error:'already_used',used:row.used_key},409);
+    const now=Date.now();await env.DB.batch([env.DB.prepare('UPDATE share_rewards SET used_key=?,used_at=? WHERE user_id=? AND used_key IS NULL').bind(key,now,user.id),env.DB.prepare("INSERT INTO report_entitlements(user_id,report_key,granted_at,granted_by,revoked_at) VALUES(?,?,?,'share-reward',NULL) ON CONFLICT(user_id,report_key) DO UPDATE SET revoked_at=NULL").bind(user.id,key,now)]);
+    return json(req,env,{ok:true,used:key});}
+   return json(req,env,{error:'not_found'},404);
+  }
   if(req.method==='GET'&&path==='/me')return json(req,env,{nickname:user.nickname,profile:user.profile?JSON.parse(user.profile):null,updated:user.profile_updated,id:user.id,isAdmin:isAdmin(user,env)});
   if(req.method==='POST'&&path==='/profile'){
     const b=await authBody(req);const revision=Math.max(now,(user.profile_updated||0)+1);
@@ -765,7 +780,7 @@ async function authRoute(req,env,url,ctx){
   }
   if(req.method==='POST'&&path==='/auth/withdraw'){
     await questionTable(env);await pairTables(env);
-    await env.DB.batch([env.DB.prepare('DELETE FROM questions WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM pairs WHERE owner_id=?').bind(user.id),env.DB.prepare('DELETE FROM pair_members WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM partners WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM sessions WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM auth_grants WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM private_reports WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM report_entitlements WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM users WHERE id=?').bind(user.id)]);
+    await env.DB.batch([env.DB.prepare('DELETE FROM questions WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM pairs WHERE owner_id=?').bind(user.id),env.DB.prepare('DELETE FROM pair_members WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM partners WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM sessions WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM auth_grants WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM private_reports WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM report_entitlements WHERE user_id=?').bind(user.id),env.DB.prepare('CREATE TABLE IF NOT EXISTS share_rewards(user_id TEXT PRIMARY KEY,reason TEXT NOT NULL,created INTEGER NOT NULL,used_key TEXT,used_at INTEGER)'),env.DB.prepare('DELETE FROM share_rewards WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM users WHERE id=?').bind(user.id)]);
     return json(req,env,{ok:true});
   }
   if(req.method==='POST'&&path==='/auth/logout'){const t=req.headers.get('Authorization').slice(7);await env.DB.prepare('DELETE FROM sessions WHERE token_hash=?').bind(await authHash(t)).run();return json(req,env,{ok:true})}

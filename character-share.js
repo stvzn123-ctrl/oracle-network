@@ -8,7 +8,7 @@ function inject(sec){if(!sec||sec.querySelector('.cs-share'))return;const at=sec
  const box=document.createElement('div');box.className='cs-share';
  box.innerHTML='<button type="button" class="cs-btn">이미지로 저장·공유하기</button><label class="cs-name"><input type="checkbox" checked> 이름 넣기</label><p class="cs-status" role="status"></p>';
  at.after(box)}
-new MutationObserver(()=>document.querySelectorAll('.destiny-character').forEach(inject)).observe(document.body,{childList:true,subtree:true});
+new MutationObserver(ms=>{document.querySelectorAll('.destiny-character').forEach(inject);if(document.body.classList.contains('demo'))return;for(const m of ms)for(const n of m.addedNodes){const d=n.nodeType===1&&(n.matches('.destiny-character')?n:n.querySelector&&n.querySelector('.destiny-character'));if(d&&!d.dataset.revealed){d.dataset.revealed='1';d.classList.add('cs-reveal')}}}).observe(document.body,{childList:true,subtree:true});
 document.querySelectorAll('.destiny-character').forEach(inject);
 const img=src=>new Promise((ok,no)=>{const i=new Image();i.decoding='async';i.onload=()=>ok(i);i.onerror=no;i.src=src});
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
@@ -56,7 +56,7 @@ async function draw(sec,withName){
 document.addEventListener('click',async e=>{const b=e.target.closest('.cs-btn');if(!b)return;const sec=b.closest('.destiny-character'),st=sec.querySelector('.cs-status'),withName=!!sec.querySelector('.cs-name input')?.checked;
  b.disabled=true;st.textContent='이미지를 만들고 있어요…';
  try{const blob=await draw(sec,withName),title=(sec.querySelector('h2')||{}).textContent||'캐릭터',file=new File([blob],'운명탐정-'+title.replace(/\s+/g,'')+'.jpg',{type:'image/jpeg'});
-  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});st.textContent='공유했어요.';track('share_character',{method:'share',character:title})}catch(err){st.textContent=err&&err.name==='AbortError'?'':'공유하지 못했어요. 다시 시도해 주세요.'}}
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});st.textContent='공유했어요.';track('share_character',{method:'share',character:title});try{window.oracleShared&&oracleShared('character')}catch(_){}}catch(err){st.textContent=err&&err.name==='AbortError'?'':'공유하지 못했어요. 다시 시도해 주세요.'}}
   else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=file.name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);st.textContent='이미지를 저장했어요.';track('share_character',{method:'download',character:title})}
  }catch(_){st.textContent='이미지를 만들지 못했어요. 다시 시도해 주세요.'}finally{b.disabled=false}});
 })();

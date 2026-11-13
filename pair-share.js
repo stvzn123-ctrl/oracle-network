@@ -30,7 +30,7 @@ async function render(card){
  return new Promise(ok=>c.toBlob(ok,'image/png'))}
 async function share(btn){const card=btn.closest('.pair-character');if(!card||btn.disabled)return;btn.disabled=true;const old=btn.textContent;btn.textContent='이미지 만드는 중…';
  try{const blob=await render(card);if(!blob)throw Error('blob');const file=new File([blob],'운명탐정-우리둘.png',{type:'image/png'});
-  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]})}catch(e){if(e&&e.name!=='AbortError')throw e}}
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});try{window.oracleShared&&oracleShared('pair')}catch(_){}}catch(e){if(e&&e.name!=='AbortError')throw e}}
   else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=file.name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}}
  catch(_){alert('이미지를 만들지 못했어요. 다시 시도해 주세요.')}finally{btn.disabled=false;btn.textContent=old}}
 function add(root){for(const card of root.querySelectorAll?root.querySelectorAll('.pair-character'):[]){if(card.querySelector('.pair-share'))continue;const b=document.createElement('button');b.type='button';b.className='pair-share fd-cta fd-cta-sub';b.textContent='이미지로 저장·공유하기';(card.querySelector('.tc-wrap')||card.querySelector('.pair-description'))?.after(b)}}
