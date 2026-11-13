@@ -2912,8 +2912,8 @@ p{text-wrap:pretty}
 #reportPurchase h2:focus{outline:none}
 
 /* 버튼: 사이트 규칙과 같게. 주 버튼 = 금색 알약(ui-cta.css), 보조 버튼 = 크림 바탕 + 갈색 선 알약. 같은 높이·글자 크기·굵기 */
-#reportPurchase #reportCheckoutAll.buy-all{display:flex;align-items:baseline;justify-content:center;gap:6px;width:100%;min-height:54px;padding:0 20px;line-height:54px;border-radius:999px;border:1.5px solid var(--gold-ink);background:var(--surface,#fffdf9);color:var(--gold-ink);font-family:inherit;font-size:17px;font-weight:600;box-shadow:none}
+#reportPurchase #reportCheckoutAll.buy-all{display:flex;align-items:baseline;justify-content:center;gap:6px;width:100%;min-height:54px;padding:0 20px;line-height:54px;border-radius:999px;border:0;background:var(--gold-ink);color:#fff;font-family:inherit;font-size:17px;font-weight:600;box-shadow:0 6px 16px rgba(138,90,30,.28)}
 #reportPurchase #reportCheckoutAll b{font-weight:700}
-#reportPurchase #reportCheckoutAll small{font-size:14px;font-weight:500;color:var(--muted);opacity:1}
+#reportPurchase #reportCheckoutAll small{font-size:14px;font-weight:500;color:#fff;opacity:.9}
 #reportPurchase #reportCheckoutAll:active,#reportPurchase #reportPurchaseClose:active{opacity:.7;transform:scale(.97)}
 @media(prefers-reduced-motion:reduce){#reportPurchase #reportCheckoutAll:active,#reportPurchase #reportPurchaseClose:active{transform:none}}
