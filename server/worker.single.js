@@ -2121,8 +2121,10 @@ function buildRichReport(ch,key){
   const mY=Math.round(YS.reduce((a,r)=>a+r.s,0)/YS.length),hiY=YS.reduce((a,b)=>b.s>a.s?b:a),loY=YS.reduce((a,b)=>b.s<a.s?b:a);
   const yRot=[0,0,0],YT=[['평소보다 밝은 해','흐름이 한결 가벼워지는 해','하고 싶던 일을 꺼내기 좋은 해','바라던 일을 앞당겨 볼 만한 해','기회가 눈에 잘 띄는 해'],['평소 흐름을 이어 가는 해','큰 오르내림 없이 이어지는 해','하던 일을 꾸준히 이어 가기 좋은 해','지금의 리듬을 지키기 좋은 해','무리 없이 한 걸음씩 나아가는 해'],['속도를 늦추고 다지기 좋은 해','안쪽을 단단히 채우는 해','쉬어 가며 힘을 모으는 해','기초를 손보기 좋은 해','다음 도약을 준비하는 해']];
   const yPara=(r,i)=>{const w=why(r.y,r.k),up=w.up.map(x=>x[0]+'의 '+x[1]).join(', '),tb=r.s>=mY+3?0:r.s<=mY-3?2:1,tone=YT[tb][yRot[tb]++%5],tg_=tenGod(d,ys(r.y)),tp=(r.k===1&&['dating','married'].includes(ch.inp.relationship)?{비견:'서로를 친구처럼 편하게 대하며 대등한 사랑을 키워요',겁재:'주변의 관심이 늘어도 둘의 믿음을 확인하며 더 단단해져요',식신:'여유와 다정함이 살아나 함께하는 시간이 즐거워져요',상관:'솔직한 표현이 관계에 활기를 더해 줘요',편재:'함께 밖으로 나가 새로운 경험을 쌓기 좋아요',정재:'생활을 함께 꾸리는 안정감이 커져요',편관:'강렬한 감정이 오가며 관계가 깊어져요',정관:'관계를 공식적으로 다지기 좋은 신호예요',편인:'서로를 깊이 이해하는 대화가 늘어나요',정인:'서로를 아끼고 돌보는 마음이 커져요'}[tg_]:TGP[tg_]?.[CATS[r.k].k])||'';
-   return r.y+'년('+kage(r.y)+'살) · '+r.s+'점 — '+(i?'':(ch.inp.name||'당신')+'님에게 ')+tone+'예요.'+(tp?' '+tp.replace(/[.!?]?$/,'.'):'')+(comp?' 이 해에 가장 밝은 분야는 '+CN[r.k]+'이에요.':'')+
-    (r===hiY?' 비교한 10년 중 가장 높은 자체 지표예요. 계획은 실제 여건을 함께 살펴 결정하세요.':r===loY?' 새로 벌이기보다 지금 가진 것을 다지는 데 힘을 쓰면 다음 해가 가벼워져요.':'')+
+   /* 2026-11-13: 10년 중 최고·최저 해는 분명히 쓰고, 낮은 해는 그해 좋은 말(세운 문구)을 빼고 → 대처를 붙인다. */
+   const isHi=r.s===hiY.s,isLo=r.s===loY.s&&!isHi,LOFIX=['큰 지출·투자는 다음 해로 미루고 비상금부터 채워 두세요.','결론을 재촉하기보다 약속 하나를 지키는 데 마음을 써 주세요.','일을 늘리기보다 다음 기회를 위한 준비(자격·결과물)에 시간을 나눠 두세요.','약속을 덜어 내고 잠과 식사 시간부터 지켜 주세요.'];
+   return r.y+'년('+kage(r.y)+'살) · '+r.s+'점 — '+(i?'':(ch.inp.name||'당신')+'님에게 ')+(isHi?'10년 중 가장 밝은 해':isLo?'10년 중 가장 낮은 해':tone)+'예요.'+(tp&&!isLo?' '+tp.replace(/[.!?]?$/,'.'):'')+(comp?' 이 해에 가장 밝은 분야는 '+CN[r.k]+'이에요.':'')+
+    (isLo?' → '+LOFIX[comp?Y4.map(a=>a[r.i].score).reduce((m,v,j,arr)=>v<arr[m]?j:m,0):ci]+' 이렇게 지나가면 다음 해가 가벼워져요.':tb===2?' → 새로 벌이기보다 지금 가진 것을 다지는 데 힘을 쓰세요.':'')+
     ' [사주] 그해의 세운은 '+ST[ys(r.y)]+BR[yb(r.y)]+'이고 천간은 나에게 '+(w=>w+(((w.charCodeAt(w.length-1)-0xac00)%28)?'이에요':'예요'))(tenGod(d,ys(r.y)))+'.'+(up?' 이 해에는 '+J(up,'이','가')+' 점수를 올렸어요.':'')};
   put('yearly','앞으로 10년, 연도별 운명',hiY.y+'년이 가장 밝고, '+loY.y+'년은 다지기 좋은 해예요.',[(comp?'네 분야 평균':CN[ci])+' 10년 평균 '+mY+'점','세운(해마다의 간지)'],
    YS.map(yPara),(hiY.y-1)+'년 12월 달력에 "'+hiY.y+'년 준비 점검"을 적어 두세요. 그해에 꺼낼 계획을 미리 한 줄로 정해 두면 좋아요.',
@@ -2304,11 +2306,15 @@ function buildRichReport(ch,key){
    Y4.forEach((rows,k)=>{
     const r=rows[i],vals=rows.map(x=>x.score),hi=Math.max(...vals),lo=Math.min(...vals),prev=rows[i-1],next=rows[i+1];
     const local=prev&&next&&((r.score>prev.score&&r.score>next.score)||(r.score<prev.score&&r.score<next.score));
-    if(!local&&r.score!==hi&&r.score!==lo)return;
-    const high=r.score===hi||(local&&r.score>prev.score);
-    const tk=r.score===hi?'hi':r.score===lo?'lo':high?'up':'dn',tone=pick(TONEV[tk],tk+k);
-    const action=pick(ACTV[k][high?0:1],'a'+k+high);
-    insights.push(['돈과 거래는 ','사람과의 관계는 ','일과 배움은 ','일상의 균형은 '][k]+tone+'이에요. '+dot(TGP[tenGod(d,ys(r.year))]?.[CATS[k].k]||'')+' '+action);
+    /* 2026-11-13: 10년 중 최고·최저(또는 95점 이상·66점 이하)는 점수와 함께 분명히 쓰고, 낮은 해는 → 대처. 앞뒤 해 비교 표현은 10년 순위와 어긋나지 않게 고른다. */
+    const rank=vals.filter(v=>v>r.score).length,ext=r.score===hi||r.score>=95?'hi':r.score===lo||r.score<=66?'lo':null;
+    if(!local&&!ext)return;
+    const high=ext?ext==='hi':r.score>prev.score;
+    const LB=['돈과 거래는 ','사람과의 관계는 ','일과 배움은 ','일상의 균형은 '][k],tg=dot(TGP[tenGod(d,ys(r.year))]?.[CATS[k].k]||''),action=pick(ACTV[k][high?0:1],'a'+k+high);
+    if(ext==='hi'){insights.push(LB+r.score+'점으로 10년 중 '+(r.score===hi?'가장 밝은':'손꼽히게 밝은')+' 해예요. '+tg+' '+action);return}
+    if(ext==='lo'){insights.push(LB+r.score+'점으로 10년 중 '+(r.score===lo?'가장 낮은':'낮은 편인')+' 해예요. → '+action);return}
+    const weak=high&&rank>=7,tone=high?(weak?'앞뒤 해보다 조금 나아지지만 아직 낮은 편인 흐름':pick(TONEV.up,'up'+k)):(rank<=2?'높은 편이지만 앞뒤 해보다 한 박자 쉬어 가는 흐름':pick(TONEV.dn,'dn'+k));
+    insights.push(LB+tone+'이에요. '+(weak?'→ '+pick(ACTV[k][1],'a'+k+false):tg+' '+(high?'':'→ ')+action));
    });
    if(!insights.length){const values=Y4.map(r=>r[i].score),focus=values.indexOf(Math.max(...values));insights.push(['수입과 지출의 구조를 정리하며 다음 거래를 준비해 보세요.','주변 사람과의 만남을 이어 가며 서로의 기대를 확인해 보세요.','진행 중인 작업과 배움의 결과를 쌓아 다음 기회에 보여 줄 준비를 하세요.','지킬 수 있는 생활 습관을 정하고 일정에 여유를 남겨 두세요.'][focus]);}
    return row.year+'년 — '+insights.join(' ');
