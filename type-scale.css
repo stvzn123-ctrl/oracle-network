@@ -1,0 +1,27 @@
+/* 글자·간격 기준 (2026-11-13). 크기·줄간격·간격 토큰은 이 파일 한 곳에서만 정의한다.
+   글자 크기는 12 / 14 / 16 / 18 / 21 / 28px, 줄간격은 1.35 / 1.45 / 1.5 / 1.6 / 1.75만 쓴다.
+   (12px 아래는 마야 260칸 표·출생 원형도·그래프 눈금처럼 칸이 좁은 곳에만 남아 있다.) */
+:root{
+  --t-display:28px; --t-title:21px; --t-sub:18px; --t-body:16px; --t-small:14px; --t-caption:12px;
+  --lh-tight:1.35; --lh-title:1.45; --lh-ui:1.5; --lh-small:1.6; --lh-body:1.75;
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px;
+  --gap-title-body:var(--s-3); --gap-para:var(--s-4); --gap-section:var(--s-6); --pad-card:20px; --gutter:20px;
+  /* 예전 이름은 새 기준을 가리킨다 */
+  --fs-s:var(--t-small); --fs-b:var(--t-body); --fs-r:var(--t-sub);
+  --type-meta:var(--t-caption); --type-copy:var(--t-body); --type-subtitle:var(--t-body); --type-section:var(--t-sub); --type-page:var(--t-display);
+  --space-1:var(--s-2); --space-2:var(--s-4); --space-3:var(--s-5); --space-4:var(--s-6); --space-5:var(--s-7);
+}
+body{word-break:keep-all}
+h1,h2,h3,h4{text-wrap:balance}
+p{text-wrap:pretty}
+/* 하단 탭바(760px 이하)에 마지막 내용이 가리지 않게: 본문과, 따로 스크롤되는 전체 화면들 */
+@media(max-width:760px){
+  body{padding-bottom:calc(var(--tabbar-h,60px) + env(safe-area-inset-bottom,0px) + var(--s-5))!important}
+  #report,.report,:is(#accountSheet,#guidePage).account-page,#tab-places.places-page{padding-bottom:calc(var(--tabbar-h,60px) + env(safe-area-inset-bottom,0px) + var(--s-5))!important;scroll-padding-bottom:calc(var(--tabbar-h,60px) + var(--s-5))}
+}
+/* 주제 화면의 같은 단계 제목은 같은 모양. '함께 살펴볼 점'은 크기 대신 옅은 바탕 상자로 구분한다. */
+#result :is(.topic-answer,.topic-candid) h4{font:600 var(--t-sub)/var(--lh-title) var(--body)!important;color:var(--text-emphasis,var(--gold-ink))!important;margin:0 0 var(--gap-title-body)!important}
+#result :is(.topic-answer,.topic-candid) p{font:400 var(--t-body)/var(--lh-body) var(--body)!important;margin:0!important}
+#result .topic-candid{margin:var(--gap-section) 0!important;padding:var(--pad-card)!important;border:0!important;border-radius:16px;background:var(--field,#f6eee4)!important}
+#result .topic-intro h3{margin:0!important}
+#result .topic-intro p{margin:var(--gap-title-body) 0 0!important}

@@ -3,10 +3,10 @@
 :is(#reportOpen,.topic-offer-action button,.cmp-open,[data-friend-result],.cmp-form button[type=submit],[data-gcalc],#reportCheckout,.demo-end button,.fd-cta:not(.fd-cta-sub)):not(#_a):not(#_b):not(#_c):not(#_d){
  display:flex!important;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;width:100%;max-width:420px;min-height:54px!important;margin-left:auto;margin-right:auto;padding:0 22px!important;
  border-radius:999px!important;border:1px solid rgba(255,249,225,.95)!important;background:linear-gradient(160deg,rgba(250,220,157,.96),rgba(232,185,100,.87))!important;
- color:#4A352B!important;font:600 17px/1.2 "IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif!important;letter-spacing:0;
+ color:#4A352B!important;font:600 18px/1.2 "IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif!important;letter-spacing:0;
  box-shadow:0 8px 24px rgba(138,90,30,.13),inset 0 1px 0 #FFF8E9!important;cursor:pointer;transition:opacity .15s,transform .15s}
 :is(#reportOpen,.topic-offer-action button,.cmp-open,[data-friend-result],.cmp-form button[type=submit],[data-gcalc],#reportCheckout,.demo-end button,.fd-cta):active{opacity:.7;transform:scale(.97)}
 :is(#reportOpen,.topic-offer-action button,.cmp-open,[data-friend-result],.cmp-form button[type=submit],[data-gcalc],#reportCheckout,.demo-end button,.fd-cta):disabled{opacity:.45;cursor:not-allowed;transform:none}
 :is(.cmp-askshare,.fd-cta-sub):not(#_a):not(#_b):not(#_c):not(#_d){display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;width:100%;max-width:420px;min-height:48px!important;margin:12px auto 0;padding:0 20px!important;
- border-radius:999px!important;border:1.5px solid rgba(138,90,30,.45)!important;background:#FFFDF9!important;color:#8A5A1E!important;font:600 15.5px/1.2 "IBM Plex Sans KR",sans-serif!important;box-shadow:none!important;cursor:pointer}
+ border-radius:999px!important;border:1.5px solid rgba(138,90,30,.45)!important;background:#FFFDF9!important;color:#8A5A1E!important;font:600 16px/1.2 "IBM Plex Sans KR",sans-serif!important;box-shadow:none!important;cursor:pointer}
 .topic-offer-action{display:block!important}
