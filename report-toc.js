@@ -32,6 +32,7 @@ const ITEMS=['재물','연인','직업','학업','궁합','재회','우정'];
 function sums(){try{const all=typeof ALL_ACCESS_PRICE!=='undefined'?ALL_ACCESS_PRICE:2990,c=typeof COMPREHENSIVE_REPORT_PRICE!=='undefined'?COMPREHENSIVE_REPORT_PRICE:1900,t=typeof TOPIC_REPORT_PRICE!=='undefined'?TOPIC_REPORT_PRICE:1000;const total=c+t*ITEMS.length;return {all,total,pct:Math.floor((1-all/total)*100)}}catch(_){return null}}
 const w=n=>n.toLocaleString()+'원';
 function paint(key){const s=sums(),btn=document.getElementById('reportCheckoutAll'),st=document.getElementById('purchaseStatus');if(!s||!btn)return;
+ const one=document.getElementById('reportCheckout'),pp=document.getElementById('purchasePrice');if(one&&pp&&pp.textContent.trim())one.innerHTML='이 리포트 열기 <b>'+pp.textContent.trim()+'</b>';
  btn.innerHTML='<span class="ba-tag">'+s.pct+'% 할인</span><span class="ba-main">전부 열기 <s>'+w(s.total)+'</s> <b>'+w(s.all)+'</b></span>';
  btn.setAttribute('aria-label','전부 열기, 따로 사면 '+w(s.total)+'인데 '+w(s.all));
  if(st&&/전부 열기\(2,990원\)/.test(st.textContent)||st&&!st.textContent)st.innerHTML='종합 리포트와 '+ITEMS.join('·')+' 리포트를 따로 사면 <b>'+w(s.total)+'</b>이에요. 전부 열기로 한 번에 모두 볼 수 있어요.'}
