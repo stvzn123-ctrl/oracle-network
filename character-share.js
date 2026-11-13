@@ -2,6 +2,8 @@
    출생 정보는 넣지 않는다. 이름은 '이름 넣기'를 켰을 때만. 시스템 공유(files) → 안 되면 내려받기.
    분석: GA4 'share_character'·Clarity 이벤트(사이트 도메인에서만 수집됨). */
 (()=>{"use strict";
+/* 공유 이미지 공통 글꼴: 메모먼트 꾹꾹체(KS 완성형 2,350자 + 영문·숫자 woff2 약 1.8MB, 사용자 허락으로 변환·서브셋). 공유 버튼을 누를 때만 받는다. 없는 글자는 IBM Plex로 대신 그린다. */
+window.loadMemoment=window.loadMemoment||(()=>{let p=null;return()=>p||(p=(async()=>{try{const ff=new FontFace('MemomentKkukkukk','url(img/fonts/memoment-kkukkukk-ks.woff2)');await ff.load();document.fonts.add(ff);window.__mmFont=1}catch(_){p=null}})())})();
 const W=1080,H=1920,INK='#4A352B',GOLD='#8A5A1E',SUB='#7a6253',LINE='#ecd6a8';
 const track=(n,p)=>{try{window.track&&window.track(n,p||{})}catch(_){}};
 function inject(sec){if(!sec||sec.querySelector('.cs-share'))return;
@@ -21,9 +23,9 @@ async function draw(sec,withName){
  const desc=descEl?descEl.innerHTML.split(/<br\s*\/?>/i).map(s=>s.replace(/<[^>]+>/g,'').trim()).filter(Boolean).map(s=>s.replace(/당신/g,name?name+'님':'나')):[];
  const art=sec.querySelector('.character-art img')||sec.querySelector('.character-art');
  const src=art?(art.tagName==='IMG'?art.src:(getComputedStyle(art).backgroundImage.match(/url\("?([^")]+)"?\)/)||[])[1]):null;
- if(!window.__mmFont){try{const ff=new FontFace('MemomentKkukkukk','url(img/fonts/MemomentKkukkukk.ttf)');await ff.load();document.fonts.add(ff);window.__mmFont=1}catch(_){}}
+ await window.loadMemoment();
  const allText='운명탐정입니다님은나는'+name+title+desc.join('')+'사주·서양점성술베딕수비학마야력다섯가지점술로읽은운명캐릭터fatedog.co.kr';
- try{await Promise.all([document.fonts.load('600 100px "IBM Plex Sans KR"',allText),document.fonts.load('600 40px "IBM Plex Sans KR"',allText),document.fonts.load('400 40px "IBM Plex Sans KR"',allText),document.fonts.load('400 30px "IBM Plex Sans KR"',allText)])}catch(_){}
+ try{await Promise.all([document.fonts.load('40px MemomentKkukkukk',allText),document.fonts.load('40px MemomentKkukkukk',allText),document.fonts.load('40px MemomentKkukkukk',allText),document.fonts.load('40px MemomentKkukkukk',allText)])}catch(_){}
  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
  const bg=c.createRadialGradient(W/2,H*.45,0,W/2,H*.45,H*.7);bg.addColorStop(0,'#fff3d6');bg.addColorStop(.5,'#fff9f4');bg.addColorStop(1,'#fbeee2');c.fillStyle=bg;c.fillRect(0,0,W,H);
  c.fillStyle='rgba(232,185,100,.18)';for(let y=27;y<H;y+=54)for(let x=27;x<W;x+=54){c.beginPath();c.arc(x,y,3,0,7);c.fill()}
@@ -41,18 +43,18 @@ async function draw(sec,withName){
  c.textAlign='left';c.fillStyle=INK;c.fillText(title,sx,y);c.font='46px MemomentKkukkukk, "IBM Plex Sans KR", sans-serif';c.fillStyle=SUB;c.fillText(tail,sx+tw+12,y);c.textAlign='center';
  /* 캐릭터 원 */
  const R=250,cy=y+80+R;c.save();c.shadowColor='rgba(138,90,30,.16)';c.shadowBlur=70;c.shadowOffsetY=24;c.beginPath();c.arc(W/2,cy,R,0,7);c.fillStyle='#fff';c.fill();c.restore();
- c.fillStyle='#e8b964';c.font='58px sans-serif';c.fillText('✦',W/2-R-30,cy-R+70);c.fillText('✦',W/2+R+20,cy+R-50);
+ c.fillStyle='#e8b964';c.font='58px MemomentKkukkukk, sans-serif';c.fillText('✦',W/2-R-30,cy-R+70);c.fillText('✦',W/2+R+20,cy+R-50);
  if(src){try{const im=await img(src),[bx,by,bw2,bh]=bbox(im),s=Math.min(360/bw2,360/bh);c.drawImage(im,bx,by,bw2,bh,W/2-bw2*s/2,cy-bh*s/2,bw2*s,bh*s)}catch(_){}}
  /* 소개 */
- y=cy+R+84;c.fillStyle=INK;c.font='400 40px "IBM Plex Sans KR", sans-serif';
+ y=cy+R+84;c.fillStyle=INK;c.font='40px MemomentKkukkukk, \"IBM Plex Sans KR\", sans-serif';
  for(const p of desc)for(const l of wrap(c,p,CW-120)){c.fillText(l,W/2,y);y+=62}
  /* 근거·링크 */
- const by2=Math.max(y+40,CY+CH2-260);c.fillStyle=SUB;c.font='600 30px "IBM Plex Sans KR", sans-serif';c.fillText('사주 · 서양 점성술 · 베딕 점성술 · 수비학 · 마야력',W/2,by2);
- c.fillStyle='#8c7565';c.font='400 30px "IBM Plex Sans KR", sans-serif';c.fillText('다섯 가지 점술로 읽은 운명 캐릭터',W/2,by2+46);
+ const by2=Math.max(y+40,CY+CH2-260);c.fillStyle=SUB;c.font='30px MemomentKkukkukk, \"IBM Plex Sans KR\", sans-serif';c.fillText('사주 · 서양 점성술 · 베딕 점성술 · 수비학 · 마야력',W/2,by2);
+ c.fillStyle='#8c7565';c.font='30px MemomentKkukkukk, \"IBM Plex Sans KR\", sans-serif';c.fillText('다섯 가지 점술로 읽은 운명 캐릭터',W/2,by2+46);
  /* 운명탐정 표시(상자 없이 마스코트 + 글자) */
  c.font='58px MemomentKkukkukk, "IBM Plex Sans KR", sans-serif';const bwd=c.measureText('운명탐정').width,mw=mascot?96:0,gx=W/2-(bwd+mw+(mascot?16:0))/2,gy=by2+150;
  if(mascot)c.drawImage(mascot,gx,gy-74,mw,mw);c.textAlign='left';c.fillStyle=GOLD;c.fillText('운명탐정',gx+mw+(mascot?16:0),gy);c.textAlign='center';
- c.fillStyle=GOLD;c.font='600 32px "IBM Plex Sans KR", sans-serif';c.fillText('fatedog.co.kr',W/2,CY+CH2+70);
+ c.fillStyle=GOLD;c.font='32px MemomentKkukkukk, \"IBM Plex Sans KR\", sans-serif';c.fillText('fatedog.co.kr',W/2,CY+CH2+70);
  return new Promise(ok=>cv.toBlob(ok,'image/jpeg',.9))}
 document.addEventListener('click',async e=>{const b=e.target.closest('.cs-btn');if(!b)return;const sec=b.closest('.destiny-character'),st=sec.querySelector('.cs-status'),withName=true;
  b.disabled=true;st.textContent=window.__mmFont?'이미지를 만들고 있어요…':'글꼴을 불러오고 있어요…';
