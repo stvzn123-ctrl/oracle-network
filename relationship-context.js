@@ -27,21 +27,34 @@
     const peak=years.sort((a,b)=>b.score-a.score)[0];
     return peak?peak.year+'년은 앞으로 10년의 애정 흐름에서 주목할 해예요. '+c.answer:c.answer;
   }
+  /* 2026-11-13: 무료 연인 화면의 문장도 관계 상태에 맞춘다(혼자인데 '오래 만났다는' 같은 문장이 나오지 않게). */
+  const STYLE_TAIL={married:'함께 사는 일상에서 이 방식으로 마음을 전하면 서로 더 편안해져요.',dating:'지금 만나는 사람에게 이 방식으로 마음을 전하면 관계가 한층 깊어져요.',crush:'호감을 표현할 때 이 방식을 쓰면 부담 없이 자연스럽게 전해져요.',single:'새로운 사람을 만날 때 이 방식이 나의 매력으로 드러나요.',private:'가까운 관계에서 이 방식으로 마음을 전해 보세요.'};
+  const CAUTION={
+    couple:['내가 정한 속도로 관계를 이끌면 상대의 망설임을 놓칠 수 있어요. 중요한 일을 정하기 전에 상대의 생각을 먼저 물어보세요.','서운할 때 바로 꺼낸 말은 마음보다 강하게 전달될 수 있어요. 감정이 가라앉은 뒤 사실과 바라는 행동을 나누어 말해 보세요.','오래 함께했다는 이유만으로 마음이 전해지지는 않아요. 표현을 줄이고 있지는 않은지 살피고, 고마운 점과 바라는 점을 말로 확인해 주세요.','옳은 말을 하는 것과 관계를 편안하게 만드는 것은 다를 수 있어요. 해결책을 주기 전에 상대가 어떤 마음이었는지 먼저 들어 보세요.','말하지 않은 마음을 상대가 알아주길 기다리면 오해가 길어질 수 있어요. 결론이 나지 않았어도 지금 느끼는 점부터 짧게 나누어 보세요.'],
+    crush:['호감이 크면 혼자 속도를 앞서 나가기 쉬워요. 마음을 표현한 다음에는 상대가 답할 시간을 주세요.','작은 반응 하나에 마음이 크게 흔들리기 쉬워요. 답이 늦어도 바로 결론 내리지 말고 다음 만남의 분위기를 살펴보세요.','좋아하는 마음을 참고만 있으면 상대는 관심이 없다고 느낄 수 있어요. 함께할 약속을 하나 먼저 제안해 보세요.','상대를 판단하는 기준을 먼저 세우면 설렘이 줄어들 수 있어요. 맞고 틀림보다 함께 있을 때의 기분을 살펴보세요.','생각이 길어지면 표현할 때를 놓치기 쉬워요. 결론이 나지 않았어도 지금 느끼는 호감을 짧게 전해 보세요.'],
+    single:['마음에 드는 사람을 만나면 혼자 속도를 내기 쉬워요. 처음 몇 번의 만남은 상대의 속도도 함께 살펴보세요.','첫인상에서 마음이 크게 움직이는 편이에요. 감정이 앞설 때는 한 번 더 만나 본 뒤 판단해 보세요.','익숙한 사람과 장소에만 머물면 새 만남이 잘 생기지 않아요. 한 달에 한 번은 처음 가는 모임이나 활동을 넣어 보세요.','기준이 분명한 만큼 처음부터 조건으로 사람을 거르기 쉬워요. 꼭 필요한 기준 한두 가지만 남기고 대화하며 알아가 보세요.','생각이 길어지면 좋은 사람을 만나도 다가갈 때를 놓치기 쉬워요. 다시 만나고 싶다면 그 마음을 먼저 짧게 전해 보세요.'],
+    private:['내가 원하는 속도로 관계를 이끌면 상대의 망설임을 놓칠 수 있어요. 중요한 순간에는 상대의 생각을 먼저 물어보세요.','서운할 때 바로 꺼낸 말은 마음보다 강하게 전달될 수 있어요. 감정이 가라앉은 뒤 사실과 바라는 행동을 나누어 말해 보세요.','마음을 표현하지 않으면 가까운 사람도 알아차리기 어려워요. 고마운 점과 바라는 점을 말로 전해 보세요.','옳은 말을 하는 것과 관계를 편안하게 만드는 것은 다를 수 있어요. 해결책을 주기 전에 상대가 어떤 마음이었는지 먼저 들어 보세요.','말하지 않은 마음을 상대가 알아주길 기다리면 오해가 길어질 수 있어요. 결론이 나지 않았어도 지금 느끼는 점부터 짧게 나누어 보세요.']};
+  window.relationshipCaution=function(ch){const st=context(ch),dom=ch.cnt.indexOf(Math.max(...ch.cnt));return (CAUTION[st==='married'||st==='dating'?'couple':st]||CAUTION.private)[dom]};
+  window.relationshipState=context;
   function rows(ch){
-    const c=COPY[context(ch)];
-    return [[c.question,flowTiming(ch)],['사랑을 표현하는 나의 방식',LOVE_STYLE[sign(birthExtraLon('Venus',ch.jd))%4]+' 방식이 차트에 나타나요. 현재 상황에 맞게 표현의 속도와 방식을 조율해 보세요.'],[c.next,c.detail],['지금 해 볼 일',c.action]];
+    const st=context(ch),c=COPY[st];
+    return [[c.question,flowTiming(ch)],['사랑을 표현하는 나의 방식',LOVE_STYLE[sign(birthExtraLon('Venus',ch.jd))%4]+' 방식이 차트에 나타나요. '+STYLE_TAIL[st]],[c.next,c.detail],['지금 해 볼 일',c.action]];
   }
   const originalOffer=topicReportHTML;
   topicReportHTML=function(key){
     if(!['love','marry'].includes(key)||!CH)return originalOffer(key);
     const c=COPY[context(CH)];
-    return '<section class="topic-offer"><h4>'+c.title+' 리포트</h4><ul><li>'+c.question+'</li><li>나의 관계 성향과 표현 방식</li><li>'+c.next+'</li><li>지금 실천할 대화와 행동</li></ul><p class="relationship-report-note" role="note">운명은 같아도 현재 상태에 따라 해석이 달라질 수 있어요. 현재 상태를 입력해 주시면 내 상황을 더 정확하게 반영한 해석을 받아보실 수 있어요. 리포트를 보기 전, 내 정보에서 현재 상태를 확인해 주세요.</p><div class="topic-offer-action"><strong>'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</strong><button type="button" data-buy="'+key+'">나의 리포트 보기</button></div><p class="buy-msg" aria-live="polite"></p></section>';
+    return '<section class="topic-offer"><h4>'+c.title+' 리포트</h4><ul><li>'+c.question+'</li><li>나의 관계 성향과 표현 방식</li><li>'+c.next+'</li><li>지금 실천할 대화와 행동</li></ul>'+(context(CH)==='private'?'<p class="relationship-report-note" role="note">운명은 같아도 현재 상태에 따라 해석이 달라질 수 있어요. 내 정보에서 지금 관계 상태를 고르면 내 상황에 맞춘 해석을 볼 수 있어요.</p>':'<p class="relationship-report-note" role="note">지금 관계 상태('+OPTIONS[context(CH)]+')에 맞춰 읽어 드려요. 상태가 바뀌었다면 내 정보에서 바꿔 주세요.</p>')+'<div class="topic-offer-action"><strong>'+LAUNCH_PRICE(TOPIC_REPORT_PRICE)+'</strong><button type="button" data-buy="'+key+'">나의 리포트 보기</button></div><p class="buy-msg" aria-live="polite"></p></section>';
   };
+  /* 연애 중·썸이면 미리보기 제목을 '배우자가 될 사람' 대신 차트가 그리는 잘 맞는 사람으로 */
+  function previewFor(ch,key){const st=context(ch);let h=spousePreviewHTML(ch,st==='single'?'love':key);
+    if(st==='dating'||st==='crush')h=h.replace(/(<h4 id="spouse-preview-title-[a-z]+">)[^<]*/,'$1차트가 그리는 나와 잘 맞는 사람');
+    return h}
   const oldTopic=topicHTML;
   topicHTML=function(ch,key){
     if(!['love','marry'].includes(key))return oldTopic(ch,key);
     const c=COPY[context(ch)];
-    return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+topicEsc(OPTIONS[context(ch)])+'</span><h3>'+c.title+'</h3></header>'+spousePreviewHTML(ch,key)+answerCards(rows(ch))+topicReportHTML(key)+'</section>';
+    return '<section class="blk blk-first topic"><header class="topic-intro"><span class="eyebrow">'+topicEsc(OPTIONS[context(ch)])+'</span><h3>'+c.title+'</h3></header>'+previewFor(ch,key)+answerCards(rows(ch))+topicReportHTML(key)+'</section>';
   };
   const originalRich=buildRichReport;
   /* 2026-11-10: 관계 상태는 리포트를 통째로 바꾸지 않고, 기존의 풍부한 장(사랑할 때의 나·인연의 모습·시기·주의·제언)을 그대로 두고

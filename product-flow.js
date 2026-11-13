@@ -106,5 +106,5 @@
  const original=topicHTML;
  topicHTML=function(ch,key){const html=original(ch,key);if(['match','friend','group','reunion','ask'].includes(key))return html;
  const area=['love','marry'].includes(key)?'relationship':['money','invest','property','business'].includes(key)?'money':['study','exam','cert'].includes(key)?'study':'work';
- return html.replace('<section class="topic-offer"','<aside class="topic-candid"><h4>함께 살펴볼 점</h4><p>'+topicEsc(constructiveCaution(ch,area))+'</p></aside><section class="topic-offer"');};
+ return html.replace('<section class="topic-offer"','<aside class="topic-candid"><h4>함께 살펴볼 점</h4><p>'+topicEsc(area==='relationship'&&window.relationshipCaution?window.relationshipCaution(ch):constructiveCaution(ch,area))+'</p></aside><section class="topic-offer"');};
 })();

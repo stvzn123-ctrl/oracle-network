@@ -9,6 +9,14 @@ const CFG={
  money:{ci:0,n:10,top:2,col:'money',name:'금전 · 앞으로 10년',lead:'앞으로 10년, 돈이 가장 잘 들어오는 해',low:'돈의 흐름이 10년 중 가장 느려지는 해예요. 큰 지출이나 투자는 부담이 커질 수 있어요.',fix:'이 해에는 새 투자보다 고정비를 줄이고 비상금을 먼저 채워 두세요. 밝은 해에 쓸 여유가 생겨요.',note:'큰 지출·투자 같은 돈의 결정은 밝은 해와 달에 맞추면 흐름을 타기 좋아요.',drop:/돈이 가장 잘 들어오는 해는\?/},
  marry:{ci:1,n:10,top:2,col:'love',name:'애정 · 앞으로 10년',lead:'앞으로 10년, 사랑이 가장 깊어지는 해',low:'마음이 엇갈리기 쉬운 해예요. 서운함이 쌓이면 거리가 생길 수 있어요.',fix:'이 해에는 연락의 양보다 약속 하나를 지키는 데 마음을 써 주세요. 작은 신뢰가 관계를 지켜요.',note:'고백·만남·중요한 대화는 밝은 해와 달에 맞추면 흐름을 타기 좋아요.',drop:null}};
 CFG.love=CFG.marry;
+/* 2026-11-13: 사랑 상자 문구는 관계 상태(결혼·연애 중·썸·혼자·고르지 않음)에 맞춘다. */
+const LOVE_REL={
+ married:{lead:'앞으로 10년, 부부 사이가 가장 깊어지는 해',low:'서로 바빠 마음이 엇갈리기 쉬운 해예요. 서운함이 쌓이면 대화가 줄 수 있어요.',fix:'이 해에는 일주일에 한 번 둘만의 대화 시간을 정해 두세요. 작은 약속이 관계를 지켜요.',note:'여행·이사·큰 결정 같은 중요한 대화는 밝은 해와 달에 맞추면 흐름을 타기 좋아요.'},
+ dating:{lead:'앞으로 10년, 사랑이 가장 깊어지는 해',low:'마음이 엇갈리기 쉬운 해예요. 서운함이 쌓이면 거리가 생길 수 있어요.',fix:'이 해에는 연락의 양보다 약속 하나를 지키는 데 마음을 써 주세요. 작은 신뢰가 관계를 지켜요.',note:'결혼 이야기·여행 같은 중요한 대화는 밝은 해와 달에 맞추면 흐름을 타기 좋아요.'},
+ crush:{lead:'앞으로 10년, 호감이 사랑으로 이어지기 좋은 해',low:'상대의 마음을 읽기 어려워 혼자 서운해지기 쉬운 해예요.',fix:'이 해에는 답을 재촉하기보다 편하게 만날 자리를 한 번 제안해 보세요. 부담이 줄면 마음도 열려요.',note:'고백·데이트 제안은 밝은 해와 달에 맞추면 흐름을 타기 좋아요.'},
+ single:{lead:'앞으로 10년, 새 인연을 만나기 좋은 해',low:'새 인연이 잘 보이지 않거나 마음이 쉽게 움직이지 않는 해예요.',fix:'이 해에는 만남을 서두르기보다 나를 돌보고 좋아하는 활동을 넓혀 두세요. 다음 밝은 해에 자연스럽게 사람이 모여요.',note:'새 모임·소개 자리는 밝은 해와 달에 맞추면 흐름을 타기 좋아요.'},
+ private:{lead:'앞으로 10년, 애정운이 가장 밝은 해',low:'마음이 엇갈리기 쉬운 해예요. 가까운 사이에서도 서운함이 쌓일 수 있어요.',fix:'이 해에는 고마운 마음을 말로 한 번 더 전해 주세요. 작은 표현이 관계를 지켜요.',note:'중요한 대화와 만남은 밝은 해와 달에 맞추면 흐름을 타기 좋아요.'}};
+function cfgFor(ch,k){const c=CFG[k];if(!c||c.ci!==1)return c;const r=(ch&&ch.inp&&ch.inp.relationship)||'private';return Object.assign({},c,LOVE_REL[r]||LOVE_REL.private)}
 function months(ch,ci){const now=new Date(),out=[];for(let i=0;i<12;i++){const d0=new Date(now.getFullYear(),now.getMonth()+i,1);let t=0,n=0;for(let dd=1;dd<=28;dd+=3){t+=dayFortune(ch,new Date(d0.getFullYear(),d0.getMonth(),dd,12)).sc[ci];n++}out.push({y:d0.getFullYear(),m:d0.getMonth()+1,v:t/n})}return out}
 function chart(S,name,col){const W=220,H=150,L=26,Rr=8,T=12,B=22,n=S.length,x=k=>L+(W-L-Rr)*k/Math.max(1,n-1),y=v=>T+(100-Math.max(60,Math.min(100,v)))/40*(H-T-B);
  let g='',bi=0;S.forEach((s,k)=>{if(s.v>S[bi].v)bi=k});
@@ -17,7 +25,7 @@ function chart(S,name,col){const W=220,H=150,L=26,Rr=8,T=12,B=22,n=S.length,x=k=
  const p=S.map((s,k)=>[x(k),y(s.v)]),path=typeof smoothPath==='function'?smoothPath(p.map(q=>q.join(',')).join(' ')):'M'+p.map(q=>q.join(' ')).join('L');
  g+=`<path class="bc-line" d="${path}" stroke="var(--${col})"/>`+p.map((q,k)=>`<circle class="bc-pt${k===bi?' top':''}" cx="${q[0]}" cy="${q[1]}" r="${k===bi?5:3}" fill="var(--${col})"><title>${S[k].y}년 ${S[k].v}점</title></circle>`).join('');
  return `<figure class="bc-cell tt-chart"><figcaption><b style="color:var(--${col})">${name}</b><span>가장 밝은 시기 · ${S[bi].y}년</span></figcaption><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${name} 흐름">${g}</svg></figure>`}
-function timingHTML(ch,k){const c=CFG[k];
+function timingHTML(ch,k){const c=cfgFor(ch,k);
  if(!c||!R||!R.length)return '';const y0=new Date().getFullYear(),age=y=>y-ch.Y+1;
  const S=R.map((r,i)=>({y:y0+1+i,v:D(r[c.ci].mean)})).slice(0,c.n),srt=S.slice().sort((a,b)=>b.v-a.v||a.y-b.y),top=srt.slice(0,c.top).sort((a,b)=>a.y-b.y),low=srt.at(-1);
  let mm=[];try{mm=months(ch,c.ci)}catch(_){}
