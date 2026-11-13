@@ -1,0 +1,18 @@
+# Cloudflare Pages 캐시 설정 (2026-11-13). build.sh가 dist/로 복사한다.
+# 해시가 붙은 파일(내용이 바뀌면 이름이 바뀜)은 1년, 버전(?v=)으로 참조하는 파일은 7일, 그림은 30일. HTML은 매번 확인.
+/app.*.js
+  Cache-Control: public, max-age=31536000, immutable
+/bundle.*.css
+  Cache-Control: public, max-age=31536000, immutable
+/maps.*.js
+  Cache-Control: public, max-age=31536000, immutable
+/img/*
+  Cache-Control: public, max-age=2592000
+/*.js
+  Cache-Control: public, max-age=604800
+/*.css
+  Cache-Control: public, max-age=604800
+/
+  Cache-Control: public, max-age=0, must-revalidate
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
