@@ -394,3 +394,4 @@
 ## 직업·학업 시기 미리보기 (2026-11-13, 사용자 요청)
 - `topic-timing.js`/`topic-timing.css`: 직업·학업 주제 화면 맨 위에 무료 상자 "언제 잘 될까?". `window.topicHTML`을 감싸 header 뒤에 넣는다. 10년 막대(R[i][2] → D(), 상위 2개 금색, 최저 해), 가장 좋은 해 2개(나이), 앞으로 12개월 중 밝은 달 3개(dayFortune(ch,date).sc[2], 3일 간격 평균), 다지기 좋은 해. 같은 내용의 답 카드("일이 가장 잘 풀리는 해는?"/"성과가 나는 해는?")는 지운다. 계산은 바꾸지 않는다.
 - oracle-api의 Cloudflare 자동 배포(Builds)는 꺼 두었다(2026-11-13 사고: 비밀값 없는 버전이 이어짐). 서버 수정 시 `server/`에서 직접 `wrangler deploy` 후 `wrangler secret list`로 비밀값 8개 확인.
+- 2026-11-13 가격 노출: 버튼 옆 가격(`.topic-offer-action>strong`, `.cmp-price`, `#reportCta .comprehensive-price`)은 demo-ui.css에서 숨긴다. `purchase-first.js`: 로그인 전·정보 저장 전·예시 상태에서 리포트 보기(`[data-buy]`, `#reportOpen`, `[data-gopen]`, `[data-cmp-open]`)를 누르면 먼저 구매 화면(`showReportPurchase`)을 띄우고, 거기서 결제 버튼을 누르면 `requireSavedProfile`(로그인·입력 안내)로 보낸다. 안내·약관의 가격표와 자유질문 제출 가격은 그대로 둔다.

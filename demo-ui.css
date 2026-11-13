@@ -3,3 +3,5 @@
 body.demo.dui-show .demo-ribbon{display:flex;position:fixed;top:56px;left:12px;right:12px;max-width:560px;margin:0 auto;z-index:60;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-radius:12px;background:#4A352B;color:#FFF9F4;font-size:13.5px;font-weight:600;word-break:keep-all;box-shadow:0 6px 16px rgba(74,53,43,.25)}
 .demo-ribbon button{flex:none;min-height:34px;padding:0 12px;border-radius:999px;border:0;background:#f2c45a;color:#4A352B;font:inherit;font-weight:700;cursor:pointer}
 @media print{.demo-ribbon{display:none!important}}
+/* 2026-11-13: 가격은 구매 화면에서만 (버튼 옆 가격 숨김) */
+.topic-offer-action>strong,.cmp-price,#reportCta .comprehensive-price{display:none!important}
