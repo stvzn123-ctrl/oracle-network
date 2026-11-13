@@ -19,3 +19,5 @@
 .tt-facts dd{margin:2px 0 0;font-size:15px;font-weight:700;color:#4A352B;word-break:keep-all}
 .tt-note{margin:0;font-size:12.5px;line-height:1.55;color:var(--muted,#7a6457);word-break:keep-all}
 @media (max-width:400px){.tt-facts{grid-template-columns:1fr}.tt-bar b{font-size:9.5px}}
+.tt-fix{margin:0 0 10px;padding:10px 12px;border-radius:12px;background:#FFF1EC;font-size:14px;line-height:1.6;color:#4A352B;word-break:keep-all}
+.tt-fix span{display:block;margin-top:4px;font-weight:600;color:#8A5A1E}

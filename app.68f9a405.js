@@ -1092,6 +1092,9 @@ function reportQA(ch){return lifeQ(ch).map(q=>`<h3>${q.q}</h3><p class="r-lead q
 /* ---------- 오늘·이번 주 운세: 다섯 점술의 그날 규칙(일진 십신, 달의 하우스, 타라발라, 개인일, 촐킨)을 합친 자체 지표 ---------- */
 const DAYTG={비견:"내 페이스대로 밀고 나가면 되는 날",겁재:"함께하는 사람과 몫을 나눌수록 커지는 날",식신:"좋아하는 일에 손이 가는 여유로운 날",상관:"말보다 결과물로 보여 주면 좋은 날",편재:"뜻밖의 기회가 눈에 띄는 날",정재:"꼼꼼히 챙긴 만큼 남는 날",편관:"압박이 와도 정면으로 풀면 인정받는 날",정관:"약속과 원칙을 지키면 빛나는 날",편인:"혼자 생각을 정리하면 답이 보이는 날",정인:"배우고 도움받기 좋은 날"};
 const TARA=["탄생","번영","위험","안녕","장애","성취","소멸","우정","큰 우정"],TARAW=[0,8,-8,8,-6,8,-10,6,8];
+const WARN_FIX={'같이 있는 시간이 줄고 서로 예민해지는 해':'일주일에 하루는 둘만의 시간을 먼저 정해 두세요','각자 자기 일로 바빠 연락이 뜸해지는 해':'짧아도 하루 한 번 안부를 주고받기로 약속해 두세요','다시 만나도 같은 일로 부딪히기 쉬운 해':'예전에 부딪힌 이유 하나를 골라, 서로 바꿀 행동을 먼저 정해 두세요','지난 일을 접고 싶어지는 해':'큰 결정은 한 달 미루고, 좋았던 기억부터 함께 꺼내 보세요','각자 새로 시작하고 싶어지는 해':'새 계획을 서로에게 먼저 말하고, 함께할 수 있는 부분을 찾아보세요'};
+const warnFix=w=>w.map(x=>WARN_FIX[x]?x+' → '+WARN_FIX[x]:x).join(' / ');
+const TARAFIX=['','','중요한 답장·결정은 한 번 더 읽고 보내세요','','이동·약속에 10분 여유를 두세요','','일정 하나를 덜어 내고 일찍 쉬세요','',''];
 const TARAM=["나를 돌아보는 날","하는 일이 불어나는 날","서두르지 말아야 할 날","마음이 편안한 날","작은 걸림돌을 조심할 날","노력이 결과로 이어지는 날","무리하지 말고 쉬어 갈 날","사람 운이 좋은 날","도움이 크게 오는 날"];
 const MHW=[null,[0,0,2,6],[8,0,2,0],[2,3,4,0],[0,4,0,4],[0,8,0,2],[0,-2,6,2],[0,8,2,0],[4,2,-2,-4],[2,2,4,2],[2,0,8,0],[6,4,4,2],[-2,-2,-2,4]];
 const PDAY={1:"새로 시작",2:"협력",3:"표현",4:"정리",5:"변화",6:"돌봄",7:"성찰",8:"성과",9:"마무리"};
@@ -1150,7 +1153,7 @@ function todayProse(f,isT){const day=isT?"오늘":f.wd+"요일",lo=f.sc.indexOf(
 function todayHTML(ch,dt){dt=dt||new Date();const isT=dt.toDateString()===new Date().toDateString(),f=dayFortune(ch,dt);const lc=LUCKC[f.le];
   const rows=[["saju","사주",`일진 ${f.pil} · ${f.tg}`,f.sj.length?f.sj.join(" · "):`${f.tg}의 날`],
     ["west","서양 점성술",`달 ${ZOD[f.ms]}자리 · ${f.mh}하우스`,`${HOUSE[f.mh]}에 마음이 가는 날`],
-    ["vedic","베딕 점성술",`타라 ${f.ta+1} · ${TARA[f.ta]}`,TARAM[f.ta]],
+    ["vedic","베딕 점성술",`타라 ${f.ta+1} · ${TARA[f.ta]}`,TARAM[f.ta]+(TARAFIX[f.ta]?" → "+TARAFIX[f.ta]:"")],
     ["num","수비학",`개인일 ${f.pd}`,`${PDAY[f.pd]}의 흐름`],
     ["maya","마야력",`${f.tone} ${MS[f.ks][0]}(${MS[f.ks][1]})`,f.my.length?f.my.join(" · "):MS[f.ks][2]]];
   $("todayHead").innerHTML=`<div class="td-head"><div class="td-ring">${ringSvgD(f.all,112)}<b>${f.all}<small>점</small></b></div>
@@ -1782,7 +1785,7 @@ function compatReportData(a,b,res){const me=a.inp.name||'나',you=b.inp.name||'�
    const mind=x.pa===x.pb?`두 사람 모두 ${PYW[x.pa]} 해라 마음이 같은 곳을 봅니다.`:x.s>=58?[`${me}님은 ${PYW[x.pa]} 해, ${you}님은 ${PYW[x.pb]} 해입니다. 바라는 것이 조금 다르니 각자 원하는 걸 한 번씩 말로 맞춰 두면 충분합니다.`,`이 해 ${me}님은 ${PYW[x.pa]} 쪽, ${you}님은 ${PYW[x.pb]} 쪽에 마음이 가 있습니다. 서로의 속도를 존중해 주면 오히려 각자의 시간이 관계에 힘이 됩니다.`,`${me}님은 ${PYW[x.pa]} 해이고 ${you}님은 ${PYW[x.pb]} 해입니다. 같은 곳을 보지 않아도 괜찮은 해라, 함께하는 날에는 서로의 한 해 이야기를 들어 주세요.`][i%3]:`${me}님은 ${PYW[x.pa]} 해, ${you}님은 ${PYW[x.pb]} 해입니다. 상대가 내 속도를 안 맞춰 준다고 느끼기 쉽지만 서로 보는 곳이 다를 뿐이니, 누가 양보할지보다 만나는 날을 지키는 데 마음을 쓰세요.`;
    return `${x.y}년 · ${t.label} — ${sig}${body} ${mind}`}),
   `${up[0].y}년에는 여행이나 기념일처럼 둘만 아는 추억을 하나 만들어 두세요. 잔잔하게 흐르는 해에 그 기억이 버팀목이 됩니다.`,
-  {table:{cap:'앞으로 3년 관계 흐름',head:['해','분위기','가까워지는 신호','조심할 것'],rows:yrs.map(x=>[x.y+'년',yearTone(x).cell,x.why.join(', ')||(x.pa===x.pb?'두 사람 다 '+PYW[x.pa]+' 해':me+'님은 '+PYW[x.pa]+' 해, '+you+'님은 '+PYW[x.pb]+' 해'),x.warn.join(', ')||'없음'])}});
+  {table:{cap:'앞으로 3년 관계 흐름',head:['해','분위기','가까워지는 신호','주의'],rows:yrs.map(x=>[x.y+'년',yearTone(x).cell,x.why.join(', ')||(x.pa===x.pb?'두 사람 다 '+PYW[x.pa]+' 해':me+'님은 '+PYW[x.pa]+' 해, '+you+'님은 '+PYW[x.pb]+' 해'),warnFix(x.warn)||'없음'])}});
  const MON=compatMonths(a,b,me,you);
  add('calendar','앞으로 12개월, 두 사람의 흐름','',MON.map(x=>x.year+'년 '+x.month+'월 — '+x.brief),'',{months:MON,compactMonthly:true});
  add('place','함께 가면 좋은 곳',`${PLACE[need][0]} 같은 곳이 두 사람에게 가장 잘 맞습니다.`,
@@ -1853,7 +1856,7 @@ function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name
   .concat([ru.mo.length?`한 해 안에서 고른다면 ${ru.mo.map(m=>m+'월').join('·')} 무렵이 가장 나아요. 두 사람 다 마음이 누그러지는 달이라, 같은 말이라도 덜 날카롭게 가 닿아요.`:''])
   .concat(dn.map(x=>`${x.y}년은 ${x.warn.join(', ')||'흐름이 잔잔한 해'}라, 이 해에는 서두르지 말고 안부 정도로만 이어 가세요.`)),
   days.length?`${dTx(days[0])}에 부담 없는 안부 한 번으로 시작해 보세요.`:`${tgt.y}년 안에 부담 없는 안부 한 번으로 시작해 보세요.`,
-  {table:{cap:'앞으로 3년 재회 흐름',head:['해','가능성','다시 닿는 신호','조심할 것'],cols:['19%','17%','40%','24%'],rows:yrs.map(x=>[x.y+'년',lab(x),whyTx(x),x.warn.join(', ')||'없음'])}});
+  {table:{cap:'앞으로 3년 재회 흐름',head:['해','가능성','다시 닿는 신호','주의'],cols:['13%','14%','35%','38%'],rows:yrs.map(x=>[x.y+'년',lab(x),whyTx(x),warnFix(x.warn)||'없음'])}});
  add('plan','재회 시나리오: 언제·어디서·어떻게',days.length?`가장 좋은 달은 ${dTx(days[0])}이에요.`:`${tgt.y}년이 가장 좋아요.`,
   [`언제 — ${days.length?days.map(dTx).join('이나 ')+'이 가장 좋아요. 두 사람의 애정 흐름이 함께 올라가는 달이에요.':tgt.y+'년이 가장 좋아요.'} 시간은 ${TIME[mb]}이 ${you}님이 답하기 편해요.`,
    `어디서 — 다시 만난다면 ${PLACE[need]}이 두 사람에게 가장 편한 자리예요. 마주 앉기보다 나란히 걷는 자리가 말이 쉽게 나오고, 오래 머무르기보다 1~2시간 안에 기분 좋게 헤어지는 편이 다음 약속을 만들어요.`,
@@ -1900,7 +1903,7 @@ function reunionReportData(a,b,res,ru){const me=a.inp.name||'나',you=b.inp.name
    `연락이 닿았는데 대화가 지난 일 따지기로만 흐르고 지금 이야기가 나오지 않는다면, 아직 때가 아니라는 뜻이에요. 그럴 땐 ${nextY}년 ${ru.mo[0]||3}월 무렵 다시 가볍게 안부를 건네 보세요.`,
    aLove<70?`${me}님의 올해 애정 흐름(${aLove}점)이 잔잔한 편이라, 지금은 나를 단단히 하는 시간이 재회 가능성을 오히려 키워요.`:'']);
  add('table','점술별 궁합 한눈에 보기','다섯 점술의 기본 궁합 점수예요.',[],'',{table:{cap:'점술별 궁합(기본 70점에서 가감)',head:['점술','점수','주요 신호'],rows:res.sys.map(o=>[o.n,o.score+'점',o.items.map(x=>x[0]).join(', ')||'두드러진 신호 없음'])}});
- add('limit','해석의 범위','재회 리포트는 두 사람의 출생 차트만 읽어요.',['상대의 지금 마음은 출생 차트와 그해 흐름으로 추측한 것이에요. 실제 마음과 다를 수 있고, 관계를 다시 시작할지는 두 사람의 대화와 선택으로 정해져요.',b.inp.notime||b.inp.place?.none?'상대의 출생 시각·출생지가 없는 항목은 참고값으로 계산했어요.':'','점수와 날짜는 전통 규칙을 수치로 옮긴 재미용 참고 지표예요.']);
+ add('limit','해석의 범위','재회 리포트는 두 사람의 출생 차트만 읽어요.',['상대의 지금 마음은 출생 차트와 그해 흐름으로 추측한 것이에요. 실제 마음과 다를 수 있고, 관계를 다시 시작할지는 두 사람의 대화와 선택으로 정해져요.',b.inp.notime||b.inp.place?.none?'상대의 출생 시각·출생지가 없는 항목은 참고값으로 계산했어요.':'','']);
  const L=k=>(S.find(s=>s.kind===k)||{}).lead;
  return {title:`${me}님과 ${you}님의 재회 리포트`,summary:[L('summary'),L('now'),L('timing'),L('plan'),L('bitter')].filter(Boolean),sections:S,years:R.map((r,i)=>({year:horizonDate(HZ[i].off).y,score:D(r[1].mean)})),category:'애정',note:'다섯 점술의 계산 규칙과 전통적 상징 해석으로 구성한 리포트입니다. 미래를 예측하는 정확성은 검증되지 않았으며, 중요한 결정은 실제 상황과 전문가의 조언을 우선해 주세요.',birthCharts:[a,b],version:'match-reunion-2026-11-11',body:''}}
 async function openCompatReport(btn,requestedKey=null){
@@ -2207,7 +2210,7 @@ document.addEventListener('click',e=>{if(cpMoved&&e.target.closest&&e.target.clo
 /* 2026-11-12: 장소는 '이번 주' 옆 지도 아이콘 탭(#tab-places)으로 옮겼다. 이번 주 가장 좋은 날·그날 행운 기운 + 나에게 맞는 장소 지도. */
 function placesTabHTML(ch){const days=weekDays().map(d=>dayFortune(ch,d)),best=days.reduce((a,b)=>b.all>a.all?b:a),le=best.le;
  const TYPE=['나무가 많은 공원·숲길','햇살 좋은 전망대·밝은 카페','흙길 산책로·공방·시장','전시장·서점처럼 정돈된 곳','강변·호숫가처럼 물이 보이는 곳'];
- return '<div class="places-week"><p><b>이번 주는 '+best.wd+'요일('+best.m+'월 '+best.d+'일)</b>이 가장 밝아요. 그날의 행운 기운은 '+ELK[le]+'('+EL[le]+')이라 <b>'+TYPE[le]+'</b>이 잘 맞아요.</p><p class="places-sub">아래는 부족한 기운을 채워 주는 곳이에요. 지도의 점이나 목록을 누르면 그곳에서 해 볼 일을 보여 드려요.</p></div>'+fengCompactPlacesHTML(ch)+'<p class="sit-more">장소는 다섯 점술의 상징을 옮긴 재미용 추천이에요.</p>'}
+ return '<div class="places-week"><p><b>이번 주는 '+best.wd+'요일('+best.m+'월 '+best.d+'일)</b>이 가장 밝아요. 그날의 행운 기운은 '+ELK[le]+'('+EL[le]+')이라 <b>'+TYPE[le]+'</b>이 잘 맞아요.</p><p class="places-sub">아래는 부족한 기운을 채워 주는 곳이에요. 지도의 점이나 목록을 누르면 그곳에서 해 볼 일을 보여 드려요.</p></div>'+fengCompactPlacesHTML(ch)+''}
 function renderPlacesTab(){const el=document.getElementById('placesBody');if(el&&CH&&MAPS.kor[0][2]){el.querySelectorAll('.feng-map').forEach(svg=>fengObserver?.unobserve(svg));el.innerHTML=placesTabHTML(CH);requestAnimationFrame(()=>el.querySelectorAll('.compact-places').forEach(cpApply))}}
 /* 2026-11-12: '더 많은 장소 보기'는 리포트처럼 화면 전체를 덮는 페이지로 연다(자체 스크롤, Esc·돌아가기로 닫기). */
 let placesReturn=null;
@@ -2486,7 +2489,7 @@ function approvedReportHTML(data,key,sourceChart=null){
  const toc='<nav class="rv3-toc" aria-label="리포트 목차"><ol>'+secs.map((s,i)=>'<li><a href="#chapter-'+i+'"><b>'+(v3?n2(i):i+1)+'</b>'+E(s.question)+'</a></li>').join('')+'</ol></nav>';
  const ymd=new Date().toLocaleDateString('ko-KR');
  const hasTiming=secs.some(s=>s.kind==='three-year'||s.kind==='timing'||s.kind==='flow'||s.kind==='turning-flow'||s.kind==='yearly');
- const flowOld=!hasTiming&&Array.isArray(data.years)&&data.years.length?'<section class="r-page rv3-ch"><header class="rv3-hd"><h2>앞으로 10년의 '+E(data.category)+' 흐름</h2></header><div class="r-yearflow">'+data.years.map(r=>'<div><b>'+E(r.year)+'년</b><meter min="60" max="100" value="'+Number(r.score)+'">'+Number(r.score)+'</meter><span>'+Number(r.score)+'점</span></div>').join('')+'</div><p class="r-note">점수는 확률이 아닌 자체 흐름 지표입니다.</p></section>':'';
+ const flowOld=!hasTiming&&Array.isArray(data.years)&&data.years.length?'<section class="r-page rv3-ch"><header class="rv3-hd"><h2>앞으로 10년의 '+E(data.category)+' 흐름</h2></header><div class="r-yearflow">'+data.years.map(r=>'<div><b>'+E(r.year)+'년</b><meter min="60" max="100" value="'+Number(r.score)+'">'+Number(r.score)+'</meter><span>'+Number(r.score)+'점</span></div>').join('')+'</div></section>':'';
  return compactReportHTML('<header class="r-cover rv3-cover">'+mascotPoseHTML(reportPose,'report-cover-pose')+'<span class="eyebrow">운명 탐정 / 개인 리포트</span><span class="rv3-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 17.6 20.5 2.6 9.3h18.8L6.4 20.5z"/></svg></span><h2>'+E(data.title).replace(/(\S+·\S+)/g,'<span class="nowrap">$1</span>')+'</h2><p>사주 · 서양 점성술 · 베딕 점성술 · 수비학 · 마야력 '+(comp?'종합 분석':'주제 분석')+'</p><span class="rv3-date">발행 '+ymd+'</span></header>'+
   '<section class="r-page rv3-ch rv3-intro"><aside class="report-reading-key"><b>리포트 읽는 법</b><p>핵심 결론부터 읽고, 목차에서 궁금한 장으로 이동하세요. 출생 차트와 계산 표·그래프는 왼쪽 위 Appendix에서 확인할 수 있어요.</p></aside><header class="rv3-hd"><span class="rv3-no">SUMMARY</span><h2>핵심 요약</h2></header><ol class="rv3-sum">'+(data.summary||[]).filter(x=>readingParts(x).main).map(x=>'<li>'+destinyMeaningHTML(readingParts(x).main)+'</li>').join('')+'</ol></section><section class="r-page rv3-ch rv3-contents"><header class="rv3-hd"><span class="rv3-no">CONTENTS</span><h2>목차</h2></header>'+toc+'</section>'+
   secs.map(chapter).join('')+flowOld+
@@ -4033,7 +4036,7 @@ function reportDash(ch){try{const t=reportTags(ch)[0],b=bestCell(),tp=turningPoi
  <div class="ks-grid"><section><h4><i>✱</i>운명 달성률</h4>${donut}</section><section><h4><i>✱</i>10년 흐름 분석</h4>${line}</section>
  <section><h4><i>✱</i>분야별 성과</h4>${bars}</section><section><h4><i>✱</i>분석 및 향후 계획</h4><div class="ks-plan">${plan.map(p=>`<p><b>✓ ${p[0]}:</b> ${p[1]}</p>`).join("")}</div></section></div>
  <footer class="ks-foot">@oracle-network</footer></div>
- ${qa?`<h3>많이 궁금해하는 네 가지</h3><div class="r-tbl"><table class="r-qa-tbl"><tbody>${qa}</tbody></table></div><p class="r-note">시기·사람·장소와 점술별 근거는 2장에서 자세히 볼 수 있어요. 점수는 확률이 아닌 자체 지표예요.</p>`:""}`}catch(e){console.error(e);return ""}}
+ ${qa?`<h3>많이 궁금해하는 네 가지</h3><div class="r-tbl"><table class="r-qa-tbl"><tbody>${qa}</tbody></table></div><p class="r-note">시기·사람·장소와 점술별 근거는 2장에서 자세히 볼 수 있어요.</p>`:""}`}catch(e){console.error(e);return ""}}
 /* 사주 장 맨 앞: 핵심 글자 카드 4장(일간·일지·월지 십성·일지 십성) */
 const BRM=["한겨울의 깊고 고요한 물 기운","겨울 끝, 봄을 품은 언 땅의 기운","이른 봄 숲처럼 뻗어 가는 나무 기운","봄꽃 핀 들판처럼 부드러운 나무 기운","봄비를 머금은 촉촉한 흙 기운","초여름 막 피어나는 불씨의 기운","한여름 한낮 태양 같은 불 기운","여름 끝자락의 포근하고 안정된 흙 기운","초가을 단단한 바위와 쇠의 기운","가을 보석처럼 정제된 쇠 기운","늦가을 마른 들판의 단단한 흙 기운","초겨울 큰 강물 같은 물 기운"];
 const TGH={비견:"比肩",겁재:"劫財",식신:"食神",상관:"傷官",편재:"偏財",정재:"正財",편관:"偏官",정관:"正官",편인:"偏印",정인:"正印"};

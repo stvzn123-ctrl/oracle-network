@@ -15,8 +15,9 @@ function timingHTML(ch,k){
 <h4>언제 잘 될까?</h4>
 <p class="tt-lead"><span>${W?'일이 가장 잘 풀리는 해':'공부한 만큼 성과가 나는 해'}</span><strong>${top.map(t=>`${t.y}년<small>(${age(t.y)}살)</small>`).join(' · ')}</strong></p>
 <ol class="tt-bars" aria-label="앞으로 10년 ${W?'직업':'학업'} 흐름">${bars}</ol>
-<dl class="tt-facts">${hiM.length?`<div><dt>앞으로 12개월 중 밝은 달</dt><dd>${hiM.map(mLab).join(' · ')}</dd></div>`:''}<div><dt>${W?'실력을 다지기 좋은 해':'기초를 다지기 좋은 해'}</dt><dd>${low.y}년</dd></div></dl>
-<p class="tt-note">${W?'이직·도전·승진 준비는':'시험·자격증·진학 준비는'} 밝은 해와 달에 맞추면 흐름을 타기 좋아요. 점수는 확률이 아닌 자체 흐름 지표예요.</p>
+<dl class="tt-facts">${hiM.length?`<div><dt>앞으로 12개월 중 밝은 달</dt><dd>${hiM.map(mLab).join(' · ')}</dd></div>`:''}<div><dt>주의할 해</dt><dd>${low.y}년</dd></div></dl>
+<p class="tt-fix"><b>${low.y}년</b>은 ${W?'일의 흐름이 10년 중 가장 느려지는 해예요. 무리한 이직·확장은 부담이 커질 수 있어요.':'공부한 만큼 결과가 바로 보이지 않을 수 있는 해예요. 조급해지기 쉬워요.'}<br><span>→ ${W?'이 해에는 자격증·포트폴리오처럼 다음 기회를 위한 준비에 힘을 모아 보세요. 밝은 해에 훨씬 크게 돌아와요.':'이 해에는 기초 개념과 오답 정리에 집중해 보세요. 다음 밝은 해에 성적으로 이어지기 쉬워요.'}</span></p>
+<p class="tt-note">${W?'이직·도전·승진 준비는':'시험·자격증·진학 준비는'} 밝은 해와 달에 맞추면 흐름을 타기 좋아요.</p>
 </section>`}
 window.topicHTML=function(ch,k){let h=orig.apply(this,arguments);if((k==='work'||k==='study')&&typeof h==='string'){
  try{const box=timingHTML(ch,k);if(box){h=h.replace('</header>','</header>'+box);h=h.replace(/<article class="topic-answer"><h4>(일이 가장 잘 풀리는 해는\?|성과가 나는 해는\?)<\/h4>[\s\S]*?<\/article>/,'')}}catch(_){}}

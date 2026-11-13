@@ -40,7 +40,7 @@ function html(ch){
  const art=penguin?'<div class="character-art character-penguin-art"><img src="'+penguin.image+'" width="360" height="360" loading="lazy" decoding="async" alt="'+c.name+' 펭귄 캐릭터"></div>':'<div class="character-art" data-loading role="img" aria-label="'+c.name+'" style="background-position:'+x+'% '+y+'%"></div>';
  const description=penguin?penguin.description:primary.s+'을 가진 당신.<br>'+secondary.t+'.';
  const evidence=tags.find(t=>t.k===c.primary);
- return '<section class="destiny-character" aria-label="나의 운명 캐릭터" data-character-id="'+c.id+'"><p class="character-eyebrow">나의 운명 캐릭터</p>'+art+'<h2>'+c.name+'</h2><p class="character-description">'+description+'</p><div class="character-tags"><span>'+primary.kw+'</span><span>'+secondary.kw+'</span></div><details class="character-basis"><summary>이 캐릭터가 나온 이유</summary>'+fateTraitsHTML(ch)+'<p>'+primary.t+'. '+(evidence?evidence.sys.join(" · ")+"에서 이 성향을 함께 읽었어요.":"")+'</p><p>타고난 성향을 조합한 재미용 캐릭터예요. 오늘 운세나 접속 날짜에 따라 바뀌지 않아요.</p></details></section>';
+ return '<section class="destiny-character" aria-label="나의 운명 캐릭터" data-character-id="'+c.id+'"><p class="character-eyebrow">나의 운명 캐릭터</p>'+art+'<h2>'+c.name+'</h2><p class="character-description">'+description+'</p><div class="character-tags"><span>'+primary.kw+'</span><span>'+secondary.kw+'</span></div><details class="character-basis"><summary>이 캐릭터가 나온 이유</summary>'+fateTraitsHTML(ch)+'<p>'+primary.t+'. '+(evidence?evidence.sys.join(" · ")+"에서 이 성향을 함께 읽었어요.":"")+'</p><p>타고난 성향으로 정해져서, 날짜가 바뀌어도 그대로예요.</p></details></section>';
 }
 window.OracleCharacters={version:2,select,names,groups,penguins};
 /* 2026-11-12: 캐릭터 그림을 받는 동안 칸을 비워 두고 메모하는 강아지를 보여 준 뒤 캐릭터로 바꾼다(우정 캐릭터 확인과 같은 방식). */
