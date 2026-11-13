@@ -6,7 +6,7 @@ const load=src=>new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.o
 function lines(g,t,max){const out=[];let line='';for(const w of t.split(/\s+/)){const s2=line?line+' '+w:w;if(g.measureText(s2).width>max&&line){out.push(line);line=w}else line=s2}if(line)out.push(line);return out}
 function wrap(g,text,x,y,max,lh){const out=[];let line='';for(const w of text.split(/\s+/)){const t=line?line+' '+w:w;if(g.measureText(t).width>max&&line){out.push(line);line=w}else line=t}if(line)out.push(line);out.forEach((l,i)=>g.fillText(l,x,y+i*lh));return out.length}
 async function sprite(g,el,x,y,s){const cs=getComputedStyle(el),url=(cs.backgroundImage.match(/url\(["']?([^"')]+)/)||[])[1];if(!url)return;const img=await load(url);
- const [sx,sy]=cs.backgroundSize.split(' ').map(v=>parseFloat(v)/100),[px,py]=cs.backgroundPosition.split(' ').map(v=>parseFloat(v)/100);
+ if(!/%/.test(cs.backgroundSize)){g.drawImage(img,x,y,s,s);return}const [sx,sy]=cs.backgroundSize.split(' ').map(v=>parseFloat(v)/100),[px,py]=cs.backgroundPosition.split(' ').map(v=>parseFloat(v)/100);
  const cw=img.width/sx,chh=img.height/sy,ox=px*(img.width-cw),oy=py*(img.height-chh);g.drawImage(img,ox,oy,cw,chh,x,y,s,s)}
 async function render(card){
  const F="'IBM Plex Sans KR',sans-serif",J="Jua,'IBM Plex Sans KR',sans-serif",habits=[...card.querySelectorAll('.tc-list li')].map(li=>[li.querySelector('b')?.textContent||'',li.querySelector('small')?.textContent||'']);

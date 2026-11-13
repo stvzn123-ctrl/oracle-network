@@ -13,6 +13,8 @@
     document.head.appendChild(s);
   }
 
+  /* 2026-11-13: 첫 화면 로딩과 겹치지 않게 load 뒤 2.5초(또는 첫 스크롤·터치)에 시작한다. */
+  var started=false;function start(){if(started)return;started=true;
   // Clarity
   window.clarity = window.clarity || function () { (window.clarity.q = window.clarity.q || []).push(arguments); };
   load('https://www.clarity.ms/tag/' + CLARITY_ID);
@@ -24,6 +26,12 @@
   gtag('config', GA_ID, { anonymize_ip: true });
   load('https://www.googletagmanager.com/gtag/js?id=' + GA_ID);
 
+  }
+  ['pointerdown','scroll','keydown'].forEach(function(ev){addEventListener(ev,start,{once:true,passive:true})});
+  if(document.readyState==='complete')setTimeout(start,2500);else addEventListener('load',function(){setTimeout(start,2500)});
+
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
   // 버튼·링크 클릭 추적 (입력 필드 값은 절대 담지 않음)
   document.addEventListener('click', function (e) {
     var el = e.target && e.target.closest && e.target.closest('button, a, [role="button"]');

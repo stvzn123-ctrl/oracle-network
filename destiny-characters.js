@@ -37,7 +37,7 @@ function html(ch){
  const tags=reportTags(ch),c=document.body.classList.contains("demo")?{id:21,name:names[20],primary:"bond",secondary:"free"}:select(tags),primary=RTAG[c.primary],secondary=RTAG[c.secondary];
  const index=c.id-1,x=(index%6)*20,y=Math.floor(index/6)*20;
  const penguin=penguins[c.id];
- const art=penguin?'<div class="character-art character-penguin-art"><img src="'+penguin.image+'" width="360" height="360" loading="lazy" decoding="async" alt="'+c.name+' 펭귄 캐릭터"></div>':'<div class="character-art" data-loading role="img" aria-label="'+c.name+'" style="background-position:'+x+'% '+y+'%"></div>';
+ const art=penguin?'<div class="character-art character-penguin-art"><img src="'+penguin.image+'" width="360" height="360" loading="lazy" decoding="async" alt="'+c.name+' 펭귄 캐릭터"></div>':'<div class="character-art" data-loading role="img" aria-label="'+c.name+'" data-art="'+String(c.id).padStart(2,'0')+'" style="background-image:url(img/characters/'+String(c.id).padStart(2,'0')+'.webp);background-size:contain;background-position:center"></div>';
  const description=penguin?penguin.description:primary.s+'을 가진 당신.<br>'+secondary.t+'.';
  const evidence=tags.find(t=>t.k===c.primary);
  return '<section class="destiny-character" aria-label="나의 운명 캐릭터" data-character-id="'+c.id+'"><p class="character-eyebrow">나의 운명 캐릭터</p>'+art+'<h2>'+c.name+'</h2><p class="character-description">'+description+'</p><div class="character-tags"><span>'+primary.kw+'</span><span>'+secondary.kw+'</span></div><details class="character-basis"><summary>이 캐릭터가 나온 이유</summary>'+fateTraitsHTML(ch)+'<p>'+primary.t+'. '+(evidence?evidence.sys.join(" · ")+"에서 이 성향을 함께 읽었어요.":"")+'</p><p>타고난 성향으로 정해져서, 날짜가 바뀌어도 그대로예요.</p></details></section>';
@@ -45,8 +45,9 @@ function html(ch){
 window.OracleCharacters={version:2,select,names,groups,penguins};
 /* 2026-11-12: 캐릭터 그림을 받는 동안 칸을 비워 두고 메모하는 강아지를 보여 준 뒤 캐릭터로 바꾼다(우정 캐릭터 확인과 같은 방식). */
 let spriteReady=null;
-function loadSprite(){return spriteReady||(spriteReady=new Promise(r=>{const i=new Image();i.onload=i.onerror=()=>r();i.src="img/characters-v1.webp";}));}
-function reveal(){const els=[...document.querySelectorAll(".character-art[data-loading]")];if(!els.length)return;Promise.all([loadSprite()]).then(()=>els.forEach(e=>e.removeAttribute("data-loading")));}
+/* 2026-11-13: 36종 시트(351KB) 대신 캐릭터 한 장(img/characters/NN.webp, 약 14KB)만 받는다. */
+function loadSprite(n){return new Promise(r=>{if(!n)return r();const i=new Image();i.onload=i.onerror=()=>r();i.src="img/characters/"+n+".webp";});}
+function reveal(){const els=[...document.querySelectorAll(".character-art[data-loading]")];if(!els.length)return;Promise.all(els.map(e=>loadSprite(e.dataset.art))).then(()=>els.forEach(e=>e.removeAttribute("data-loading")));}
 const original=resultIntroHTML;
 resultIntroHTML=function(ch){
  const quadrant=fateTraitsHTML(ch);

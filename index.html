@@ -53,7 +53,7 @@
 @media (prefers-reduced-motion:reduce){#bootLoader *,#bootLoader .bl-ring::before{animation-duration:3s}}</style>
 <style>.purchase-buttons{display:grid;gap:8px;margin:10px 0 4px}.purchase-buttons button{min-height:48px}#reportCheckoutAll{background:#8A5A1E;color:#fff;border:0;border-radius:14px;font:inherit;cursor:pointer}#reportCheckoutAll small{opacity:.85;font-size:.8em}.free-ask{margin:10px 0 4px}#freeAskBtn{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 14px;border-radius:14px;border:1.5px dashed rgba(138,90,30,.45);background:rgba(255,248,237,.7);color:inherit;font:inherit;cursor:pointer;opacity:.85}#freeAskBtn:hover{opacity:1}.free-ask-badge{font-size:.78em;padding:2px 8px;border-radius:999px;background:#8A5A1E;color:#fff}.free-ask-note{margin:6px 0 0;text-align:center;font-size:.9em;opacity:.8}html.rd #freeAskBtn{background:rgba(255,255,255,.06);border-color:rgba(217,168,92,.5)}</style>
 </head>
-<body class="fresh">
+<body class="fresh demo">
 <div id="bootLoader" role="status" aria-live="polite"><div class="bl-ring"><img src="img/pose-white-detective.webp" alt="" fetchpriority="high"></div><span>운명을 분석하는 중이에요…</span></div>
 <canvas id="sky" aria-hidden="true"></canvas>
 <!-- Supplied artwork, compressed to WebP and embedded to keep a single HTML. -->
@@ -135,7 +135,7 @@
 <section id="result" class="result" aria-labelledby="resTitle">
   <div class="demo-note" role="note"><p><b>아래는 예시 인물 ‘운탐정’의 결과예요.</b><span>로그인하지 않았거나 내 정보를 넣기 전에는 운탐정의 결과를 보여 드려요. 위 버튼으로 내 정보를 넣으면 나의 결과로 바뀌어요.</span></p></div>
   <div class="res-top">
-    <h2 class="res-eyebrow" id="resTitle">당신의 운명</h2>
+    <h2 class="res-eyebrow" id="resTitle">운탐정님의 운명</h2>
   </div>
 <div class="res-nav"><div class="res-tabs" role="tablist" aria-label="결과 보기"><button type="button" role="tab" id="tb-natal" aria-controls="tab-natal" aria-selected="false" data-tab="natal"  tabindex="-1">나의 운명</button><button type="button" role="tab" id="tb-flow" aria-controls="tab-flow" aria-selected="false" data-tab="flow"  tabindex="-1">앞으로 10년</button><button type="button" role="tab" id="tb-today" aria-controls="tab-today" aria-selected="false" data-tab="today"  tabindex="-1">이번 주</button></div><details class="topic-fold" id="topicFold"><summary class="topic-nav-title">무엇이 궁금하세요?</summary><div class="topic-fold-in"><div class="res-topics" role="tablist" aria-label="관심 주제"><button type="button" role="tab" id="tb-romance" aria-controls="tab-marry" aria-selected="false" data-tab="marry" data-romance="true" tabindex="-1"><span class="pose pose-heart topic-pose" aria-hidden="true"></span><strong>사랑</strong></button><button type="button" role="tab" id="tb-money-group" aria-controls="tab-money" aria-selected="false" data-tab="money"  tabindex="-1"><span class="pose pose-money topic-pose" aria-hidden="true"></span><strong>재물·돈</strong></button><button type="button" role="tab" id="tb-work-group" aria-controls="tab-work" aria-selected="false" data-tab="work" data-topic-group="work"  tabindex="-1"><span class="pose pose-lucky topic-pose" aria-hidden="true"></span><strong>직업</strong></button><button type="button" role="tab" id="tb-study-group" aria-controls="tab-study" aria-selected="false" data-tab="study" data-topic-group="study"  tabindex="-1"><span class="pose pose-happy topic-pose" aria-hidden="true"></span><strong>학업·성취</strong></button></div><div class="romance-tabs" role="tablist" aria-label="사랑 이야기" hidden><button type="button" role="tab" id="tb-marry" aria-controls="tab-marry" aria-selected="false" data-tab="marry" tabindex="-1">연인</button><button type="button" role="tab" id="tb-match" aria-controls="tab-match" aria-selected="false" data-tab="match" tabindex="-1">궁합</button><button type="button" role="tab" id="tb-reunion" aria-controls="tab-reunion" aria-selected="false" data-tab="reunion" tabindex="-1">재회</button><button type="button" role="tab" id="tb-friend" aria-controls="tab-match" aria-selected="false" data-tab="friend" tabindex="-1">우정</button></div></div></details></div>
   <div class="tabp" id="tab-places" role="tabpanel" aria-labelledby="tb-places" hidden><section class="blk places-tab" aria-labelledby="placesTitle"><button type="button" class="places-back" data-close-places>← 결과로 돌아가기</button><h3 class="blk-h" id="placesTitle">나의 기운을 좋게 만드는 장소</h3><div id="placesBody"></div></section></div>
@@ -159,19 +159,21 @@
   </section>
     <button type="button" class="to-report" data-goto="natal">운명 개선법·추천 장소·리포트 보기 ›</button>
   </div>
-  <div class="tabp" id="tab-natal" role="tabpanel" aria-labelledby="tb-natal" hidden>
-    <div class="res-intro" id="resIntro"></div>
-  <div class="trend is-locked" id="result-gate">
-    <div id="graph-content" inert aria-hidden="true">
-      <section class="blk act" aria-label="맞춤 실천과 추천 장소"><div id="actionBody"></div></section>
-      <div class="report-cta" id="reportCta"><span class="eyebrow">종합 리포트</span><h3><span id="rcName">당신의</span> 운명, 리포트에서는 이렇게 읽어 드려요</h3>
+  <div class="tabp" id="tab-natal" role="tabpanel" aria-labelledby="tb-natal"><!--DEMO-SNAPSHOT: 예시 인물 운탐정의 나의 운명 탭(첫 화면 LCP용). demo-home.js가 곧 같은 내용으로 다시 그린다.-->
+    <div class="res-intro" id="resIntro"><p class="res-lead">운탐정은 익숙한 방식을 쉽게 놓지 못하는 편이지만, <span class="destiny-strength">흔들리는 순간에도 중심을 잡고 사람들의 신뢰를 쌓아가는 버팀목과 같은 면모를 지닌 사람</span>이에요.</p><section class="destiny-character" aria-label="나의 운명 캐릭터" data-character-id="21"><p class="character-eyebrow">나의 운명 캐릭터</p><div class="character-art" role="img" aria-label="인연의 연결자" data-art="21" style="background-image:url(img/characters/21.webp);background-size:contain;background-position:center"></div><h2>인연의 연결자</h2><p class="character-description">사람을 끌어당기고 오래 곁에 두는 힘을 가진 운탐정.<br>변화와 새로운 무대에서 크게 자라요.</p><div class="character-tags"><span>공감과 관계</span><span>자유와 변화</span></div><details class="character-basis"><summary>이 캐릭터가 나온 이유</summary><figure class="trait-quadrant"><svg viewBox="0 0 360 300" role="img" aria-label="선택: 분석, 움직임: 충분히 살피기. 본인의 성향이 오른쪽과 위쪽에 오도록 축 이름을 배치한 사분면"><rect x="62" y="38" width="236" height="216" rx="16" class="quadrant-paper"></rect><path d="M180 38V254M62 146H298" class="quadrant-axis"></path><text x="180" y="16" text-anchor="middle"><tspan x="180" dy="0">충분히</tspan><tspan x="180" dy="14">살피기</tspan></text><text x="180" y="274" text-anchor="middle"><tspan x="180" dy="0">먼저</tspan><tspan x="180" dy="14">행동</tspan></text><text x="52" y="144" text-anchor="end"><tspan x="52" dy="0">직관</tspan></text><text x="308" y="144" text-anchor="start"><tspan x="308" dy="0">분석</tspan></text><circle cx="234" cy="92" r="9" class="quadrant-point"></circle></svg></figure><p>사람의 마음을 읽고 관계를 소중히 해요. 사주 · 서양 점성술 · 베딕 점성술 · 마야력에서 이 성향을 함께 읽었어요.</p><p>타고난 성향으로 정해져서, 날짜가 바뀌어도 그대로예요.</p></details></section>
+  <h3 class="res-h">여러 운세에서 발견한 나의 매력</h3><ul class="r-agree"><li><span class="dots" role="img" aria-label="5개 중 4개 일치"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span><div><b>사람의 마음을 읽고 관계를 소중히 해요</b><small>5개 점술 중 4개 점술이 같은 성향을 이야기해요.</small></div></li></ul>
+  <h3 class="res-h">타고난 기질과 선물</h3><div class="r-prose"><p>한번 마음을 준 일과 사람을 오래 지키려는 편이에요. 빠른 변화보다는 약속한 일을 꾸준히 해내며 신뢰를 쌓을 때 편안함을 느껴요.</p><p>일이나 공부에서는 믿을 만한 사람과 안정된 환경이 꾸준함을 도와줘요. 처음부터 혼자 감당하기보다 질문하고 도움을 구하면서, 익숙해진 부분부터 자기 방식으로 넓혀 가는 과정이 잘 맞아요.</p><p>말보다 지켜 온 약속과 행동으로 마음을 전하는 편이에요. 믿음이 깊어질수록 편안해지지만, 서운함까지 혼자 참으면 상대가 알아차리기 어려워요.</p><p>흔들리는 상황에서도 중심을 잡는 모습이 주변에는 든든함으로 전해질 수 있어요. 대신 책임을 혼자 떠안거나 익숙한 방식만 고집하고 있지는 않은지 가끔 돌아보세요.</p><p>참고 책임지는 모습을 계속 보이면 주변은 괜찮은 줄 알 수 있어요. 버티는 것만으로 해결되지 않는 일은 힘든 점과 필요한 도움을 구체적으로 말해 주세요.</p></div></div>
+  <div class="trend" id="result-gate">
+    <div id="graph-content" aria-hidden="false">
+      <section class="blk act" aria-label="맞춤 실천과 추천 장소"><div id="actionBody"><div class="habit-split"><section class="home-habits"><h3 class="res-h">운을 높이는 세 가지 습관</h3><ol class="home-habit-list"><li><span class="home-habit-number">01</span><div><b>매일 같은 시간 20분 ‘루틴 블록’</b><p class="home-habit-reason">꾸준한 강점을 일상의 성과로 이어줘요.</p><small>하루 중 고정된 시간 · 20분</small></div></li><li><span class="home-habit-number">02</span><div><b>일주일에 한 번 ‘처음 해 보기’</b><p class="home-habit-reason">익숙함에서 벗어나 새로운 관점을 더해줘요.</p><small>주말 · 30분</small></div></li><li><span class="home-habit-number">03</span><div><b>주 2회 15분, 새 분야 배우기</b><p class="home-habit-reason">작은 배움으로 새로운 가능성을 넓혀줘요.</p><small>점심시간이나 퇴근 후 · 15분</small></div></li></ol></section><section class="home-places-mini"><h3 class="res-h">나의 기운을 좋게 만드는 장소</h3><ol class="home-habit-list"><li><div><span class="place-when">중요한 결정을 할 때</span><b>서울대학교 관악캠퍼스</b><small>서울 관악구</small></div></li><li><div><span class="place-when">답답할 때</span><b>서울숲</b><small>서울 성동구</small></div></li><li><div><span class="place-when">잘 안 풀릴 때</span><b>서울식물원</b><small>서울 강서구</small></div></li></ol><button type="button" class="places-more" data-open-places="">더 많은 장소 보기 →</button></section></div></div></section>
+      <div class="report-cta" id="reportCta"><span class="eyebrow">종합 리포트</span><h3><span id="rcName">운탐정님의</span> 운명, 리포트에서는 이렇게 읽어 드려요</h3>
         <ul class="rc-toc" id="rcPreview"><li><b>한눈에 보는 나</b><span>다섯 점술이 공통으로 가리키는 나의 중심과 가장 밝은 해</span></li><li><b>타고난 성격과 기질</b><span>사람을 대하는 방식, 결정하는 습관, 힘이 빠질 때의 모습</span></li><li><b>사랑과 인연</b><span>사랑할 때의 나, 잘 맞는 사람의 모습, 인연이 뚜렷한 해</span></li><li><b>일과 돈</b><span>잘 맞는 일의 방식, 돈이 붙는 습관, 도약할 해</span></li><li><b>앞으로 10년의 흐름</b><span>크게 나아갈 해와 숨 고를 해, 전환점</span></li><li><b>다섯 점술이 본 나와 제언</b><span>사주·별자리·낙샤트라·수비학·마야력의 시선과 실천</span></li></ul>
         <div class="rc-only"><b>무료 결과에는 없고 리포트에만 있는 것</b><ul><li>앞으로 10년, 해마다 점수와 그 해를 밝게·조심스럽게 본 이유</li><li>사랑·일·돈의 방향과 우선순위를 함께 읽기</li><li>각 장의 핵심 해설과 나에게 맞는 실천</li><li>대운·연도별·월별 흐름과 PDF 저장</li></ul></div>
         <div class="comprehensive-price"><span>종합 리포트</span><strong><b>1,900원</b> <small class="launch">전부 열기 2,990원</small></strong></div><button type="button" id="reportOpen">종합 리포트 보기</button><p class="rc-fine"><a href="sample.html" target="_blank" rel="noopener">샘플 리포트 보기</a> · <button type="button" class="linklike" data-policy="products">리포트 종류 안내</button></p></div>
     </div>
-    <div class="graph-gate" id="graph-gate"><div class="gate-card"><h3>운을 높이는 법과 운명 리포트가 궁금하다면</h3><p>친구에게 운명탐정을 소개하고<br>나에게 맞는 운을 높이는 법, 추천 장소, 운명 리포트를 열어 보세요.</p><button type="button" id="gate-share">친구에게 공유하고 전체 결과 보기 ↗</button><small id="gate-note">친구에게 공유하면 바로 열려요.</small></div></div>
+    <div class="graph-gate" id="graph-gate" hidden=""><div class="gate-card"><h3>운을 높이는 법과 운명 리포트가 궁금하다면</h3><p>친구에게 운명탐정을 소개하고<br>나에게 맞는 운을 높이는 법, 추천 장소, 운명 리포트를 열어 보세요.</p><button type="button" id="gate-share">친구에게 공유하고 전체 결과 보기 ↗</button><small id="gate-note">친구에게 공유하면 바로 열려요.</small></div></div>
   </div><p id="unlock-status" role="status" aria-live="polite"></p>
-  <div class="demo-end"><p class="demo-end-t">내 운명도 이렇게 볼 수 있어요</p><p>생일과 태어난 시각을 넣으면 1분 안에 나의 캐릭터·10년 흐름·이번 주 운세가 나와요.</p><button type="button" data-open-ask>내 정보로 확인하기</button><a href="sample.html" target="_blank" rel="noopener">운탐정의 샘플 리포트 보기</a></div>
+  <div class="demo-end"><p class="demo-end-t">내 운명도 이렇게 볼 수 있어요</p><p>생일과 태어난 시각을 넣으면 1분 안에 나의 캐릭터·10년 흐름·이번 주 운세가 나와요.</p><button type="button" data-open-ask="">내 정보로 확인하기</button><a href="sample.html" target="_blank" rel="noopener">운탐정의 샘플 리포트 보기</a></div>
   </div>
   <div class="tabp" id="tab-money" role="tabpanel" aria-labelledby="tb-money-group" hidden></div>
   <div class="tabp" id="tab-marry" role="tabpanel" aria-labelledby="tb-marry" hidden></div>
@@ -264,14 +266,14 @@ $("brandbar").addEventListener("keydown",e=>{if(e.target!==e.currentTarget)retur
 
 <script defer src="penguin-social.js?v=2"></script>
 <script defer src="social-card.js?v=6"></script>
-<script defer src="destiny-characters.js?v=7"></script>
-<script defer src="pair-characters.js?v=3"></script>
-<script defer src="pair-share.js?v=5"></script>
+<script defer src="destiny-characters.js?v=8"></script>
+<script defer src="pair-characters.js?v=4"></script>
+<script defer src="pair-share.js?v=6"></script>
 <script defer src="touch-card.js?v=5"></script>
 <script defer src="demo-home.js?v=5"></script>
 <script defer src="demo-ui.js?v=1"></script>
 <script defer src="purchase-first.js?v=1"></script>
 <script defer src="report-toc.js?v=1"></script>
-<script defer src="analytics.js?v=1"></script>
+<script defer src="analytics.js?v=2"></script>
 
 
