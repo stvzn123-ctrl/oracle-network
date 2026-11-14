@@ -2,7 +2,7 @@
 실행: python tools/build-css.py   (저장소 맨 위에서)
 순서가 중요하다(뒤 파일이 앞 파일을 덮는다). 새 CSS 파일을 만들면 ORDER에 알맞은 자리로 넣는다."""
 import hashlib,re,os,glob
-ORDER=['pair-characters.css','install-app.css','app.004405c6.css','companion.css','glass-system.css','product-flow.css','ui-unify.css','demo-ui.css','topic-timing.css','touch-card.css','ui-cta.css','report-table.css','destiny-characters.css','type-scale.css','purchase.css','character-share.css','share-reward.css','week-pass.css','site-font.css']
+ORDER=['pair-characters.css','install-app.css','app.004405c6.css','companion.css','glass-system.css','product-flow.css','ui-unify.css','demo-ui.css','topic-timing.css','touch-card.css','ui-cta.css','report-table.css','destiny-characters.css','type-scale.css','purchase.css','character-share.css','share-reward.css','week-pass.css','admin-test.css','site-font.css']
 parts=[]
 for f in ORDER:
     parts.append('/* ==== '+f+' ==== */\n'+open(f,encoding='utf-8').read().strip()+'\n')

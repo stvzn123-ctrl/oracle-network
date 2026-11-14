@@ -308,7 +308,7 @@ async function accessRoute(req,env,url){
  }
  if(req.method==='POST'&&(path==='/admin/permission'||path==='/admin/report')){
   const raw=await req.text();if(raw.length>150000)return json(req,env,{error:'input'},400);let b;try{b=JSON.parse(raw)}catch{return json(req,env,{error:'input'},400)}
-  if(typeof b.userId!=='string'||! /^[a-f0-9]{64}$/.test(b.userId)||!REPORT_KEYS.concat('all').includes(b.key))return json(req,env,{error:'input'},400);
+  if(typeof b.userId!=='string'||! /^[a-f0-9]{64}$/.test(b.userId)||!REPORT_KEYS.concat('all','week','cards30').includes(b.key))return json(req,env,{error:'input'},400);
   if(!await env.DB.prepare('SELECT id FROM users WHERE id=?').bind(b.userId).first())return json(req,env,{error:'not_found'},404);
   const now=Date.now();let op;
   if(path==='/admin/permission'){
