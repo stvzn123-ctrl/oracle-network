@@ -10,7 +10,7 @@ const API=()=>typeof INVITE_API!=='undefined'?INVITE_API:'https://oracle-api.stv
 const tokenKey='oracle-room-tokens';
 const tokens=()=>{try{return JSON.parse(localStorage.getItem(tokenKey)||'{}')}catch(_){return {}}};
 const setToken=(code,t)=>{try{const m=tokens();m[code]=t;localStorage.setItem(tokenKey,JSON.stringify(m))}catch(_){}};
-const ERR={room_not_found:'방을 찾을 수 없어요. 만든 지 14일이 지나 사라졌거나 잘못된 링크예요.',room_full:'정한 인원이 다 찼어요.',room_closed:'이미 결과가 공개된 방이라 새로 참여할 수 없어요.',consent_required:'정보 이용 동의가 필요해요.',input:'입력한 정보를 다시 확인해 주세요.',room_too_small:'아직 인원이 부족해요.',forbidden:'이 방에 참여한 사람만 볼 수 있어요.',unauthorized:'로그인이 필요해요.',profile_required:'먼저 내 출생 정보를 저장해 주세요.',room_limit:'오늘은 방을 더 만들 수 없어요. 내일 다시 만들어 주세요.'};
+const ERR={room_not_found:'방을 찾을 수 없어요. 만든 지 14일이 지나 사라졌거나 잘못된 링크예요.',room_full:'정한 인원이 다 찼어요.',room_closed:'이미 결과가 공개된 방이라 새로 참여할 수 없어요.',consent_required:'정보 이용 동의가 필요해요.',input:'입력한 정보를 다시 확인해 주세요.',room_too_small:'아직 인원이 부족해요.',forbidden:'이 방에 참여한 사람만 볼 수 있어요.',unauthorized:'로그인이 필요해요.',profile_required:'먼저 내 출생 정보를 저장해 주세요.',room_limit:'오늘은 방을 더 만들 수 없어요. 내일 다시 만들어 주세요.',too_many:'이 기기에서는 이 방에 더 참여할 수 없어요.'};
 async function api(path,body){const h={};const t=typeof accountToken!=='undefined'?accountToken:'';if(t)h.Authorization='Bearer '+t;if(body)h['Content-Type']='application/json';
  const r=await fetch(API()+path,{method:body?'POST':'GET',headers:h,body:body?JSON.stringify(body):undefined,cache:'no-store'});let d={};try{d=await r.json()}catch(_){}
  if(!r.ok){const e=new Error(ERR[d.error]||'잠시 뒤 다시 시도해 주세요.');e.code=d.error;throw e}return d}

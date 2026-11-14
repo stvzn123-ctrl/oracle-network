@@ -1,6 +1,12 @@
 # Cloudflare Pages 캐시 설정 (2026-11-13). build.sh가 dist/로 복사한다.
 # 여러 규칙이 맞으면 위에서부터 합쳐지므로, 넓은 규칙을 먼저 두고 좁은 규칙에서 "! Cache-Control"로 지운 뒤 다시 정한다.
 # ?v= 파일 7일, 그림 30일, 해시가 붙은 파일 1년, HTML은 매번 확인.
+# 2026-11-14 보안 점검(cloudflare/security-audit-skill): 다른 사이트가 iframe으로 품지 못하게(클릭재킹), https 강제, 쓰지 않는 기기 권한 끄기
+/*
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'
+  Strict-Transport-Security: max-age=31536000
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
 /*.js
   Cache-Control: public, max-age=604800
 /*.css

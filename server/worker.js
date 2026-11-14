@@ -69,7 +69,7 @@ async function roomTables(env){if(roomReady)return;await env.DB.batch([
   env.DB.prepare('CREATE TABLE IF NOT EXISTS rooms(code TEXT PRIMARY KEY,owner_id TEXT NOT NULL,kind TEXT NOT NULL,name TEXT NOT NULL,created INTEGER NOT NULL,revealed INTEGER NOT NULL DEFAULT 0)'),
   env.DB.prepare('CREATE TABLE IF NOT EXISTS room_members(code TEXT NOT NULL,mid TEXT NOT NULL,token_hash TEXT NOT NULL,user_id TEXT,name TEXT NOT NULL,profile TEXT NOT NULL,allow_save INTEGER NOT NULL DEFAULT 0,joined INTEGER NOT NULL,PRIMARY KEY(code,mid))')]);
   /* 2026-11-14 b: 인원수(size)와 방장 화면에서 계산한 결과(result: 이름·캐릭터·역할만, 출생 정보 없음) */
-  for(const q of ['ALTER TABLE rooms ADD COLUMN size INTEGER','ALTER TABLE rooms ADD COLUMN result TEXT'])try{await env.DB.prepare(q).run()}catch(_){}
+  for(const q of ['ALTER TABLE rooms ADD COLUMN size INTEGER','ALTER TABLE rooms ADD COLUMN result TEXT','ALTER TABLE room_members ADD COLUMN sig TEXT'])try{await env.DB.prepare(q).run()}catch(_){}
   roomReady=true}
 async function roomSweep(env){const now=Date.now();if(now-roomSwept<6e5)return;roomSwept=now;const cut=now-ROOM_DAYS*864e5;
   await env.DB.batch([env.DB.prepare('DELETE FROM room_members WHERE code IN (SELECT code FROM rooms WHERE created<?)').bind(cut),env.DB.prepare('DELETE FROM rooms WHERE created<?').bind(cut)])}
@@ -105,10 +105,12 @@ async function roomRoute(req,env,url){
     const ms=await members(),me=await meOf(room,body.token);
     if(me){await env.DB.prepare('UPDATE room_members SET name=?,profile=?,allow_save=? WHERE code=? AND mid=?').bind(p.name,JSON.stringify(p),body.allowSave===true?1:0,room.code,me).run();return json(req,env,{ok:true,updated:true})}
     if(ms.length>=roomCap(room))return json(req,env,{error:'room_full'},409);
+    /* 같은 접속(IP+브라우저 해시)에서 한 방에 새로 참여는 3번까지(가짜 참여로 방을 채우는 것 방지) */
+    const sig=await sigOf(req),dup=await env.DB.prepare('SELECT COUNT(*) n FROM room_members WHERE code=? AND sig=?').bind(room.code,sig).first();if(dup.n>=3)return json(req,env,{error:'too_many'},429);
     const mid=authRandom().slice(0,12),token=authRandom();
-    await env.DB.prepare('INSERT INTO room_members(code,mid,token_hash,user_id,name,profile,allow_save,joined) VALUES(?,?,?,?,?,?,?,?)').bind(room.code,mid,await authHash(token),user?user.id:null,p.name,JSON.stringify(p),body.allowSave===true?1:0,now).run();
+    await env.DB.prepare('INSERT INTO room_members(code,mid,token_hash,user_id,name,profile,allow_save,joined,sig) VALUES(?,?,?,?,?,?,?,?,?)').bind(room.code,mid,await authHash(token),user?user.id:null,p.name,JSON.stringify(p),body.allowSave===true?1:0,now,sig).run();
     return json(req,env,{ok:true,token})}
-  const isOwner=!!(user&&user.id===room.owner_id),safe=(x,n)=>typeof x==='string'&&x.length<=n&&!/[<> -]/.test(x);
+  const isOwner=!!(user&&user.id===room.owner_id),safe=(x,n)=>typeof x==='string'&&x.length<=n&&!/[<>\u0000-\u001f]/.test(x);
   /* 방장만: 결과 계산용 출생 정보(공개 전). 참여자들에게는 출생 정보를 주지 않는다 */
   if(path==='/room/profiles'&&req.method==='POST'){if(!isOwner)return json(req,env,{error:'forbidden'},403);const ms=await members();return json(req,env,{members:ms.map(m=>({mid:m.mid,name:m.name,allowSave:!!m.allow_save,self:m.user_id===user.id,profile:JSON.parse(m.profile)}))})}
   if(path==='/room/size'&&req.method==='POST'){if(!isOwner)return json(req,env,{error:'forbidden'},403);if(room.kind!=='group'||room.revealed)return json(req,env,{error:'input'},400);
@@ -2194,7 +2196,7 @@ async function sharedResultRoute(req,env,url){
  const user=await member(req,env);if(!user)return json(req,env,{error:'unauthorized'},401);
  const text=await req.text();if(text.length>60000)return json(req,env,{error:'size'},413);let b;try{b=JSON.parse(text)}catch{return json(req,env,{error:'invalid'},400)}
  const valid=(x,max)=>typeof x==='string'&&x.length<=max;
- const social=b.kind==='social'&&Array.isArray(b.people)&&b.people.length>=2&&b.people.length<=8&&b.people.every(p=>valid(p.name,40)&&['a','b','c','d'].includes(p.sheet)&&Number.isInteger(p.index)&&p.index>=0&&p.index<9&&valid(p.role,60)&&valid(p.strength,300));
+ const social=b.kind==='social'&&Array.isArray(b.people)&&b.people.length>=2&&b.people.length<=8&&b.people.every(p=>valid(p.name,40)&&['a','b','c','d','p'].includes(p.sheet)&&Number.isInteger(p.index)&&p.index>=0&&p.index<9&&valid(p.role,60)&&valid(p.strength,300));
  if(!social&&(!valid(b.title,160)||!Array.isArray(b.sections)||b.sections.length<1||b.sections.length>30||b.sections.some(s=>!valid(s.title,200)||!Array.isArray(s.paragraphs)||s.paragraphs.length>40||s.paragraphs.some(p=>!valid(p,3000)))))return json(req,env,{error:'invalid'},400);
  const count=await env.DB.prepare('SELECT COUNT(*) n FROM shared_results WHERE owner=? AND created>?').bind(user.id,now-86400000).first();if(count.n>=30)return json(req,env,{error:'limit'},429);
  const code=authRandom().slice(0,32),payload=social?{kind:'social',people:b.people.map(p=>({name:p.name,sheet:p.sheet,index:p.index,role:p.role,strength:p.strength}))}:{title:b.title,sections:b.sections.map(s=>({title:s.title,paragraphs:s.paragraphs}))};
