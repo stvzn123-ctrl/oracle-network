@@ -1022,6 +1022,7 @@ function todayHTML(ch,dt){dt=dt||new Date();const isT=dt.toDateString()===new Da
     ["vedic","베딕 점성술",`타라 ${f.ta+1} · ${TARA[f.ta]}`,TARAM[f.ta]+(TARAFIX[f.ta]?" → "+TARAFIX[f.ta]:"")],
     ["num","수비학",`개인일 ${f.pd}`,`${PDAY[f.pd]}의 흐름`],
     ["maya","마야력",`${f.tone} ${MS[f.ks][0]}(${MS[f.ks][1]})`,f.my.length?f.my.join(" · "):MS[f.ks][2]]];
+  $("todayHead").dataset.adviceDate=[dt.getFullYear(),dt.getMonth()+1,dt.getDate()].join("-");
   $("todayHead").innerHTML=`<div class="td-head"><div class="td-ring">${ringSvgD(f.all,112)}<b>${f.all}<small>점</small></b></div>
    <div><span class="td-date">${isT?"오늘":f.wd+"요일"} · ${f.m}월 ${f.d}일 (${f.wd})</span>${todayAdvice(f,isT)}</div></div>`;
   return `<div class="today">
@@ -1388,9 +1389,8 @@ function topicRowsV2(ch,k){
   if(k==='move')rows.push(['이직은 언제가 좋을까?',mv?`${(mv.a.split(' · ').filter(x=>!/자격증/.test(x)).join(' · ')||mv.a).replace(/^이직 (?=\d)/,'이직은 ')}. ${mv.s}`:`${top[0].y}년이 가장 좋아요.`],['옮긴다면 어떤 곳으로?',`지금보다 ${['새 프로젝트가 많은 성장 조직','사람을 많이 만나는 대외 업무','안정된 큰 조직','역할과 기준이 분명한 전문 조직','혼자 깊게 파고들 수 있는 연구·분석 조직'][dom]}이 잘 맞아요.`]);
   return rows}
  if(k==='study'||k==='exam'||k==='cert'){const gi=ng[4],ss=ng[1],top=best.slice(0,2).sort((a,b)=>a.y-b.y),py=[0,1,2].map(i=>y0+i).filter(y=>[1,4,7].includes(pyOf(ch,y)));
-  const s3=S.slice(0,3),b3=s3.slice().sort((a,b)=>b.v-a.v)[0],tr=s3[2].v-s3[0].v,ET=[['성장형','한 번 감을 잡으면 점수가 계단처럼 올라가요. 지금 모의고사 점수는 출발선일 뿐이에요.'],['실전형','긴장되는 실전에서 오히려 집중력이 올라가요. 모의고사가 낮아도 걱정하지 마세요. 본시험에서 실력이 더 나와요.'],['누적형','쌓은 만큼 정직하게 나와요. 당장 점수가 안 보여도 바닥이 단단해지는 중이에요.'],['침착형','시험장에 들어가면 오히려 차분해지는 타입이에요. 연습 때보다 본시험에서 실수가 줄어, 지금 점수가 최종 실력은 아니에요.'],['막판 역전형','시험이 가까워질수록 머리가 정리되며 점수가 뛰어요. 초반 성적에 흔들리지 마세요.']][dom];
-  const rows=[['모의고사 점수가 낮아도 괜찮을까?',`${ET[0]}이에요. ${ET[1]}${tr>=3?` 흐름도 ${s3[0].y}년보다 ${s3[2].y}년이 높아, 갈수록 좋아지는 쪽이에요.`:''}`],
-   ['다가오는 시험은 어떨까?',s3[0]===b3?`${s3[0].y}년이 앞으로 3년 중 결과가 가장 잘 나오는 해예요. 지금 준비하는 시험에 힘을 실어도 좋아요.`:`${s3[0].y}년은 실력이 쌓이는 해예요. 점수가 기대만큼 안 나와도 공부가 헛되지 않아요. 그 노력은 ${b3.y}년(${kage(b3.y)}살)에 가장 크게 돌아와요.`]];
+  const s3=S.slice(0,3),b3=s3.slice().sort((a,b)=>b.v-a.v)[0];
+  const rows=[   ['다가오는 시험은 어떨까?',s3[0]===b3?`${s3[0].y}년이 앞으로 3년 중 결과가 가장 잘 나오는 해예요. 지금 준비하는 시험에 힘을 실어도 좋아요.`:`${s3[0].y}년은 실력이 쌓이는 해예요. 점수가 기대만큼 안 나와도 공부가 헛되지 않아요. 그 노력은 ${b3.y}년(${kage(b3.y)}살)에 가장 크게 돌아와요.`]];
   if(k==='exam')rows.push(['시험 운이 좋은 시기는?',py.length?`${py.join('·')}년이 시작·기반·학습의 개인년이라 시험 운이 좋아요.${ch.has.munc?' 원국에 문창귀인이 있어 글쓰기·서술형에 강해요.':''}`:`${top[0].y}년을 목표로 준비하면 흐름과 잘 맞아요.`]);
   if(k==='cert'||k==='study')rows.push(['어떤 자격증이 잘 맞을까?',`${J(CERTEX[dom].join(', '),'이','가')} 내 강점과 잘 맞아요.${mv&&/자격증/.test(mv.a)?' '+mv.a.split(' · ').find(x=>/자격증/.test(x))+'.':''}`]);
   return rows}
@@ -2355,6 +2355,7 @@ $('reportPurchaseClose').onclick=()=>$('reportPurchase').close();$('reportChecko
 /* 페이앱 결제 (2026-11-12): 주문은 서버(/pay/start)가 만들고 가격도 서버가 정한다. 결제 완료는 서버가 페이앱 통보로만 반영한다. */
 let payappLoading=null;
 function loadPayApp(){if(window.PayApp&&window.PayApp.$)return Promise.resolve();if(payappLoading)return payappLoading;payappLoading=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://lite.payapp.kr/public/api/v2/payapp-lite.js';s.onload=()=>{const P=window.PayApp;if(P&&!P.$&&window.jQuery&&window.jQuery.extend){P.$=P.jQuery=window.jQuery}P&&P.$?ok():no(new Error('payapp'))};s.onerror=()=>{payappLoading=null;no(new Error('payapp'))};document.head.append(s)});return payappLoading}
+const REPORT_PRODUCT_NAMES={all:'전체 리포트 열람권',comprehensive:'종합 리포트',money:'재물운 리포트',marry:'연인 리포트',love:'연인 리포트',reunion:'재회 리포트',work:'직업 리포트',match:'궁합 리포트',study:'학업·성취 리포트',employment:'취업 리포트',move:'이사 리포트',invest:'투자 리포트',property:'부동산 리포트',business:'사업 리포트',exam:'시험 리포트',cert:'자격증 리포트',group:'모임 리포트',friend:'우정 리포트',week:'일주일 운세 영구 해제',cards30:'한 달 조언 카드'};
 async function startCheckout(key){
  const st=$('purchaseStatus'),btns=[$('reportCheckout'),$('reportCheckoutAll')];
  if(!key)return;if(!accountUser){needLogin();return}if(!requireSavedProfile())return;
@@ -2363,7 +2364,7 @@ async function startCheckout(key){
   const [o]=await Promise.all([accountAPI('/pay/start',{key}),loadPayApp()]);
   try{sessionStorage.setItem('oracle-paying',JSON.stringify({o:o.orderId,k:key,p:o.price,t:Date.now()}))}catch(_){}try{window.track&&track('begin_checkout',{character_type:window.oracleCharType?oracleCharType():'',value:Number(o.price)||0,currency:'KRW',report_key:key})}catch(_){}
   PayApp.setDefault('userid',o.userid);PayApp.setDefault('shopname',o.shopname);PayApp.setTarget('_self');
-  PayApp.payrequest({goodname:o.goodname,price:String(o.price),var1:o.orderId,feedbackurl:o.feedbackurl,checkretry:'y',smsuse:'n',redirectpay:'1',returnurl:o.returnurl,redirect:'self'});
+  PayApp.payrequest({goodname:REPORT_PRODUCT_NAMES[key]||o.goodname,price:String(o.price),var1:o.orderId,feedbackurl:o.feedbackurl,checkretry:'y',smsuse:'n',redirectpay:'1',returnurl:o.returnurl,redirect:'self'});
  }catch(e){st.textContent=e?.message==='payapp'?'결제창을 불러오지 못했어요. 잠시 뒤 다시 시도해 주세요.':'결제를 시작하지 못했어요. '+(e?.message||'잠시 뒤 다시 시도해 주세요.')}
  finally{setTimeout(()=>btns.forEach(b=>b.disabled=false),1500)}
 }
