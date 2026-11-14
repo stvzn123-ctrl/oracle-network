@@ -4,7 +4,7 @@
 import hashlib,re,os,glob
 ORDER=['relationship-context.js','navigation.js','navigation-history.js','input-experience.js','product-flow.js','topic-timing.js',
  'profile-controls.js','install-app.js','year-format.js','penguin-social.js','social-card.js','destiny-characters.js','pair-characters.js',
- 'pair-share.js','character-share.js','share-reward.js','touch-card.js','week-pass.js','admin-test.js','demo-home.js','demo-ui.js',
+ 'pair-share.js','character-share.js','share-reward.js','touch-card.js','week-pass.js','room.js','admin-test.js','demo-home.js','demo-ui.js',
  'purchase-first.js','report-toc.js','refresh-keep.js','analytics.js']
 js='\n;\n'.join('/* ==== '+f+' ==== */\n'+open(f,encoding='utf-8').read().strip() for f in ORDER)+'\n'
 h=hashlib.md5(js.encode('utf-8')).hexdigest()[:8]

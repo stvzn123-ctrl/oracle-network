@@ -2934,6 +2934,40 @@ p{text-wrap:pretty}
 #result .social-share-card:not(.ps-fail) .social-cast{display:none!important}
 #result .social-share-card:not(.ps-has-img):not(.ps-fail) .social-card-content::before{content:'캐릭터 사진을 만드는 중이에요…';display:block;padding:48px 0;text-align:center;color:#8a6a45;background:linear-gradient(90deg,#fbf1e2,#fff8ee,#fbf1e2);background-size:200% 100%;border-radius:18px;margin:0 0 12px;animation:psShimmer 1.4s linear infinite}
 @keyframes psShimmer{to{background-position:-200% 0}}
+/* 2026-11-14 모임 방 화면(room.js) */
+html.room-open{overflow:hidden}
+.room-page{position:fixed;inset:0;z-index:5000;overflow-y:auto;background:#FFF9F4;color:#4A352B}
+.room-page[hidden]{display:none}
+.rp-in{max-width:560px;margin:0 auto;padding:76px 16px 60px}
+html.room-open .bottom-nav{display:none!important}
+.rp-close{min-height:44px;padding:0 4px;border:0;background:none;color:#8A5A1E;font:inherit;font-weight:600;cursor:pointer}
+.rp-kind{margin:12px 0 4px;font-size:13px;color:#8a6a45}
+.room-page h2{margin:0 0 14px;font-size:26px;line-height:1.3}
+.rp-slots{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.rp-slots li{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border:1px dashed #d9c3a0;border-radius:999px;color:#a08670;font-size:14px}
+.rp-slots li.on{border-style:solid;border-color:#e3cfae;background:#fff;color:#4A352B;font-weight:600}
+.rp-slots li span{color:#c9a46a}
+.rp-box,.rp-form{display:grid;gap:10px;padding:16px;border:1px solid #efdfc2;border-radius:16px;background:#fff}
+.rp-sub{margin:0;font-size:13px;color:#8a6a45;line-height:1.6}.rp-center{text-align:center;margin-top:6px}
+.rp-link input,.rp-form input[type=text],.rp-form input:not([type]),.rp-form input[inputmode],.rp-make input{width:100%;min-height:46px;padding:0 12px;border:1px solid #e3cfae;border-radius:12px;background:#fffdf8;font:inherit;font-size:16px;color:inherit;box-sizing:border-box}
+.rp-form label{display:grid;gap:6px;font-size:14px;font-weight:600}
+.rp-sex{display:flex;gap:16px;border:0;padding:0;margin:0}.rp-sex legend{font-size:14px;font-weight:600;margin-bottom:6px}.rp-sex label{display:flex;align-items:center;gap:6px;font-weight:400}
+.rp-form .rp-chk{display:flex;gap:8px;align-items:flex-start;font-weight:400;font-size:13px;line-height:1.6;color:#6b5547}.rp-chk input{margin-top:3px;width:18px;height:18px;flex:none}
+.rp-btns{display:flex;gap:8px}.rp-btns button,.rp-make button{flex:1;min-height:46px;border-radius:999px;border:1px solid #e3cfae;background:#fffaf2;color:#8A5A1E;font:inherit;font-weight:600;cursor:pointer}
+.rp-btns [data-rshare]{background:#8A5A1E;border-color:#8A5A1E;color:#fff}
+.rp-join,.rp-reveal{width:100%;min-height:54px;margin-top:6px;border:0;border-radius:999px;background:linear-gradient(180deg,#f5cf72,#e2a93f);color:#4A352B;font:inherit;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(138,90,30,.22)}
+.rp-reveal{margin-top:16px}.rp-reveal:disabled{background:#efe3d0;box-shadow:none;color:#8a6a45;cursor:default}
+.rp-del{display:block;margin:20px auto 0;min-height:40px;border:0;background:none;color:#a08670;font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
+.rp-msg{margin:0;font-size:13px;color:#B0613F;min-height:1em}.rp-msg:empty{display:none}
+.rp-wait{padding:20px;border-radius:16px;background:#fbf1e2;color:#6b5547;line-height:1.7;text-align:center}
+.rp-err{padding:16px;border-radius:14px;background:#fdeee8;color:#9a4a32}
+.rp-make{display:grid;gap:8px;margin:8px 0}.rp-make label{display:grid;gap:6px;font-size:14px;font-weight:600}
+.rp-rooms{margin:0 0 12px}.rp-rooms h4{margin:0 0 8px;font-size:15px;color:#8A5A1E}
+.rp-cards{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.rp-card{flex:none;display:grid;gap:2px;min-width:160px;text-align:left;padding:12px 14px;border:1px solid #efdfc2;border-radius:14px;background:#fff;font:inherit;color:inherit;cursor:pointer}.rp-card small{font-size:12px;color:#8a6a45}
+/* 방 화면의 결과도 이미지로만 보인다(칸 그림 숨김, 자리표시) */
+#roomPage .social-share-card:not(.ps-fail) .social-cast{display:none!important}
+#roomPage .social-share-card:not(.ps-has-img):not(.ps-fail) .social-card-content::before{content:'캐릭터 사진을 만드는 중이에요…';display:block;padding:48px 0;text-align:center;color:#8a6a45;background:linear-gradient(90deg,#fbf1e2,#fff8ee,#fbf1e2);background-size:200% 100%;border-radius:18px;margin:0 0 12px;animation:psShimmer 1.4s linear infinite}
 
 /* ==== purchase.css ==== */
 /* 2026-11-13 결제 화면 가독성(#reportPurchase 안에서만). 목차는 주제 화면에 이미 보이므로 접어 두고, 화면에는 제목·가격·결제 버튼만 먼저 보이게 한다. */

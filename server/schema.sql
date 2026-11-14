@@ -34,3 +34,7 @@ CREATE INDEX IF NOT EXISTS payments_user ON payments(user_id,created);
 
 -- 2026-11-13 공유 혜택(계정마다 한 번, 주제 리포트 1개)
 CREATE TABLE IF NOT EXISTS share_rewards(user_id TEXT PRIMARY KEY,reason TEXT NOT NULL,created INTEGER NOT NULL,used_key TEXT,used_at INTEGER);
+
+-- 2026-11-14 우정·모임 방(14일 뒤 자동 삭제, worker roomTables가 없으면 만든다)
+CREATE TABLE IF NOT EXISTS rooms(code TEXT PRIMARY KEY,owner_id TEXT NOT NULL,kind TEXT NOT NULL,name TEXT NOT NULL,created INTEGER NOT NULL,revealed INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE IF NOT EXISTS room_members(code TEXT NOT NULL,mid TEXT NOT NULL,token_hash TEXT NOT NULL,user_id TEXT,name TEXT NOT NULL,profile TEXT NOT NULL,allow_save INTEGER NOT NULL DEFAULT 0,joined INTEGER NOT NULL,PRIMARY KEY(code,mid));
