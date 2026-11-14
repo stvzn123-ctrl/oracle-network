@@ -1025,7 +1025,6 @@ function todayHTML(ch,dt){dt=dt||new Date();const isT=dt.toDateString()===new Da
   $("todayHead").innerHTML=`<div class="td-head"><div class="td-ring">${ringSvgD(f.all,112)}<b>${f.all}<small>점</small></b></div>
    <div><span class="td-date">${isT?"오늘":f.wd+"요일"} · ${f.m}월 ${f.d}일 (${f.wd})</span>${todayAdvice(f,isT)}</div></div>`;
   return `<div class="today">
-  <details class="td-fold"><summary>분야별 점수 보기 · 금전·애정·직업·학업·건강</summary><ul class="td-cats">${CATS.map((c,ci)=>`<li><span>${SHORT[ci]}</span><i><em style="width:${f.sc[ci]}%;background:var(--${c.k})"></em></i><b>${f.sc[ci]}</b></li>`).join("")}</ul></details>
   <p class="td-prose">${todayProse(f,isT)}</p>
   <details><summary>오늘의 계산 근거 보기</summary>
   <table class="td-tbl"><thead><tr><th scope="col">점술</th><th scope="col">계산값</th><th scope="col">한 줄 풀이</th></tr></thead><tbody>${rows.map(([k,n,v,t])=>`<tr><th scope="row">${n}</th><td>${v}</td><td>${t}</td></tr>`).join("")}</tbody></table></details></div>`}
