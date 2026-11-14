@@ -9,26 +9,13 @@
 .dcard-front .td-ring{width:92px;height:92px}.dcard-front .td-ring svg{width:92px;height:92px}.dcard-front .td-ring b{font-size:28px}
 .dcard-st{min-height:0;font-size:12px;color:#8a6a45;text-align:right}
 #tab-today .dcard + section.blk{margin-top:0;padding-top:var(--s-2,8px)}
-.dmonth{max-width:560px;margin-left:auto;margin-right:auto}
-.dm-h{margin:0 0 var(--s-2,8px);font-size:16px;color:var(--gold-ink,#8A5A1E)}
-.dm-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.dm-list li{padding:12px 14px;border:1px solid #efdfc2;border-radius:14px;background:#fffdf8}
-.dm-list li b{display:block;font-size:16px;margin:2px 0}.dm-list li p{margin:0;font-size:14px;color:#6b5547}
-.dm-d{font-size:12px;color:#8a6a45}
-.dm-lock{position:relative}.dm-blur{filter:blur(5px);opacity:.6;user-select:none}
-.dm-gate{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;padding:12px;text-align:center}
-.dm-gate p{margin:0 0 2px;font-size:14px}
-.dm-buy,.dm-all{min-height:46px;width:min(280px,100%);border-radius:999px;font:inherit;font-size:16px;cursor:pointer}
-.dm-buy{border:0;background:linear-gradient(180deg,#f5cf72,#e2a93f);color:#4A352B;box-shadow:0 6px 16px rgba(138,90,30,.22)}
-.dm-all{border:0;background:var(--gold-ink,#8A5A1E);color:#fff}
-.dm-st{font-size:12px;color:#8a6a45;min-height:1em}
 
 /* 2026-11-14 d 일주일 = 오늘 앞뒤 3일, 그래프 맨 위, 다른 날은 흐린 잠금 + 잠금 해제 창 */
-#tab-today>.blk:first-child{margin-top:0;padding-top:var(--s-2,8px);border-top:0}
+#result #tab-today{margin-top:6px}#result #tab-today>.blk:first-child{margin-top:0!important;padding-top:0!important;border-top:0}
 .td-fold{margin:0 0 14px}.td-fold>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600;color:var(--gold-ink,#8A5A1E)}.td-fold>ul{padding-top:6px}
 .day-lock{position:relative;display:grid;gap:8px;padding:18px 0;text-align:left}.dl-blur{filter:blur(6px);opacity:.55;user-select:none;pointer-events:none;display:grid;gap:8px}.dl-blur span{font-size:13px;color:var(--gold-ink,#8A5A1E)}.dl-blur b{font-size:20px}.dl-blur p{margin:0;font-size:15px;line-height:1.7}
 .dl-open{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 18px;border:0;border-radius:99px;background:#fffaf2;color:var(--gold-ink,#8A5A1E);font:inherit;font-weight:600;box-shadow:0 2px 10px #4a352b22;cursor:pointer}
 .day-lock .dl-open{position:absolute;inset:36px 0 0;margin:auto;width:max-content;height:44px}
 .day-buy{border:0;border-radius:18px;padding:24px 20px 16px;width:min(360px,calc(100% - 32px));background:#FFF9F4;color:#4A352B}.day-buy::backdrop{background:#2a1d1466}.day-buy h2{margin:0 0 6px;font-size:19px}.day-buy>p{margin:0 0 14px;font-size:14px;color:#7a6253}
 .db-opts{display:grid;gap:8px}.db-opts button{display:flex;justify-content:space-between;align-items:center;min-height:52px;padding:0 16px;border:1px solid #e3cfae;border-radius:12px;background:#fff;color:inherit;font:inherit;cursor:pointer}.db-opts b{color:var(--gold-ink,#8A5A1E)}
-.day-buy .dm-st{display:block;margin:10px 0 0}.db-close{display:block;margin:8px auto 0;min-height:44px;padding:0 16px;border:0;background:none;color:#7a6253;font:inherit;cursor:pointer}
+.day-buy .dm-st{display:block;margin:10px 0 0;font-size:12px;color:#8a6a45}.day-buy .dm-st:empty{display:none}.db-close{display:block;margin:8px auto 0;min-height:44px;padding:0 16px;border:0;background:none;color:#7a6253;font:inherit;cursor:pointer}

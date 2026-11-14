@@ -801,9 +801,10 @@ function isAdmin(user,env){return !!user&&(env.ADMIN_USER_IDS||'').split(',').ma
 // 가격은 서버가 정한다. 낱개 리포트 1,000원 · 종합 1,900원 · 전체 열람 2,990원.
 // 결제 완료는 페이앱이 /payapp/feedback 으로 알려 줄 때만 인정한다(userid·연동KEY·연동VALUE·hash·금액·주문 확인).
 const PAY_SINGLE_KEYS=REPORT_KEYS.filter(k=>k!=='comprehensive').concat(['group','friend']);
-/* 2026-11-14 한 달 조언 카드(1,000원): 키 cards30, 결제한 날부터 30일. 'all'도 포함(앱에서 판정). */
+/* 2026-11-14 한 달 조언 카드(1,000원): 키 cards30, 결제한 날부터 30일. 'all'도 포함(앱에서 판정).
+   2026-11-14 d 일주일 운세 영구 해제(1,000원): 키 week, 기한 없음. 새 결제 창은 week만 판다. */
 const CARDS_DAYS=30;
-const PAY_PRICE=k=>k==='cards30'?1000:k==='all'?2990:k==='comprehensive'?1900:PAY_SINGLE_KEYS.includes(k)?1000:0;
+const PAY_PRICE=k=>k==='week'||k==='cards30'?1000:k==='all'?2990:k==='comprehensive'?1900:PAY_SINGLE_KEYS.includes(k)?1000:0;
 const PAY_NAME={all:'전체 리포트 열람권',comprehensive:'종합 리포트',money:'재물운 리포트',marry:'결혼 리포트',love:'연애 리포트',reunion:'재회 리포트',work:'직업 리포트',match:'궁합 리포트',study:'학업 리포트',employment:'취업 리포트',move:'이사 리포트',invest:'투자 리포트',property:'부동산 리포트',business:'사업 리포트',exam:'시험 리포트',cert:'자격증 리포트',group:'모임 리포트',friend:'우정 리포트'};
 const sha256hex=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
 async function paymentRoute(req,env,url){
@@ -861,7 +862,7 @@ async function paymentRoute(req,env,url){
   const orderId=authRandom().slice(0,32);
   await env.DB.prepare("INSERT INTO payments(order_id,user_id,report_key,price,status,created) VALUES(?,?,?,?,'ready',?)").bind(orderId,user.id,key,price,now).run();
   const api=url.origin;
-  return json(req,env,{orderId,userid:env.PAYAPP_USERID,shopname:'운명탐정',goodname:key==='cards30'?'한 달 조언 카드':PAY_NAME[key]||'운명 리포트',price,feedbackurl:api+'/payapp/feedback',returnurl:SITE+'?paid='+orderId});
+  return json(req,env,{orderId,userid:env.PAYAPP_USERID,shopname:'운명탐정',goodname:key==='week'?'일주일 운세 영구 해제':key==='cards30'?'한 달 조언 카드':PAY_NAME[key]||'운명 리포트',price,feedbackurl:api+'/payapp/feedback',returnurl:SITE+'?paid='+orderId});
  }
  return null;
 }
