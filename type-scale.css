@@ -32,12 +32,12 @@ p{text-wrap:pretty}
 #result .topic-answers:has(+.topic-candid)>.topic-answer:last-child{padding-bottom:0!important}
 #result .topic-candid{margin:0 0 20px!important;padding:16px!important;border-radius:14px;background:#f6ecdf!important}
 #result .topic-candid h4{margin-bottom:6px!important}
-/* 2026-11-14 주제 카드 5개(사랑·우정·재물 / 직업·학업): 6칸 격자에서 위 3개는 2칸씩, 아래 2개는 3칸씩 */
+/* 2026-11-14 주제 카드 5개: 위 사랑·우정 2개 크게(3칸씩), 아래 재물·직업·학업 3개 작게(2칸씩) */
 #topicFold .res-topics{grid-template-columns:repeat(6,minmax(0,1fr))!important}
-#topicFold .res-topics>[role=tab]{grid-column:span 2}
-#topicFold .res-topics>[role=tab]:nth-child(n+4){grid-column:span 3}
-#topicFold .res-topics>[role=tab]:nth-child(-n+3){min-height:136px;padding:12px 6px!important}
-#topicFold .res-topics>[role=tab]:nth-child(-n+3) .topic-pose{width:72px!important}
+#topicFold .res-topics>[role=tab]{grid-column:span 3}
+#topicFold .res-topics>[role=tab]:nth-child(n+3){grid-column:span 2;min-height:118px;padding:10px 6px!important}
+#topicFold .res-topics>[role=tab]:nth-child(n+3) .topic-pose{width:60px!important}
+#topicFold .res-topics>[role=tab]:nth-child(n+3) strong{font-size:14px}
 .pose-linker{background-image:url('img/characters/21.webp')!important;background-size:contain!important;background-position:center!important}
 /* 우정 카드: 강아지와 펭귄 하이파이브(사용자 제공, 2026-11-14) */
 .pose-friends{background-image:url('img/pose-white-friends.webp')!important;background-size:contain!important;background-position:center!important}
