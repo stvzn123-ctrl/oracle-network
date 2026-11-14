@@ -3061,12 +3061,12 @@ async function openGroupReport(trigger){groupRender();return;
  showLaunchReport('group',{me:me.inp,members:list.slice(1).map(c=>c.inp)},trigger,show)
 }
 const SOCIAL_DOGS=[
- ['a',0,'혼자 평온한 애'],['a',1,'취했는데 안 취했대'],['a',2,'먹을 때만 빠른 애'],['a',3,'일단 의심하는 애'],['a',4,'꾸미다 지각한 애'],['a',5,'이불 밖은 무리인 애'],['a',6,'계산하다 까먹는 애'],['a',7,'읽씹하고 다 아는 애'],['a',8,'웃다가 집 못 가는 애'],
+ ['a',0,'혼자 평온한 애'],['a',1,'취했는데 안 취했대'],['a',2,'간식 앞에선 못 참는 애'],['a',3,'일단 의심하는 애'],['a',4,'꾸미다 지각한 애'],['a',5,'이불 밖은 무리인 애'],['a',6,'계산하다 까먹는 애'],['a',7,'읽씹하고 다 아는 애'],['a',8,'웃다가 집 못 가는 애'],
  ['b',0,'약속 잡고 후회하는 애'],['b',1,'메뉴는 얘가 정함'],['b',2,'썰에 살 붙이는 애'],['b',3,'여행 가면 팀장인 애'],['b',4,'일단 가자는 애'],['b',5,'남 얘기에 우는 애'],['b',6,'사진 검사하는 애'],['b',7,'나오자마자 집 가재'],['b',8,'네 편부터 드는 애']
 ];
 SOCIAL_DOGS.push(
  ['c',0,'가만있다 혼나는 애'],['c',1,'관심 없는 척 다 듣는 애'],['c',2,'밥 먹고 또 먹는 애'],['c',3,'답장은 내일 하는 애'],['c',4,'굳이 건드리는 애'],['c',5,'안 정하면 답답한 애'],['c',6,'욕하면서 챙기는 애'],['c',7,'여기가 내 자리인 애'],['c',8,'조용하면 불안한 애'],
- ['d',0,'표정으로 욕하는 애'],['d',1,'길 모르는데 앞장서는 애'],['d',2,'듣다가 팩트 꽂는 애'],['d',3,'자기가 말하고 웃는 애'],['d',4,'일단 사진부터 찍는 애'],['d',5,'친해지면 시끄러운 애'],['d',6,'괜찮다 하고 삐진 애'],['d',7,'싸우면 중간에 낀 애'],['d',8,'대충 살아도 잘되는 애']
+ ['d',0,'쉬는 날엔 느긋한 애'],['d',1,'길 모르는데 앞장서는 애'],['d',2,'작은 얘기도 기억하는 애'],['d',3,'자기가 말하고 웃는 애'],['d',4,'일단 사진부터 찍는 애'],['d',5,'친해지면 시끄러운 애'],['d',6,'괜찮다 하고 삐진 애'],['d',7,'싸우면 중간에 낀 애'],['d',8,'대충 살아도 잘되는 애']
 );
 // Character personality vectors: initiative, expression, care, structure, listening, energy.
 const SOCIAL_PERSONALITIES=[
@@ -3077,7 +3077,7 @@ const SOCIAL_PERSONALITIES=[
  [0,-1,1,1,0,0],[0,-1,1,1,1,-1],[1,1,0,-1,-1,1],[0,-1,-1,1,1,-1],[1,1,0,0,-1,1],[0,-1,0,1,1,0],
  [1,1,1,-1,0,1],[1,1,0,1,0,1],[0,1,1,-1,1,0],[0,-1,1,0,1,-1],[0,0,1,1,1,0],[0,0,0,-1,1,-1]
 ];
-const SOCIAL_PERSONALITY_COPY=['느긋하게 거리를 지키는 편','신나면 멈추는 타이밍을 놓치는 편','좋아하는 것 앞에서는 반응이 빠른 편','결정 전에 의심부터 해 보는 편','취향과 준비에 진심인 편','편안한 공간에서 충전하는 편','챙기려는 마음은 큰데 가끔 허술한 편','말없이 듣고 기억하는 편','함께 웃는 순간에 에너지를 쓰는 편','시작은 의욕적이지만 혼자 쉴 시간도 필요한 편','함께 먹고 즐길 것을 챙기는 편','이야기를 재미있게 풀어내는 편','계획을 세우고 진행을 이끄는 편','고민보다 행동이 먼저인 편','다른 사람의 감정에 쉽게 공감하는 편','취향과 결과물을 꼼꼼히 보는 편','여럿이 있어도 휴식이 필요한 편','가까운 사람을 먼저 응원하는 편','조용히 지켜보다 타이밍을 놓치기도 하는 편','관심을 드러내지 않고 듣는 편','소소한 즐거움을 자주 찾는 편','자기 속도로 반응하는 편','궁금하면 직접 확인하는 편','정해지지 않은 상황을 정리하는 편','표현은 무뚝뚝해도 행동으로 챙기는 편','익숙한 자리와 자기 영역을 지키는 편','정적을 깨고 반응을 끌어내는 편','말보다 표정으로 속내가 드러나는 편','일단 나서고 보며 시행착오를 겪는 편','듣다가 핵심을 짚는 편','자기 이야기에도 즐겁게 반응하는 편','좋은 순간을 기록하는 편','편해지면 표현이 많아지는 편','서운함을 바로 말하기 어려운 편','양쪽 사정을 듣고 조율하는 편','유연하게 흘러가는 대로 즐기는 편'];
+const SOCIAL_PERSONALITY_COPY=['느긋하게 거리를 지키는 편','신나면 멈추는 타이밍을 놓치는 편','맛있는 간식 앞에서 즐거움을 드러내는 편','결정 전에 의심부터 해 보는 편','취향과 준비에 진심인 편','편안한 공간에서 충전하는 편','챙기려는 마음은 큰데 가끔 허술한 편','말없이 듣고 기억하는 편','함께 웃는 순간에 에너지를 쓰는 편','시작은 의욕적이지만 혼자 쉴 시간도 필요한 편','함께 먹고 즐길 것을 챙기는 편','이야기를 재미있게 풀어내는 편','계획을 세우고 진행을 이끄는 편','고민보다 행동이 먼저인 편','다른 사람의 감정에 쉽게 공감하는 편','취향과 결과물을 꼼꼼히 보는 편','여럿이 있어도 휴식이 필요한 편','가까운 사람을 먼저 응원하는 편','조용히 지켜보다 타이밍을 놓치기도 하는 편','관심을 드러내지 않고 듣는 편','소소한 즐거움을 자주 찾는 편','자기 속도로 반응하는 편','궁금하면 직접 확인하는 편','정해지지 않은 상황을 정리하는 편','표현은 무뚝뚝해도 행동으로 챙기는 편','익숙한 자리와 자기 영역을 지키는 편','정적을 깨고 반응을 끌어내는 편','편안한 휴식으로 자기 리듬을 되찾는 편','일단 나서고 보며 시행착오를 겪는 편','작은 이야기도 귀담아듣고 기억하는 편','자기 이야기에도 즐겁게 반응하는 편','좋은 순간을 기록하는 편','편해지면 표현이 많아지는 편','서운함을 바로 말하기 어려운 편','양쪽 사정을 듣고 조율하는 편','유연하게 흘러가는 대로 즐기는 편'];
 function socialContext(list){
  const ratio=c=>{const total=c.cnt.reduce((a,b)=>a+b,0)||1;return c.cnt.map(v=>v/total);};
  const values=list.map(ratio),mean=[0,1,2,3,4].map(k=>values.reduce((n,r)=>n+r[k],0)/list.length);
@@ -3093,7 +3093,7 @@ function socialContext(list){
  });
 }
 function socialDogCast(list){return socialContext(list).map(x=>x.cast);}
-function socialCastHTML(cast){return '<div class="social-cast">'+cast.map(c=>'<figure class="social-dog"><figcaption class="social-dog-label">'+topicEsc(c.label)+'</figcaption><div class="social-dog-window social-dog-row-'+Math.floor(c.index/3)+'" role="img" aria-label="'+topicEsc(c.label)+' 강아지 캐릭터"><span class="social-dog-sprite" style="background-image:url(img/social-dogs-'+c.sheet+'-v5.webp)'+';background-position:'+(c.index%3*50)+'% '+(Math.floor(c.index/3)*50)+'%"></span></div><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>').join('')+'</div>';}
+function socialCastHTML(cast){return '<div class="social-cast">'+cast.map(c=>'<figure class="social-dog"><figcaption class="social-dog-label">'+topicEsc(c.label)+'</figcaption><div class="social-dog-window social-dog-row-'+Math.floor(c.index/3)+'" role="img" aria-label="'+topicEsc(c.label)+' 강아지 캐릭터"><span class="social-dog-sprite" style="background-image:url(img/social-dogs-'+c.sheet+'-v6.webp)'+';background-position:'+(c.index%3*50)+'% '+(Math.floor(c.index/3)*50)+'%"></span></div><strong class="social-dog-name">'+topicEsc(c.name)+'</strong></figure>').join('')+'</div>';}
 function socialRevealHTML(){return '<div class="social-reveal" role="status"><img src="img/pose-white-note.webp" width="144" height="144" alt="물음표와 메모하는 강아지"><p>우리 조합을 확인하고 있어요…</p></div>';}
 function socialPlaceholderHTML(count){return '<div class="social-placeholder"><h4>'+ (count===2?'우리 둘의 관계는 어떤 캐릭터일까요?':'우리 모임에서 나는 어떤 캐릭터일까요?')+'</h4><div class="mystery-line" style="--count:'+count+'">'+Array.from({length:count},(_,i)=>'<div class="mystery-character"><b aria-hidden="true">?</b><span class="mystery-dog" style="--mystery-image:url(img/pose-white-'+(i%2?'rest':'happy')+'.webp)" role="img" aria-label="아직 공개되지 않은 강아지 캐릭터"></span></div>').join('')+'</div></div>';}
 function collapseFriendInputs(out){
