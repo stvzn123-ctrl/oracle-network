@@ -83,3 +83,9 @@
 
 /* renderAll()이 질문 탭 내용을 비우므로(로그인 정보가 늦게 도착할 때 등), 질문 화면을 보고 있으면 다시 채운다. */
 (()=>{const ra=renderAll;renderAll=function(){const r=ra.apply(this,arguments);if(document.body.classList.contains('nav-ask')){document.getElementById('tab-ask').innerHTML=freeQuestionHTML();setTab('ask')}return r}})();
+
+/* 2026-11-14 우정·모임 카드 아래 '우정 / 모임' 버튼: 사랑 카드 아래 버튼과 같은 자리. 패널 안의 같은 버튼(.cmp-kind)은 CSS로 숨긴다. */
+(()=>{const box=document.querySelector('.friend-tabs');if(!box)return;
+ const paint=()=>box.querySelectorAll('[data-friendkind]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.friendkind===(typeof CMPKIND!=='undefined'&&CMPKIND==='group'?'group':'friend'))));
+ box.addEventListener('click',e=>{const b=e.target.closest('[data-friendkind]');if(!b)return;setTab('friend');cmpSetKind(b.dataset.friendkind);paint()});
+ document.addEventListener('click',e=>{if(e.target.closest('#tb-friend-group,.cmp-kind button'))setTimeout(paint,0)});paint()})();

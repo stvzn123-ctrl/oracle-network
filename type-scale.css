@@ -41,3 +41,7 @@ p{text-wrap:pretty}
 .pose-linker{background-image:url('img/characters/21.webp')!important;background-size:contain!important;background-position:center!important}
 /* 우정 카드: 강아지와 펭귄 하이파이브(사용자 제공, 2026-11-14) */
 .pose-friends{background-image:url('img/pose-white-friends.webp')!important;background-size:contain!important;background-position:center!important}
+/* 우정·모임 아래 버튼(.friend-tabs): 사랑 아래 버튼과 같은 모양, 선택은 aria-pressed */
+.friend-tabs button[aria-pressed=true]{background:rgba(255,253,249,.96)!important;border-color:var(--gold-ink)!important;color:var(--gold-ink)!important}
+#tab-match .cmp-kind{display:none!important}
+.friend-tabs button{flex:1}

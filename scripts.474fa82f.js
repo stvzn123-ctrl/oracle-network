@@ -171,6 +171,12 @@
 
 /* renderAll()이 질문 탭 내용을 비우므로(로그인 정보가 늦게 도착할 때 등), 질문 화면을 보고 있으면 다시 채운다. */
 (()=>{const ra=renderAll;renderAll=function(){const r=ra.apply(this,arguments);if(document.body.classList.contains('nav-ask')){document.getElementById('tab-ask').innerHTML=freeQuestionHTML();setTab('ask')}return r}})();
+
+/* 2026-11-14 우정·모임 카드 아래 '우정 / 모임' 버튼: 사랑 카드 아래 버튼과 같은 자리. 패널 안의 같은 버튼(.cmp-kind)은 CSS로 숨긴다. */
+(()=>{const box=document.querySelector('.friend-tabs');if(!box)return;
+ const paint=()=>box.querySelectorAll('[data-friendkind]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.friendkind===(typeof CMPKIND!=='undefined'&&CMPKIND==='group'?'group':'friend'))));
+ box.addEventListener('click',e=>{const b=e.target.closest('[data-friendkind]');if(!b)return;setTab('friend');cmpSetKind(b.dataset.friendkind);paint()});
+ document.addEventListener('click',e=>{if(e.target.closest('#tb-friend-group,.cmp-kind button'))setTimeout(paint,0)});paint()})();
 ;
 /* ==== navigation-history.js ==== */
 /* Same-document history: back closes overlays and restores the previous view. */
@@ -728,14 +734,32 @@ async function render(card){
    let ty=y+14;rows.forEach(([t,f,col,lh])=>{g.font=f;g.fillStyle=col;g.fillText(t,210,ty+lh/2);ty+=lh});y+=h+12});g.textBaseline='alphabetic';g.textAlign='center'}
  g.fillStyle='#8A5A1E';g.font='40px '+J;g.fillText('운명탐정',W/2,H-80);g.fillStyle='#9a8576';g.font='28px '+F;g.fillText('fatedog.co.kr',W/2,H-38);
  return new Promise(ok=>c.toBlob(ok,'image/png'))}
-async function share(btn){const card=btn.closest('.pair-character');if(!card||btn.disabled)return;btn.disabled=true;const old=btn.textContent;btn.textContent='이미지 만드는 중…';
- try{const blob=await render(card);if(!blob)throw Error('blob');const file=new File([blob],'운명탐정-우리둘.png',{type:'image/png'});
+/* 2026-11-14 우정(두 사람) 캐릭터 조합(.social-share-card)도 같은 틀로 그린다: 캐릭터 별명·그림·이름·역할 */
+async function renderSocial(box){
+ const F="MemomentKkukkukk,'IBM Plex Sans KR',sans-serif",dogs=[...box.querySelectorAll('.social-dog')].slice(0,2),roles={},strengths={};
+ box.querySelectorAll('.social-role-table tbody tr').forEach(tr=>{const td=tr.querySelectorAll('th,td');if(td.length>1){roles[td[0].textContent.trim()]=td[1].textContent.trim();strengths[td[0].textContent.trim()]=(td[2]?.textContent||'').trim()}});
+ try{if(window.loadMemoment)await window.loadMemoment();await document.fonts.load('60px MemomentKkukkukk',box.textContent.slice(0,400)+'우리 둘의 캐릭터 조합 운명탐정')}catch(_){}
+ const H=1150,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+ g.fillStyle='#FFF9F4';g.fillRect(0,0,W,H);g.fillStyle='#FDF1DF';g.strokeStyle='#E9D3B0';g.lineWidth=3;g.beginPath();g.roundRect(60,60,W-120,H-200,48);g.fill();g.stroke();
+ g.textAlign='center';g.fillStyle='#8A5A1E';g.font='34px '+F;g.fillText('우리 둘의 캐릭터 조합',W/2,180);
+ const S=410,top=250,pos=[[95,top],[W-95-S,top]];
+ for(let i=0;i<dogs.length;i++){const d=dogs[i],x=pos[i][0],name=d.querySelector('.social-dog-name')?.textContent.trim()||'';
+  /* 그림 안에 캐릭터 별명이 이미 적혀 있어 따로 쓰지 않는다 */
+  g.save();g.beginPath();g.roundRect(x,top,S,S,36);g.clip();try{await sprite(g,d.querySelector('.social-dog-sprite'),x,top,S)}catch(_){}g.restore();
+  g.textAlign='center';g.fillStyle='#4A352B';g.font='700 50px '+F;g.fillText(name,x+S/2,top+S+76);
+  g.fillStyle='#8A5A1E';g.font='34px '+F;wrap(g,roles[name]||'',x+S/2,top+S+128,S,44);
+  g.fillStyle='#6b5547';g.font='28px '+F;const st=(strengths[name]||'').split(/(?<=요\.)\s/)[0];wrap(g,st,x+S/2,top+S+196,S-10,38)}
+ g.fillStyle='#8A5A1E';g.font='40px '+F;g.fillText('운명탐정',W/2,H-80);g.fillStyle='#9a8576';g.font='28px '+F;g.fillText('fatedog.co.kr',W/2,H-38);
+ return new Promise(ok=>c.toBlob(ok,'image/png'))}
+async function share(btn){const card=btn.closest('.pair-character')||btn.closest('.social-share-card');if(!card||btn.disabled)return;btn.disabled=true;const old=btn.textContent;btn.textContent='이미지 만드는 중…';
+ try{const blob=await (card.matches('.social-share-card')?renderSocial(card):render(card));if(!blob)throw Error('blob');const file=new File([blob],'운명탐정-우리둘.png',{type:'image/png'});
   if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});try{window.oracleShared&&oracleShared('pair')}catch(_){}}catch(e){if(e&&e.name!=='AbortError')throw e}}
   else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=file.name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}}
  catch(_){alert('이미지를 만들지 못했어요. 다시 시도해 주세요.')}finally{btn.disabled=false;btn.textContent=old}}
-function add(root){for(const card of root.querySelectorAll?root.querySelectorAll('.pair-character'):[]){if(card.querySelector('.pair-share'))continue;const b=document.createElement('button');b.type='button';b.className='pair-share fd-cta fd-cta-sub';b.textContent='이미지로 저장·공유하기';(card.querySelector('.tc-wrap')||card.querySelector('.pair-description'))?.after(b)}}
+function add(root){for(const box of root.querySelectorAll?root.querySelectorAll('.social-share-card'):[]){if(box.querySelector('.pair-share')||box.querySelectorAll('.social-dog').length!==2)continue;const b=document.createElement('button');b.type='button';b.className='pair-share fd-cta fd-cta-sub';b.textContent='이미지로 저장·공유하기';box.querySelector('.social-share-button')?.before(b)}
+ for(const card of root.querySelectorAll?root.querySelectorAll('.pair-character'):[]){if(card.querySelector('.pair-share'))continue;const b=document.createElement('button');b.type='button';b.className='pair-share fd-cta fd-cta-sub';b.textContent='이미지로 저장·공유하기';(card.querySelector('.tc-wrap')||card.querySelector('.pair-description'))?.after(b)}}
 document.addEventListener('click',e=>{const b=e.target.closest('.pair-share');if(b)share(b)});
-new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1){if(n.matches?.('.pair-character'))add(n.parentNode);else add(n)}}).observe(document.body,{childList:true,subtree:true});
+new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1){if(n.matches?.('.pair-character,.social-share-card'))add(n.parentNode);else add(n)}}).observe(document.body,{childList:true,subtree:true});
 add(document);
 })();
 ;
