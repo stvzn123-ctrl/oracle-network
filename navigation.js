@@ -90,3 +90,10 @@
  box.addEventListener('click',e=>{const b=e.target.closest('[data-friendkind]');if(!b)return;setTab('friend');cmpSetKind(b.dataset.friendkind);paint()});
  document.addEventListener('click',e=>{if(e.target.closest('#tb-friend-group,.cmp-kind button'))setTimeout(paint,0)});paint()})();
 
+/* 2026-11-14 보안: 모든 기기에서 로그아웃(서버의 내 세션을 모두 지운다). 폰을 잃어버렸거나 공용 기기에서 로그인했을 때 */
+(()=>{const b=document.getElementById('accountLogoutAll');if(!b)return;
+ const sync=()=>{b.hidden=!(typeof accountUser!=='undefined'&&accountUser)};setInterval(sync,1500);sync();
+ b.addEventListener('click',async()=>{if(!confirm('이 기기를 포함해 로그인한 모든 기기에서 로그아웃할까요?'))return;b.disabled=true;
+  try{await accountAPI('/auth/logout-all',{})}catch(_){}
+  try{['oracle-session','oracle-nick','oracle-admin','oracle-real-admin'].forEach(k=>localStorage.removeItem(k));sessionStorage.removeItem('oracle-pending')}catch(_){}
+  location.replace(location.pathname)})})();

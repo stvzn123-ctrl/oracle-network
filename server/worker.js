@@ -57,6 +57,8 @@ function validProfile(v){
   }
   return {name:v.name.trim(),roman:v.roman.trim(),sex:v.sex,cal:v.cal,ly:v.ly,lm:v.lm,ld:v.ld,leap:v.cal==='l'&&v.leap,date:v.date,time:v.time,notime:v.notime,place,relationship:['married','dating','crush','single','private'].includes(v.relationship)?v.relationship:'private'};
 }
+/* 2026-11-14 보안: 로그인 유지 기간 7일 → 3일(로그인 정보가 새어 나가도 쓸 수 있는 기간을 줄인다). 나중에 HttpOnly 쿠키로 옮길 예정 */
+const SESSION_MS=3*86400000;
 async function member(req,env){const token=req.headers.get("Authorization")?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];if(!token)return null;return env.DB.prepare("SELECT users.id,users.kakao_id,users.nickname,users.profile,users.profile_updated FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token_hash=? AND sessions.expires>?").bind(await authHash(token),Date.now()).first()}
 
 // ── 모임 방 (2026-11-14) ─────────────────────────────────────────────
@@ -169,7 +171,7 @@ async function authRoute(req,env,url,ctx){
   if(req.method==='POST'&&path==='/auth/exchange'){
     const {code,verifier}=await authBody(req);if(typeof code!=='string'||! /^[a-f0-9]{64}$/.test(code)||typeof verifier!=='string'||! /^[a-f0-9]{64}$/.test(verifier))return json(req,env,{error:'input'},400);
     const row=await env.DB.prepare('DELETE FROM auth_grants WHERE code_hash=? AND challenge=? AND expires>? RETURNING user_id').bind(await authHash(code),await authHash(verifier),now).first();if(!row)return json(req,env,{error:'login_expired'},401);
-    const session=authRandom();await env.DB.prepare('INSERT INTO sessions(token_hash,user_id,expires) VALUES(?,?,?)').bind(await authHash(session),row.user_id,now+7*86400000).run();return json(req,env,{token:session,expires:now+7*86400000});
+    const session=authRandom();await env.DB.prepare('INSERT INTO sessions(token_hash,user_id,expires) VALUES(?,?,?)').bind(await authHash(session),row.user_id,now+SESSION_MS).run();return json(req,env,{token:session,expires:now+SESSION_MS});
   }
   const user=await member(req,env);if(!user)return json(req,env,{error:'unauthorized'},401);
   /* 2026-11-13 공유 혜택: 계정마다 한 번, 주제 리포트 1개(종합·자유질문 제외) 무료 열람권. 공유를 마치거나(share) 공유 링크로 들어와 정보를 저장하면(invited) 받는다. */
@@ -251,6 +253,8 @@ async function authRoute(req,env,url,ctx){
     await roomTables(env);await env.DB.batch([env.DB.prepare('DELETE FROM room_members WHERE code IN (SELECT code FROM rooms WHERE owner_id=?)').bind(user.id),env.DB.prepare('DELETE FROM rooms WHERE owner_id=?').bind(user.id),env.DB.prepare('DELETE FROM room_members WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM questions WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM pairs WHERE owner_id=?').bind(user.id),env.DB.prepare('DELETE FROM pair_members WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM partners WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM sessions WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM auth_grants WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM private_reports WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM report_entitlements WHERE user_id=?').bind(user.id),env.DB.prepare('CREATE TABLE IF NOT EXISTS share_rewards(user_id TEXT PRIMARY KEY,reason TEXT NOT NULL,created INTEGER NOT NULL,used_key TEXT,used_at INTEGER)'),env.DB.prepare('DELETE FROM share_rewards WHERE user_id=?').bind(user.id),env.DB.prepare('DELETE FROM users WHERE id=?').bind(user.id)]);
     return json(req,env,{ok:true});
   }
+  /* 2026-11-14 모든 기기에서 로그아웃: 이 회원의 세션을 모두 지운다 */
+  if(req.method==='POST'&&path==='/auth/logout-all'){await env.DB.prepare('DELETE FROM sessions WHERE user_id=?').bind(user.id).run();return json(req,env,{ok:true})}
   if(req.method==='POST'&&path==='/auth/logout'){const t=req.headers.get('Authorization').slice(7);await env.DB.prepare('DELETE FROM sessions WHERE token_hash=?').bind(await authHash(t)).run();return json(req,env,{ok:true})}
   return json(req,env,{error:'not_found'},404);
 }
