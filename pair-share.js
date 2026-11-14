@@ -45,12 +45,43 @@ async function renderSocial(box){
   g.fillStyle='#6b5547';g.font='28px '+F;const st=(strengths[name]||'').split(/(?<=요\.)\s/)[0];wrap(g,st,x+S/2,top+S+196,S-10,38)}
  g.fillStyle='#8A5A1E';g.font='40px '+F;g.fillText('운명탐정',W/2,H-80);g.fillStyle='#9a8576';g.font='28px '+F;g.fillText('fatedog.co.kr',W/2,H-38);
  return new Promise(ok=>c.toBlob(ok,'image/png'))}
+/* 2026-11-14 모임(3~8명) 단체 사진: 배경을 오려 낸 캐릭터(img/social-cut/<시트><번호>.webp)를 줄줄이 겹쳐 세우고(뒤로 갈수록 작게),
+   크기·기울기·위치를 이름으로 정한 무작위로 살짝 흔든다(같은 모임이면 같은 배치). 나(첫 사람)는 앞줄 가운데. 별명은 화살표로 가리킨다. */
+function cutKey(el){const cs=getComputedStyle(el),m=cs.backgroundImage.match(/social-dogs-([a-d])-/);if(!m)return null;const [px,py]=cs.backgroundPosition.split(' ').map(v=>Math.round(parseFloat(v)/50));return m[1]+(py*3+px)}
+function seeded(str){let h=1779033703;for(const ch of str)h=Math.imul(h^ch.charCodeAt(0),3432918353),h=h<<13|h>>>19;return ()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return ((h^=h>>>16)>>>0)/4294967296}}
+function arrow(g,x1,y1,x2,y2,bend){const mx=(x1+x2)/2+bend,my=(y1+y2)/2;g.beginPath();g.moveTo(x1,y1);g.quadraticCurveTo(mx,my,x2,y2);g.stroke();const a=Math.atan2(y2-my,x2-mx);g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-16*Math.cos(a-0.45),y2-16*Math.sin(a-0.45));g.moveTo(x2,y2);g.lineTo(x2-16*Math.cos(a+0.45),y2-16*Math.sin(a+0.45));g.stroke()}
+async function renderGroup(box){
+ const F="MemomentKkukkukk,'IBM Plex Sans KR',sans-serif",dogs=[...box.querySelectorAll('.social-dog')].slice(0,8),n=dogs.length;
+ try{if(window.loadMemoment)await window.loadMemoment();await document.fonts.load('60px MemomentKkukkukk',box.textContent.slice(0,800)+'우리 모임 단체 사진 명의 캐릭터 조합 운명탐정')}catch(_){}
+ const people=await Promise.all(dogs.map(async d=>{const k=cutKey(d.querySelector('.social-dog-sprite'));let img=null;try{img=await load('img/social-cut/'+k+'.webp')}catch(_){}return {name:d.querySelector('.social-dog-name')?.textContent.trim()||'',nick:d.querySelector('.social-dog-label')?.textContent.trim()||'',img}}));
+ const rnd=seeded(people.map(p=>p.name).join('|')),H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+ g.fillStyle='#FFF6EA';g.fillRect(0,0,W,H);
+ for(let i=0;i<26;i++){const x=60+rnd()*(W-120),y=260+rnd()*(H-420),r=6+rnd()*10;g.fillStyle=i%3?'rgba(242,196,90,.55)':'rgba(255,134,176,.35)';g.beginPath();for(let k=0;k<8;k++){const a=k*Math.PI/4,rr=k%2?r*0.38:r;g.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr)}g.closePath();g.fill()}
+ g.textAlign='center';g.fillStyle='#4A352B';g.font='64px '+F;g.fillText('우리 모임 단체 사진',W/2,150);g.fillStyle='#8A5A1E';g.font='32px '+F;g.fillText(n+'명의 캐릭터 조합',W/2,200);
+ const plan={3:[1,2],4:[2,2],5:[2,3],6:[3,3],7:[3,4],8:[4,4]}[n]||[n],R=plan.length,front=plan[R-1];
+ /* 줄마다 사람 배치: 나는 앞줄 가운데 */
+ const others=people.slice(1),rows=plan.map(k=>Array(k).fill(null)),mid=Math.floor((front-1)/2);rows[R-1][mid]=people[0];let q=0;for(let r=R-1;r>=0;r--)for(let i=0;i<rows[r].length;i++)if(!rows[r][i])rows[r][i]=others[q++];
+ const base=Math.min(n<=3?430:n<=4?380:340,(W-120)/front*1.2),items=[];let feet=0;
+ for(let r=R-1;r>=0;r--){const sz=base*Math.pow(0.86,R-1-r),k=rows[r].length,step=(W-150)/k;
+  rows[r].forEach((p,i)=>{const s=sz*(0.94+rnd()*0.12),ar=p.img?p.img.height/p.img.width:1,w=ar>1?s/ar:s,h=ar>1?s:s*ar,cx=75+step*(i+0.5)+(rnd()-0.5)*40+(r<R-1&&k===plan[r+1]?step*0.25:0);
+   items.push({p,r,cx,feet:feet+(rnd()-0.5)*24,w,h,rot:(rnd()-0.5)*0.22})});feet-=sz*0.52}
+ const top=Math.min(...items.map(t=>t.feet-t.h))-110,bottom=110,span=bottom-top,area=[250,1150],sc=Math.min(1,(area[1]-area[0])/span),oy=area[0]-top*sc+((area[1]-area[0])-span*sc)/2;
+ for(const t of items){t.w*=sc;t.h*=sc;t.feet=oy+t.feet*sc;t.cx=W/2+(t.cx-W/2)*Math.min(1,sc*1.05);t.cx=Math.max(30+t.w/2,Math.min(W-30-t.w/2,t.cx))}
+ for(let r=0;r<R;r++)for(const t of items.filter(t=>t.r===r)){if(!t.p.img)continue;g.save();g.translate(t.cx,t.feet);g.rotate(t.rot);g.shadowColor='rgba(74,53,43,.18)';g.shadowBlur=14;g.shadowOffsetY=6;g.drawImage(t.p.img,-t.w/2,-t.h,t.w,t.h);g.restore()}
+ /* 별명 + 이름, 화살표로 가리키기: 앞줄은 발밑, 나머지는 머리 위 */
+ g.lineCap='round';g.lineJoin='round';
+ for(const t of items){const below=t.r===R-1,k4=items.filter(u=>u.r===t.r).length>=4;let lx=Math.max(120,Math.min(W-120,t.cx+(below||k4?0:(t.cx<W/2?-30:30))));const ly=below?t.feet+64:t.feet-t.h-58;
+  g.font=(k4?'26px ':'30px ')+F;{const hw=g.measureText(t.p.nick).width/2+14;lx=Math.max(70+hw,Math.min(W-70-hw,lx))}g.lineWidth=9;g.strokeStyle='#FFF6EA';g.strokeText(t.p.nick,lx,ly);g.fillStyle='#4A352B';g.fillText(t.p.nick,lx,ly);
+  g.font=(k4?'600 23px ':'600 26px ')+F;g.strokeText(t.p.name,lx,ly+(below?34:-36));g.fillStyle='#B0613F';g.fillText(t.p.name,lx,ly+(below?34:-36));
+  g.strokeStyle='#8A5A1E';g.lineWidth=3.5;below?arrow(g,lx+(lx<t.cx?20:-20),ly-34,t.cx+(t.cx<W/2?-10:10),t.feet-t.h*0.18,lx<W/2?-30:30):arrow(g,lx,ly+12,t.cx+(t.cx<W/2?8:-8),t.feet-t.h*0.86,t.cx<W/2?-24:24)}
+ g.fillStyle='#8A5A1E';g.font='40px '+F;g.fillText('운명탐정',W/2,H-80);g.fillStyle='#9a8576';g.font='28px '+F;g.fillText('fatedog.co.kr',W/2,H-38);
+ return new Promise(ok=>c.toBlob(ok,'image/png'))}
 async function share(btn){const card=btn.closest('.pair-character')||btn.closest('.social-share-card');if(!card||btn.disabled)return;btn.disabled=true;const old=btn.textContent;btn.textContent='이미지 만드는 중…';
- try{const blob=await (card.matches('.social-share-card')?renderSocial(card):render(card));if(!blob)throw Error('blob');const file=new File([blob],'운명탐정-우리둘.png',{type:'image/png'});
+ try{const blob=await (card.matches('.social-share-card')?(card.querySelectorAll('.social-dog').length>2?renderGroup(card):renderSocial(card)):render(card));if(!blob)throw Error('blob');const file=new File([blob],card.querySelectorAll?.('.social-dog').length>2?'운명탐정-우리모임.png':'운명탐정-우리둘.png',{type:'image/png'});
   if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});try{window.oracleShared&&oracleShared('pair')}catch(_){}}catch(e){if(e&&e.name!=='AbortError')throw e}}
   else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=file.name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}}
  catch(_){alert('이미지를 만들지 못했어요. 다시 시도해 주세요.')}finally{btn.disabled=false;btn.textContent=old}}
-function add(root){for(const box of root.querySelectorAll?root.querySelectorAll('.social-share-card'):[]){if(box.querySelector('.pair-share')||box.querySelectorAll('.social-dog').length!==2)continue;const b=document.createElement('button');b.type='button';b.className='pair-share fd-cta fd-cta-sub';b.textContent='이미지로 저장·공유하기';box.querySelector('.social-share-button')?.before(b)}
+function add(root){for(const box of root.querySelectorAll?root.querySelectorAll('.social-share-card'):[]){if(box.querySelector('.pair-share')||box.querySelectorAll('.social-dog').length<2)continue;const b=document.createElement('button');b.type='button';b.className='pair-share fd-cta fd-cta-sub';b.textContent='이미지로 저장·공유하기';box.querySelector('.social-share-button')?.before(b)}
  for(const card of root.querySelectorAll?root.querySelectorAll('.pair-character'):[]){if(card.querySelector('.pair-share'))continue;const b=document.createElement('button');b.type='button';b.className='pair-share fd-cta fd-cta-sub';b.textContent='이미지로 저장·공유하기';(card.querySelector('.tc-wrap')||card.querySelector('.pair-description'))?.after(b)}}
 document.addEventListener('click',e=>{const b=e.target.closest('.pair-share');if(b)share(b)});
 new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1){if(n.matches?.('.pair-character,.social-share-card'))add(n.parentNode);else add(n)}}).observe(document.body,{childList:true,subtree:true});
