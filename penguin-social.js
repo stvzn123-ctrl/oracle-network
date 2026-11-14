@@ -15,10 +15,13 @@
   // A canonical, sorted signature makes ties independent of member order and today's date.
   const signature=list.map(c=>JSON.stringify([c.inp.date,c.inp.notime?'unknown':c.inp.time||'',c.inp.sex,c.cnt,c.stems.d,Boolean(c.strong)])).sort().join('|');
   let hash=2166136261;for(const ch of signature)hash=Math.imul(hash^ch.charCodeAt(0),16777619)>>>0;
+  const used=new Set();/* 2026-11-14 한 조합 안에서는 같은 캐릭터가 두 번 나오지 않게: 이미 나온 캐릭터면 같은 역할 무리에서 다음으로 잘 맞는 캐릭터, 무리가 다 쓰이면 전체에서 다음 순위 */
   return list.map((c,i)=>{
    const weights=values[i].map((v,k)=>v-mean[k]+v*.2),field=weights.indexOf(Math.max(...weights)),pool=pools[field];
    const score=id=>SOCIAL_PERSONALITIES[id].slice(0,5).reduce((n,v,k)=>n+v*weights[k],0)+SOCIAL_PERSONALITIES[id][5]*(c.strong?.03:-.03);
-   const maximum=Math.max(...pool.map(score)),tied=pool.filter(id=>Math.abs(score(id)-maximum)<1e-9),id=tied[(hash+mod(c.stems.d,10))%tied.length],dog=SOCIAL_DOGS[id];
+   const maximum=Math.max(...pool.map(score)),tied=pool.filter(id=>Math.abs(score(id)-maximum)<1e-9);let id=tied[(hash+mod(c.stems.d,10))%tied.length];
+   if(used.has(id)){const rank=ids=>ids.filter(x=>!used.has(x)).sort((x,y)=>score(y)-score(x)||x-y);id=rank(pool)[0]??rank(SOCIAL_DOGS.map((_,k)=>k))[0]??id}
+   used.add(id);const dog=SOCIAL_DOGS[id];
    return {field,role:roles[field][0],strength:SOCIAL_PERSONALITY_COPY[id]+'이에요. '+roles[field][1],personality:id,cast:{name:groupName(c,i),sheet:dog[0],index:dog[1],label:dog[2]}};
   });
  };

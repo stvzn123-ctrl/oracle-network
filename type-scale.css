@@ -100,3 +100,17 @@ html.room-open .bottom-nav{display:none!important}
 /* 방 화면의 결과도 이미지로만 보인다(칸 그림 숨김, 자리표시) */
 #roomPage .social-share-card:not(.ps-fail) .social-cast{display:none!important}
 #roomPage .social-share-card:not(.ps-has-img):not(.ps-fail) .social-card-content::before{content:'캐릭터 사진을 만드는 중이에요…';display:block;padding:48px 0;text-align:center;color:#8a6a45;background:linear-gradient(90deg,#fbf1e2,#fff8ee,#fbf1e2);background-size:200% 100%;border-radius:18px;margin:0 0 12px;animation:psShimmer 1.4s linear infinite}
+/* 2026-11-14 b 모임 방: 인원 조절·직접 추가·빼기·안내 */
+.rp-size{display:flex;align-items:center;gap:10px;margin:0 0 12px}.rp-size span{font-size:14px;font-weight:600;color:#6b5547}.rp-size b{min-width:48px;text-align:center;font-size:18px}
+.rp-size button{width:44px;height:44px;border-radius:50%;border:1px solid #e3cfae;background:#fff;color:#8A5A1E;font:inherit;font-size:22px;line-height:1;cursor:pointer}.rp-size button:disabled{opacity:.4;cursor:default}
+.rp-x{margin-left:4px;width:26px;height:26px;border:0;border-radius:50%;background:#f3e6d3;color:#8A5A1E;font:inherit;font-size:16px;line-height:1;cursor:pointer}
+.rp-note{margin:0;padding:10px 12px;border-radius:12px;background:#fbf1e2;font-size:13px;line-height:1.6;color:#6b5547}
+.rp-add{margin:12px 0 0;border:1px dashed #d9c3a0;border-radius:16px;padding:0 14px}.rp-add>summary{cursor:pointer;min-height:46px;display:flex;align-items:center;font-weight:600;color:#8A5A1E}.rp-add .rp-form{border:0;padding:0 0 14px}
+.rp-create{padding:16px;margin:0 0 14px;border:1px solid #efdfc2;border-radius:16px;background:#fff}.rp-create h4{margin:0 0 4px;font-size:17px;color:#4A352B}.rp-create .rp-sub{margin:0 0 10px}
+.rp-make select{width:100%;min-height:46px;padding:0 10px;border:1px solid #e3cfae;border-radius:12px;background:#fffdf8;font:inherit;font-size:16px}
+.rp-make button{background:#8A5A1E;color:#fff;border-color:#8A5A1E}
+/* 모임은 방 만들기가 먼저: 예전 직접 입력 폼·결과 자리는 숨긴다 */
+#cmpGroup.room-first>:not(.rp-rooms){display:none!important}
+/* 연인 궁합에서 두 사람이 같은 캐릭터면 닮은꼴(두 번째는 좌우 반전) */
+.pair-twin .pair-stage figure:last-of-type .pair-art{transform:scaleX(-1)}
+.pair-twin-note{margin:0 0 6px;font-size:13px;color:#8A5A1E;text-align:center;line-height:1.6}

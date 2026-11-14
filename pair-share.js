@@ -30,19 +30,21 @@ async function render(card){
  return toBlob(c)}
 /* 2026-11-14 우정(두 사람) 캐릭터 조합(.social-share-card)도 같은 틀로 그린다: 캐릭터 별명·그림·이름·역할 */
 async function renderSocial(box){
- const F="MemomentKkukkukk,'IBM Plex Sans KR',sans-serif",dogs=[...box.querySelectorAll('.social-dog')].slice(0,2),roles={},strengths={};
- box.querySelectorAll('.social-role-table tbody tr').forEach(tr=>{const td=tr.querySelectorAll('th,td');if(td.length>1){roles[td[0].textContent.trim()]=td[1].textContent.trim();strengths[td[0].textContent.trim()]=(td[2]?.textContent||'').trim()}});
+ /* 2026-11-14 b 우정(두 사람): 오려 둔 캐릭터 두 마리를 나란히 세운다(상자 없이). 위에 별명, 아래에 이름·역할 */
+ const F="MemomentKkukkukk,'IBM Plex Sans KR',sans-serif",dogs=[...box.querySelectorAll('.social-dog')].slice(0,2),roles={};
+ box.querySelectorAll('.social-role-table tbody tr').forEach(tr=>{const td=tr.querySelectorAll('th,td');if(td.length>1)roles[td[0].textContent.trim()]=td[1].textContent.trim()});
  try{if(window.loadMemoment)await window.loadMemoment();await document.fonts.load('60px MemomentKkukkukk',box.textContent.slice(0,400)+'우리 둘의 캐릭터 조합 운명탐정')}catch(_){}
+ const imgs=await Promise.all(dogs.map(async d=>{const pg=d.querySelector('.social-penguin-image'),sp=d.querySelector('.social-dog-sprite'),k=sp?cutKey(sp):null;try{return await load(pg?pg.getAttribute('src'):'img/social-cut/'+k+'.webp')}catch(_){return null}}));
  const H=1150,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
- g.fillStyle='#FFF9F4';g.fillRect(0,0,W,H);g.fillStyle='#FDF1DF';g.strokeStyle='#E9D3B0';g.lineWidth=3;g.beginPath();g.roundRect(60,60,W-120,H-200,48);g.fill();g.stroke();
- g.textAlign='center';g.fillStyle='#8A5A1E';g.font='34px '+F;g.fillText('우리 둘의 캐릭터 조합',W/2,180);
- const S=410,top=250,pos=[[95,top],[W-95-S,top]];
- for(let i=0;i<dogs.length;i++){const d=dogs[i],x=pos[i][0],name=d.querySelector('.social-dog-name')?.textContent.trim()||'';
-  /* 그림 안에 캐릭터 별명이 이미 적혀 있어 따로 쓰지 않는다 */
-  g.save();g.beginPath();g.roundRect(x,top,S,S,36);g.clip();{const pg=d.querySelector('.social-penguin-image');if(pg){g.fillStyle='#FFFDF8';g.fillRect(x,top,S,S);try{g.drawImage(await load(pg.getAttribute('src')),x+50,top+70,S-100,S-100)}catch(_){}g.fillStyle='#3a2a20';g.font='34px '+F;g.textAlign='center';g.fillText(d.querySelector('.social-dog-label')?.textContent.trim()||'',x+S/2,top+60)}else{/* 큰 묶음 그림 대신 오려 둔 한 장(img/social-cut)을 쓰고 별명은 직접 쓴다 */g.fillStyle='#FFFDF8';g.fillRect(x,top,S,S);const k=cutKey(d.querySelector('.social-dog-sprite'));try{const im=await load('img/social-cut/'+k+'.webp'),m=S-90,sc=Math.min(m/im.width,(m-10)/im.height),w=im.width*sc,h=im.height*sc;g.drawImage(im,x+(S-w)/2,top+S-24-h,w,h)}catch(_){}g.fillStyle='#3a2a20';g.font='34px '+F;g.textAlign='center';g.fillText(d.querySelector('.social-dog-label')?.textContent.trim()||'',x+S/2,top+60)}}g.restore();
-  g.textAlign='center';g.fillStyle='#4A352B';g.font='700 50px '+F;g.fillText(name,x+S/2,top+S+76);
-  g.fillStyle='#8A5A1E';g.font='34px '+F;wrap(g,roles[name]||'',x+S/2,top+S+128,S,44);
-  g.fillStyle='#6b5547';g.font='28px '+F;const st=(strengths[name]||'').split(/(?<=요\.)\s/)[0];wrap(g,st,x+S/2,top+S+196,S-10,38)}
+ g.fillStyle='#FFF6EA';g.fillRect(0,0,W,H);const rnd=seeded(dogs.map(d=>d.textContent).join('|'));
+ for(let i=0;i<18;i++){const x=60+rnd()*(W-120),y=230+rnd()*(H-400),r=6+rnd()*9;g.fillStyle=i%3?'rgba(242,196,90,.55)':'rgba(255,134,176,.35)';g.beginPath();for(let k=0;k<8;k++){const a=k*Math.PI/4,rr=k%2?r*0.38:r;g.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr)}g.closePath();g.fill()}
+ g.textAlign='center';g.fillStyle='#4A352B';g.font='60px '+F;g.fillText('우리 둘의 캐릭터 조합',W/2,150);
+ const box2=400,feet=740,cx=[W/2-240,W/2+240];
+ for(let i=0;i<dogs.length;i++){const d=dogs[i],im=imgs[i],x=cx[i],name=d.querySelector('.social-dog-name')?.textContent.trim()||'';
+  g.fillStyle='#8A5A1E';g.font='36px '+F;wrap(g,d.querySelector('.social-dog-label')?.textContent.trim()||'',x,300,box2,44);
+  if(im){const sc=Math.min(box2/im.width,box2/im.height),w=im.width*sc,h=im.height*sc;g.save();g.shadowColor='rgba(74,53,43,.18)';g.shadowBlur=14;g.shadowOffsetY=6;g.drawImage(im,x-w/2,feet-h,w,h);g.restore()}
+  g.fillStyle='#4A352B';g.font='700 48px '+F;g.fillText(name,x,feet+80);
+  if(roles[name]){g.fillStyle='#B0613F';g.font='32px '+F;wrap(g,roles[name],x,feet+130,box2,42)}}
  g.fillStyle='#8A5A1E';g.font='40px '+F;g.fillText('운명탐정',W/2,H-80);g.fillStyle='#9a8576';g.font='28px '+F;g.fillText('fatedog.co.kr',W/2,H-38);
  return toBlob(c)}
 /* 2026-11-14 모임(3~8명) 단체 사진: 배경을 오려 낸 캐릭터(img/social-cut/<시트><번호>.webp)를 줄줄이 겹쳐 세우고(뒤로 갈수록 작게),
