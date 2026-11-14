@@ -11,7 +11,10 @@ let busy=false;
 const run0=window.run;
 if(typeof run0==='function')window.run=function(v){if(v!==DEMO)B.classList.remove('demo');return run0.apply(this,arguments)};
 function showDemo(){
- if(busy||!B.classList.contains('fresh')||typeof run0!=='function')return;busy=true;
+ if(busy||!B.classList.contains('fresh')||typeof run0!=='function')return;
+ /* 모임 방 링크로 들어오면 방 화면이 가리므로 예시 계산(폰에서 1초 넘게 멈춤)은 방을 닫은 뒤에 한다 */
+ if(document.documentElement.classList.contains('room-open')){const o=new MutationObserver(()=>{if(!document.documentElement.classList.contains('room-open')){o.disconnect();showDemo()}});o.observe(document.documentElement,{attributes:true,attributeFilter:['class']});return}
+ busy=true;
  try{B.classList.add('demo');const snapP=document.querySelector('#resIntro .res-lead');window.run(DEMO,false);personalize();
  /* 2026-11-13: HTML에 미리 그려 둔 첫 문장(LCP)이 그대로면 원래 요소를 되돌려 놓아, 다시 그린 시점이 LCP로 잡히지 않게 한다. */
  try{const nowP=document.querySelector('#resIntro .res-lead');if(snapP&&nowP&&snapP!==nowP&&snapP.textContent===nowP.textContent)nowP.replaceWith(snapP)}catch(_){}

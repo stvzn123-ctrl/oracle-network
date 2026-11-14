@@ -1073,6 +1073,9 @@ function readPerson(f){const name=f.name.value.trim(),sex=(f.querySelector('[nam
  let time='12:00',notime=true;if(tm){const t=tm.replace(/\D/g,'');if(!/^\d{3,4}$/.test(t))return '시각은 예: 09:30처럼 적어 주세요.';const hh=+t.slice(0,t.length-2),mm=+t.slice(-2);if(hh>23||mm>59)return '시각을 다시 확인해 주세요.';time=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');notime=false}
  let roman='';try{roman=typeof romanize==='function'?romanize(name):''}catch(_){}if(!/[a-z]/i.test(roman))roman='friend';
  return {name,roman,sex,cal:'s',leap:false,ly:y,lm:m,ld:d,date:ymd.slice(0,4)+'-'+ymd.slice(4,6)+'-'+ymd.slice(6,8),time,notime,place:{name:'출생지 미선택',none:true,kr:true,lat:null,lon:127.5,tz:9},relationship:'private'}}
+/* 방장의 '직접 추가'에서 내 저장 목록(궁합·우정에 저장한 사람)에서 골라 칸을 채운다. 이미 방에 있는 이름은 뺀다 */
+const savedList=()=>{try{return typeof partnerList==='function'?(partnerList()||[]).filter(p=>p&&p.name&&p.date):[]}catch(_){return []}};
+function savedPickHTML(info){const L=savedList();if(!L.length)return '';const inRoom=new Set(info.names||[]);const opts=L.map((p,i)=>inRoom.has(p.name)?'':'<option value="'+i+'">'+esc(p.name)+' · '+esc(String(p.date).slice(0,4))+'년생</option>').join('');if(!opts)return '';return '<label>저장한 사람에서 고르기<select name="saved"><option value="">직접 입력할게요</option>'+opts+'</select></label>'}
 const digitsOnly=f=>f.date.addEventListener('input',()=>{f.date.value=f.date.value.replace(/\D/g,'').slice(0,8)});
 
 /* 방 화면 */
@@ -1095,7 +1098,7 @@ function headHTML(info){const chips=info.names.map((n,i)=>{const p=info.people&&
 function ownerHTML(info){const ready=info.count>=info.min,url=roomUrl(info.code),full=info.count>=info.max;
  return (info.kind==='group'?'<div class="rp-size"><span>인원</span><button type="button" data-rsize="-1" aria-label="인원 줄이기"'+(info.max<=Math.max(info.min,info.count)?' disabled':'')+'>−</button><b>'+info.max+'명</b><button type="button" data-rsize="1" aria-label="인원 늘리기"'+(info.max>=info.limit?' disabled':'')+'>+</button></div>':'')+
   '<div class="rp-box"><b>친구들에게 링크를 보내 주세요</b><p class="rp-sub">링크를 받은 사람은 로그인 없이 자기 이름·생년월일만 넣으면 이 방에 들어와요. 서로의 생년월일은 보이지 않아요.</p><p class="rp-link"><input type="text" readonly value="'+esc(url)+'" aria-label="방 링크"></p><div class="rp-btns"><button type="button" data-rshare>링크 보내기</button><button type="button" data-rcopy>복사</button></div><p class="rp-msg" role="status"></p></div>'+
-  (full?'':'<details class="rp-add"><summary>내가 직접 추가하기</summary><form class="rp-form rp-addform" novalidate>'+personFields(null)+'<label class="rp-chk"><input type="checkbox" name="consent"><span><b>(필수)</b> 이 사람에게 이 방에서 캐릭터 분석에 정보를 쓰는 것에 동의를 받았어요. 정보는 방을 만든 날부터 14일 뒤 자동으로 삭제돼요.</span></label><button type="submit" class="rp-join">추가하기</button><p class="rp-msg" role="alert"></p></form></details>')+
+  (full?'':'<details class="rp-add"><summary>내가 직접 추가하기</summary><form class="rp-form rp-addform" novalidate>'+savedPickHTML(info)+personFields(null)+'<label class="rp-chk"><input type="checkbox" name="consent"><span><b>(필수)</b> 이 사람에게 이 방에서 캐릭터 분석에 정보를 쓰는 것에 동의를 받았어요. 정보는 방을 만든 날부터 14일 뒤 자동으로 삭제돼요.</span></label><button type="submit" class="rp-join">추가하기</button><p class="rp-msg" role="alert"></p></form></details>')+
   '<button type="button" class="rp-reveal" data-rreveal'+(ready?'':' disabled')+'>'+(ready?'결과 공개하기 · '+info.count+'명':(info.min-info.count)+'명 더 모이면 공개할 수 있어요')+'</button><p class="rp-sub rp-center">공개하면 새 참여는 닫히고, 모두의 캐릭터가 한 번에 나와요.</p><button type="button" class="rp-del" data-rdel>방 지우기</button>'}
 function joinHTML(info){const p=(typeof accountUser!=='undefined'&&accountUser&&accountUser.profile)||null;
  return '<form class="rp-form" novalidate><b>내 정보로 참여하기</b><p class="rp-note">🔒 내 정보만 입력하면 돼요. 다른 참여자에게 내 생년월일은 보이지 않고, 결과로는 캐릭터와 역할만 함께 보여요.</p>'+personFields(p)+
@@ -1109,6 +1112,7 @@ function bind(info){const main=page.querySelector('.rp-main'),msg=main.querySele
    try{const r=await api('/room/join',{code:info.code,profile:p,consent:true,allowSave:form.allow.checked,token:tokens()[info.code]||undefined});if(r.token)setToken(info.code,r.token);try{window.track&&track('room_join',{kind:info.kind})}catch(_){}cur.info=null;refresh(true)}
    catch(err){m.textContent=err.message;b.disabled=false;b.textContent='참여하기'}})}
  const add=main.querySelector('.rp-addform');if(add){digitsOnly(add);const det=add.closest('details');det.addEventListener('toggle',()=>{cur.editing=det.open});
+  const pick=add.querySelector('[name=saved]');if(pick)pick.onchange=()=>{const s=savedList()[+pick.value];if(!s)return;add.name.value=s.name||'';add.querySelectorAll('[name=sex]').forEach(r=>r.checked=r.value===s.sex);add.date.value=String(s.date||'').replace(/\D/g,'');add.time.value=s.notime?'':(s.time||'')};
   add.addEventListener('submit',async e=>{e.preventDefault();const m=add.querySelector('.rp-msg'),p=readPerson(add);if(typeof p==='string'){m.textContent=p;return}if(!add.consent.checked){m.textContent='그 사람의 동의를 받았는지 확인해 주세요.';return}
    const b=add.querySelector('.rp-join');b.disabled=true;try{await api('/room/add',{code:info.code,profile:p,consent:true});cur.editing=false;cur.info=null;refresh(true)}catch(err){m.textContent=err.message;b.disabled=false}})}
  main.querySelectorAll('[data-rremove]').forEach(x=>x.onclick=async()=>{if(!confirm('이 사람을 방에서 뺄까요? 입력한 정보도 지워져요.'))return;try{await api('/room/remove',{code:info.code,mid:x.dataset.rremove});cur.info=null;refresh(true)}catch(e){alert(e.message)}});
@@ -1125,8 +1129,9 @@ async function reveal(info,rv){if(!confirm('지금 결과를 공개할까요? �
   const ctx=socialContext(charts),casts=ctx.map((x,i)=>({mid:d.members[i].mid,name:d.members[i].name,sheet:x.cast.sheet,index:x.cast.index,label:x.cast.label,role:x.role,strength:x.strength}));
   await api('/room/reveal',{code:info.code,result:{casts}});try{window.track&&track('room_reveal',{kind:info.kind,count:info.count})}catch(_){}
   /* 저장을 허락한 참여자만 방장의 저장 목록에 더한다 */
-  try{if(typeof partnerSave==='function'){const have=partnerList();for(const m of d.members){if(m.self||!m.allowSave)continue;const p=m.profile;if(have.some(x=>x.name===p.name&&x.date===p.date))continue;await partnerSave({name:p.name,roman:p.roman||'',sex:p.sex,date:p.date,time:p.notime?'':p.time,notime:!!p.notime,pi:null})}}}catch(_){}
-  cur.info=null;refresh(true)}catch(e){rv.disabled=false;rv.textContent='결과 공개하기';alert(e.message||'결과를 공개하지 못했어요.')}}
+  cur.info=null;refresh(true);
+  /* 저장은 결과 화면을 막지 않고 뒤에서 */
+  (async()=>{try{if(typeof partnerSave==='function'){const have=partnerList();for(const m of d.members){if(m.self||!m.allowSave)continue;const p=m.profile;if(have.some(x=>x.name===p.name&&x.date===p.date))continue;await partnerSave({name:p.name,roman:p.roman||'',sex:p.sex,date:p.date,time:p.notime?'':p.time,notime:!!p.notime,pi:null})}}}catch(_){}})()}catch(e){rv.disabled=false;rv.textContent='결과 공개하기';alert(e.message||'결과를 공개하지 못했어요.')}}
 function resultHTML(casts){return '<section class="social-share-card"><div class="social-card-content"><div class="social-result">'+socialCastHTML(casts)+reportInfoTable('각자 역할',['이름','역할','강점'],casts.map(c=>[c.name,c.role,c.strength]),'social-role-table',['25%','30%','45%'])+'</div></div></section>'}
 async function showResult(info){const main=page.querySelector('.rp-main');cur.shown=true;main.innerHTML=headHTML(info)+'<p class="rp-wait">결과를 불러오는 중이에요…</p>';
  let d;try{d=await api('/room/result',{code:info.code,token:tokens()[info.code]||undefined})}catch(e){main.innerHTML=headHTML(info)+'<p class="rp-err">'+esc(e.message)+'</p>';return}
@@ -1155,7 +1160,8 @@ async function roomsPaint(force){const tab=$('tab-match');if(!tab||typeof CMPKIN
   (list.length?'<h4>내 '+kindName(kind)+' 방</h4><div class="rp-cards">'+list.map(r=>'<button type="button" class="rp-card" data-room="'+esc(r.code)+'"><b>'+esc(r.name)+'</b><small>'+r.count+'명 · '+(r.revealed?'결과 공개됨':'모이는 중')+' · '+dLeft(r.expires)+'일 남음</small></button>').join('')+'</div>':'');
  const f=box.querySelector('.rp-make');if(f)bindMake(f,'group')}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-room]');if(b)openRoom(b.dataset.room)});
-new MutationObserver(()=>roomsPaint(false)).observe(document.body,{childList:true,subtree:true});
+/* DOM이 바뀔 때마다 부르지 않고 한 프레임에 한 번만 */
+let rpQ=0;new MutationObserver(()=>{if(rpQ)return;rpQ=requestAnimationFrame(()=>{rpQ=0;roomsPaint(false)})}).observe(document.body,{childList:true,subtree:true});
 
 /* 링크로 들어온 경우: ?room=코드 */
 try{const q=new URLSearchParams(location.search),code=q.get('room');if(code&&/^[a-f0-9]{12}$/.test(code)){q.delete('room');history.replaceState(history.state,'',location.pathname+(q.toString()?'?'+q:'')+location.hash);
@@ -1218,7 +1224,10 @@ let busy=false;
 const run0=window.run;
 if(typeof run0==='function')window.run=function(v){if(v!==DEMO)B.classList.remove('demo');return run0.apply(this,arguments)};
 function showDemo(){
- if(busy||!B.classList.contains('fresh')||typeof run0!=='function')return;busy=true;
+ if(busy||!B.classList.contains('fresh')||typeof run0!=='function')return;
+ /* 모임 방 링크로 들어오면 방 화면이 가리므로 예시 계산(폰에서 1초 넘게 멈춤)은 방을 닫은 뒤에 한다 */
+ if(document.documentElement.classList.contains('room-open')){const o=new MutationObserver(()=>{if(!document.documentElement.classList.contains('room-open')){o.disconnect();showDemo()}});o.observe(document.documentElement,{attributes:true,attributeFilter:['class']});return}
+ busy=true;
  try{B.classList.add('demo');const snapP=document.querySelector('#resIntro .res-lead');window.run(DEMO,false);personalize();
  /* 2026-11-13: HTML에 미리 그려 둔 첫 문장(LCP)이 그대로면 원래 요소를 되돌려 놓아, 다시 그린 시점이 LCP로 잡히지 않게 한다. */
  try{const nowP=document.querySelector('#resIntro .res-lead');if(snapP&&nowP&&snapP!==nowP&&snapP.textContent===nowP.textContent)nowP.replaceWith(snapP)}catch(_){}

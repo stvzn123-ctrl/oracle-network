@@ -685,7 +685,7 @@ async function roomTables(env){if(roomReady)return;await env.DB.batch([
   env.DB.prepare('CREATE TABLE IF NOT EXISTS rooms(code TEXT PRIMARY KEY,owner_id TEXT NOT NULL,kind TEXT NOT NULL,name TEXT NOT NULL,created INTEGER NOT NULL,revealed INTEGER NOT NULL DEFAULT 0)'),
   env.DB.prepare('CREATE TABLE IF NOT EXISTS room_members(code TEXT NOT NULL,mid TEXT NOT NULL,token_hash TEXT NOT NULL,user_id TEXT,name TEXT NOT NULL,profile TEXT NOT NULL,allow_save INTEGER NOT NULL DEFAULT 0,joined INTEGER NOT NULL,PRIMARY KEY(code,mid))')]);
   /* 2026-11-14 b: 인원수(size)와 방장 화면에서 계산한 결과(result: 이름·캐릭터·역할만, 출생 정보 없음) */
-  for(const q of ['ALTER TABLE rooms ADD COLUMN size INTEGER','ALTER TABLE rooms ADD COLUMN result TEXT','ALTER TABLE room_members ADD COLUMN sig TEXT'])try{await env.DB.prepare(q).run()}catch(_){}
+  await Promise.allSettled(['ALTER TABLE rooms ADD COLUMN size INTEGER','ALTER TABLE rooms ADD COLUMN result TEXT','ALTER TABLE room_members ADD COLUMN sig TEXT'].map(q=>env.DB.prepare(q).run()));
   roomReady=true}
 async function roomSweep(env){const now=Date.now();if(now-roomSwept<6e5)return;roomSwept=now;const cut=now-ROOM_DAYS*864e5;
   await env.DB.batch([env.DB.prepare('DELETE FROM room_members WHERE code IN (SELECT code FROM rooms WHERE created<?)').bind(cut),env.DB.prepare('DELETE FROM rooms WHERE created<?').bind(cut)])}
@@ -693,15 +693,16 @@ async function roomRoute(req,env,url){
   const path=url.pathname.replace(/\/+$/,'');if(path!=='/room'&&!path.startsWith('/room/')&&path!=='/rooms')return null;
   if(req.method!=='GET'&&req.method!=='POST')return json(req,env,{error:'method'},405);
   if(req.method==='POST'&&!ORIGINS.includes(req.headers.get('Origin')))return json(req,env,{error:'origin'},403);
-  await roomTables(env);await roomSweep(env);
-  const user=await member(req,env),now=Date.now(),okCode=c=>typeof c==='string'&&/^[a-f0-9]{12}$/.test(c);
+  /* 2026-11-14: 질의를 순서대로 기다리지 않는다(D1 왕복 한 번에 약 100ms) */
+  const [user]=await Promise.all([member(req,env),roomTables(env)]);roomSweep(env).catch(()=>{});
+  const now=Date.now(),okCode=c=>typeof c==='string'&&/^[a-f0-9]{12}$/.test(c);
   let body=null;if(req.method==='POST'){try{body=await authBody(req)}catch(_){return json(req,env,{error:'input'},400)}if(!body||typeof body!=='object')return json(req,env,{error:'input'},400)}
   const getRoom=async c=>okCode(c)?env.DB.prepare('SELECT * FROM rooms WHERE code=? AND created>?').bind(c,now-ROOM_DAYS*864e5).first():null;
   const meOf=async(room,token)=>{if(user){const m=await env.DB.prepare('SELECT mid FROM room_members WHERE code=? AND user_id=?').bind(room.code,user.id).first();if(m)return m.mid}
     if(typeof token==='string'&&/^[a-f0-9]{64}$/.test(token)){const m=await env.DB.prepare('SELECT mid FROM room_members WHERE code=? AND token_hash=?').bind(room.code,await authHash(token)).first();if(m)return m.mid}return null};
   if(path==='/rooms'&&req.method==='GET'){if(!user)return json(req,env,{error:'unauthorized'},401);
-    const r=await env.DB.prepare('SELECT DISTINCT r.code,r.name,r.kind,r.created,r.revealed,r.owner_id FROM rooms r LEFT JOIN room_members m ON m.code=r.code WHERE r.created>? AND (r.owner_id=? OR m.user_id=?) ORDER BY r.created DESC LIMIT 30').bind(now-ROOM_DAYS*864e5,user.id,user.id).all();
-    const out=[];for(const x of r.results){const c=await env.DB.prepare('SELECT COUNT(*) n FROM room_members WHERE code=?').bind(x.code).first();out.push({code:x.code,name:x.name,kind:x.kind,created:x.created,expires:x.created+ROOM_DAYS*864e5,revealed:!!x.revealed,count:c.n,mine:x.owner_id===user.id})}
+    const r=await env.DB.prepare('SELECT r.code,r.name,r.kind,r.created,r.revealed,r.owner_id,(SELECT COUNT(*) FROM room_members c WHERE c.code=r.code) n FROM rooms r WHERE r.created>? AND (r.owner_id=? OR EXISTS(SELECT 1 FROM room_members m WHERE m.code=r.code AND m.user_id=?)) ORDER BY r.created DESC LIMIT 30').bind(now-ROOM_DAYS*864e5,user.id,user.id).all();
+    const out=r.results.map(x=>({code:x.code,name:x.name,kind:x.kind,created:x.created,expires:x.created+ROOM_DAYS*864e5,revealed:!!x.revealed,count:x.n,mine:x.owner_id===user.id}));
     return json(req,env,{rooms:out})}
   if(path==='/room'&&req.method==='POST'){if(!user)return json(req,env,{error:'unauthorized'},401);if(!user.profile)return json(req,env,{error:'profile_required'},409);
     const kind=body.kind==='group'?'group':'friend',name=typeof body.name==='string'?body.name.trim():'',size=kind==='group'?Math.max(3,Math.min(8,parseInt(body.size,10)||4)):2;if(!name||name.length>30||/[<>\u0000-\u001f]/.test(name))return json(req,env,{error:'input'},400);
@@ -712,7 +713,7 @@ async function roomRoute(req,env,url){
     return json(req,env,{code,kind,name,size})}
   const room=await getRoom(body?body.code:url.searchParams.get('code'));if(!room)return json(req,env,{error:'room_not_found'},404);
   const members=async()=>(await env.DB.prepare('SELECT mid,name,profile,allow_save,user_id FROM room_members WHERE code=? ORDER BY joined').bind(room.code).all()).results;
-  if(path==='/room/info'&&req.method==='POST'){const ms=await members(),me=await meOf(room,body.token);
+  if(path==='/room/info'&&req.method==='POST'){const [ms,me]=await Promise.all([members(),meOf(room,body.token)]);
     return json(req,env,{code:room.code,name:room.name,kind:room.kind,created:room.created,expires:room.created+ROOM_DAYS*864e5,revealed:!!room.revealed,max:roomCap(room),limit:ROOM_MAX[room.kind],min:ROOM_MIN[room.kind],names:ms.map(m=>m.name),count:ms.length,joined:!!me,owner:!!(user&&user.id===room.owner_id),people:user&&user.id===room.owner_id?ms.map(m=>({mid:m.mid,name:m.name,self:m.user_id===user.id})):undefined})}
   if(path==='/room/join'&&req.method==='POST'){
     if(room.revealed)return json(req,env,{error:'room_closed'},409);
