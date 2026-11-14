@@ -801,7 +801,10 @@ function isAdmin(user,env){return !!user&&(env.ADMIN_USER_IDS||'').split(',').ma
 // 가격은 서버가 정한다. 낱개 리포트 1,000원 · 종합 1,900원 · 전체 열람 2,990원.
 // 결제 완료는 페이앱이 /payapp/feedback 으로 알려 줄 때만 인정한다(userid·연동KEY·연동VALUE·hash·금액·주문 확인).
 const PAY_SINGLE_KEYS=REPORT_KEYS.filter(k=>k!=='comprehensive').concat(['group','friend']);
-const PAY_PRICE=k=>k==='all'?2990:k==='comprehensive'?1900:PAY_SINGLE_KEYS.includes(k)?1000:0;
+/* 2026-11-14 이번 주 7일 흐름(990원): 키는 week-YYYYMMDD(그 주 월요일, 한국 시간). 이번 주와 다음 주만 판매. */
+const weekMon=off=>{const d=new Date(Date.now()+9*36e5);d.setUTCDate(d.getUTCDate()-((d.getUTCDay()+6)%7)+off*7);return 'week-'+d.toISOString().slice(0,10).replace(/-/g,'')};
+const isWeekKey=k=>k===weekMon(0)||k===weekMon(1);
+const PAY_PRICE=k=>isWeekKey(k)?990:k==='all'?2990:k==='comprehensive'?1900:PAY_SINGLE_KEYS.includes(k)?1000:0;
 const PAY_NAME={all:'전체 리포트 열람권',comprehensive:'종합 리포트',money:'재물운 리포트',marry:'결혼 리포트',love:'연애 리포트',reunion:'재회 리포트',work:'직업 리포트',match:'궁합 리포트',study:'학업 리포트',employment:'취업 리포트',move:'이사 리포트',invest:'투자 리포트',property:'부동산 리포트',business:'사업 리포트',exam:'시험 리포트',cert:'자격증 리포트',group:'모임 리포트',friend:'우정 리포트'};
 const sha256hex=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
 async function paymentRoute(req,env,url){
@@ -859,7 +862,7 @@ async function paymentRoute(req,env,url){
   const orderId=authRandom().slice(0,32);
   await env.DB.prepare("INSERT INTO payments(order_id,user_id,report_key,price,status,created) VALUES(?,?,?,?,'ready',?)").bind(orderId,user.id,key,price,now).run();
   const api=url.origin;
-  return json(req,env,{orderId,userid:env.PAYAPP_USERID,shopname:'운명탐정',goodname:PAY_NAME[key]||'운명 리포트',price,feedbackurl:api+'/payapp/feedback',returnurl:SITE+'?paid='+orderId});
+  return json(req,env,{orderId,userid:env.PAYAPP_USERID,shopname:'운명탐정',goodname:isWeekKey(key)?'이번 주 7일 운세':PAY_NAME[key]||'운명 리포트',price,feedbackurl:api+'/payapp/feedback',returnurl:SITE+'?paid='+orderId});
  }
  return null;
 }
