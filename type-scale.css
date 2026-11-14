@@ -28,3 +28,16 @@ p{text-wrap:pretty}
 /* 2026-11-13: '함께 살펴볼 점' 위아래 공백 줄임(답 카드 아래 여백 20px이 이미 있음) */
 #result .topic-candid{margin:4px 0 16px!important}
 #result .topic-candid+.topic-offer{margin-top:0!important}
+/* 2026-11-14 '함께 살펴볼 점': 위 답과 간격을 줄이고(겹친 여백 44px→16px), 안쪽 여백을 답 목록과 맞춘 옅은 상자 */
+#result .topic-answers:has(+.topic-candid)>.topic-answer:last-child{padding-bottom:0!important}
+#result .topic-candid{margin:0 0 20px!important;padding:16px!important;border-radius:14px;background:#f6ecdf!important}
+#result .topic-candid h4{margin-bottom:6px!important}
+/* 2026-11-14 주제 카드 5개(사랑·우정·재물 / 직업·학업): 6칸 격자에서 위 3개는 2칸씩, 아래 2개는 3칸씩 */
+#topicFold .res-topics{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+#topicFold .res-topics>[role=tab]{grid-column:span 2}
+#topicFold .res-topics>[role=tab]:nth-child(n+4){grid-column:span 3}
+#topicFold .res-topics>[role=tab]:nth-child(-n+3){min-height:136px;padding:12px 6px!important}
+#topicFold .res-topics>[role=tab]:nth-child(-n+3) .topic-pose{width:72px!important}
+.pose-linker{background-image:url('img/characters/21.webp')!important;background-size:contain!important;background-position:center!important}
+/* 우정 카드: 강아지와 펭귄 하이파이브(사용자 제공, 2026-11-14) */
+.pose-friends{background-image:url('img/pose-white-friends.webp')!important;background-size:contain!important;background-position:center!important}
