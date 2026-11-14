@@ -2985,6 +2985,22 @@ p{text-wrap:pretty}
 .db-opts{display:grid;gap:8px}.db-opts button{display:flex;justify-content:space-between;align-items:center;min-height:52px;padding:0 16px;border:1px solid #e3cfae;border-radius:12px;background:#fff;color:inherit;font:inherit;cursor:pointer}.db-opts b{color:var(--gold-ink,#8A5A1E)}
 .day-buy .dm-st{display:block;margin:10px 0 0;font-size:12px;color:#8a6a45}.day-buy .dm-st:empty{display:none}.db-close{display:block;margin:8px auto 0;min-height:44px;padding:0 16px;border:0;background:none;color:#7a6253;font:inherit;cursor:pointer}
 
+/* ==== admin-test.css ==== */
+/* 2026-11-14 관리자 테스트 도구(admin-test.js) */
+.admin-test{margin:var(--s-6,24px) 0 0;padding:var(--s-4,16px);border:1px dashed #c9a46a;border-radius:14px;background:#fffaf2;text-align:left}
+.admin-test h3{margin:0 0 4px;font-size:18px;color:var(--gold-ink,#8A5A1E)}
+.admin-test .at-note{margin:0 0 12px;font-size:12px;color:#8a6a45}
+.admin-test .at-note:empty{display:none}
+.at-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid #efdfc2;cursor:pointer}
+.at-row input{width:22px;height:22px;margin-top:2px;flex:none}
+.at-row small,.at-block small{display:block;font-size:12px;color:#8a6a45;line-height:1.5}
+.at-block{padding:10px 0;border-top:1px solid #efdfc2}
+.at-block ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.at-block li{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px}
+.at-block li em{font-style:normal;font-size:12px;color:#8a6a45;text-align:right}
+.at-block button{min-height:40px;padding:0 14px;border:1px solid #e3cfae;border-radius:999px;background:#fff;color:var(--gold-ink,#8A5A1E);font:inherit;font-size:14px;cursor:pointer;flex:none}
+.at-block>button{margin-top:8px}
+
 /* ==== site-font.css ==== */
 /* 2026-11-14 본문은 예전 글꼴 IBM Plex Sans KR(무료 화면·리포트 모두). 제목(h1~h3)만 주아. 공유 이미지(canvas)는 메모먼트 꾹꾹체. 묶음 맨 끝. */
 :root{--body:"IBM Plex Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;--display:"Jua",var(--body);--serif:var(--body)}
