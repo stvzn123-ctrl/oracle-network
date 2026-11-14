@@ -389,3 +389,15 @@ body.nav-edit #accountEditor .askbox:not([open]){margin-bottom:20px}#reportInfoC
 @media(max-width:360px){.cmp-wrap .cmp-saved ul{grid-template-columns:1fr}}
 .cmp-out .cmp-open{display:block;width:100%;min-height:46px;margin:14px 0 0;padding:12px;font:700 14px/1.5 var(--body);border:1px solid var(--gold-ink);border-radius:12px;background:var(--panel);color:var(--gold-ink);cursor:pointer}
 .cmp-out .cmp-score{text-align:center}
+
+/* Account entry actions share one size and alignment; Kakao retains its brand color. */
+#accountSheet #guestProfile{padding:20px 0;margin:0 0 4px}
+#accountSheet #guestProfile h3{margin:0 0 10px;font:600 17px/1.5 var(--body);color:var(--ink)}
+#accountSheet #guestProfileNote{font:400 14px/1.75 var(--body);color:var(--ink2);margin:0 0 18px}
+#accountSheet :is(#guestProfileEdit,#accountLogin){box-sizing:border-box;width:100%;min-width:0;min-height:50px;margin:0;padding:13px 18px;border-radius:14px;font:600 16px/1.5 var(--body);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+#accountSheet #guestProfileEdit{background:var(--field);color:var(--ink);border:1px solid var(--line)}
+#accountSheet #accountLogin{background:#fee500;color:#191919;border:1px solid rgba(90,73,0,.08)}
+#accountSheet #accountLogin::before{content:"";width:20px;height:20px;flex:none;background:currentColor;clip-path:polygon(50% 10%,72% 14%,89% 30%,93% 48%,86% 65%,67% 76%,43% 78%,23% 92%,27% 73%,11% 62%,6% 43%,15% 25%,31% 14%)}
+#accountSheet #accountLoginDataNotice{font:400 12px/1.8 var(--body);color:var(--ink2);margin:12px 2px 24px;word-break:keep-all}
+#accountSheet :is(#guestProfileEdit,#accountLogin):focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+#accountSheet #accountLogin[hidden]{display:none}
