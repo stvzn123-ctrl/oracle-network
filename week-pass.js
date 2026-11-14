@@ -44,7 +44,7 @@
  const img=src=>new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=src});
  function wrapT(c,t,max){const out=[];let line='';for(const ch of t.split(' ')){const s=line?line+' '+ch:ch;if(c.measureText(s).width>max&&line){out.push(line);line=ch}else line=s}if(line)out.push(line);return out}
  async function share(){const b=document.querySelector('.dcard-share'),st=document.querySelector('.dcard-st');if(!CH)return;b.disabled=true;st.textContent='로딩 중…';
-  try{const d=new Date(),a=advOf(d),h=a.h.replace(/[“”"]/g,''),F='MemomentKkukkukk,"IBM Plex Sans KR",sans-serif';
+  try{const head=$('todayHead'),parts=(head.dataset.adviceDate||'').split('-').map(Number),d=parts.length===3?new Date(parts[0],parts[1]-1,parts[2],12):new Date(),a={h:head.querySelector('.td-adv b')?.textContent||'',t:head.querySelector('.td-adv p')?.textContent||''},h=a.h.replace(/[“”"]/g,''),F='MemomentKkukkukk,"IBM Plex Sans KR",sans-serif';
    if(window.loadMemoment)await window.loadMemoment();try{await document.fonts.load('40px MemomentKkukkukk','오늘의조언운명탐정'+h+a.t+fmt(d)+'fatedog.co.kr')}catch(_){}
    const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
    const g=c.createRadialGradient(W/2,H*.4,0,W/2,H*.4,H*.8);g.addColorStop(0,'#fff3d6');g.addColorStop(1,'#fbeee2');c.fillStyle=g;c.fillRect(0,0,W,H);
@@ -52,14 +52,14 @@
    c.textAlign='center';c.font='92px '+F;const hl=wrapT(c,h,CW-120);c.font='44px '+F;const tl=wrapT(c,a.t,CW-150);
    const blockH=50+70+40+hl.length*112+50+tl.length*66,top=Y+40+Math.max(40,((CHh-230)-blockH)/2);let y=top+40;
    c.fillStyle='#7a6253';c.font='40px '+F;c.fillText(fmt(d),W/2,y);y+=74;
-   c.fillStyle='#8A5A1E';c.font='46px '+F;c.fillText('오늘의 조언',W/2,y);y+=40+92;
+   c.fillStyle='#8A5A1E';c.font='46px '+F;c.fillText(d.toDateString()===new Date().toDateString()?'오늘의 조언':'이날의 조언',W/2,y);y+=40+92;
    c.fillStyle='#4A352B';c.font='92px '+F;hl.forEach(l=>{c.fillText(l,W/2,y);y+=112});y+=30;
    c.fillStyle='#5b463a';c.font='44px '+F;tl.forEach(l=>{c.fillText(l,W/2,y);y+=66});
    c.strokeStyle='#ecd6a8';c.lineWidth=2;c.beginPath();c.moveTo(W/2-200,Y+CHh-170);c.lineTo(W/2+200,Y+CHh-170);c.stroke();
    try{const m=await img('img/mascot.webp');c.drawImage(m,W/2-215,Y+CHh-152,124,124*m.naturalHeight/m.naturalWidth)}catch(_){}
    c.fillStyle='#8A5A1E';c.font='58px '+F;c.textAlign='left';c.fillText('운명탐정',W/2-80,Y+CHh-72);
    c.textAlign='center';c.fillStyle='#8A5A1E';c.font='38px '+F;c.fillText('fatedog.co.kr',W/2,H-80);
-   const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.92)),file=new File([blob],'운명탐정-오늘의-조언.jpg',{type:'image/jpeg'});
+   const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.92)),file=new File([blob],'운명탐정-조언-'+[d.getFullYear(),d.getMonth()+1,d.getDate()].join('-')+'.jpg',{type:'image/jpeg'});
    if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});track('share_daily_card',{method:'share'});window.oracleShared&&window.oracleShared('daily-card')}catch(_){}}
    else{const u=URL.createObjectURL(blob),l=document.createElement('a');l.href=u;l.download=file.name;document.body.append(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),4e3);track('share_daily_card',{method:'download'})}
    st.textContent=''}catch(e){st.textContent='이미지를 만들지 못했어요. 잠시 뒤 다시 시도해 주세요.'}finally{b.disabled=false}}
