@@ -49,3 +49,9 @@ p{text-wrap:pretty}
 .ps-view{border:0;border-radius:18px;padding:16px;width:min(420px,calc(100% - 24px));background:#FFF9F4;text-align:center}.ps-view::backdrop{background:#2a1d1488}
 .ps-view p{margin:0 0 10px;font-size:14px;color:#6b5547}.ps-view img{width:100%;border-radius:12px;display:block;-webkit-touch-callout:default}
 .ps-view div{display:flex;gap:8px;margin-top:12px}.ps-view a,.ps-view button{flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:999px;border:1px solid #e3cfae;background:#fff;color:#8A5A1E;font:inherit;text-decoration:none}
+/* 2026-11-14 우정·모임 결과: 이미지를 무료 화면에 바로 보여 준다(pair-share.js inline). 나타날 때 살짝 튀어 오르며 반짝 */
+#result .social-share-card.ps-has-img .social-cast{display:none!important}
+.ps-inline{display:block;width:100%;height:auto;border-radius:18px;margin:0 0 12px;box-shadow:0 10px 28px rgba(138,90,30,.16);animation:psPop .7s cubic-bezier(.2,1.4,.4,1) both,psGlow 1.6s ease-out .2s both}
+@keyframes psPop{0%{opacity:0;transform:translateY(18px) scale(.92) rotate(-1.5deg)}100%{opacity:1;transform:none}}
+@keyframes psGlow{0%{box-shadow:0 0 0 0 rgba(242,196,90,.75)}60%{box-shadow:0 0 0 14px rgba(242,196,90,0)}100%{box-shadow:0 10px 28px rgba(138,90,30,.16)}}
+@media(prefers-reduced-motion:reduce){.ps-inline{animation:none}}
