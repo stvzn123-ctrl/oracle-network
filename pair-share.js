@@ -76,13 +76,22 @@ async function renderGroup(box){
   g.strokeStyle='#8A5A1E';g.lineWidth=3.5;below?arrow(g,lx+(lx<t.cx?20:-20),ly-34,t.cx+(t.cx<W/2?-10:10),t.feet-t.h*0.18,lx<W/2?-30:30):arrow(g,lx,ly+12,t.cx+(t.cx<W/2?8:-8),t.feet-t.h*0.86,t.cx<W/2?-24:24)}
  g.fillStyle='#8A5A1E';g.font='40px '+F;g.fillText('운명탐정',W/2,H-80);g.fillStyle='#9a8576';g.font='28px '+F;g.fillText('fatedog.co.kr',W/2,H-38);
  return new Promise(ok=>c.toBlob(ok,'image/png'))}
-async function share(btn){const card=btn.closest('.pair-character')||btn.closest('.social-share-card');if(!card||btn.disabled)return;btn.disabled=true;const old=btn.textContent;btn.textContent='이미지 만드는 중…';
- try{const blob=await (card.matches('.social-share-card')?(card.querySelectorAll('.social-dog').length>2?renderGroup(card):renderSocial(card)):render(card));if(!blob)throw Error('blob');const file=new File([blob],card.querySelectorAll?.('.social-dog').length>2?'운명탐정-우리모임.png':'운명탐정-우리둘.png',{type:'image/png'});
-  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});try{window.oracleShared&&oracleShared('pair')}catch(_){}}catch(e){if(e&&e.name!=='AbortError')throw e}}
-  else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=file.name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}}
- catch(_){alert('이미지를 만들지 못했어요. 다시 시도해 주세요.')}finally{btn.disabled=false;btn.textContent=old}}
-function add(root){for(const box of root.querySelectorAll?root.querySelectorAll('.social-share-card'):[]){if(box.querySelector('.pair-share')||box.querySelectorAll('.social-dog').length<2)continue;const b=document.createElement('button');b.type='button';b.className='pair-share fd-cta fd-cta-sub';b.textContent='이미지로 저장·공유하기';box.querySelector('.social-share-button')?.before(b)}
- for(const card of root.querySelectorAll?root.querySelectorAll('.pair-character'):[]){if(card.querySelector('.pair-share'))continue;const b=document.createElement('button');b.type='button';b.className='pair-share fd-cta fd-cta-sub';b.textContent='이미지로 저장·공유하기';(card.querySelector('.tc-wrap')||card.querySelector('.pair-description'))?.after(b)}}
+/* 아이폰 사파리는 누른 직후에만 공유 창을 연다. 그래서 이미지를 미리 만들어 두고(prep), 누르면 바로 navigator.share를 부른다.
+   미리 만들기가 덜 끝났으면 만든 뒤 '한 번 더 눌러 주세요'로 바꾸고, 공유가 막히면 화면에 이미지를 띄워 길게 눌러 저장하게 한다. */
+const ready=new WeakMap();
+function cardOf(btn){return btn.closest('.pair-character')||btn.closest('.social-share-card')}
+function build(card){return card.matches('.social-share-card')?(card.querySelectorAll('.social-dog').length>2?renderGroup(card):renderSocial(card)):render(card)}
+function prep(card){if(!ready.has(card))ready.set(card,build(card).then(blob=>({blob,file:new File([blob],card.querySelectorAll('.social-dog').length>2?'운명탐정-우리모임.png':'운명탐정-우리둘.png',{type:'image/png'})})).catch(()=>{ready.delete(card);return null}));return ready.get(card)}
+function showImage(blob){const url=URL.createObjectURL(blob),d=document.createElement('dialog');d.className='ps-view';d.innerHTML='<p>이미지를 길게 눌러 저장하거나 공유해 주세요.</p><img alt="공유 이미지"><div><a download="운명탐정.png">사진 저장하기</a><button type="button">닫기</button></div>';d.querySelector('img').src=url;d.querySelector('a').href=url;document.body.append(d);d.querySelector('button').onclick=()=>d.close();d.addEventListener('close',()=>{URL.revokeObjectURL(url);d.remove()});d.showModal()}
+function share(btn){const card=cardOf(btn);if(!card||btn.disabled)return;const p=ready.get(card);let res=null;
+ p&&p.then(r=>{res=r});
+ /* 이미 만들어졌으면 같은 탭 안에서 바로 공유 */
+ const go=r=>{if(navigator.canShare&&navigator.canShare({files:[r.file]})){navigator.share({files:[r.file]}).then(()=>{try{window.oracleShared&&oracleShared('pair')}catch(_){}}).catch(e=>{if(!e||e.name!=='AbortError')showImage(r.blob)})}else showImage(r.blob)};
+ if(btn.dataset.ready==='1'&&btn._r){go(btn._r);return}
+ const old=btn.dataset.label||btn.textContent;btn.dataset.label=old;btn.disabled=true;btn.textContent='이미지 만드는 중…';
+ prep(card).then(r=>{btn.disabled=false;if(!r){btn.textContent=old;alert('이미지를 만들지 못했어요. 다시 시도해 주세요.');return}btn._r=r;btn.dataset.ready='1';btn.textContent='이미지 준비 완료 · 눌러서 공유하기'})}
+function add(root){for(const box of root.querySelectorAll?root.querySelectorAll('.social-share-card'):[]){if(box.querySelector('.pair-share')||box.querySelectorAll('.social-dog').length<2)continue;const b=document.createElement('button');b.type='button';b.className='pair-share fd-cta fd-cta-sub';b.textContent='이미지로 저장·공유하기';box.querySelector('.social-share-button')?.before(b);setTimeout(()=>prep(box).then(r=>{if(r){b._r=r;b.dataset.ready='1'}}),600)}
+ for(const card of root.querySelectorAll?root.querySelectorAll('.pair-character'):[]){if(card.querySelector('.pair-share'))continue;const b=document.createElement('button');b.type='button';b.className='pair-share fd-cta fd-cta-sub';b.textContent='이미지로 저장·공유하기';(card.querySelector('.tc-wrap')||card.querySelector('.pair-description'))?.after(b);setTimeout(()=>prep(card).then(r=>{if(r){b._r=r;b.dataset.ready='1'}}),600)}}
 document.addEventListener('click',e=>{const b=e.target.closest('.pair-share');if(b)share(b)});
 new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1){if(n.matches?.('.pair-character,.social-share-card'))add(n.parentNode);else add(n)}}).observe(document.body,{childList:true,subtree:true});
 add(document);

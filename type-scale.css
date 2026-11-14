@@ -45,3 +45,7 @@ p{text-wrap:pretty}
 .friend-tabs button[aria-pressed=true]{background:rgba(255,253,249,.96)!important;border-color:var(--gold-ink)!important;color:var(--gold-ink)!important}
 #tab-match .cmp-kind{display:none!important}
 .friend-tabs button{flex:1}
+/* 공유가 막혔을 때 띄우는 이미지(pair-share.js showImage) */
+.ps-view{border:0;border-radius:18px;padding:16px;width:min(420px,calc(100% - 24px));background:#FFF9F4;text-align:center}.ps-view::backdrop{background:#2a1d1488}
+.ps-view p{margin:0 0 10px;font-size:14px;color:#6b5547}.ps-view img{width:100%;border-radius:12px;display:block;-webkit-touch-callout:default}
+.ps-view div{display:flex;gap:8px;margin-top:12px}.ps-view a,.ps-view button{flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:999px;border:1px solid #e3cfae;background:#fff;color:#8A5A1E;font:inherit;text-decoration:none}
