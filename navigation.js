@@ -46,7 +46,7 @@
   document.querySelectorAll('dialog[open]').forEach(d=>d.close());
   if(!document.getElementById('report').hidden)closeReport();
   document.body.classList.toggle('nav-account',key==='account');sheet.hidden=key!=='account';
-  if(key==='account'){paintProfile();document.body.classList.add('app-entered');select(key);window.scrollTo({top:0,behavior:'instant'});return}
+  if(key==='account'){paintProfile();document.body.classList.remove('nav-topics','nav-ask');document.body.classList.add('app-entered');select(key);window.scrollTo({top:0,behavior:'instant'});return}
   document.body.classList.toggle('nav-topics',key==='topics');document.body.classList.toggle('nav-ask',key==='ask');select(key);
   if(key==='home'){
    if(typeof CH!=='undefined'&&CH){setTab('natal');document.body.classList.add('app-entered')}

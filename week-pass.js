@@ -29,7 +29,7 @@
  function advOf(d){const f=dayFortune(CH,d),box=document.createElement('div');box.innerHTML=todayAdvice(f,false);return {f,h:(box.querySelector('b')||{}).textContent||'',t:(box.querySelector('p')||{}).textContent||''}}
 
  async function buy(key){key=key||'week';const st=document.querySelector('#dayBuyDialog .dm-st');track('click_cards_pass',{report_key:key});
-  if(typeof requireSavedProfile==='function'&&!requireSavedProfile())return;
+  if(typeof requireSavedProfile==='function'&&!requireSavedProfile()){$('dayBuyDialog')?.close();return}
   st&&(st.textContent='결제창을 준비하고 있어요…');
   try{const [o]=await Promise.all([accountAPI('/pay/start',{key}),loadPayApp()]);
    try{sessionStorage.setItem('oracle-paying',JSON.stringify({o:o.orderId,k:key,p:o.price,t:Date.now()}))}catch(_){}

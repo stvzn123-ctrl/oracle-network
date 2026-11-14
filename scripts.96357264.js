@@ -134,7 +134,7 @@
   document.querySelectorAll('dialog[open]').forEach(d=>d.close());
   if(!document.getElementById('report').hidden)closeReport();
   document.body.classList.toggle('nav-account',key==='account');sheet.hidden=key!=='account';
-  if(key==='account'){paintProfile();document.body.classList.add('app-entered');select(key);window.scrollTo({top:0,behavior:'instant'});return}
+  if(key==='account'){paintProfile();document.body.classList.remove('nav-topics','nav-ask');document.body.classList.add('app-entered');select(key);window.scrollTo({top:0,behavior:'instant'});return}
   document.body.classList.toggle('nav-topics',key==='topics');document.body.classList.toggle('nav-ask',key==='ask');select(key);
   if(key==='home'){
    if(typeof CH!=='undefined'&&CH){setTab('natal');document.body.classList.add('app-entered')}
@@ -909,7 +909,7 @@ new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nod
  function advOf(d){const f=dayFortune(CH,d),box=document.createElement('div');box.innerHTML=todayAdvice(f,false);return {f,h:(box.querySelector('b')||{}).textContent||'',t:(box.querySelector('p')||{}).textContent||''}}
 
  async function buy(key){key=key||'week';const st=document.querySelector('#dayBuyDialog .dm-st');track('click_cards_pass',{report_key:key});
-  if(typeof requireSavedProfile==='function'&&!requireSavedProfile())return;
+  if(typeof requireSavedProfile==='function'&&!requireSavedProfile()){$('dayBuyDialog')?.close();return}
   st&&(st.textContent='결제창을 준비하고 있어요…');
   try{const [o]=await Promise.all([accountAPI('/pay/start',{key}),loadPayApp()]);
    try{sessionStorage.setItem('oracle-paying',JSON.stringify({o:o.orderId,k:key,p:o.price,t:Date.now()}))}catch(_){}

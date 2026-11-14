@@ -22,9 +22,9 @@ else:
         assert m,f
         s=s[:m.start()]+(tag if first else '')+s[m.end():];first=False
 open(p,'w',encoding='utf-8',newline='').write(s)
-# sample.html도 같은 묶음을 쓴다(2026-11-13)
-sp='sample.html'
-if os.path.exists(sp):
+# sample.html과 주제 페이지 4개도 같은 묶음을 쓴다(2026-11-13, 주제 페이지는 2026-11-14 추가: 빠뜨려서 스타일 없이 보였다)
+for sp in ['sample.html','gunghap/index.html','jaemul/index.html','yeonae/index.html','jikup/index.html']:
+    if not os.path.exists(sp):continue
     t=open(sp,encoding='utf-8').read();t2=re.sub(r'bundle\.[0-9a-f]+\.css',name,t)
     if t2!=t:open(sp,'w',encoding='utf-8',newline='').write(t2)
 print(name,len(css)//1024,'KB')
