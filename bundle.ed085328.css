@@ -2644,6 +2644,14 @@ body.nav-edit #guestProfile{display:none!important}
 #landing #landing-title.landing-headline{display:block!important;width:100%!important;max-width:none!important;text-align:center!important;font-size:clamp(14px,5.3cqw,32px)!important;white-space:nowrap!important;line-height:1.5!important;letter-spacing:-.05em!important;text-wrap:nowrap!important}
 #landing .landing-lead.landing-one{max-width:none!important;width:100%!important;text-align:center!important;font-size:clamp(11px,3.15cqw,15px)!important;line-height:1.75!important;word-break:keep-all!important}
 
+/* Report preparation: show a painted status before synchronous report generation. */
+.report-preparing{outline:none;border:0;border-radius:24px;background:var(--bg);color:var(--ink);padding:32px 24px;width:min(360px,calc(100vw - 40px));text-align:center;box-sizing:border-box;box-shadow:0 18px 64px #30201530}
+.report-preparing::backdrop{background:#30201566;backdrop-filter:blur(3px)}
+.report-preparing h2{font-size:19px;line-height:1.6;margin:18px 0 8px}.report-preparing p{font-size:14px;line-height:1.7;margin:0;color:var(--ink2)}
+.report-preparing-art{position:relative;width:128px;height:128px;margin:auto;display:grid;place-items:center}.report-preparing-art img{object-fit:contain}.report-preparing-art span{position:absolute;inset:0;border:3px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:report-preparing-spin 1.3s linear infinite}
+@keyframes report-preparing-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.report-preparing-art span{animation:none;border-style:dotted}}
+
 /* ==== ui-unify.css ==== */
 /* 통일 레이어 (2026-11-11): 버튼 색·선택 상태·누름 효과를 한 규칙으로 맞춘다. 마지막에 불러온다. */
 :root{
