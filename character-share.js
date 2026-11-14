@@ -57,7 +57,7 @@ async function draw(sec,withName){
  c.fillStyle=GOLD;c.font='32px MemomentKkukkukk, \"IBM Plex Sans KR\", sans-serif';c.fillText('fatedog.co.kr',W/2,CY+CH2+70);
  return new Promise(ok=>cv.toBlob(ok,'image/jpeg',.9))}
 document.addEventListener('click',async e=>{const b=e.target.closest('.cs-btn');if(!b)return;const sec=b.closest('.destiny-character'),st=sec.querySelector('.cs-status'),withName=true;
- b.disabled=true;st.textContent=window.__mmFont?'이미지를 만들고 있어요…':'글꼴을 불러오고 있어요…';
+ b.disabled=true;st.textContent='로딩 중…';
  try{const blob=await draw(sec,withName),title=(sec.querySelector('h2')||{}).textContent||'캐릭터',file=new File([blob],'운명탐정-'+title.replace(/\s+/g,'')+'.jpg',{type:'image/jpeg'});
   if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});st.textContent='공유했어요.';track('share_character',{method:'share',character:title});try{window.oracleShared&&oracleShared('character')}catch(_){}}catch(err){st.textContent=err&&err.name==='AbortError'?'':'공유하지 못했어요. 다시 시도해 주세요.'}}
   else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=file.name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);st.textContent='이미지를 저장했어요.';track('share_character',{method:'download',character:title})}

@@ -1,6 +1,4 @@
-/* 2026-11-13 사이트 글꼴은 주아(Jua) 하나로 통일(사용자 결정). 주아는 굵기가 하나라 가짜 굵게를 끈다.
-   공유 이미지(canvas)는 메모먼트 꾹꾹체를 따로 쓴다. 묶음 맨 끝. */
-:root{--body:"Jua",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;--display:var(--body);--serif:var(--body)}
-html body,html body *:not(svg):not(svg *),#report,#report *{font-family:var(--body)!important;font-synthesis:none}
-/* 2026-11-13 리포트처럼 긴 글은 예전 본문 글꼴(IBM Plex Sans KR). 제목·장 머리·표지 숫자는 주아 그대로. */
-#report p,#report li,#report td,#report dd,#report dt,#report small,#report blockquote,#report details,#report summary,#report .rv3-lead,#report p *,#report li *,#report td *,#report dd *{font-family:"IBM Plex Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif!important}
+/* 2026-11-14 본문은 예전 글꼴 IBM Plex Sans KR(무료 화면·리포트 모두). 제목(h1~h3)만 주아. 공유 이미지(canvas)는 메모먼트 꾹꾹체. 묶음 맨 끝. */
+:root{--body:"IBM Plex Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;--display:"Jua",var(--body);--serif:var(--body)}
+html body,html body *:not(svg):not(svg *),#report,#report *{font-family:var(--body)!important}
+html body :is(h1,h2,h3),html body :is(h1,h2,h3) *{font-family:var(--display)!important;font-synthesis:none}
