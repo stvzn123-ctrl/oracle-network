@@ -787,37 +787,6 @@ function renderNet(){renderNetCtl();const r=R[netP][netC],cat=CATS[netC],hz=HZ[n
   h+=`</div><p class="why-foot">다섯 점술의 점수를 종합해 <b>${D(r.mean)}</b>점이 됐어요. 막대 옆 숫자는 각 근거가 점수를 얼마나 밀고 당겼는지 나타내는 세기예요. 점술끼리 일치도는 ${r.agree}%입니다.</p>`;
   document.getElementById("whyBox").innerHTML=h}
 
-/* ---------- sky: connected network ---------- */
-(function networkSky(){
- const cv=document.getElementById("sky"),x=cv?.getContext("2d");if(!x)return;
- const motion=matchMedia("(prefers-reduced-motion: reduce)");
- let w=0,h=0,dpr=1,nodes=[],raf=0,last=0,time=0,colors,bgc=null;const slow=innerWidth<600||/KAKAOTALK|NAVER\(|Instagram|FBAN|FBAV|Line\//i.test(navigator.userAgent),step=slow?90:50;
- function resize(){if(w&&Math.abs(innerWidth-w)<2&&Math.abs(innerHeight-h)<160)return;
-   const style=getComputedStyle(document.documentElement);colors={bg:style.getPropertyValue("--net-bg").trim(),core:style.getPropertyValue("--net-core").trim(),node:style.getPropertyValue("--net-node").trim(),line:style.getPropertyValue("--teal").trim()};
-   dpr=Math.min(devicePixelRatio||1,slow?1:1.5);w=innerWidth;h=innerHeight;cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);cv.style.width=w+"px";cv.style.height=h+"px";
-   let seed=87;const rnd=()=>{seed=seed*16807%2147483647;return(seed-1)/2147483646};
-   bgc=null;nodes=Array.from({length:w<600?26:70},()=>({x:rnd()*w,y:rnd()*h,p:rnd()*Math.PI*2,r:1+rnd()*1.4}));
-   draw();
- }
- function draw(){
-   if(!w||!h||!cv.width||!cv.height)return;if(!bgc){bgc=document.createElement("canvas");bgc.width=cv.width;bgc.height=cv.height;const b=bgc.getContext("2d");b.setTransform(dpr,0,0,dpr,0,0);b.fillStyle=colors.bg;b.fillRect(0,0,w,h);const glow=b.createRadialGradient(w*.72,h*.35,0,w*.72,h*.35,Math.max(w,h)*.7);glow.addColorStop(0,colors.core);glow.addColorStop(1,colors.bg);b.fillStyle=glow;b.fillRect(0,0,w,h)}
-   x.setTransform(1,0,0,1,0,0);x.globalAlpha=1;x.drawImage(bgc,0,0);x.setTransform(dpr,0,0,dpr,0,0);
-   const pts=nodes.map(n=>({...n,px:n.x+Math.sin(time*.12+n.p)*16,py:n.y+Math.cos(time*.1+n.p)*12})),reach=w<600?120:165;
-   x.lineWidth=.7;x.strokeStyle=colors.line;
-   for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
-     const a=pts[i],b=pts[j],dist=Math.hypot(a.px-b.px,a.py-b.py);if(dist>reach)continue;
-     x.globalAlpha=(1-dist/reach)*.32;x.beginPath();x.moveTo(a.px,a.py);x.lineTo(b.px,b.py);x.stroke();
-     if((i+j)%11===0){const t=(time*.08+a.p)%1;x.globalAlpha=(1-dist/reach)*.65;x.fillStyle=colors.node;x.beginPath();x.arc(a.px+(b.px-a.px)*t,a.py+(b.py-a.py)*t,1.6,0,Math.PI*2);x.fill();}
-   }
-   x.fillStyle=colors.node;
-   for(const p of pts){x.globalAlpha=.25+.35*(.5+.5*Math.sin(time*.5+p.p));x.beginPath();x.arc(p.px,p.py,p.r,0,Math.PI*2);x.fill();}
-   x.globalAlpha=1;
- }
- function frame(ts){if(document.hidden){raf=0;return}if(ts-last>=step){time+=Math.min((ts-last)/1000,.1);last=ts;draw()}if(!motion.matches)raf=requestAnimationFrame(frame)}
- function start(){cancelAnimationFrame(raf);last=performance.now();draw();if(!motion.matches)raf=requestAnimationFrame(frame)}
- resize();addEventListener("resize",resize);motion.addEventListener("change",start);document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!raf)start()});start();
-})();
-
 /* ---------- form ---------- */
 const $=id=>document.getElementById(id);
 const placeFromIdx=i=>{const p=PLACES[i];return {name:p[0],lat:p[1],lon:p[2],tz:p[3],kr:p[3]===9&&p[2]>124&&p[2]<132&&p[1]>33&&p[1]<39}};
@@ -1134,7 +1103,7 @@ function dayFortune(ch,dt){const y=dt.getFullYear(),m=dt.getMonth()+1,d=dt.getDa
   const rawSc=cat.map(v=>Math.round(clamp(71+v,60,98))),rawAll=Math.round(rawSc.reduce((a,b)=>a+b,0)/4),sc=rawSc.map(smoothDailyScore),all=Math.round(sc.reduce((a,b)=>a+b,0)/4);
   const F=[...new Set(ch.goodG.map(x=>(SE[dm]+x)%5))],le=F.includes(SE[ds])?SE[ds]:F.includes((SE[ds]+1)%5)?(SE[ds]+1)%5:F[(J)%F.length];
   return {y,m,d,wd:WD[dt.getDay()],all,sc,rawAll,rawSc,tg,phrase:DAYTG[tg],pil:ST[ds]+BR[db],sj,ms,mh,ta,pd,tone,ks,my,le,best:sc.indexOf(Math.max(...sc))}}
-function weekDays(){const t=new Date();t.setHours(12,0,0,0);const off=(t.getDay()+6)%7;return [...Array(7)].map((_,i)=>{const x=new Date(t);x.setDate(t.getDate()-off+i);return x})}
+function weekDays(){const t=new Date();t.setHours(12,0,0,0);return [...Array(7)].map((_,i)=>{const x=new Date(t);x.setDate(t.getDate()-3+i);return x})}
 function ringSvgD(v,size){const r=size/2-7,c=2*Math.PI*r,p=clamp(v/100,0,1);return `<svg class="dring" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--gold)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${c*p} ${c}" transform="rotate(-90 ${size/2} ${size/2})"/></svg>`}
 const IC={
  saju:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a4.5 4.5 0 0 1 0 9a4.5 4.5 0 0 0 0 9"/><circle cx="12" cy="7.5" r="1.2" class="f"/><circle cx="12" cy="16.5" r="1.2"/></svg>`,
@@ -1175,22 +1144,24 @@ function todayHTML(ch,dt){dt=dt||new Date();const isT=dt.toDateString()===new Da
   $("todayHead").innerHTML=`<div class="td-head"><div class="td-ring">${ringSvgD(f.all,112)}<b>${f.all}<small>점</small></b></div>
    <div><span class="td-date">${isT?"오늘":f.wd+"요일"} · ${f.m}월 ${f.d}일 (${f.wd})</span>${todayAdvice(f,isT)}</div></div>`;
   return `<div class="today">
-  <ul class="td-cats">${CATS.map((c,ci)=>`<li><span>${SHORT[ci]}</span><i><em style="width:${f.sc[ci]}%;background:var(--${c.k})"></em></i><b>${f.sc[ci]}</b></li>`).join("")}</ul>
+  <details class="td-fold"><summary>분야별 점수 보기 · 금전·애정·직업·학업·건강</summary><ul class="td-cats">${CATS.map((c,ci)=>`<li><span>${SHORT[ci]}</span><i><em style="width:${f.sc[ci]}%;background:var(--${c.k})"></em></i><b>${f.sc[ci]}</b></li>`).join("")}</ul></details>
   <p class="td-prose">${todayProse(f,isT)}</p>
   <details><summary>오늘의 계산 근거 보기</summary>
   <table class="td-tbl"><thead><tr><th scope="col">점술</th><th scope="col">계산값</th><th scope="col">한 줄 풀이</th></tr></thead><tbody>${rows.map(([k,n,v,t])=>`<tr><th scope="row">${n}</th><td>${v}</td><td>${t}</td></tr>`).join("")}</tbody></table></details></div>`}
-function pickWeekDay(i){const d=weekDays()[i];if(!d||!CH)return;$("todayBox").innerHTML=todayHTML(CH,d);document.querySelectorAll("#weekBox .wk-pt").forEach(g=>g.classList.toggle("sel",+g.dataset.wkday===i));$("todayHead").scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})}
+function dayLockHTML(d,i){const f=dayFortune(CH,d),k=i-3,when=k<0?(k===-1?"어제":-k+"일 전"):(k===1?"내일":k+"일 뒤");
+  return `<div class="day-lock"><span class="td-date">${when} · ${f.m}월 ${f.d}일 (${f.wd})</span><div class="dl-blur" aria-hidden="true"><span>이날의 조언</span><b>“흐름을 읽는 한 마디가 여기에 있어요”</b><p>이날의 기운이 어디로 흐르는지, 무엇을 먼저 하면 좋은지 다섯 점술의 계산을 모아 풀어 드려요.</p><p>사주 일진과 달의 위치, 타라와 개인일, 촐킨까지 이날의 근거를 정리했어요.</p></div><button type="button" class="dl-open" data-dayunlock><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>잠금 해제하기</button></div>`}
+function pickWeekDay(i){const d=weekDays()[i];if(!d||!CH)return;if(i===3||(window.weekPassOpen&&window.weekPassOpen()))$("todayBox").innerHTML=todayHTML(CH,d);else{todayHTML(CH,weekDays()[3]);$("todayBox").innerHTML=dayLockHTML(d,i)}document.querySelectorAll("#weekBox .wk-pt").forEach(g=>g.classList.toggle("sel",+g.dataset.wkday===i));$("todayHead").scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})}
 document.addEventListener("click",e=>{const g=e.target.closest&&e.target.closest("#weekBox [data-wkday]");if(g)pickWeekDay(+g.dataset.wkday)});
 document.addEventListener("keydown",e=>{const g=e.target.closest&&e.target.closest("#weekBox [data-wkday]");if(g&&(e.key==="Enter"||e.key===" ")){e.preventDefault();pickWeekDay(+g.dataset.wkday)}});
-function weekHTML(ch){const ds=weekDays(),F=ds.map(d=>dayFortune(ch,d)),td=new Date().getDay(),ti=(td+6)%7;
+function weekHTML(ch){const ds=weekDays(),F=ds.map(d=>dayFortune(ch,d)),ti=3;
   const hi=F.reduce((b,f,i)=>f.all>F[b].all?i:b,0),lo=F.reduce((b,f,i)=>f.all<F[b].all?i:b,0);
   const ca=[0,1,2,3].map(c=>F.reduce((a,f)=>a+f.sc[c],0)/7),bc=ca.indexOf(Math.max(...ca));
   const W=700,H=210,bw=56,gap=(W-40-bw*7)/6,y=v=>H-36-(v-55)/45*(H-70);
   const vmin=Math.max(0,Math.floor(Math.min(...F.map(f=>f.all))-3)),vmax=Math.min(100,Math.ceil(Math.max(...F.map(f=>f.all))+3)),yv=v=>H-44-(v-vmin)/Math.max(8,vmax-vmin)*(H-90);
   const px=i=>40+i*(W-80)/6,pts=F.map((f,i)=>[px(i),yv(f.all)]),path=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
   const grid=[vmin,Math.round((vmin+vmax)/2),vmax].map(v=>`<path d="M40 ${yv(v)}H${W-40}" stroke="var(--line)" fill="none"/><text x="30" y="${yv(v)+4}" text-anchor="end" class="wk-scale">${v}</text>`).join("");
-  const bars=grid+`<path d="${path}" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`+F.map((f,i)=>`<g class="wk-pt${i===ti?" sel now":""}" data-wkday="${i}" role="button" tabindex="0" aria-label="${"월화수목금토일"[i]}요일 ${f.all}점 자세히 보기"><circle cx="${pts[i][0]}" cy="${pts[i][1]}" r="26" fill="transparent"/><circle class="wk-dot" cx="${pts[i][0]}" cy="${pts[i][1]}" r="8"/><text x="${pts[i][0]}" y="${pts[i][1]-18}" text-anchor="middle" class="wk-v">${f.all}</text><text x="${pts[i][0]}" y="${H-10}" text-anchor="middle" class="wk-d">${"월화수목금토일"[i]}${i===ti?"·오늘":""}</text></g>`).join("");
-  return `<div class="week wk-line"><svg viewBox="0 0 ${W} ${H}" role="group" aria-label="이번 주 요일별 점수. 점을 누르면 그날 운세가 아래에 나옵니다">${bars}</svg><p class="wk-hint">점을 누르면 그날의 조언과 풀이가 아래에 나와요.</p>
+  const bars=grid+`<path d="${path}" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`+F.map((f,i)=>`<g class="wk-pt${i===ti?" sel now":""}" data-wkday="${i}" role="button" tabindex="0" aria-label="${f.m}월 ${f.d}일 ${f.wd}요일 ${f.all}점 자세히 보기"><circle cx="${pts[i][0]}" cy="${pts[i][1]}" r="26" fill="transparent"/><circle class="wk-dot" cx="${pts[i][0]}" cy="${pts[i][1]}" r="8"/><text x="${pts[i][0]}" y="${pts[i][1]-18}" text-anchor="middle" class="wk-v">${f.all}</text><text x="${pts[i][0]}" y="${H-10}" text-anchor="middle" class="wk-d">${i===ti?"오늘":f.d+"일("+f.wd+")"}</text></g>`).join("");
+  return `<div class="week wk-line"><svg viewBox="0 0 ${W} ${H}" role="group" aria-label="오늘 앞뒤 3일의 점수. 점을 누르면 그날 운세가 아래에 나옵니다">${bars}</svg><p class="wk-hint">점을 누르면 그날의 조언과 풀이가 아래에 나와요.</p>
   </div>`}
 /* 귀인·결혼: 다섯 점술의 신호를 해마다 모아, 가장 많은 점술이 겹치는 해와 그해의 달·날짜까지 짚는다(자체 규칙). */
 const PL_PERSON={Sun:"당당하고 리더십 있는",Moon:"다정하고 섬세한",Mars:"활동적이고 추진력 있는",Mercury:"재치 있고 말이 잘 통하는",Jupiter:"너그럽고 배울 점이 많은",Venus:"매력적이고 감각 있는",Saturn:"성실하고 책임감 강한",Rahu:"색다르고 이국적인 분위기의",Ketu:"조용하고 깊이가 있는"};
@@ -3000,25 +2971,6 @@ accountPaint();accountInit().then(paymentReturnCheck).catch(()=>{});
 document.getElementById('landingStart').addEventListener('click',()=>{document.body.classList.add('app-entered');if(document.body.classList.contains('fresh')){document.getElementById('askbox').open=true;document.getElementById('in-name').focus({preventScroll:true})}window.scrollTo({top:0,behavior:'instant'})});
 
 
-
-/* 하단 탭바(2026-11): 새 로직 없이 이미 있는 버튼을 대신 눌러 준다 */
-(function(){
- const S=id=>document.getElementById(id);
- const soft=()=>reduceM?'auto':'smooth';
- const started=()=>document.body.classList.contains('app-entered');
- document.addEventListener('click',e=>{
-  const b=e.target.closest('[data-tabbar]');if(!b)return;
-  const k=b.dataset.tabbar;
-  document.querySelectorAll('[data-tabbar]').forEach(x=>x.setAttribute('aria-current',String(x===b)));
-  if(!started()){S('landingStart')?.click();return}
-  if(k==='home'){document.body.classList.remove('show-topics');S('tb-natal')?.click();
-   (S('result')||document.body).scrollIntoView({behavior:soft(),block:'start'});return}
-  if(k==='topics'){document.body.classList.add('show-topics');
-   const f=S('topicFold');if(f){f.open=true;f.scrollIntoView({behavior:soft(),block:'start'})}return}
-  if(k==='me'){const t=S('accountMember')&&!S('accountMember').hidden?S('accountMember'):S('accountLogin');
-   if(t){t.scrollIntoView({behavior:soft(),block:'center'});if(t===S('accountLogin'))t.focus({preventScroll:true})}}
- });
-})();
 
 /* 생년월일은 8자리 한 칸으로 받고, 기존 연·월·일 입력칸에 그대로 넣어 준다 */
 (function(){

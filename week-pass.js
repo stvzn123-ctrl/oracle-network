@@ -23,7 +23,7 @@
    head.before(wrap);wrap.querySelector('.dcard-front').append(head);
    wrap.querySelector('.dcard-share').addEventListener('click',share);
    const dm=document.createElement('section');dm.className='blk dmonth';const tr=document.querySelector('#tab-today .to-report');tr?tr.before(dm):$('tab-today').append(dm);
-   dm.addEventListener('click',e=>{if(e.target.closest('.dm-buy'))buy();if(e.target.closest('.dm-all'))buy('all')})}
+   }
   month()}
 
  const fmt=d=>(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+'일월화수목금토'[d.getDay()]+')';
@@ -32,9 +32,9 @@
   const days=[];for(let i=1;i<=30;i++){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()+i);days.push(d)}
   if(open){m.innerHTML='<h4 class="dm-h">앞으로 30일의 조언 카드</h4><ol class="dm-list">'+days.map(d=>{const a=advOf(d);return '<li><span class="dm-d">'+fmt(d)+'</span><b>'+a.h+'</b><p>'+a.t+'</p></li>'}).join('')+'</ol>';return}
   const pv=days.slice(0,3).map(d=>{const a=advOf(d);return '<li aria-hidden="true"><span class="dm-d">'+fmt(d)+'</span><b>'+a.h+'</b><p>'+a.t+'</p></li>'}).join('');
-  m.innerHTML='<h4 class="dm-h">앞으로 30일의 조언 카드</h4><div class="dm-lock"><ol class="dm-list dm-blur" inert>'+pv+'</ol><div class="dm-gate"><p>내일부터 30일 동안의 조언 카드를 미리 볼 수 있어요.</p><button type="button" class="dm-buy">한 달 카드 보기 · 1,000원</button><button type="button" class="dm-all">모든 기능 전부 열기 · 2,990원</button><small class="dm-st" aria-live="polite"></small></div></div>'}
+  m.innerHTML='<h4 class="dm-h">앞으로 30일의 조언 카드</h4><div class="dm-lock"><ol class="dm-list dm-blur" inert>'+pv+'</ol><div class="dm-gate"><button type="button" class="dl-open" data-dayunlock><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>잠금 해제하기</button></div></div>'}
 
- async function buy(key){key=key||'cards30';const st=document.querySelector('.dm-st');track('click_cards_pass',{report_key:key});
+ async function buy(key){key=key||'cards30';const st=document.querySelector('#dayBuyDialog .dm-st');track('click_cards_pass',{report_key:key});
   if(typeof requireSavedProfile==='function'&&!requireSavedProfile())return;
   st&&(st.textContent='결제창을 준비하고 있어요…');
   try{const [o]=await Promise.all([accountAPI('/pay/start',{key}),loadPayApp()]);
@@ -44,7 +44,7 @@
    PayApp.payrequest({goodname:o.goodname,price:String(o.price),var1:o.orderId,feedbackurl:o.feedbackurl,checkretry:'y',smsuse:'n',redirectpay:'1',returnurl:o.returnurl,redirect:'self'});
   }catch(e){st&&(st.textContent='결제를 시작하지 못했어요. 잠시 뒤 다시 시도해 주세요.')}}
  async function check(){if(!user()){open=false;month();return}
-  try{const a=await accountAPI('/access');open=!!(a.isAdmin||a.reports.includes('all')||a.reports.includes('cards30'))}catch(_){open=false}month()}
+  try{const a=await accountAPI('/access');open=!!(a.isAdmin||a.reports.includes('all')||a.reports.includes('cards30'))}catch(_){open=false}month();const sel=document.querySelector('#weekBox .wk-pt.sel');if(open&&document.querySelector('#todayBox .day-lock')&&sel)pickWeekDay(+sel.dataset.wkday)}
 
  /* 공유 이미지 1080×1350: 날짜 · 오늘의 조언 · 문장 · 운명탐정 */
  const img=src=>new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=src});
@@ -70,6 +70,13 @@
    else{const u=URL.createObjectURL(blob),l=document.createElement('a');l.href=u;l.download=file.name;document.body.append(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),4e3);track('share_daily_card',{method:'download'})}
    st.textContent=''}catch(e){st.textContent='이미지를 만들지 못했어요. 잠시 뒤 다시 시도해 주세요.'}finally{b.disabled=false}}
 
+ /* 잠금 해제 창: 한 달 열기(cards30, 결제일부터 30일) 1,000원 / 영구적으로 전부 열기(all) 2,990원 */
+ window.weekPassOpen=()=>open;
+ function unlockDialog(){let d=$('dayBuyDialog');if(!d){d=document.createElement('dialog');d.id='dayBuyDialog';d.className='day-buy';d.setAttribute('aria-labelledby','dayBuyTitle');
+   d.innerHTML='<h2 id="dayBuyTitle">운세 카드 잠금 해제</h2><p>지나간 날과 다가올 날의 조언과 풀이, 계산 근거를 볼 수 있어요.</p><div class="db-opts"><button type="button" data-buykey="cards30"><span>한 달 동안 열기</span><b>1,000원</b></button><button type="button" data-buykey="all"><span>영구적으로 열기 · 전부 포함</span><b>2,990원</b></button></div><small class="dm-st" aria-live="polite"></small><button type="button" class="db-close" data-dayclose>닫기</button>';
+   document.body.append(d);d.addEventListener('click',e=>{const b=e.target.closest('[data-buykey]');if(b){buy(b.dataset.buykey);return}if(e.target===d||e.target.closest('[data-dayclose]'))d.close()})}
+  d.querySelector('.dm-st').textContent='';track('view_paywall',{source_page:'week'});d.showModal()}
+ document.addEventListener('click',e=>{if(e.target.closest('[data-dayunlock]'))unlockDialog()});
  function paint(){order();card()}
  const ra=window.renderAll;
  window.renderAll=function(){const r=ra.apply(this,arguments);paint();if(weekFirst())setTab('today');else if(saved())setTimeout(markSeen,3000);check();return r};
