@@ -66,7 +66,8 @@ async function showResult(info){const main=page.querySelector('.rp-main');cur.sh
  let d;try{d=await api('/room/result',{code:info.code,token:tokens()[info.code]||undefined})}catch(e){main.innerHTML=headHTML(info)+'<p class="rp-err">'+esc(e.message)+'</p>';return}
  const ms=d.members.slice().sort((a,b)=>(b.me?1:0)-(a.me?1:0));let charts;
  try{charts=ms.map(m=>buildChart(Object.assign({},m.profile,{name:m.profile.name||m.name})))}catch(e){main.innerHTML=headHTML(info)+'<p class="rp-err">결과를 계산하지 못했어요.</p>';return}
- main.innerHTML=headHTML(info)+'<div class="rp-result">'+socialResultHTML(charts)+'</div>';
+ main.innerHTML=headHTML(info)+'<div class="rp-result">'+socialResultHTML(charts)+'</div>'+(info.owner?'<button type="button" class="rp-del" data-rdel>방 지우기</button>':'');
+ {const del=main.querySelector('[data-rdel]');if(del)del.onclick=async()=>{if(!confirm('이 방과 참여자 정보를 지금 지울까요? 되돌릴 수 없어요.'))return;try{await api('/room/delete',{code:info.code});closeRoom();roomsPaint(true)}catch(e){alert(e.message)}}}
  /* 저장을 허락한 사람만, 로그인한 경우 내 저장 목록에 더한다 */
  try{if(typeof accountUser!=='undefined'&&accountUser&&typeof partnerSave==='function'){const have=partnerList();for(const m of ms){if(m.me||!m.allowSave)continue;const p=m.profile;if(have.some(x=>x.name===p.name&&x.date===p.date))continue;await partnerSave({name:p.name,roman:p.roman||'',sex:p.sex,date:p.date,time:p.notime?'':p.time,notime:!!p.notime,pi:null})}}}catch(_){}}
 
