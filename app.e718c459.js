@@ -1783,8 +1783,8 @@ async function openCompatReport(btn,requestedKey=null){
  if(kind==='group'){alert('모임 결과에서 모임 리포트를 열어 주세요.');return}
  const key=kind==='reunion'?'reunion':kind==='friend'?'friend':'match';
  const show=()=>{reportReturnFocus=btn;$('reportBody').innerHTML=approvedReportHTML(key==='reunion'?reunionReportData(me,pair.b,pair.res,pair.ru):key==='friend'?friendReportData(me,pair.b,pair.res):compatReportData(me,pair.b,pair.res),key,me);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true})};
- if(accountUser?.isAdmin)return show();if(!accountUser)return needLogin();
- try{const ac=await accountAPI('/access');if(ac.isAdmin||ac.reports.includes(key)||(key==='friend'&&ac.reports.includes('match'))||ac.reports.includes('all'))return show()}catch(_){}
+ if(accountUser?.isAdmin)return prepareReportView(show);if(!accountUser)return needLogin();
+ try{const ac=await accountAPI('/access');if(ac.isAdmin||ac.reports.includes(key)||(key==='friend'&&ac.reports.includes('match'))||ac.reports.includes('all'))return prepareReportView(show)}catch(_){}
  showLaunchReport(key,{me:me.inp,partner:pair.b.inp,kind},btn,show)
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cmp-open]');if(b)openCompatReport(b)});
@@ -2060,13 +2060,26 @@ function launchTrialState(key,identity){
  const slot=launchTrialSlot(key),fingerprint=launchTrialIdentity(identity),used=localStorage.getItem(slot);
  return {slot,fingerprint,used,allowed:!used||used===fingerprint};
 }
-function showLaunchReport(key,identity,trigger,show){
- if(accountUser?.isAdmin){show();return}
+let reportPreparingCount=0;
+function beginReportPreparing(){
+ let dialog=document.getElementById('reportPreparing');
+ if(!dialog){dialog=document.createElement('dialog');dialog.id='reportPreparing';dialog.className='report-preparing';dialog.setAttribute('aria-label','리포트 준비 중');dialog.innerHTML='<div role="status" aria-live="polite"><div class="report-preparing-art"><img src="img/pose-white-note.webp" width="112" height="112" alt=""><span aria-hidden="true"></span></div><h2>운명의 단서를 정리하고 있어요…</h2><p>잠시만 기다려 주세요. 리포트를 준비하고 있어요.</p></div>';dialog.addEventListener('cancel',e=>e.preventDefault());document.body.append(dialog)}
+ reportPreparingCount++;if(!dialog.open)dialog.showModal();
+ let done=false;return ()=>{if(done)return;done=true;if(--reportPreparingCount===0&&dialog.open){dialog.close();if(document.getElementById('report')?.hidden===false)document.getElementById('reportClose')?.focus({preventScroll:true})}};
+}
+async function prepareReportView(show){
+ const finish=beginReportPreparing();
+ try{await new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve,250)));await ensureReport();return await show()}
+ finally{finish()}
+}
+async function showLaunchReport(key,identity,trigger,show){
+ if(accountUser?.isAdmin){await prepareReportView(show);return}
  if(!accountUser){needLogin();return}
  if(!FREE_LAUNCH){
   // 리포트별 결제 또는 전체 열람(2,990원): 서버 /access에 'all'(또는 해당 리포트) 권한이 있을 때만 연다.
   if(!requireSavedProfile())return;
-  accountAPI('/access').then(a=>{if(a.isAdmin||a.reports.includes('all')||a.reports.includes(key)){if($('reportPurchase').open)$('reportPurchase').close();show()}else showReportPurchase(key,trigger)}).catch(e=>{showReportPurchase(key,trigger);$('purchaseStatus').textContent=e.message});
+  const finishAccess=beginReportPreparing();
+  accountAPI('/access').then(async a=>{if(a.isAdmin||a.reports.includes('all')||a.reports.includes(key)){if($('reportPurchase').open)$('reportPurchase').close();await prepareReportView(show)}else showReportPurchase(key,trigger)}).catch(e=>{showReportPurchase(key,trigger);$('purchaseStatus').textContent=e.message}).finally(finishAccess);
   return;
  }
  try{
@@ -2074,7 +2087,7 @@ function showLaunchReport(key,identity,trigger,show){
   if(!trial.allowed){requestReport(key,trigger);return}
   // Reserve synchronously so a second click cannot consume another input; roll back rendering failures.
   localStorage.setItem(trial.slot,trial.fingerprint);
-  try{show()}catch(error){if(!trial.used)localStorage.removeItem(trial.slot);throw error}
+  try{await prepareReportView(show)}catch(error){if(!trial.used)localStorage.removeItem(trial.slot);throw error}
  }catch(error){alert('무료 이용 기록을 저장하거나 리포트를 열지 못했어요. 브라우저 저장 설정을 확인한 뒤 다시 시도해 주세요.')}
 }
 
@@ -2252,9 +2265,10 @@ function approvedReportHTML(data,key,sourceChart=null){
 
 function paintAccessAccount(){const el=$('accountIdLabel');if(el){el.textContent='';el.hidden=true}const a=$('adminPageLink');if(a)a.hidden=!(accountToken&&(accountUser?.isAdmin||lsGet('oracle-real-admin')==='1'||lsGet('oracle-admin')==='1'));}
 async function loadPrivateReport(key,trigger){if(key==='group')return openGroupReport(trigger);if(['match','friend','reunion'].includes(key)){return openCompatReport(trigger,key)}if(!accountUser){accountStatus('리포트는 로그인 후 관리자 승인이 필요해요.');alert('카카오 로그인 후 리포트 열람 승인을 요청해주세요.');return;}
+ const finishPreparing=beginReportPreparing();
  const prior=trigger?.textContent;if(trigger){trigger.disabled=true;trigger.textContent='권한 확인 중…'}
  try{const data=await accountAPI('/reports?key='+encodeURIComponent(key));if(typeof data.body!=='string'||typeof data.title!=='string')throw Error('리포트를 준비하고 있어요.');reportReturnFocus=trigger;$('reportBody').innerHTML=approvedReportHTML(data,key);$('report').hidden=false;document.documentElement.classList.add('rep-lock');$('report').scrollTop=0;$('reportClose').focus({preventScroll:true});}
- catch(e){alert(e.message)}finally{if(trigger){trigger.disabled=false;trigger.textContent=prior}}
+ catch(e){alert(e.message)}finally{finishPreparing();if(trigger){trigger.disabled=false;trigger.textContent=prior}}
 }
 
 REPORT_TOPIC_ART.love={"src":"img/5d39fc226e.jpg","alt":"봄날의 정원 카페에서 마주 보는 두 마리 새"};
@@ -2310,7 +2324,7 @@ function ensureReport(){if(__richImpl)return Promise.resolve();if(__reportLoadin
 function buildRichReport(ch,key){if(!__richImpl){ensureReport();throw new Error("report_loading")}return __richImpl(ch,key)}
 (()=>{const SEL='[data-buy]:not([data-buy="ask"]),#reportOpen,[data-gopen],[data-cmp-open],#reportCheckout,#reportCheckoutAll,.sr-free button,[data-open-report],.rc-open';
  document.addEventListener("click",e=>{if(__richImpl)return;const b=e.target.closest&&e.target.closest(SEL);if(!b)return;e.preventDefault();e.stopImmediatePropagation();
-  b.setAttribute("aria-busy","true");ensureReport().then(()=>{b.removeAttribute("aria-busy");b.click()},()=>{b.removeAttribute("aria-busy");alert("리포트를 불러오지 못했어요. 연결을 확인하고 다시 눌러 주세요.")})},true);
+  const finish=beginReportPreparing();b.setAttribute("aria-busy","true");ensureReport().then(()=>{b.removeAttribute("aria-busy");b.click();finish()},()=>{finish();b.removeAttribute("aria-busy");alert("리포트를 불러오지 못했어요. 연결을 확인하고 다시 눌러 주세요.")})},true);
  // Prepare report code on user intent, rather than every landing-page visit.
  const warm=e=>{if(e.target.closest&&e.target.closest(SEL))ensureReport().catch(()=>{})};
  document.addEventListener('pointerover',warm,{passive:true});
