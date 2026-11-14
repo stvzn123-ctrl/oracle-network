@@ -952,6 +952,7 @@ new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nod
   d.querySelector('.dm-st').textContent='';track('view_paywall',{source_page:'week'});d.showModal()}
  document.addEventListener('click',e=>{if(e.target.closest('[data-dayunlock]'))unlockDialog()});
  function paint(){order();card()}
+ const previousSetTab=window.setTab;window.setTab=function(){const r=previousSetTab.apply(this,arguments);if(!$("tab-today").hidden)paint();return r};
  const ra=window.renderAll;
  window.renderAll=function(){const r=ra.apply(this,arguments);paint();if(weekFirst())setTab('today');else if(saved())setTimeout(markSeen,3000);check();return r};
  document.addEventListener('click',e=>{if(e.target.closest('[data-bottom=home]')&&weekFirst()&&typeof CH!=='undefined'&&CH)setTimeout(()=>setTab('today'),0);if(e.target.closest('#tb-today'))check()});
