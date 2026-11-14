@@ -34,4 +34,7 @@
    p.innerHTML=o.length?o.map(x=>`<li><span>${esc(NAMES[x.report_key]||x.report_key)} · ${Number(x.price).toLocaleString()}원</span><em>${esc({paid:'결제 완료',ready:'결제 전(창만 열림)',canceled:'취소됨','check:price':'금액 불일치'}[x.status]||x.status)} · ${new Date(x.created).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}</em></li>`).join(''):'<li>결제 기록이 없어요.</li>'}catch(_){p.innerHTML='<li>불러오지 못했어요.</li>'}}
  /* 내 정보 화면이 열릴 때마다 다시 그린다 */
  new MutationObserver(()=>{if(!sheet.hidden)paint()}).observe(sheet,{attributes:true,attributeFilter:['hidden']});
+ /* 로그인 응답이 늦게 오거나 이미 열린 내 정보를 다시 누를 때도 그린다 */
+ document.addEventListener('click',e=>{if(e.target.closest('[data-bottom=account]'))setTimeout(()=>{if(!sheet.hidden)paint()},50)});
+ let tries=0;const t=setInterval(()=>{if(++tries>20||(typeof accountUser!=='undefined'&&accountUser)){clearInterval(t);if(!sheet.hidden)paint()}},500);
 })();
