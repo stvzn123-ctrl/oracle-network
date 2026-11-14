@@ -943,7 +943,7 @@ $("ask").addEventListener("submit",e=>{e.preventDefault();const ce=checkForm();i
   const finish=()=>{ab.classList.remove("casting");btn.textContent="내 운명 보기";ab.open=false;document.body.classList.remove("fresh");run(v,true);
     requestAnimationFrame(()=>{const nb=$("result");if(nb.getBoundingClientRect().top<0)nb.scrollIntoView({behavior:reduceM?"auto":"smooth",block:"start"})})};
   if(reduceM){finish();return}
-  ab.classList.add("casting");btn.textContent="운명을 읽는 중…";setTimeout(finish,1100)});
+  ab.classList.add("casting");btn.textContent="운명을 읽는 중…";setTimeout(finish,180)});
 /* ---------- 운명 리포트 (자동 생성: 1장 종합 + 2장 사주, 3~6장 미리보기) ---------- */
 const RTAG={
  insight:{kw:"깊은 통찰",t:"생각이 깊고 직관이 날카로워요",s:"겉보다 이면을 먼저 보는 눈"},
@@ -2573,8 +2573,11 @@ function buildRichReport(ch,key){if(!__richImpl){ensureReport();throw new Error(
 (()=>{const SEL='[data-buy]:not([data-buy="ask"]),#reportOpen,[data-gopen],[data-cmp-open],#reportCheckout,#reportCheckoutAll,.sr-free button,[data-open-report],.rc-open';
  document.addEventListener("click",e=>{if(__richImpl)return;const b=e.target.closest&&e.target.closest(SEL);if(!b)return;e.preventDefault();e.stopImmediatePropagation();
   b.setAttribute("aria-busy","true");ensureReport().then(()=>{b.removeAttribute("aria-busy");b.click()},()=>{b.removeAttribute("aria-busy");alert("리포트를 불러오지 못했어요. 연결을 확인하고 다시 눌러 주세요.")})},true);
- const pre=()=>{const go=()=>ensureReport().catch(()=>{});window.requestIdleCallback?requestIdleCallback(go,{timeout:4000}):setTimeout(go,2500)};
- if(document.readyState==="complete")pre();else addEventListener("load",()=>setTimeout(pre,1200));})();
+ // Prepare report code on user intent, rather than every landing-page visit.
+ const warm=e=>{if(e.target.closest&&e.target.closest(SEL))ensureReport().catch(()=>{})};
+ document.addEventListener('pointerover',warm,{passive:true});
+ document.addEventListener('focusin',warm);
+ document.addEventListener('touchstart',warm,{passive:true});})();
 function topicReportPageLegacy(ch,k){const name=TOPICS.find(x=>x[0]===k)?.[1]||'나의 운명',rows=reportTopicRows(ch,k),relationship=['love','marry','reunion','match'].includes(k),ci=relationship?1:['money','invest','property','business'].includes(k)?0:2,dom=ch.cnt.indexOf(Math.max(...ch.cnt));
 const steps=['지금 가장 궁금한 질문 하나를 적어보세요.','이번 주에 해볼 행동 하나와 가능한 시간을 정해보세요.','실천 후 느낀 점을 한 문장으로 남겨보세요.'];
 const yearRows=R.map((r,i)=>({y:horizonDate(HZ[i].off).y,score:D(r[ci].mean)}));
@@ -3048,7 +3051,7 @@ function groupRefresh(){const b=document.getElementById('cmpGroupList');if(b)b.i
 function groupRender(reveal=true){
  const all=[CH,...GROUP],out=document.getElementById('cmpGroupOut');if(!out)return;
  if(!CH||all.length<3||all.length>8){GROUPRES=null;out.textContent='모임은 나를 포함해 3~8명을 입력해 주세요.';return}
- if(reveal){const token=String(Date.now());out.dataset.reveal=token;out.innerHTML=socialRevealHTML();out.scrollIntoView({behavior:soft(),block:'nearest'});setTimeout(()=>{if(out.isConnected&&out.dataset.reveal===token&&[CH,...GROUP].every((c,i)=>c===all[i])&&GROUP.length+1===all.length)groupRender(false);},900);return;}
+ if(reveal){const token=String(Date.now());out.dataset.reveal=token;out.innerHTML=socialRevealHTML();out.scrollIntoView({behavior:soft(),block:'nearest'});setTimeout(()=>{if(out.isConnected&&out.dataset.reveal===token&&[CH,...GROUP].every((c,i)=>c===all[i])&&GROUP.length+1===all.length)groupRender(false);},180);return;}
  const r=GROUPRES=groupResult(all);
  out.innerHTML=socialResultHTML(all);collapseGroupMembers();
  out.scrollIntoView({behavior:soft(),block:'nearest'})}
@@ -3199,7 +3202,7 @@ async function cmpPairCheck(code,msgEl){
 
 function cmpShowOne(label,scroll=true){
  if(COMPAT&&COMPAT.mode==='match'&&CMPKIND==='friend')COMPAT.kind='friend';
- if(COMPAT?.kind==='friend'&&scroll){const pair=COMPAT,out=document.getElementById('friendRoleOut');if(out){const token=String(Date.now())+Math.random();out.dataset.reveal=token;out.innerHTML=socialRevealHTML();out.scrollIntoView({behavior:soft(),block:'nearest'});setTimeout(()=>{if(COMPAT===pair&&out.isConnected&&out.dataset.reveal===token)cmpShowOne(label,false);},900);return;}}
+ if(COMPAT?.kind==='friend'&&scroll){const pair=COMPAT,out=document.getElementById('friendRoleOut');if(out){const token=String(Date.now())+Math.random();out.dataset.reveal=token;out.innerHTML=socialRevealHTML();out.scrollIntoView({behavior:soft(),block:'nearest'});setTimeout(()=>{if(COMPAT===pair&&out.isConnected&&out.dataset.reveal===token)cmpShowOne(label,false);},180);return;}}
 
  if(COMPAT?.kind==='friend'){const out=document.getElementById('friendRoleOut')||document.querySelector('#cmpOne .cmp-result');if(out){out.innerHTML=socialResultHTML([CH,COMPAT.b]);collapseFriendInputs(out);if(scroll)out.scrollIntoView({behavior:soft(),block:'nearest'});}return;}
  const res=COMPAT.res,out=document.querySelector('#cmpOne .cmp-out')||document.querySelector('#cmpOne .cmp-result');if(!out)return;cmpCollapse(out);
