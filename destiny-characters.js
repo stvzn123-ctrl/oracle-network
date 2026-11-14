@@ -34,7 +34,7 @@ function select(tags){
  return {...winner,name:names[winner.id-1],primary};
 }
 function html(ch){
- const tags=reportTags(ch),c=document.body.classList.contains("demo")?{id:21,name:names[20],primary:"bond",secondary:"free"}:select(tags),primary=RTAG[c.primary],secondary=RTAG[c.secondary];
+ const tags=reportTags(ch),c=select(tags),primary=RTAG[c.primary],secondary=RTAG[c.secondary];
  const index=c.id-1,x=(index%6)*20,y=Math.floor(index/6)*20;
  const penguin=penguins[c.id];
  const art=penguin?'<div class="character-art character-penguin-art"><img src="'+penguin.image+'" width="360" height="360" loading="lazy" decoding="async" alt="'+c.name+' 펭귄 캐릭터"></div>':'<div class="character-art" data-loading role="img" aria-label="'+c.name+'" data-art="'+String(c.id).padStart(2,'0')+'" style="background-image:url(img/characters/'+String(c.id).padStart(2,'0')+'.webp);background-size:contain;background-position:center"></div>';

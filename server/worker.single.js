@@ -1248,7 +1248,7 @@ function summarize(v,k){const sc=v.map(x=>x[0]);const avg=sc.reduce((a,b)=>a+b)/
   return {v,avg,mean:amp(avg,k),agree:Math.max(0,Math.round(100-sd*2.2))}}
 let CH=null,R=null,RY=null,LY=null,LD=null,LS=null;const sel={money:0,love:0,work:0,health:0};let mode="near",selDec=0,netP=0,netC=0;
 const AGES=81,DECS=8;
-const nowAge=()=>{const n=new Date();return n.getFullYear()+(n.getMonth()+.5)/12-CH.birthYear};
+const nowAge=(chart=CH)=>{const n=new Date();return n.getFullYear()+(n.getMonth()+.5)/12-chart.birthYear};
 function compute(){
   /* 1~10년 뒤를 해마다 계산(RY). R은 같은 값 */
   RY=Array.from({length:10},(_,i)=>CATS.map((c,ci)=>{const t=horizonDate(i+1);return summarize(ORC.map(o=>o(CH,t,ci)),1.8)}));
@@ -1832,7 +1832,7 @@ const J=(w,a,b)=>w+(bat(w)?a:b);const ro=w=>w+(bat(w)===1?"으로":"로");
 const firstSentence=t=>{const p=plain(t).split(/(?<=[.!?])\s+/)[0]||"";return p};
 
 
-function turningPoints(ch){const na=nowAge(),y0=new Date().getFullYear(),lim=Math.min(80,na+45);const ev=[];const by=a=>Math.floor(ch.birthYear+a);
+function turningPoints(ch){const na=nowAge(ch),y0=new Date().getFullYear(),lim=Math.min(80,na+45);const ev=[];const by=a=>Math.floor(ch.birthYear+a);
   const d=ch.stems.d;
   for(let k=1;k<10;k++){const a=ch.dwStart+10*(k-1);if(a<=na||a>lim)continue;const dw=ch.mIdx+(ch.fwd?k:-k);const s=mod(dw,60)%10;const tg=tenGod(d,s);
     const idx=[0,ch.male?1:2,3,4];const bc=[0,1,2,3].sort((x,z)=>TGW[tg][idx[z]]-TGW[tg][idx[x]])[0];const fav=ch.goodG.includes(Math.floor(TG.indexOf(tg)/2));

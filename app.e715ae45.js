@@ -302,7 +302,7 @@ function summarize(v,k){const sc=v.map(x=>x[0]);const avg=sc.reduce((a,b)=>a+b)/
   return {v,avg,mean:amp(avg,k),agree:Math.max(0,Math.round(100-sd*2.2))}}
 let CH=null,R=null,RY=null,LY=null,LD=null,LS=null;const sel={money:0,love:0,work:0,health:0};let mode="near",selDec=0,netP=0,netC=0;
 const AGES=81,DECS=8;
-const nowAge=()=>{const n=new Date();return n.getFullYear()+(n.getMonth()+.5)/12-CH.birthYear};
+const nowAge=(chart=CH)=>{const n=new Date();return n.getFullYear()+(n.getMonth()+.5)/12-chart.birthYear};
 function compute(){
   /* 1~10년 뒤를 해마다 계산(RY). R은 같은 값 */
   RY=Array.from({length:10},(_,i)=>CATS.map((c,ci)=>{const t=horizonDate(i+1);return summarize(ORC.map(o=>o(CH,t,ci)),1.8)}));
@@ -585,7 +585,7 @@ const firstSentence=t=>{const p=plain(t).split(/(?<=[.!?])\s+/)[0]||"";return p}
 
 
 
-function turningPoints(ch){const na=nowAge(),y0=new Date().getFullYear(),lim=Math.min(80,na+45);const ev=[];const by=a=>Math.floor(ch.birthYear+a);
+function turningPoints(ch){const na=nowAge(ch),y0=new Date().getFullYear(),lim=Math.min(80,na+45);const ev=[];const by=a=>Math.floor(ch.birthYear+a);
   const d=ch.stems.d;
   for(let k=1;k<10;k++){const a=ch.dwStart+10*(k-1);if(a<=na||a>lim)continue;const dw=ch.mIdx+(ch.fwd?k:-k);const s=mod(dw,60)%10;const tg=tenGod(d,s);
     const idx=[0,ch.male?1:2,3,4];const bc=[0,1,2,3].sort((x,z)=>TGW[tg][idx[z]]-TGW[tg][idx[x]])[0];const fav=ch.goodG.includes(Math.floor(TG.indexOf(tg)/2));
@@ -2712,7 +2712,7 @@ function groupResult(list){
  const years=keep>=88?'10년 넘게':keep>=82?'5~10년쯤':keep>=75?'3~5년쯤':'계기가 있을 때마다';
  const level=keep>=88?'오래 남을 모임':keep>=82?'길게 이어질 모임':keep>=75?'한동안 잘 굴러갈 모임':'계기가 있을 때 다시 모이는 모임';
  const total=Math.round(clamp(avg,72,99));
- return {pairs,total,keep,level,years,best,worst,tie,clash,spread,roles:list.map(groupRole)}}
+ return {pairs,total,keep,level,years,best,worst,tie,clash,spread,roles:socialContext(list).map(x=>[x.role,x.strength])}}
 
 function groupName(ch,i){return ch.inp.name||(i===0?'나':'참여자 '+(i+1))}
 function groupListHTML(){
@@ -2801,7 +2801,7 @@ function socialPlayData(list){
  return {nick:list.map(c=>style[dom(c)][c.strong?0:1]),activities:order.slice(0,2).map(x=>activity[x.i]),missions:list.map(c=>mission[dom(c)]),same:order.length===1};
 }
 function friendReportData(a,b,res){
- const names=[a.inp.name||'나',b.inp.name||'친구'],roles=[groupRole(a),groupRole(b)];
+ const names=[a.inp.name||'나',b.inp.name||'친구'],roles=socialContext([a,b]).map(x=>[x.role,x.strength]);
  const dom=c=>c.cnt.indexOf(Math.max(...c.cnt)),same=dom(a)===dom(b);
  const style=['새로운 활동과 제안을 나누는 것','반응과 고마움을 말로 전하는 것','꾸준히 안부를 묻고 익숙한 시간을 갖는 것','약속과 서로의 기준을 분명히 하는 것','차분히 듣고 혼자 생각할 시간을 주는 것'];
  const sections=[
