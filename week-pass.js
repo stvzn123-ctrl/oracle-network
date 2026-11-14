@@ -6,10 +6,14 @@
  const user=()=>typeof accountUser!=='undefined'?accountUser:null;
  const isDemo=()=>document.body.classList.contains('demo');
  const saved=()=>!!(user()&&user().profile)&&!isDemo();
+ /* 처음 저장하고 본 결과는 '나의 운명'부터. 그다음 방문부터 '이번 주'부터. */
+ const seen=()=>{try{return localStorage.getItem('oracle-seen-natal')==='1'}catch(_){return true}};
+ const markSeen=()=>{try{localStorage.setItem('oracle-seen-natal','1')}catch(_){}};
+ const weekFirst=()=>saved()&&seen();
  const track=(n,p)=>{try{window.track&&window.track(n,p||{})}catch(_){}};
  let open=false;
 
- function order(){const box=document.querySelector('.res-tabs');if(!box)return;(saved()?['tb-today','tb-flow','tb-natal']:['tb-natal','tb-flow','tb-today']).forEach(id=>{const b=$(id);if(b)box.append(b)})}
+ function order(){const box=document.querySelector('.res-tabs');if(!box)return;(weekFirst()?['tb-today','tb-flow','tb-natal']:['tb-natal','tb-flow','tb-today']).forEach(id=>{const b=$(id);if(b)box.append(b)})}
 
  /* 오늘의 조언 카드(바로 보기) + 공유 */
  function card(){const head=$('todayHead');if(!head||!head.firstElementChild)return;
@@ -58,7 +62,7 @@
    c.fillStyle='#4A352B';c.font='92px '+F;hl.forEach(l=>{c.fillText(l,W/2,y);y+=112});y+=30;
    c.fillStyle='#5b463a';c.font='44px '+F;tl.forEach(l=>{c.fillText(l,W/2,y);y+=66});
    c.strokeStyle='#ecd6a8';c.lineWidth=2;c.beginPath();c.moveTo(W/2-200,Y+CHh-170);c.lineTo(W/2+200,Y+CHh-170);c.stroke();
-   try{const m=await img('img/mascot.webp');c.drawImage(m,W/2-190,Y+CHh-140,96,96*m.naturalHeight/m.naturalWidth)}catch(_){}
+   try{const m=await img('img/mascot.webp');c.drawImage(m,W/2-215,Y+CHh-152,124,124*m.naturalHeight/m.naturalWidth)}catch(_){}
    c.fillStyle='#8A5A1E';c.font='58px '+F;c.textAlign='left';c.fillText('운명탐정',W/2-80,Y+CHh-72);
    c.textAlign='center';c.fillStyle='#8A5A1E';c.font='38px '+F;c.fillText('fatedog.co.kr',W/2,H-80);
    const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.92)),file=new File([blob],'운명탐정-오늘의-조언.jpg',{type:'image/jpeg'});
@@ -68,9 +72,9 @@
 
  function paint(){order();card()}
  const ra=window.renderAll;
- window.renderAll=function(){const r=ra.apply(this,arguments);paint();if(saved())setTab('today');check();return r};
- document.addEventListener('click',e=>{if(e.target.closest('[data-bottom=home]')&&saved()&&typeof CH!=='undefined'&&CH)setTimeout(()=>setTab('today'),0);if(e.target.closest('#tb-today'))check()});
+ window.renderAll=function(){const r=ra.apply(this,arguments);paint();if(weekFirst())setTab('today');else if(saved())setTimeout(markSeen,3000);check();return r};
+ document.addEventListener('click',e=>{if(e.target.closest('[data-bottom=home]')&&weekFirst()&&typeof CH!=='undefined'&&CH)setTimeout(()=>setTab('today'),0);if(e.target.closest('#tb-today'))check()});
  let pay=null;try{pay=JSON.parse(sessionStorage.getItem('oracle-paying')||'null')}catch(_){}
  if(pay&&(pay.k==='cards30'||pay.k==='all')){let n=0;const t=setInterval(()=>{if(++n>12||open){clearInterval(t);return}if(typeof CH!=='undefined'&&CH)check()},2500)}
- let was=null;setInterval(()=>{const s=saved();if(s!==was){was=s;order();if(s&&typeof CH!=='undefined'&&CH&&!document.querySelector('.res-tabs [aria-selected=true]:not(#tb-natal)'))setTab('today');if(typeof CH!=='undefined'&&CH)check()}},1000);
+ let was=null;setInterval(()=>{const s=saved();if(s!==was){was=s;order();if(s&&weekFirst()&&typeof CH!=='undefined'&&CH&&!document.querySelector('.res-tabs [aria-selected=true]:not(#tb-natal)'))setTab('today');if(s&&!seen()&&typeof CH!=='undefined'&&CH)setTimeout(markSeen,3000);if(typeof CH!=='undefined'&&CH)check()}},1000);
 })();
