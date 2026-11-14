@@ -674,7 +674,7 @@ function validProfile(v){
 async function member(req,env){const token=req.headers.get("Authorization")?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];if(!token)return null;return env.DB.prepare("SELECT users.id,users.kakao_id,users.nickname,users.profile,users.profile_updated FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token_hash=? AND sessions.expires>?").bind(await authHash(token),Date.now()).first()}
 async function authRoute(req,env,url,ctx){
   const path=url.pathname.replace(/\/+$/,"");
-  if(!path.startsWith('/auth/')&&path!=="/me"&&path!=="/profile"&&path!=="/partners"&&path!=="/pair"&&path!=="/pair/join")return null;
+  if(!path.startsWith('/auth/')&&path!=="/me"&&path!=="/profile"&&path!=="/partners"&&path!=="/pair"&&path!=="/pair/join"&&path!=="/pairs")return null;
   if(req.method!=="GET"&&req.method!=="POST")return json(req,env,{error:"method"},405);
   const now=Date.now(),origin=req.headers.get('Origin');
   // 카카오 설정에서 연결을 끊은 회원은 서버의 세션과 출생 정보도 정리한다.
@@ -746,7 +746,7 @@ async function authRoute(req,env,url,ctx){
     const id=ex?ex.id:[...crypto.getRandomValues(new Uint8Array(16))].map(x=>x.toString(16).padStart(2,'0')).join('');
     await env.DB.prepare('INSERT INTO partners(id,user_id,name,date,data,consent_at,updated) VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data,updated=excluded.updated,consent_at=excluded.consent_at').bind(id,user.id,v.name,v.date,JSON.stringify(v),now,now).run();return json(req,env,{ok:true,id})}
   /* 궁합 링크: 서버는 회원끼리 출생 정보를 주고받게만 하고, 궁합 계산은 브라우저가 한다. */
-  if(path==='/pair'||path==='/pair/join'){
+  if(path==='/pair'||path==='/pair/join'||path==='/pairs'){
     await pairTables(env);
     if(!user.profile)return json(req,env,{error:'profile_required'},409);
     if(req.method==='POST'&&path==='/pair'){
@@ -765,7 +765,9 @@ async function authRoute(req,env,url,ctx){
       const cnt=await env.DB.prepare('SELECT COUNT(*) n FROM pair_members WHERE code=?').bind(b.code).first();
       const mine=await env.DB.prepare('SELECT 1 FROM pair_members WHERE code=? AND user_id=?').bind(b.code,user.id).first();
       if(!mine&&cnt.n>=(link.kind==='group'?8:2))return json(req,env,{error:'pair_full'},409);
-      if(!mine)await env.DB.prepare('INSERT INTO pair_members(code,user_id,joined) VALUES(?,?,?)').bind(b.code,user.id,now).run();
+      const allow=b.allowSave===true?1:0;
+      if(!mine)await env.DB.prepare('INSERT INTO pair_members(code,user_id,joined,allow_save) VALUES(?,?,?,?)').bind(b.code,user.id,now,allow).run();
+      else await env.DB.prepare('UPDATE pair_members SET allow_save=? WHERE code=? AND user_id=?').bind(allow,b.code,user.id).run();
       return json(req,env,{ok:true,kind:link.kind});
     }
     if(req.method==='GET'&&path==='/pair'){
@@ -773,8 +775,14 @@ async function authRoute(req,env,url,ctx){
       const mine=await env.DB.prepare('SELECT 1 FROM pair_members WHERE code=? AND user_id=?').bind(code,user.id).first();
       if(!mine)return json(req,env,{error:'forbidden'},403);
       const link=await env.DB.prepare('SELECT kind FROM pairs WHERE code=?').bind(code).first();
-      const r=await env.DB.prepare('SELECT users.id,users.nickname,users.profile FROM pair_members JOIN users ON users.id=pair_members.user_id WHERE pair_members.code=? ORDER BY pair_members.joined').bind(code).all();
-      return json(req,env,{kind:link?link.kind:'love',members:r.results.filter(x=>x.profile).map(x=>({id:x.id,nickname:x.nickname,me:x.id===user.id,profile:JSON.parse(x.profile)}))});
+      const r=await env.DB.prepare('SELECT users.id,users.nickname,users.profile,pair_members.allow_save FROM pair_members JOIN users ON users.id=pair_members.user_id WHERE pair_members.code=? ORDER BY pair_members.joined').bind(code).all();
+      return json(req,env,{kind:link?link.kind:'love',members:r.results.filter(x=>x.profile).map(x=>({id:x.id,nickname:x.nickname,me:x.id===user.id,allowSave:!!x.allow_save,profile:JSON.parse(x.profile)}))});
+    }
+    /* 내가 참여한 폴더 목록(우정·모임): 코드·종류·만든 날·참여자 이름(출생 정보는 주지 않는다) */
+    if(req.method==='GET'&&path==='/pairs'){
+      const r=await env.DB.prepare("SELECT p.code,p.kind,p.created,p.owner_id FROM pairs p JOIN pair_members m ON m.code=p.code WHERE m.user_id=? AND p.kind IN ('friend','group') ORDER BY p.created DESC LIMIT 30").bind(user.id).all();
+      const out=[];for(const f of r.results){const ms=await env.DB.prepare('SELECT users.nickname,users.profile FROM pair_members JOIN users ON users.id=pair_members.user_id WHERE pair_members.code=? ORDER BY pair_members.joined').bind(f.code).all();out.push({code:f.code,kind:f.kind,created:f.created,mine:f.owner_id===user.id,names:ms.results.map(x=>{try{return JSON.parse(x.profile||'null')?.name||x.nickname||''}catch(_){return x.nickname||''}})})}
+      return json(req,env,{folders:out});
     }
     return json(req,env,{error:'method'},405);
   }
@@ -2685,7 +2693,10 @@ let questionTableReady=false;
 let pairTablesReady=false;
 async function pairTables(env){if(pairTablesReady)return;await env.DB.batch([
   env.DB.prepare("CREATE TABLE IF NOT EXISTS pairs(code TEXT PRIMARY KEY,owner_id TEXT NOT NULL,kind TEXT NOT NULL DEFAULT 'love',created INTEGER NOT NULL)"),
-  env.DB.prepare('CREATE TABLE IF NOT EXISTS pair_members(code TEXT NOT NULL,user_id TEXT NOT NULL,joined INTEGER NOT NULL,PRIMARY KEY(code,user_id))')]);pairTablesReady=true}
+  env.DB.prepare('CREATE TABLE IF NOT EXISTS pair_members(code TEXT NOT NULL,user_id TEXT NOT NULL,joined INTEGER NOT NULL,PRIMARY KEY(code,user_id))')]);
+  /* 2026-11-14 폴더: 참여자가 '내 출생 정보를 다른 참여자가 저장해도 돼요'를 골랐는지(기본 0) */
+  try{await env.DB.prepare('ALTER TABLE pair_members ADD COLUMN allow_save INTEGER NOT NULL DEFAULT 0').run()}catch(_){}
+  pairTablesReady=true}
 async function questionTable(env){if(questionTableReady)return;await env.DB.prepare("CREATE TABLE IF NOT EXISTS questions(id INTEGER PRIMARY KEY AUTOINCREMENT,user_id TEXT,email TEXT NOT NULL,question TEXT NOT NULL,sig TEXT,created INTEGER NOT NULL,done_at INTEGER)").run();questionTableReady=true}
 async function questionRoute(req,env,url,ctx){
   const path=url.pathname.replace(/\/+$/,"");

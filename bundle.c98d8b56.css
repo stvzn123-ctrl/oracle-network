@@ -2923,6 +2923,17 @@ p{text-wrap:pretty}
 @keyframes psPop{0%{opacity:0;transform:translateY(18px) scale(.92) rotate(-1.5deg)}100%{opacity:1;transform:none}}
 @keyframes psGlow{0%{box-shadow:0 0 0 0 rgba(242,196,90,.75)}60%{box-shadow:0 0 0 14px rgba(242,196,90,0)}100%{box-shadow:0 10px 28px rgba(138,90,30,.16)}}
 @media(prefers-reduced-motion:reduce){.ps-inline{animation:none}}
+/* 공유 폴더 목록(navigation.js) */
+.cmp-folders{margin:0 0 12px;border:1px solid #e3cfae;border-radius:14px;background:#fffaf2;padding:0 14px}
+.cmp-folders>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600;color:var(--gold-ink,#8A5A1E)}
+.cmp-folder-list{display:grid;gap:8px;padding:0 0 12px}
+.cmp-folder{display:grid;gap:2px;text-align:left;padding:12px 14px;border:1px solid #efdfc2;border-radius:12px;background:#fff;font:inherit;cursor:pointer;color:inherit}
+.cmp-folder small{color:#8a6a45;font-size:12px}
+.pair-allow{display:flex;gap:8px;align-items:flex-start;margin:10px 0 0;font-size:14px;text-align:left}
+/* 이미지가 나오기 전 칸 그림은 아예 숨겨 큰 묶음 그림을 받지 않는다. 실패하면(ps-fail) 다시 보인다 */
+#result .social-share-card:not(.ps-fail) .social-cast{display:none!important}
+#result .social-share-card:not(.ps-has-img):not(.ps-fail) .social-card-content::before{content:'캐릭터 사진을 만드는 중이에요…';display:block;padding:48px 0;text-align:center;color:#8a6a45;background:linear-gradient(90deg,#fbf1e2,#fff8ee,#fbf1e2);background-size:200% 100%;border-radius:18px;margin:0 0 12px;animation:psShimmer 1.4s linear infinite}
+@keyframes psShimmer{to{background-position:-200% 0}}
 
 /* ==== purchase.css ==== */
 /* 2026-11-13 결제 화면 가독성(#reportPurchase 안에서만). 목차는 주제 화면에 이미 보이므로 접어 두고, 화면에는 제목·가격·결제 버튼만 먼저 보이게 한다. */

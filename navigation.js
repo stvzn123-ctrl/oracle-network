@@ -89,3 +89,18 @@
  const paint=()=>box.querySelectorAll('[data-friendkind]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.friendkind===(typeof CMPKIND!=='undefined'&&CMPKIND==='group'?'group':'friend'))));
  box.addEventListener('click',e=>{const b=e.target.closest('[data-friendkind]');if(!b)return;setTab('friend');cmpSetKind(b.dataset.friendkind);paint()});
  document.addEventListener('click',e=>{if(e.target.closest('#tb-friend-group,.cmp-kind button'))setTimeout(paint,0)});paint()})();
+
+/* 2026-11-14 우정·모임 '공유 폴더' 목록: 내가 만들었거나 링크로 들어간 폴더를 다시 열어 캐릭터 사진을 본다(서버 GET /pairs). */
+(()=>{const tab=document.getElementById('tab-match');if(!tab)return;
+ const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ function box(){const kind=typeof CMPKIND!=='undefined'?CMPKIND:'love';if(kind==='love'||typeof accountUser==='undefined'||!accountUser||!accountUser.profile)return;
+  const host=kind==='group'?document.getElementById('cmpGroup'):document.getElementById('cmpOne');if(!host||host.querySelector('.cmp-folders'))return;
+  const d=document.createElement('details');d.className='cmp-folders';d.innerHTML='<summary>공유 폴더</summary><div class="cmp-folder-list"><p class="cmp-priv">불러오는 중…</p></div>';host.prepend(d);
+  d.addEventListener('toggle',async()=>{if(!d.open)return;const list=d.querySelector('.cmp-folder-list');
+   try{const r=await accountAPI('/pairs'),f=(r.folders||[]).filter(x=>x.kind===(kind==='group'?'group':'friend'));
+    list.innerHTML=f.length?f.map(x=>'<button type="button" class="cmp-folder" data-folder="'+esc(x.code)+'"><b>'+esc(x.names.join(' · ')||'아직 나만 있어요')+'</b><small>'+x.names.length+'명 · '+new Date(x.created).toLocaleDateString('ko-KR')+(x.mine?' · 내가 만듦':'')+'</small></button>').join(''):'<p class="cmp-priv">아직 공유 폴더가 없어요. 아래 \'공유 폴더 만들고 링크 보내기\'로 만들 수 있어요.</p>'}
+   catch(e){list.innerHTML='<p class="cmp-priv">폴더를 불러오지 못했어요. '+esc(e.message||'')+'</p>'}});
+ }
+ tab.addEventListener('click',async e=>{const b=e.target.closest('[data-folder]');if(!b)return;b.disabled=true;const d=b.closest('details');
+  try{const ok=await cmpPairCheck(b.dataset.folder,null);if(!ok){b.querySelector('small').textContent='아직 다른 사람이 들어오지 않았어요.'}else{d.open=false;(tab.querySelector('#friendRoleOut .social-share-card,#cmpGroup .social-share-card')||tab).scrollIntoView({behavior:'smooth',block:'start'})}}catch(err){b.querySelector('small').textContent='열지 못했어요. '+(err.message||'')}finally{b.disabled=false}});
+ new MutationObserver(box).observe(tab,{childList:true,subtree:true});setInterval(box,2000)})();

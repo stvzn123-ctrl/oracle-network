@@ -1551,7 +1551,7 @@ document.addEventListener('click',e=>{const ld=e.target.closest('.cmp-load'),dl=
  el.partnerNoPlace.checked=p.pi==null;el.partnerPlace.disabled=p.pi==null;if(p.pi!=null)el.partnerPlace.value=String(p.pi);
  if(ld.closest('.cmp-wrap')){COMPAT=null;if(f.dataset.mode==='match'&&CMPKIND==='friend'){const out=document.getElementById('friendRoleOut');if(out){delete out.dataset.reveal;out.innerHTML=socialPlaceholderHTML(2);}}const o2=ld.closest('.cmp-wrap').querySelector('.cmp-out');if(o2)o2.innerHTML='';const panel=ld.closest('.cmp-wrap');panel.querySelectorAll('.cmp-load').forEach(b=>b.setAttribute('aria-pressed',String(b===ld)));const status=panel.querySelector('.friend-selection-status');if(status)status.textContent=p.name+'님을 선택했어요. \''+(panel.querySelector('[data-friend-result]')?.textContent||'확인하기')+'\'를 눌러 주세요.';return;}f.requestSubmit()});
 function compatFormHTML(mode='match',panel=''){const FR=mode==='friend'||!!panel;const PL={friend:'우리 관계 확인하기',love:'궁합 확인하기',reunion:'재회 흐름 확인하기'}[panel||(mode==='friend'?'friend':'')];if(mode==='friend')mode='match';const RU=mode==='reunion',GP=mode==='group',opts=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
- return `<section class="chart-form cmp-form ${GP?'cmp-form-group':FR?'cmp-form-friend':''}"><div class="cmp-head"><h4>${GP?"모임에 사람 추가하기":RU?"상대방 정보로 재회 흐름 보기":FR?"상대 정보 입력하기":"상대방 정보로 궁합 보기"}</h4>${RU?"":'<button type="button" class="cmp-askshare" data-pmake>공유해서 입력 요청하기</button>'}</div>${RU?"":'<div class="cmp-pair"></div>'}${FR?'':`<div class="cmp-saved">${partnerSavedHTML(GP)}</div>`}<form id="${GP?"group-form":RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate>${GP||FR?'<details class="group-manual"><summary>직접 입력해서 추가</summary>':''}<div class="chart-fields">
+ return `<section class="chart-form cmp-form ${GP?'cmp-form-group':FR?'cmp-form-friend':''}"><div class="cmp-head"><h4>${GP?"모임에 사람 추가하기":RU?"상대방 정보로 재회 흐름 보기":FR?"상대 정보 입력하기":"상대방 정보로 궁합 보기"}</h4>${RU?"":'<button type="button" class="cmp-askshare" data-pmake>'+(GP||FR?'공유 폴더 만들고 링크 보내기':'공유해서 입력 요청하기')+'</button>'}</div>${RU?"":'<div class="cmp-pair"></div>'}${FR?'':`<div class="cmp-saved">${partnerSavedHTML(GP)}</div>`}<form id="${GP?"group-form":RU?"reunion-form":"compatibility-form"}" data-mode="${mode}" novalidate>${GP||FR?'<details class="group-manual"><summary>직접 입력해서 추가</summary>':''}<div class="chart-fields">
  <label>상대 이름 <small>(선택)</small><input name="partnerName" maxlength="40" autocomplete="off" placeholder="홍길동 · 비워 두면 이름 없이 봐요"></label>
  <label>상대 영문 이름 <small>(선택)</small><input name="partnerRoman" maxlength="80" autocomplete="off" placeholder="자동 입력"></label>
  <p class="cmp-priv">이름을 넣지 않으면 이름으로 계산하는 수비학 영혼 수는 빼고, 생년월일로 보는 점술만으로 계산해요.</p>
@@ -2848,7 +2848,7 @@ async function cmpMakeLink(btn){
  const out=btn.closest('.cmp-form').querySelector('.cmp-pair');btn.disabled=true;
  try{
   const d=await accountAPI('/pair',{kind:CMPKIND}),url=pairUrl(d.code);try{window.track&&track('create_invite_link',{character_type:window.oracleCharType?oracleCharType():'',source_page:CMPKIND||'match'})}catch(_){}
-  out.innerHTML='<p class="cmp-note">아래 링크를 상대방에게 보내주세요. 상대방이 카카오 로그인 후 출생 정보를 저장하면 이 화면에 자동으로 입력돼요. 참여하면 서로의 출생 정보와 궁합이 공유돼요.</p><p class="cmp-link"><input type="text" readonly value="'+topicEsc(url)+'" aria-label="입력 요청 링크"></p><button type="button" data-pcopy>링크 복사</button> <button type="button" data-pcheck="'+d.code+'">입력 확인하기</button><p class="cmp-priv cmp-pair-msg" aria-live="polite">상대방의 입력을 기다리고 있어요…</p>';
+  out.innerHTML='<p class="cmp-note">'+(CMPKIND==='love'?'아래 링크를 상대방에게 보내주세요. 상대방이 카카오 로그인 후 출생 정보를 저장하면 이 화면에 자동으로 입력돼요. 참여하면 서로의 출생 정보와 궁합이 공유돼요.':'공유 폴더를 만들었어요. 링크를 받은 친구가 로그인하고 내 정보를 저장하면 폴더에 자동으로 들어오고, 폴더에 들어온 사람은 누구나 우리 캐릭터 사진을 볼 수 있어요. 생년월일은 본인이 허락할 때만 다른 사람에게 저장돼요.')+'</p><p class="cmp-link"><input type="text" readonly value="'+topicEsc(url)+'" aria-label="입력 요청 링크"></p><button type="button" data-pcopy>링크 복사</button> <button type="button" data-pcheck="'+d.code+'">입력 확인하기</button><p class="cmp-priv cmp-pair-msg" aria-live="polite">상대방의 입력을 기다리고 있어요…</p>';
   out.querySelector('[data-pcopy]').onclick=async()=>{const field=out.querySelector('input');try{await navigator.clipboard.writeText(url);out.querySelector('.cmp-pair-msg').textContent='링크를 복사했어요. 상대방에게 보내주세요.'}catch(_){field.focus();field.select();out.querySelector('.cmp-pair-msg').textContent='링크를 선택했어요. 직접 복사해 주세요.'}};
   cmpRemember(d.code);cmpWatch(d.code);
  }catch(e){out.innerHTML='<p class="cmp-priv">'+topicEsc(e.message||'링크를 만들지 못했어요.')+'</p>'}finally{btn.disabled=false}
@@ -2870,6 +2870,8 @@ async function cmpPairCheck(code,msgEl){
  const others=(d.members||[]).filter(m=>!m.me);
  if(!others.length){if(msgEl)msgEl.textContent='아직 친구가 들어오지 않았어요. 친구가 로그인하고 내 정보를 저장하면 여기에 바로 보여요.';return false}
  const kind=d.kind==='group'?'group':d.kind==='friend'?'friend':'love';
+ /* 저장을 허락한 참여자만 내 저장 목록에 더한다(이미 있으면 건너뜀) */
+ try{const have=partnerList();for(const m of others){if(!m.allowSave)continue;const p=typeof m.profile==='string'?JSON.parse(m.profile):m.profile;if(!p||!p.date||have.some(x=>x.name===p.name&&x.date===p.date))continue;await partnerSave({name:p.name||m.nickname||'친구',roman:p.roman||'',sex:p.sex,date:p.date,time:p.notime?'':p.time||'',notime:!!p.notime,pi:Number.isInteger(p.place?.pi)?p.place.pi:null})}}catch(_){}
  if(kind==='group'){GROUP=others.map(pairChart).filter((c,i,a)=>!sameGroupPerson(c,CH)&&a.findIndex(x=>sameGroupPerson(c,x))===i);cmpSetKind('group');groupRefresh();groupRender()}
  else{const other=pairChart(others[0],1);COMPAT={b:other,res:compatScore(CH,other),mode:'match',kind};cmpSetKind(kind);cmpFillShared(other.inp);cmpShowOne((other.inp.name||'친구')+'님')}
  return true}
@@ -2930,7 +2932,7 @@ document.addEventListener('click',e=>{
 }catch(_){}})();
 
 /* 초대 링크로 들어온 사람이 이미 출생 정보를 저장해 둔 경우: 바로 합류하지 않고 서로 보는 데 동의하는지 먼저 묻는다. 링크를 보낸 사람은 만들 때 동의한 것으로 본다. */
-function pairConsent(){return new Promise(res=>{let d=$('pairConsentDialog');if(!d){d=document.createElement('dialog');d.id='pairConsentDialog';d.className='login-save-dialog pair-consent';d.setAttribute('aria-labelledby','pairConsentTitle');d.innerHTML='<h2 id="pairConsentTitle">친구가 보낸 궁합 링크예요</h2><p>동의하면 저장된 내 출생 정보로 궁합을 계산하고, 결과와 출생 정보가 링크를 보낸 사람에게도 보여요.</p><p class="fine">링크를 보낸 사람은 링크를 만들 때 이미 동의한 것으로 봐요.</p><div class="login-save-btns"><button type="button" data-pair-no>나중에</button><button type="button" class="primary" data-pair-yes>동의하고 궁합 보기</button></div>';document.body.append(d);d.querySelector('[data-pair-yes]').onclick=()=>d.close('yes');d.querySelector('[data-pair-no]').onclick=()=>d.close('no')}
+function pairConsent(){return new Promise(res=>{let d=$('pairConsentDialog');if(!d){d=document.createElement('dialog');d.id='pairConsentDialog';d.className='login-save-dialog pair-consent';d.setAttribute('aria-labelledby','pairConsentTitle');d.innerHTML='<h2 id="pairConsentTitle">친구가 보낸 궁합 링크예요</h2><p>동의하면 저장된 내 출생 정보로 궁합을 계산하고, 결과와 출생 정보가 링크를 보낸 사람에게도 보여요.</p><p class="fine">링크를 보낸 사람은 링크를 만들 때 이미 동의한 것으로 봐요.</p><label class="chk pair-allow"><input type="checkbox" id="pairAllowSave"> 폴더의 다른 사람이 내 생년월일을 저장해도 돼요</label><p class="fine">체크하지 않으면 함께 보는 동안에만 쓰이고 다른 사람의 저장 목록에는 남지 않아요.</p><div class="login-save-btns"><button type="button" data-pair-no>나중에</button><button type="button" class="primary" data-pair-yes>동의하고 궁합 보기</button></div>';document.body.append(d);d.querySelector('[data-pair-yes]').onclick=()=>d.close('yes');d.querySelector('[data-pair-no]').onclick=()=>d.close('no')}
  d.onclose=()=>res(d.returnValue==='yes');d.returnValue='';d.showModal()})}
 async function cmpPairBoot(){
  let code='';try{code=sessionStorage.getItem(PAIRKEY)||''}catch(_){}
@@ -2939,7 +2941,7 @@ async function cmpPairBoot(){
  if(!accountUser.profile){accountNotice('궁합 링크로 들어왔어요. 출생 정보를 입력하고 ‘내 정보 저장’을 누르면 친구와의 궁합이 바로 나와요.');return}
  if(!(await pairConsent())){try{sessionStorage.removeItem(PAIRKEY)}catch(_){}accountNotice('궁합 링크 참여를 미뤘어요. 보고 싶어지면 친구가 보낸 링크를 다시 열어 주세요.');return}
  try{
-  await accountAPI('/pair/join',{code});
+  await accountAPI('/pair/join',{code,allowSave:!!document.getElementById('pairAllowSave')?.checked});
   try{sessionStorage.removeItem(PAIRKEY)}catch(_){}
   if(!CH)return;
   setTab('match');
