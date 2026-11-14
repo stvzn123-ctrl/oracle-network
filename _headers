@@ -16,6 +16,9 @@
 /maps.*.js
   ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
+/scripts.*.js
+  ! Cache-Control
+  Cache-Control: public, max-age=31536000, immutable
 /report.*.js
   ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
